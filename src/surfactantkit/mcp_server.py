@@ -21,6 +21,8 @@ from . import cpp as cpp_mod
 from . import electrostatics as elec
 from . import dynamics as dyn
 from . import thermodynamics as thermo
+from . import wetting
+from . import solubilization as solub
 
 mcp = MCPServer(
     "SurfactantKit",
@@ -40,7 +42,10 @@ mcp = MCPServer(
         "salt/ionic-strength systems, and anything requiring iterative "
         "numerical solving or careful unit conversion (e.g. cP vs Pa.s, "
         "cm^2/s vs m^2/s -- these are exactly the kind of silent unit errors "
-        "this server exists to prevent)."
+        "this server exists to prevent). Also covers the Szyszkowski surface "
+        "tension equation, wetting/adhesion (Young-Dupre, spreading "
+        "coefficient), the capillary number (enhanced oil recovery), and "
+        "micellar solubilization (Molar Solubilization Ratio)."
     ),
 )
 
@@ -126,6 +131,21 @@ def gibbs_area_per_molecule(gamma_max_mol_per_m2: float) -> dict:
     Gamma_max (mol/m^2, from gibbs_surface_excess)."""
     value = ads.gibbs_a_min(gamma_max_mol_per_m2)
     return {"a_min_nm2": value, "unit": "nm^2 per molecule"}
+
+
+@mcp.tool()
+def szyszkowski_predict_surface_tension(concentration: float, gamma0_mN_m: float, gamma_max_mol_per_m2: float, K: float, temperature_K: float = 298.15, n_factor: float = 1.0) -> dict:
+    """Predict surface tension (mN/m) at a given surfactant concentration
+    via the Szyszkowski/Langmuir equation: gamma = gamma0 -
+    n_factor*R*T*Gamma_max*ln(1+K*concentration). K is a fitted
+    Szyszkowski/Langmuir constant specific to the surfactant + condition
+    (not a universal constant -- must come from real data, e.g. a fit to
+    measured surface-tension-vs-concentration points). concentration and
+    K must use consistent units (K*concentration must be dimensionless).
+    Only valid below the CMC, where surfactant is present as free
+    monomer at the interface."""
+    value = ads.szyszkowski_surface_tension(concentration, gamma0_mN_m, gamma_max_mol_per_m2, K, temperature_K, n_factor)
+    return {"surface_tension_mN_m": value, "unit": "mN/m"}
 
 
 @mcp.tool()
@@ -316,6 +336,55 @@ def entropy_of_micellization(deltaG_mic_kJ_per_mol: float, deltaH_mic_kJ_per_mol
     vant_hoff_enthalpy)."""
     value = thermo.entropy_micellization(deltaG_mic_kJ_per_mol, deltaH_mic_kJ_per_mol, temperature_K)
     return {"deltaS_mic_J_per_mol_K": value, "unit": "J/(mol.K)"}
+
+
+@mcp.tool()
+def wetting_work_of_adhesion(gamma_LV_mN_m: float, contact_angle_deg: float) -> dict:
+    """Young-Dupre work of adhesion (mJ/m^2, numerically = mN/m):
+    W_a = gamma_LV * (1 + cos(theta)). gamma_LV_mN_m is the liquid-vapor
+    surface tension; contact_angle_deg is the measured equilibrium
+    contact angle in degrees (0-180)."""
+    value = wetting.work_of_adhesion(gamma_LV_mN_m, contact_angle_deg)
+    return {"work_of_adhesion_mJ_per_m2": value, "unit": "mJ/m^2"}
+
+
+@mcp.tool()
+def wetting_spreading_coefficient(gamma_LV_mN_m: float, contact_angle_deg: float) -> dict:
+    """Spreading coefficient (mN/m) from Young's equation:
+    S = gamma_LV * (cos(theta) - 1). Always <= 0 in this formulation
+    (equality only at complete wetting, theta=0); more negative means
+    poorer spreading."""
+    value = wetting.spreading_coefficient(gamma_LV_mN_m, contact_angle_deg)
+    return {"spreading_coefficient_mN_m": value, "unit": "mN/m"}
+
+
+@mcp.tool()
+def eor_capillary_number(viscosity_mPas: float, velocity_m_per_s: float, interfacial_tension_mN_m: float) -> dict:
+    """Capillary number (dimensionless): Ca = (viscosity*velocity) /
+    interfacial_tension -- governs oil-displacement efficiency in
+    enhanced oil recovery. Below Ca ~ 1e-5, flow is capillary-dominated
+    and residual oil stays trapped; surfactants raise Ca mainly by
+    driving interfacial tension toward ultra-low values. viscosity_mPas
+    in mPa.s (=cP); velocity_m_per_s in m/s; interfacial_tension_mN_m in mN/m."""
+    value = wetting.capillary_number(viscosity_mPas, velocity_m_per_s, interfacial_tension_mN_m)
+    return {"capillary_number": value, "unit": "dimensionless",
+            "flow_regime": "capillary-dominated (residual oil trapped)" if value < 1e-5 else "transitional/viscous-dominated"}
+
+
+@mcp.tool()
+def molar_solubilization_ratio(total_solubilized_M: float, intrinsic_water_solubility_M: float, surfactant_concentration_M: float, cmc_M: float) -> dict:
+    """Molar Solubilization Ratio (MSR, dimensionless): moles of
+    solubilizate taken up per mole of MICELLIZED surfactant (only the
+    surfactant above the CMC, since that's what forms micelles):
+    MSR = (total_solubilized - intrinsic_water_solubility) /
+    (surfactant_concentration - cmc). All four inputs must be in the
+    same concentration unit. Note: the companion quantity Km
+    (micelle-water partition coefficient) is deliberately NOT provided
+    by this server -- its exact formula is study-specific in the
+    literature with no single dominant convention, and guessing one
+    risks reproducing the wrong definition for a given paper."""
+    value = solub.molar_solubilization_ratio(total_solubilized_M, intrinsic_water_solubility_M, surfactant_concentration_M, cmc_M)
+    return {"msr": value, "unit": "dimensionless (mol solubilizate per mol micellized surfactant)"}
 
 
 def main() -> None:

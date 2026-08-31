@@ -132,3 +132,34 @@ def test_vant_hoff_and_entropy_tools_complete_triad():
     })
     expected = ((dh["deltaH_mic_kJ_per_mol"] - dg["deltaG_mic_kJ_per_mol"]) / 298.15) * 1000.0
     assert ds["deltaS_mic_J_per_mol_K"] == pytest.approx(expected)
+
+
+def test_szyszkowski_tool_at_zero_concentration_returns_gamma0():
+    out = call("szyszkowski_predict_surface_tension", {
+        "concentration": 0.0, "gamma0_mN_m": 72.0, "gamma_max_mol_per_m2": 3.0e-6, "K": 50.0,
+    })
+    assert out["surface_tension_mN_m"] == pytest.approx(72.0)
+
+
+def test_wetting_work_of_adhesion_tool_complete_wetting():
+    out = call("wetting_work_of_adhesion", {"gamma_LV_mN_m": 72.0, "contact_angle_deg": 0.0})
+    assert out["work_of_adhesion_mJ_per_m2"] == pytest.approx(144.0)
+
+
+def test_wetting_spreading_coefficient_tool_never_positive():
+    out = call("wetting_spreading_coefficient", {"gamma_LV_mN_m": 72.0, "contact_angle_deg": 90.0})
+    assert out["spreading_coefficient_mN_m"] <= 0
+
+
+def test_eor_capillary_number_tool_matches_direct_formula():
+    out = call("eor_capillary_number", {"viscosity_mPas": 1.0, "velocity_m_per_s": 1e-5, "interfacial_tension_mN_m": 0.01})
+    expected = (1.0e-3 * 1e-5) / (0.01e-3)
+    assert out["capillary_number"] == pytest.approx(expected)
+
+
+def test_molar_solubilization_ratio_tool():
+    out = call("molar_solubilization_ratio", {
+        "total_solubilized_M": 0.51e-3, "intrinsic_water_solubility_M": 0.01e-3,
+        "surfactant_concentration_M": 10e-3, "cmc_M": 2e-3,
+    })
+    assert out["msr"] == pytest.approx(0.0625)

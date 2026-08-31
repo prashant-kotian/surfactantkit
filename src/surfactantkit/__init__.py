@@ -19,7 +19,7 @@ from .mixed_micelle import (
     rosen_beta_sigma,
     corrin_harkins_predict_cmc,
 )
-from .adsorption import gibbs_gamma_max, gibbs_a_min
+from .adsorption import gibbs_gamma_max, gibbs_a_min, szyszkowski_surface_tension
 from .hlb import hlb_griffin, hlb_davies
 from .cpp import (
     tanford_tail_volume,
@@ -42,8 +42,10 @@ from .thermodynamics import (
     vant_hoff_enthalpy,
     entropy_micellization,
 )
+from .wetting import work_of_adhesion, spreading_coefficient, capillary_number
+from .solubilization import molar_solubilization_ratio
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 __all__ = [
     "clint_ideal_cmc",
@@ -56,6 +58,7 @@ __all__ = [
     "corrin_harkins_predict_cmc",
     "gibbs_gamma_max",
     "gibbs_a_min",
+    "szyszkowski_surface_tension",
     "hlb_griffin",
     "hlb_davies",
     "tanford_tail_volume",
@@ -73,4 +76,8 @@ __all__ = [
     "gibbs_free_energy_micellization",
     "vant_hoff_enthalpy",
     "entropy_micellization",
+    "work_of_adhesion",
+    "spreading_coefficient",
+    "capillary_number",
+    "molar_solubilization_ratio",
 ]
