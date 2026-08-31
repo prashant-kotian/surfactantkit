@@ -18,18 +18,29 @@ from . import mixed_micelle as mm
 from . import adsorption as ads
 from . import hlb as hlb_mod
 from . import cpp as cpp_mod
+from . import electrostatics as elec
+from . import dynamics as dyn
+from . import thermodynamics as thermo
 
 mcp = MCPServer(
     "SurfactantKit",
     instructions=(
         "Surfactant and interfacial-science calculations: Clint ideal mixing, "
-        "Rubingh regular-solution theory for binary surfactant mixtures, the "
-        "Gibbs adsorption isotherm, HLB (Griffin's and Davies' methods), and "
-        "the critical packing parameter (Tanford's formulas). Use these tools "
-        "instead of computing or recalling these values from memory -- CMC, "
-        "interaction-parameter, and HLB values are easy to hallucinate and easy "
-        "to get wrong, especially for gemini (two-headgroup) surfactants and "
-        "anything requiring iterative numerical solving."
+        "Rubingh regular-solution theory for binary surfactant mixtures (and its "
+        "Rosen extension to mixed adsorbed monolayers), the Gibbs adsorption "
+        "isotherm, HLB (Griffin's and Davies' methods), the critical packing "
+        "parameter and aggregation number (Tanford's formulas), full "
+        "micellization thermodynamics (deltaG/deltaH/deltaS, counterion "
+        "binding), the Corrin-Harkins salt-CMC relation, Debye screening "
+        "length, zeta potential (Henry equation), and hydrodynamic radius "
+        "(Stokes-Einstein). Use these tools instead of computing or recalling "
+        "these values from memory -- CMC, interaction-parameter, HLB, and "
+        "electrolyte/electrostatic values are easy to hallucinate and easy to "
+        "get wrong, especially for gemini (two-headgroup) surfactants, mixed "
+        "salt/ionic-strength systems, and anything requiring iterative "
+        "numerical solving or careful unit conversion (e.g. cP vs Pa.s, "
+        "cm^2/s vs m^2/s -- these are exactly the kind of silent unit errors "
+        "this server exists to prevent)."
     ),
 )
 
@@ -168,6 +179,143 @@ def critical_packing_parameter(volume_A3: float, head_area_A2: float, length_A: 
     cpp = cpp_mod.critical_packing_parameter(volume_A3, head_area_A2, length_A)
     morphology = cpp_mod.classify_aggregate_morphology(cpp)
     return {"cpp": cpp, "unit": "dimensionless", "predicted_morphology": morphology}
+
+
+@mcp.tool()
+def aggregation_number(tail_volume_A3: float, core_radius_A: float) -> dict:
+    """Estimated spherical-micelle aggregation number from geometric
+    packing: N_agg = core_volume / tail_volume. tail_volume_A3 typically
+    comes from tanford_chain_geometry; core_radius_A is usually
+    approximated by the critical chain length from that same tool, but
+    pass a measured value (e.g. from SANS/SAXS) if you have one. This is
+    a geometric estimate, not a substitute for a directly measured
+    aggregation number (e.g. fluorescence quenching)."""
+    value = cpp_mod.aggregation_number_spherical(tail_volume_A3, core_radius_A)
+    return {"aggregation_number": value, "unit": "dimensionless (molecules per micelle)",
+            "note": "geometric estimate assuming a spherical micelle core"}
+
+
+@mcp.tool()
+def rosen_monolayer_solve(alpha1: float, c_mix_sigma_mM: float, c1_sigma_mM: float, c2_sigma_mM: float) -> dict:
+    """Rosen's extension of Rubingh theory to the mixed ADSORBED
+    MONOLAYER at an interface, from surface-tension data -- NOT CMC
+    data. c1_sigma_mM/c2_sigma_mM are the pure-component concentrations
+    needed to reach a chosen reference surface tension (or pressure);
+    c_mix_sigma_mM is the mixed concentration needed to reach that SAME
+    reference surface tension at bulk mole fraction alpha1. Using CMC
+    values here instead is a common category error -- if you have CMC
+    data, use rubingh_solve instead."""
+    x1 = mm.solve_rosen_monolayer_x(alpha1, c_mix_sigma_mM, c1_sigma_mM, c2_sigma_mM)
+    if x1 is None:
+        raise ValueError("No valid root found in (0, 1) for these inputs.")
+    beta_sigma = mm.rosen_beta_sigma(x1, alpha1, c_mix_sigma_mM, c1_sigma_mM)
+    return {
+        "monolayer_mole_fraction_x1": x1,
+        "beta_sigma": beta_sigma,
+        "synergy_classification": "synergistic" if beta_sigma < 0 else ("antagonistic" if beta_sigma > 0 else "ideal"),
+    }
+
+
+@mcp.tool()
+def corrin_harkins_predict(cmc1_mM: float, salt_conc1_mM: float, cmc2_mM: float, salt_conc2_mM: float, salt_conc_target_mM: float) -> dict:
+    """Predict CMC at a new counterion (salt) concentration via the
+    Corrin-Harkins log-linear relation, fit from two known (CMC, salt
+    concentration) data points for the SAME surfactant + salt system.
+    The fitted slope g and intercept are system-specific -- there is no
+    universal lookup table for them, which is why two real data points
+    are required as input. Only reliable as interpolation between (or a
+    close extrapolation beyond) the two given concentrations."""
+    predicted_cmc, g = mm.corrin_harkins_predict_cmc(cmc1_mM, salt_conc1_mM, cmc2_mM, salt_conc2_mM, salt_conc_target_mM)
+    return {"predicted_cmc_mM": predicted_cmc, "fitted_slope_g": g}
+
+
+@mcp.tool()
+def debye_screening_length(ionic_strength_M: float, temperature_K: float = 298.15) -> dict:
+    """Debye screening length (nm) for an electrolyte solution.
+    ionic_strength_M must be the IONIC STRENGTH (0.5*sum(c_i*z_i^2)),
+    not the raw salt concentration -- for a simple 1:1 salt like NaCl
+    these are numerically equal, but for anything else (CaCl2, MgSO4,
+    etc.) they are not. Use the ionic_strength helper concept: for each
+    ion, multiply its molar concentration by its charge squared, sum,
+    and halve."""
+    value = elec.debye_length(ionic_strength_M, temperature_K)
+    return {"debye_length_nm": value, "unit": "nm"}
+
+
+@mcp.tool()
+def zeta_potential(electrophoretic_mobility_um_cm_per_Vs: float, viscosity_mPas: float, regime: str) -> dict:
+    """Zeta potential (mV) from electrophoretic mobility via the Henry
+    equation. regime must be explicitly stated as 'huckel' (small
+    particles / low ionic strength, kappa*a << 1) or 'smoluchowski'
+    (larger colloids, ionic strength >= ~10 mM, kappa*a >> 1) -- there is
+    no default, because silently picking the wrong regime is exactly the
+    kind of error this tool exists to prevent. viscosity_mPas: solvent
+    viscosity in mPa.s (=cP; water is ~0.89 at 25C -- do not pass Pa.s
+    here, a 1000x unit error)."""
+    value = elec.zeta_potential_henry(electrophoretic_mobility_um_cm_per_Vs, viscosity_mPas, regime)
+    return {"zeta_potential_mV": value, "unit": "mV", "regime_used": regime.lower()}
+
+
+@mcp.tool()
+def hydrodynamic_radius(diffusion_coefficient_cm2_per_s: float, viscosity_mPas: float, temperature_K: float = 298.15) -> dict:
+    """Hydrodynamic radius (nm) from a DLS-measured diffusion
+    coefficient via the Stokes-Einstein equation. diffusion_coefficient
+    must be in cm^2/s (the commonly-reported DLS unit) -- NOT m^2/s, a
+    classic 1e4x unit error. viscosity_mPas: solvent viscosity in mPa.s
+    (=cP; water is ~0.89 at 25C) -- NOT Pa.s."""
+    value = dyn.hydrodynamic_radius_stokes_einstein(diffusion_coefficient_cm2_per_s, viscosity_mPas, temperature_K)
+    return {"hydrodynamic_radius_nm": value, "unit": "nm"}
+
+
+@mcp.tool()
+def counterion_binding_degree(slope_below_cmc: float, slope_above_cmc: float) -> dict:
+    """Degree of counterion binding to the micelle (beta) from the
+    slope-ratio method on a conductivity-vs-concentration plot: beta = 1
+    - (slope_above_cmc / slope_below_cmc). Both slopes must be positive,
+    with slope_above_cmc < slope_below_cmc. Note: this method's physical
+    interpretation has been questioned for some systems in the
+    literature -- the arithmetic is standard and widely used, but treat
+    the result as an approximate, commonly-reported value."""
+    value = thermo.counterion_binding_degree(slope_below_cmc, slope_above_cmc)
+    return {"beta": value, "unit": "dimensionless (fraction, 0 to 1)"}
+
+
+@mcp.tool()
+def gibbs_free_energy_micellization(cmc_M: float, temperature_K: float, counterion_factor: float = 1.0) -> dict:
+    """Standard Gibbs free energy of micellization (kJ/mol) from CMC
+    (molarity, mol/L) and temperature. counterion_factor must be stated
+    explicitly: use 1.0 for a nonionic surfactant, or (2 - beta) for an
+    ionic surfactant given its counterion binding degree beta (see
+    counterion_binding_degree) -- this is never auto-detected, since
+    silently assuming nonionic behavior for an ionic surfactant (or vice
+    versa) is exactly the kind of hidden-assumption error this tool
+    exists to prevent."""
+    x_cmc = thermo.cmc_to_mole_fraction(cmc_M)
+    value = thermo.gibbs_free_energy_micellization(x_cmc, temperature_K, counterion_factor)
+    return {"deltaG_mic_kJ_per_mol": value, "unit": "kJ/mol", "cmc_mole_fraction_used": x_cmc}
+
+
+@mcp.tool()
+def vant_hoff_enthalpy(cmc1_M: float, temperature1_K: float, cmc2_M: float, temperature2_K: float) -> dict:
+    """Van't Hoff enthalpy of micellization (kJ/mol) from CMC (molarity)
+    measured at two temperatures. Assumes deltaH is constant over the
+    temperature interval -- treat results from a wide T range with
+    appropriate caution, and note this breaks down if the aggregation
+    number itself varies significantly with temperature."""
+    x1 = thermo.cmc_to_mole_fraction(cmc1_M)
+    x2 = thermo.cmc_to_mole_fraction(cmc2_M)
+    value = thermo.vant_hoff_enthalpy(x1, temperature1_K, x2, temperature2_K)
+    return {"deltaH_mic_kJ_per_mol": value, "unit": "kJ/mol"}
+
+
+@mcp.tool()
+def entropy_of_micellization(deltaG_mic_kJ_per_mol: float, deltaH_mic_kJ_per_mol: float, temperature_K: float) -> dict:
+    """Entropy of micellization (J/(mol.K)): deltaS = (deltaH - deltaG) /
+    T. Completes the deltaG/deltaH/deltaS thermodynamic triad given the
+    other two (from gibbs_free_energy_micellization and
+    vant_hoff_enthalpy)."""
+    value = thermo.entropy_micellization(deltaG_mic_kJ_per_mol, deltaH_mic_kJ_per_mol, temperature_K)
+    return {"deltaS_mic_J_per_mol_K": value, "unit": "J/(mol.K)"}
 
 
 def main() -> None:

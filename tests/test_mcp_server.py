@@ -74,3 +74,61 @@ def test_critical_packing_parameter_tool_end_to_end():
         "vesicle/bilayer",
         "inverted structure",
     }
+
+
+def test_aggregation_number_tool():
+    geom = call("tanford_chain_geometry", {"n_carbons": 12})
+    out = call("aggregation_number", {"tail_volume_A3": geom["tail_volume_A3"], "core_radius_A": geom["critical_length_A"]})
+    assert 40.0 < out["aggregation_number"] < 80.0
+
+
+def test_debye_screening_length_tool_matches_textbook_value():
+    out = call("debye_screening_length", {"ionic_strength_M": 0.1, "temperature_K": 298.15})
+    assert out["debye_length_nm"] == pytest.approx(0.961, abs=0.01)
+
+
+def test_zeta_potential_tool_requires_explicit_regime():
+    with pytest.raises(Exception):
+        call("zeta_potential", {"electrophoretic_mobility_um_cm_per_Vs": 2.0, "viscosity_mPas": 0.89, "regime": "not_a_real_regime"})
+
+
+def test_hydrodynamic_radius_tool_positive_and_reasonable():
+    out = call("hydrodynamic_radius", {"diffusion_coefficient_cm2_per_s": 1e-6, "viscosity_mPas": 0.89})
+    assert 0.1 < out["hydrodynamic_radius_nm"] < 1000.0
+
+
+def test_rosen_monolayer_solve_tool_matches_underlying_math():
+    out = call("rosen_monolayer_solve", {"alpha1": 0.5, "c_mix_sigma_mM": 4.07, "c1_sigma_mM": 11.50, "c2_sigma_mM": 11.98})
+    assert out["monolayer_mole_fraction_x1"] == pytest.approx(0.5033, abs=0.001)
+    assert out["beta_sigma"] == pytest.approx(-4.236, abs=0.01)
+
+
+def test_corrin_harkins_predict_tool_cmc_decreases_with_salt():
+    out = call("corrin_harkins_predict", {
+        "cmc1_mM": 10.0, "salt_conc1_mM": 10.0,
+        "cmc2_mM": 5.0, "salt_conc2_mM": 100.0,
+        "salt_conc_target_mM": 200.0,
+    })
+    assert out["predicted_cmc_mM"] < 5.0
+
+
+def test_counterion_binding_degree_tool():
+    out = call("counterion_binding_degree", {"slope_below_cmc": 2.0, "slope_above_cmc": 1.0})
+    assert out["beta"] == pytest.approx(0.5)
+
+
+def test_gibbs_free_energy_micellization_tool_is_negative():
+    out = call("gibbs_free_energy_micellization", {"cmc_M": 0.008, "temperature_K": 298.15, "counterion_factor": 1.6})
+    assert out["deltaG_mic_kJ_per_mol"] < 0
+
+
+def test_vant_hoff_and_entropy_tools_complete_triad():
+    dg = call("gibbs_free_energy_micellization", {"cmc_M": 0.008, "temperature_K": 298.15, "counterion_factor": 1.6})
+    dh = call("vant_hoff_enthalpy", {"cmc1_M": 0.008, "temperature1_K": 293.15, "cmc2_M": 0.0075, "temperature2_K": 313.15})
+    ds = call("entropy_of_micellization", {
+        "deltaG_mic_kJ_per_mol": dg["deltaG_mic_kJ_per_mol"],
+        "deltaH_mic_kJ_per_mol": dh["deltaH_mic_kJ_per_mol"],
+        "temperature_K": 298.15,
+    })
+    expected = ((dh["deltaH_mic_kJ_per_mol"] - dg["deltaG_mic_kJ_per_mol"]) / 298.15) * 1000.0
+    assert ds["deltaS_mic_J_per_mol_K"] == pytest.approx(expected)

@@ -105,3 +105,52 @@ def activity_coefficients(x1: float, beta: float) -> tuple[float, float]:
 def excess_free_energy(x1: float, f1: float, f2: float, temperature_k: float) -> float:
     """Excess free energy of micelle formation, kJ/mol."""
     return (R_GAS * temperature_k * (x1 * math.log(f1) + (1.0 - x1) * math.log(f2))) / 1000.0
+
+
+def solve_rosen_monolayer_x(alpha1: float, c_mix_sigma: float, c1_sigma: float, c2_sigma: float, **kwargs) -> float | None:
+    """Rosen's extension of Rubingh's regular-solution theory to the
+    mixed ADSORBED MONOLAYER at an interface, from surface tension data
+    rather than CMC data. Mathematically identical to solve_rubingh_x --
+    the difference is entirely in what the inputs mean, and getting that
+    right matters: c1_sigma/c2_sigma are the pure-component surfactant
+    concentrations required to reach a chosen REFERENCE surface tension
+    (or surface pressure) at the interface, and c_mix_sigma is the total
+    mixed-surfactant concentration required to reach that SAME reference
+    surface tension at bulk mole fraction alpha1 -- these are NOT CMC
+    values. Using CMC values here by mistake silently produces a
+    micellization-monolayer confusion, not an error."""
+    return solve_rubingh_x(alpha1, c_mix_sigma, c1_sigma, c2_sigma, **kwargs)
+
+
+def rosen_beta_sigma(x1_sigma: float, alpha1: float, c_mix_sigma: float, c1_sigma: float) -> float:
+    """Rosen's monolayer interaction parameter beta^sigma, given the
+    solved monolayer mole fraction x1_sigma (see solve_rosen_monolayer_x).
+    Same formula as rubingh_beta -- see that function's docstring for
+    the input-meaning distinction (surface-tension-derived concentrations,
+    not CMC values)."""
+    return rubingh_beta(x1_sigma, alpha1, c_mix_sigma, c1_sigma)
+
+
+def corrin_harkins_predict_cmc(cmc1: float, c_counterion1: float, cmc2: float, c_counterion2: float, c_counterion_target: float) -> tuple[float, float]:
+    """Predict CMC at a new counterion (salt) concentration using the
+    Corrin-Harkins log-linear relation: log10(CMC) = -g*log10(C) + b.
+    Fits g and b from two known (CMC, counterion concentration) points,
+    then predicts CMC at c_counterion_target. Returns (predicted_cmc, g).
+
+    g and b are SYSTEM-SPECIFIC (surfactant + salt identity), not
+    universal constants -- this is why two real data points are required
+    as input rather than a lookup table. All CMC and concentration
+    values must be in the same, consistent unit (e.g. all mM); the
+    prediction is only reliable as an interpolation between (or close
+    extrapolation beyond) the two given concentrations.
+    """
+    if cmc1 <= 0 or cmc2 <= 0 or c_counterion1 <= 0 or c_counterion2 <= 0 or c_counterion_target <= 0:
+        raise ValueError("all CMC and concentration values must be positive")
+    if c_counterion1 == c_counterion2:
+        raise ValueError("c_counterion1 and c_counterion2 must differ to fit a slope")
+    log_cmc1, log_cmc2 = math.log10(cmc1), math.log10(cmc2)
+    log_c1, log_c2 = math.log10(c_counterion1), math.log10(c_counterion2)
+    g = (log_cmc2 - log_cmc1) / (log_c1 - log_c2)
+    b = log_cmc1 + g * log_c1
+    log_cmc_target = -g * math.log10(c_counterion_target) + b
+    return 10.0 ** log_cmc_target, g

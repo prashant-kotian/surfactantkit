@@ -15,6 +15,7 @@ from surfactantkit.hlb import hlb_griffin, hlb_davies
 from surfactantkit.cpp import (
     tanford_tail_volume,
     tanford_critical_length,
+    aggregation_number_spherical,
     critical_packing_parameter,
     classify_aggregate_morphology,
 )
@@ -67,6 +68,33 @@ def test_tanford_critical_length_c12():
     # lc = 1.5 + 1.265*12 = 16.68 Angstrom -- in the commonly-cited
     # ballpark (~16.7 A) for a fully-extended dodecyl chain.
     assert tanford_critical_length(12) == pytest.approx(16.68, abs=0.01)
+
+
+def test_aggregation_number_spherical_c12_lands_in_literature_range():
+    """C12 chain (SDS/DTAB scale) geometric aggregation number should
+    land near the commonly-reported literature range (~55-70) for these
+    surfactants -- a sanity/order-of-magnitude check, not an exact
+    literature match (this is a geometric estimate, not a substitute for
+    a directly-measured aggregation number; see cpp.py docstring)."""
+    v = tanford_tail_volume(12)
+    lc = tanford_critical_length(12)
+    nagg = aggregation_number_spherical(v, lc)
+    assert 40.0 < nagg < 80.0
+
+
+def test_aggregation_number_spherical_matches_direct_geometry_formula():
+    import math
+
+    v, r = 350.2, 16.68
+    expected = ((4.0 / 3.0) * math.pi * r ** 3) / v
+    assert aggregation_number_spherical(v, r) == pytest.approx(expected)
+
+
+def test_aggregation_number_spherical_rejects_nonpositive():
+    with pytest.raises(ValueError):
+        aggregation_number_spherical(0, 16.68)
+    with pytest.raises(ValueError):
+        aggregation_number_spherical(350.2, -1.0)
 
 
 def test_tanford_rejects_bad_chain_length():
