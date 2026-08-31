@@ -22,6 +22,10 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=7"]
+mcp = ["mcp[cli]>=2.0"]
+
+[project.scripts]
+surfactantkit-mcp = "surfactantkit.mcp_server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

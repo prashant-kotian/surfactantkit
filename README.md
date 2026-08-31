@@ -4,7 +4,7 @@ Surfactant-science theory as a tested, importable Python library: Clint ideal mi
 
 ## Status
 
-Early alpha. Core theory (`surfactantkit.mixed_micelle`, `surfactantkit.adsorption`, `surfactantkit.hlb`, `surfactantkit.cpp`) is implemented and tested. An MCP server exposing these functions as tools for Claude/Cursor/other AI assistants is planned next.
+Early alpha. Core theory (`surfactantkit.mixed_micelle`, `surfactantkit.adsorption`, `surfactantkit.hlb`, `surfactantkit.cpp`) is implemented and tested, and SurfMCP (`surfactantkit.mcp_server`) exposes all of it as MCP tools for Claude Desktop, Cursor, and other MCP-aware AI assistants.
 
 ## Why
 
@@ -27,6 +27,30 @@ cmc_id = clint_ideal_cmc(alpha1=0.25, cmc1=14.80, cmc2=8.00)  # mM
 x1 = solve_rubingh_x(alpha1=0.25, cmc_mix=6.011, cmc1=14.80, cmc2=8.00)
 beta = rubingh_beta(x1, alpha1=0.25, cmc_mix=6.011, cmc1=14.80)
 ```
+
+## SurfMCP: using this from Claude Desktop / Cursor / other AI assistants
+
+Install with the `mcp` extra, then point your MCP client at the `surfactantkit-mcp` entry point:
+
+```bash
+pip install -e ".[mcp]"
+```
+
+Claude Desktop config (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "surfactantkit": {
+      "command": "surfactantkit-mcp"
+    }
+  }
+}
+```
+
+This exposes 10 tools covering Clint/Rubingh mixed-micelle theory, Gibbs adsorption, HLB (both methods), and the critical packing parameter. Every tool returns units explicitly in its response — the point of this server is to stop unit confusion, so a bare unlabeled number would defeat the purpose. Tools that would otherwise require guessing an unverified value (e.g. a Davies group number with no cited source, or a Rubingh equation with no valid root) raise an explicit error instead of returning a plausible-looking wrong number.
+
+Built against MCP spec 2026-07-28 / Python SDK v2.
 
 ## Validation
 
