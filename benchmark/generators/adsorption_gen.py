@@ -47,7 +47,7 @@ def gen() -> list[Question]:
             gold_answer=gamma_max, tolerance={"rel": 0.02}, source_note=label,
         ))
 
-    for slope, n, T, label in GIBBS_CASES:
+    for slope, n, T, label in GIBBS_CASES * 2:
         i += 1
         gamma_max = gibbs_gamma_max(slope, n, T)
         a_min = gibbs_a_min(gamma_max)

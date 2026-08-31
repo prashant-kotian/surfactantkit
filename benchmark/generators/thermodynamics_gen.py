@@ -92,8 +92,12 @@ def gen() -> list[Question]:
             gold_answer=round(dh, 3), tolerance={"rel": 0.03}, source_note=label,
         ))
 
-    # entropy triad-completion questions, chaining the two previous results
-    for (cmc_M, T, factor, dg_label), (cmc1, T1, cmc2, T2, dh_label) in zip(DG_CASES, VANTHOFF_CASES + VANTHOFF_CASES[:1]):
+    # entropy triad-completion questions, chaining the two previous results.
+    # Full cross-product of DG_CASES x VANTHOFF_CASES (4x3=12) rather than a
+    # length-limited zip, which was silently capping this at 4 questions --
+    # the thinnest tool in the first draft of the bank.
+    import itertools
+    for (cmc_M, T, factor, dg_label), (cmc1, T1, cmc2, T2, dh_label) in itertools.product(DG_CASES, VANTHOFF_CASES):
         i += 1
         x_cmc = cmc_to_mole_fraction(cmc_M)
         dg = gibbs_free_energy_micellization(x_cmc, T, factor)

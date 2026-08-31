@@ -1974,152 +1974,140 @@
   {
     "id": "B-019",
     "category": "B",
-    "subcategory": "szyszkowski_predict_surface_tension",
+    "subcategory": "gibbs_area_per_molecule",
     "tools_required": [
-      "szyszkowski_predict_surface_tension"
+      "gibbs_surface_excess",
+      "gibbs_area_per_molecule"
     ],
-    "difficulty": "hard",
-    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=3e-06 mol/m^2, Szyszkowski constant K=50.0 (per mM), n_factor=1.0, at 298.15 K (nonionic, moderate K), predict the surface tension (mN/m) at a surfactant concentration of 5.0 mM.",
+    "difficulty": "medium",
+    "question_text": "Below the CMC, d(gamma)/d(ln C) = -5.0 mN/m for a system with n_factor=2.0 at 298.15 K (ionic surfactant, no added salt (n=2)). First compute Gamma_max (mol/m^2), then use it to compute the minimum area per molecule, A_min, in nm^2.",
     "given_data": {
-      "concentration": 5.0,
-      "gamma0_mN_m": 72.0,
-      "gamma_max_mol_per_m2": 3e-06,
-      "K": 50.0,
-      "temperature_K": 298.15,
-      "n_factor": 1.0
+      "slope_mN_per_lnC": -5.0,
+      "n_factor": 2.0,
+      "temperature_K": 298.15
     },
-    "gold_answer": 30.908,
+    "gold_answer": 1.646561997369653,
     "tolerance": {
-      "rel": 0.02
+      "rel": 0.03
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
-    "source_note": "nonionic, moderate K"
+    "trap_type": "multi_tool_chain",
+    "source_note": "ionic surfactant, no added salt (n=2)"
   },
   {
     "id": "B-020",
     "category": "B",
-    "subcategory": "szyszkowski_predict_surface_tension",
+    "subcategory": "gibbs_area_per_molecule",
     "tools_required": [
-      "szyszkowski_predict_surface_tension"
+      "gibbs_surface_excess",
+      "gibbs_area_per_molecule"
     ],
-    "difficulty": "hard",
-    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=3e-06 mol/m^2, Szyszkowski constant K=50.0 (per mM), n_factor=1.0, at 298.15 K (nonionic, lower concentration), predict the surface tension (mN/m) at a surfactant concentration of 2.0 mM.",
+    "difficulty": "medium",
+    "question_text": "Below the CMC, d(gamma)/d(ln C) = -8.5 mN/m for a system with n_factor=2.0 at 298.15 K (ionic surfactant, steeper pre-CMC slope). First compute Gamma_max (mol/m^2), then use it to compute the minimum area per molecule, A_min, in nm^2.",
     "given_data": {
-      "concentration": 2.0,
-      "gamma0_mN_m": 72.0,
-      "gamma_max_mol_per_m2": 3e-06,
-      "K": 50.0,
-      "temperature_K": 298.15,
-      "n_factor": 1.0
+      "slope_mN_per_lnC": -8.5,
+      "n_factor": 2.0,
+      "temperature_K": 298.15
     },
-    "gold_answer": 37.678,
+    "gold_answer": 0.9685658808056782,
     "tolerance": {
-      "rel": 0.02
+      "rel": 0.03
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
-    "source_note": "nonionic, lower concentration"
+    "trap_type": "multi_tool_chain",
+    "source_note": "ionic surfactant, steeper pre-CMC slope"
   },
   {
     "id": "B-021",
     "category": "B",
-    "subcategory": "szyszkowski_predict_surface_tension",
+    "subcategory": "gibbs_area_per_molecule",
     "tools_required": [
-      "szyszkowski_predict_surface_tension"
+      "gibbs_surface_excess",
+      "gibbs_area_per_molecule"
     ],
-    "difficulty": "hard",
-    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=68.0 mN/m, saturation surface excess Gamma_max=2.5e-06 mol/m^2, Szyszkowski constant K=30.0 (per mM), n_factor=2.0, at 298.15 K (ionic surfactant (n=2), different gamma0), predict the surface tension (mN/m) at a surfactant concentration of 8.0 mM.",
+    "difficulty": "medium",
+    "question_text": "Below the CMC, d(gamma)/d(ln C) = -3.2 mN/m for a system with n_factor=1.0 at 298.15 K (nonionic surfactant or ionic with excess electrolyte (n=1)). First compute Gamma_max (mol/m^2), then use it to compute the minimum area per molecule, A_min, in nm^2.",
     "given_data": {
-      "concentration": 8.0,
-      "gamma0_mN_m": 68.0,
-      "gamma_max_mol_per_m2": 2.5e-06,
-      "K": 30.0,
-      "temperature_K": 298.15,
-      "n_factor": 2.0
+      "slope_mN_per_lnC": -3.2,
+      "n_factor": 1.0,
+      "temperature_K": 298.15
     },
-    "gold_answer": 0.017,
+    "gold_answer": 1.2863765604450415,
     "tolerance": {
-      "rel": 0.02
+      "rel": 0.03
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
-    "source_note": "ionic surfactant (n=2), different gamma0"
+    "trap_type": "multi_tool_chain",
+    "source_note": "nonionic surfactant or ionic with excess electrolyte (n=1)"
   },
   {
     "id": "B-022",
     "category": "B",
-    "subcategory": "szyszkowski_predict_surface_tension",
+    "subcategory": "gibbs_area_per_molecule",
     "tools_required": [
-      "szyszkowski_predict_surface_tension"
+      "gibbs_surface_excess",
+      "gibbs_area_per_molecule"
     ],
-    "difficulty": "hard",
-    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=4e-06 mol/m^2, Szyszkowski constant K=100.0 (per mM), n_factor=1.0, at 298.15 K (high-affinity adsorption (large K)), predict the surface tension (mN/m) at a surfactant concentration of 1.0 mM.",
+    "difficulty": "medium",
+    "question_text": "Below the CMC, d(gamma)/d(ln C) = -6.7 mN/m for a system with n_factor=1.0 at 308.15 K (nonionic surfactant, elevated temperature). First compute Gamma_max (mol/m^2), then use it to compute the minimum area per molecule, A_min, in nm^2.",
     "given_data": {
-      "concentration": 1.0,
-      "gamma0_mN_m": 72.0,
-      "gamma_max_mol_per_m2": 4e-06,
-      "K": 100.0,
-      "temperature_K": 298.15,
-      "n_factor": 1.0
+      "slope_mN_per_lnC": -6.7,
+      "n_factor": 1.0,
+      "temperature_K": 308.15
     },
-    "gold_answer": 26.237,
+    "gold_answer": 0.6349955064808339,
     "tolerance": {
-      "rel": 0.02
+      "rel": 0.03
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
-    "source_note": "high-affinity adsorption (large K)"
+    "trap_type": "multi_tool_chain",
+    "source_note": "nonionic surfactant, elevated temperature"
   },
   {
     "id": "B-023",
     "category": "B",
-    "subcategory": "szyszkowski_predict_surface_tension",
+    "subcategory": "gibbs_area_per_molecule",
     "tools_required": [
-      "szyszkowski_predict_surface_tension"
+      "gibbs_surface_excess",
+      "gibbs_area_per_molecule"
     ],
-    "difficulty": "hard",
-    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=3e-06 mol/m^2, Szyszkowski constant K=50.0 (per mM), n_factor=1.0, at 298.15 K (nonionic, moderate K), predict the surface tension (mN/m) at a surfactant concentration of 5.0 mM.",
+    "difficulty": "medium",
+    "question_text": "Below the CMC, d(gamma)/d(ln C) = -4.4 mN/m for a system with n_factor=2.0 at 293.15 K (ionic surfactant, lower temperature). First compute Gamma_max (mol/m^2), then use it to compute the minimum area per molecule, A_min, in nm^2.",
     "given_data": {
-      "concentration": 5.0,
-      "gamma0_mN_m": 72.0,
-      "gamma_max_mol_per_m2": 3e-06,
-      "K": 50.0,
-      "temperature_K": 298.15,
-      "n_factor": 1.0
+      "slope_mN_per_lnC": -4.4,
+      "n_factor": 2.0,
+      "temperature_K": 293.15
     },
-    "gold_answer": 30.908,
+    "gold_answer": 1.8397147924660928,
     "tolerance": {
-      "rel": 0.02
+      "rel": 0.03
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
-    "source_note": "nonionic, moderate K"
+    "trap_type": "multi_tool_chain",
+    "source_note": "ionic surfactant, lower temperature"
   },
   {
     "id": "B-024",
     "category": "B",
-    "subcategory": "szyszkowski_predict_surface_tension",
+    "subcategory": "gibbs_area_per_molecule",
     "tools_required": [
-      "szyszkowski_predict_surface_tension"
+      "gibbs_surface_excess",
+      "gibbs_area_per_molecule"
     ],
-    "difficulty": "hard",
-    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=3e-06 mol/m^2, Szyszkowski constant K=50.0 (per mM), n_factor=1.0, at 298.15 K (nonionic, lower concentration), predict the surface tension (mN/m) at a surfactant concentration of 2.0 mM.",
+    "difficulty": "medium",
+    "question_text": "Below the CMC, d(gamma)/d(ln C) = -9.1 mN/m for a system with n_factor=2.0 at 298.15 K (gemini cationic surfactant, strong adsorption). First compute Gamma_max (mol/m^2), then use it to compute the minimum area per molecule, A_min, in nm^2.",
     "given_data": {
-      "concentration": 2.0,
-      "gamma0_mN_m": 72.0,
-      "gamma_max_mol_per_m2": 3e-06,
-      "K": 50.0,
-      "temperature_K": 298.15,
-      "n_factor": 1.0
+      "slope_mN_per_lnC": -9.1,
+      "n_factor": 2.0,
+      "temperature_K": 298.15
     },
-    "gold_answer": 37.678,
+    "gold_answer": 0.9047043941591499,
     "tolerance": {
-      "rel": 0.02
+      "rel": 0.03
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
-    "source_note": "nonionic, lower concentration"
+    "trap_type": "multi_tool_chain",
+    "source_note": "gemini cationic surfactant, strong adsorption"
   },
   {
     "id": "B-025",
@@ -2129,56 +2117,6 @@
       "szyszkowski_predict_surface_tension"
     ],
     "difficulty": "hard",
-    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=68.0 mN/m, saturation surface excess Gamma_max=2.5e-06 mol/m^2, Szyszkowski constant K=30.0 (per mM), n_factor=2.0, at 298.15 K (ionic surfactant (n=2), different gamma0), predict the surface tension (mN/m) at a surfactant concentration of 8.0 mM.",
-    "given_data": {
-      "concentration": 8.0,
-      "gamma0_mN_m": 68.0,
-      "gamma_max_mol_per_m2": 2.5e-06,
-      "K": 30.0,
-      "temperature_K": 298.15,
-      "n_factor": 2.0
-    },
-    "gold_answer": 0.017,
-    "tolerance": {
-      "rel": 0.02
-    },
-    "grading_method": "numeric_tolerance",
-    "trap_type": "none",
-    "source_note": "ionic surfactant (n=2), different gamma0"
-  },
-  {
-    "id": "B-026",
-    "category": "B",
-    "subcategory": "szyszkowski_predict_surface_tension",
-    "tools_required": [
-      "szyszkowski_predict_surface_tension"
-    ],
-    "difficulty": "hard",
-    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=4e-06 mol/m^2, Szyszkowski constant K=100.0 (per mM), n_factor=1.0, at 298.15 K (high-affinity adsorption (large K)), predict the surface tension (mN/m) at a surfactant concentration of 1.0 mM.",
-    "given_data": {
-      "concentration": 1.0,
-      "gamma0_mN_m": 72.0,
-      "gamma_max_mol_per_m2": 4e-06,
-      "K": 100.0,
-      "temperature_K": 298.15,
-      "n_factor": 1.0
-    },
-    "gold_answer": 26.237,
-    "tolerance": {
-      "rel": 0.02
-    },
-    "grading_method": "numeric_tolerance",
-    "trap_type": "none",
-    "source_note": "high-affinity adsorption (large K)"
-  },
-  {
-    "id": "B-027",
-    "category": "B",
-    "subcategory": "szyszkowski_predict_surface_tension",
-    "tools_required": [
-      "szyszkowski_predict_surface_tension"
-    ],
-    "difficulty": "hard",
     "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=3e-06 mol/m^2, Szyszkowski constant K=50.0 (per mM), n_factor=1.0, at 298.15 K (nonionic, moderate K), predict the surface tension (mN/m) at a surfactant concentration of 5.0 mM.",
     "given_data": {
       "concentration": 5.0,
@@ -2197,7 +2135,7 @@
     "source_note": "nonionic, moderate K"
   },
   {
-    "id": "B-028",
+    "id": "B-026",
     "category": "B",
     "subcategory": "szyszkowski_predict_surface_tension",
     "tools_required": [
@@ -2222,7 +2160,7 @@
     "source_note": "nonionic, lower concentration"
   },
   {
-    "id": "B-029",
+    "id": "B-027",
     "category": "B",
     "subcategory": "szyszkowski_predict_surface_tension",
     "tools_required": [
@@ -2247,7 +2185,207 @@
     "source_note": "ionic surfactant (n=2), different gamma0"
   },
   {
+    "id": "B-028",
+    "category": "B",
+    "subcategory": "szyszkowski_predict_surface_tension",
+    "tools_required": [
+      "szyszkowski_predict_surface_tension"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=4e-06 mol/m^2, Szyszkowski constant K=100.0 (per mM), n_factor=1.0, at 298.15 K (high-affinity adsorption (large K)), predict the surface tension (mN/m) at a surfactant concentration of 1.0 mM.",
+    "given_data": {
+      "concentration": 1.0,
+      "gamma0_mN_m": 72.0,
+      "gamma_max_mol_per_m2": 4e-06,
+      "K": 100.0,
+      "temperature_K": 298.15,
+      "n_factor": 1.0
+    },
+    "gold_answer": 26.237,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "high-affinity adsorption (large K)"
+  },
+  {
+    "id": "B-029",
+    "category": "B",
+    "subcategory": "szyszkowski_predict_surface_tension",
+    "tools_required": [
+      "szyszkowski_predict_surface_tension"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=3e-06 mol/m^2, Szyszkowski constant K=50.0 (per mM), n_factor=1.0, at 298.15 K (nonionic, moderate K), predict the surface tension (mN/m) at a surfactant concentration of 5.0 mM.",
+    "given_data": {
+      "concentration": 5.0,
+      "gamma0_mN_m": 72.0,
+      "gamma_max_mol_per_m2": 3e-06,
+      "K": 50.0,
+      "temperature_K": 298.15,
+      "n_factor": 1.0
+    },
+    "gold_answer": 30.908,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "nonionic, moderate K"
+  },
+  {
     "id": "B-030",
+    "category": "B",
+    "subcategory": "szyszkowski_predict_surface_tension",
+    "tools_required": [
+      "szyszkowski_predict_surface_tension"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=3e-06 mol/m^2, Szyszkowski constant K=50.0 (per mM), n_factor=1.0, at 298.15 K (nonionic, lower concentration), predict the surface tension (mN/m) at a surfactant concentration of 2.0 mM.",
+    "given_data": {
+      "concentration": 2.0,
+      "gamma0_mN_m": 72.0,
+      "gamma_max_mol_per_m2": 3e-06,
+      "K": 50.0,
+      "temperature_K": 298.15,
+      "n_factor": 1.0
+    },
+    "gold_answer": 37.678,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "nonionic, lower concentration"
+  },
+  {
+    "id": "B-031",
+    "category": "B",
+    "subcategory": "szyszkowski_predict_surface_tension",
+    "tools_required": [
+      "szyszkowski_predict_surface_tension"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=68.0 mN/m, saturation surface excess Gamma_max=2.5e-06 mol/m^2, Szyszkowski constant K=30.0 (per mM), n_factor=2.0, at 298.15 K (ionic surfactant (n=2), different gamma0), predict the surface tension (mN/m) at a surfactant concentration of 8.0 mM.",
+    "given_data": {
+      "concentration": 8.0,
+      "gamma0_mN_m": 68.0,
+      "gamma_max_mol_per_m2": 2.5e-06,
+      "K": 30.0,
+      "temperature_K": 298.15,
+      "n_factor": 2.0
+    },
+    "gold_answer": 0.017,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "ionic surfactant (n=2), different gamma0"
+  },
+  {
+    "id": "B-032",
+    "category": "B",
+    "subcategory": "szyszkowski_predict_surface_tension",
+    "tools_required": [
+      "szyszkowski_predict_surface_tension"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=4e-06 mol/m^2, Szyszkowski constant K=100.0 (per mM), n_factor=1.0, at 298.15 K (high-affinity adsorption (large K)), predict the surface tension (mN/m) at a surfactant concentration of 1.0 mM.",
+    "given_data": {
+      "concentration": 1.0,
+      "gamma0_mN_m": 72.0,
+      "gamma_max_mol_per_m2": 4e-06,
+      "K": 100.0,
+      "temperature_K": 298.15,
+      "n_factor": 1.0
+    },
+    "gold_answer": 26.237,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "high-affinity adsorption (large K)"
+  },
+  {
+    "id": "B-033",
+    "category": "B",
+    "subcategory": "szyszkowski_predict_surface_tension",
+    "tools_required": [
+      "szyszkowski_predict_surface_tension"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=3e-06 mol/m^2, Szyszkowski constant K=50.0 (per mM), n_factor=1.0, at 298.15 K (nonionic, moderate K), predict the surface tension (mN/m) at a surfactant concentration of 5.0 mM.",
+    "given_data": {
+      "concentration": 5.0,
+      "gamma0_mN_m": 72.0,
+      "gamma_max_mol_per_m2": 3e-06,
+      "K": 50.0,
+      "temperature_K": 298.15,
+      "n_factor": 1.0
+    },
+    "gold_answer": 30.908,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "nonionic, moderate K"
+  },
+  {
+    "id": "B-034",
+    "category": "B",
+    "subcategory": "szyszkowski_predict_surface_tension",
+    "tools_required": [
+      "szyszkowski_predict_surface_tension"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=72.0 mN/m, saturation surface excess Gamma_max=3e-06 mol/m^2, Szyszkowski constant K=50.0 (per mM), n_factor=1.0, at 298.15 K (nonionic, lower concentration), predict the surface tension (mN/m) at a surfactant concentration of 2.0 mM.",
+    "given_data": {
+      "concentration": 2.0,
+      "gamma0_mN_m": 72.0,
+      "gamma_max_mol_per_m2": 3e-06,
+      "K": 50.0,
+      "temperature_K": 298.15,
+      "n_factor": 1.0
+    },
+    "gold_answer": 37.678,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "nonionic, lower concentration"
+  },
+  {
+    "id": "B-035",
+    "category": "B",
+    "subcategory": "szyszkowski_predict_surface_tension",
+    "tools_required": [
+      "szyszkowski_predict_surface_tension"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using the Szyszkowski equation with pure-solvent surface tension gamma0=68.0 mN/m, saturation surface excess Gamma_max=2.5e-06 mol/m^2, Szyszkowski constant K=30.0 (per mM), n_factor=2.0, at 298.15 K (ionic surfactant (n=2), different gamma0), predict the surface tension (mN/m) at a surfactant concentration of 8.0 mM.",
+    "given_data": {
+      "concentration": 8.0,
+      "gamma0_mN_m": 68.0,
+      "gamma_max_mol_per_m2": 2.5e-06,
+      "K": 30.0,
+      "temperature_K": 298.15,
+      "n_factor": 2.0
+    },
+    "gold_answer": 0.017,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "ionic surfactant (n=2), different gamma0"
+  },
+  {
+    "id": "B-036",
     "category": "B",
     "subcategory": "szyszkowski_predict_surface_tension",
     "tools_required": [
@@ -5605,6 +5743,78 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
+    "question_text": "For a surfactant with deltaG_mic = -35.082 kJ/mol and deltaH_mic = 3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "given_data": {
+      "deltaG_mic_kJ_per_mol": -35.082,
+      "deltaH_mic_kJ_per_mol": 3.756,
+      "temperature_K": 298.15
+    },
+    "gold_answer": 130.262,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "ionic surfactant, SDS-like CMC scale, beta~0.4 / CMC increasing with temperature"
+  },
+  {
+    "id": "G-039",
+    "category": "G",
+    "subcategory": "entropy_of_micellization",
+    "tools_required": [
+      "gibbs_free_energy_micellization",
+      "vant_hoff_enthalpy",
+      "entropy_of_micellization"
+    ],
+    "difficulty": "hard",
+    "question_text": "For a surfactant with deltaG_mic = -35.082 kJ/mol and deltaH_mic = -1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "given_data": {
+      "deltaG_mic_kJ_per_mol": -35.082,
+      "deltaH_mic_kJ_per_mol": -1.958,
+      "temperature_K": 298.15
+    },
+    "gold_answer": 111.099,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "ionic surfactant, SDS-like CMC scale, beta~0.4 / gemini surfactant, small CMC-T dependence"
+  },
+  {
+    "id": "G-040",
+    "category": "G",
+    "subcategory": "entropy_of_micellization",
+    "tools_required": [
+      "gibbs_free_energy_micellization",
+      "vant_hoff_enthalpy",
+      "entropy_of_micellization"
+    ],
+    "difficulty": "hard",
+    "question_text": "For a surfactant with deltaG_mic = -28.347 kJ/mol and deltaH_mic = -2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "given_data": {
+      "deltaG_mic_kJ_per_mol": -28.347,
+      "deltaH_mic_kJ_per_mol": -2.463,
+      "temperature_K": 298.15
+    },
+    "gold_answer": 86.816,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "nonionic surfactant, low CMC / CMC decreasing slightly with temperature"
+  },
+  {
+    "id": "G-041",
+    "category": "G",
+    "subcategory": "entropy_of_micellization",
+    "tools_required": [
+      "gibbs_free_energy_micellization",
+      "vant_hoff_enthalpy",
+      "entropy_of_micellization"
+    ],
+    "difficulty": "hard",
     "question_text": "For a surfactant with deltaG_mic = -28.347 kJ/mol and deltaH_mic = 3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -28.347,
@@ -5620,7 +5830,79 @@
     "source_note": "nonionic surfactant, low CMC / CMC increasing with temperature"
   },
   {
-    "id": "G-039",
+    "id": "G-042",
+    "category": "G",
+    "subcategory": "entropy_of_micellization",
+    "tools_required": [
+      "gibbs_free_energy_micellization",
+      "vant_hoff_enthalpy",
+      "entropy_of_micellization"
+    ],
+    "difficulty": "hard",
+    "question_text": "For a surfactant with deltaG_mic = -28.347 kJ/mol and deltaH_mic = -1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "given_data": {
+      "deltaG_mic_kJ_per_mol": -28.347,
+      "deltaH_mic_kJ_per_mol": -1.958,
+      "temperature_K": 298.15
+    },
+    "gold_answer": 88.51,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "nonionic surfactant, low CMC / gemini surfactant, small CMC-T dependence"
+  },
+  {
+    "id": "G-043",
+    "category": "G",
+    "subcategory": "entropy_of_micellization",
+    "tools_required": [
+      "gibbs_free_energy_micellization",
+      "vant_hoff_enthalpy",
+      "entropy_of_micellization"
+    ],
+    "difficulty": "hard",
+    "question_text": "For a surfactant with deltaG_mic = -30.808 kJ/mol and deltaH_mic = -2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "given_data": {
+      "deltaG_mic_kJ_per_mol": -30.808,
+      "deltaH_mic_kJ_per_mol": -2.463,
+      "temperature_K": 298.15
+    },
+    "gold_answer": 95.072,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "DTAB-like ionic surfactant / CMC decreasing slightly with temperature"
+  },
+  {
+    "id": "G-044",
+    "category": "G",
+    "subcategory": "entropy_of_micellization",
+    "tools_required": [
+      "gibbs_free_energy_micellization",
+      "vant_hoff_enthalpy",
+      "entropy_of_micellization"
+    ],
+    "difficulty": "hard",
+    "question_text": "For a surfactant with deltaG_mic = -30.808 kJ/mol and deltaH_mic = 3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "given_data": {
+      "deltaG_mic_kJ_per_mol": -30.808,
+      "deltaH_mic_kJ_per_mol": 3.756,
+      "temperature_K": 298.15
+    },
+    "gold_answer": 115.93,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "DTAB-like ionic surfactant / CMC increasing with temperature"
+  },
+  {
+    "id": "G-045",
     "category": "G",
     "subcategory": "entropy_of_micellization",
     "tools_required": [
@@ -5644,7 +5926,7 @@
     "source_note": "DTAB-like ionic surfactant / gemini surfactant, small CMC-T dependence"
   },
   {
-    "id": "G-040",
+    "id": "G-046",
     "category": "G",
     "subcategory": "entropy_of_micellization",
     "tools_required": [
@@ -5666,6 +5948,54 @@
     "grading_method": "numeric_tolerance",
     "trap_type": "multi_tool_chain",
     "source_note": "gemini cationic surfactant, very low CMC / CMC decreasing slightly with temperature"
+  },
+  {
+    "id": "G-047",
+    "category": "G",
+    "subcategory": "entropy_of_micellization",
+    "tools_required": [
+      "gibbs_free_energy_micellization",
+      "vant_hoff_enthalpy",
+      "entropy_of_micellization"
+    ],
+    "difficulty": "hard",
+    "question_text": "For a surfactant with deltaG_mic = -59.602 kJ/mol and deltaH_mic = 3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "given_data": {
+      "deltaG_mic_kJ_per_mol": -59.602,
+      "deltaH_mic_kJ_per_mol": 3.756,
+      "temperature_K": 298.15
+    },
+    "gold_answer": 212.504,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "gemini cationic surfactant, very low CMC / CMC increasing with temperature"
+  },
+  {
+    "id": "G-048",
+    "category": "G",
+    "subcategory": "entropy_of_micellization",
+    "tools_required": [
+      "gibbs_free_energy_micellization",
+      "vant_hoff_enthalpy",
+      "entropy_of_micellization"
+    ],
+    "difficulty": "hard",
+    "question_text": "For a surfactant with deltaG_mic = -59.602 kJ/mol and deltaH_mic = -1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "given_data": {
+      "deltaG_mic_kJ_per_mol": -59.602,
+      "deltaH_mic_kJ_per_mol": -1.958,
+      "temperature_K": 298.15
+    },
+    "gold_answer": 193.34,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "gemini cationic surfactant, very low CMC / gemini surfactant, small CMC-T dependence"
   },
   {
     "id": "H-001",
@@ -6179,9 +6509,9 @@
       "eor_capillary_number"
     ],
     "difficulty": "medium",
-    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 1.0 mPa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 20.0 mN/m (waterflooding, normal oil-water IFT). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
+    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 0.001 Pa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 20.0 mN/m (waterflooding, normal oil-water IFT). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
     "given_data": {
-      "viscosity_mPas": 1.0,
+      "viscosity_Pas_as_reported": 0.001,
       "velocity_m_per_s": 1e-05,
       "interfacial_tension_mN_m": 20.0
     },
@@ -6193,7 +6523,7 @@
       "rel": 0.02
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
+    "trap_type": "unit_trap",
     "source_note": "waterflooding, normal oil-water IFT"
   },
   {
@@ -6254,9 +6584,9 @@
       "eor_capillary_number"
     ],
     "difficulty": "medium",
-    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 1.0 mPa.s and velocity 0.0001 m/s; the oil-water interfacial tension is 20.0 mN/m (higher injection velocity, normal IFT). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
+    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 0.001 Pa.s and velocity 0.0001 m/s; the oil-water interfacial tension is 20.0 mN/m (higher injection velocity, normal IFT). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
     "given_data": {
-      "viscosity_mPas": 1.0,
+      "viscosity_Pas_as_reported": 0.001,
       "velocity_m_per_s": 0.0001,
       "interfacial_tension_mN_m": 20.0
     },
@@ -6268,7 +6598,7 @@
       "rel": 0.02
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
+    "trap_type": "unit_trap",
     "source_note": "higher injection velocity, normal IFT"
   },
   {
@@ -6329,9 +6659,9 @@
       "eor_capillary_number"
     ],
     "difficulty": "medium",
-    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 1.0 mPa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.01 mN/m (surfactant flooding, ultra-low IFT). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
+    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 0.001 Pa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.01 mN/m (surfactant flooding, ultra-low IFT). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
     "given_data": {
-      "viscosity_mPas": 1.0,
+      "viscosity_Pas_as_reported": 0.001,
       "velocity_m_per_s": 1e-05,
       "interfacial_tension_mN_m": 0.01
     },
@@ -6343,7 +6673,7 @@
       "rel": 0.02
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
+    "trap_type": "unit_trap",
     "source_note": "surfactant flooding, ultra-low IFT"
   },
   {
@@ -6404,9 +6734,9 @@
       "eor_capillary_number"
     ],
     "difficulty": "medium",
-    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 1.0 mPa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.00034 mN/m (extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
+    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 0.001 Pa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.00034 mN/m (extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
     "given_data": {
-      "viscosity_mPas": 1.0,
+      "viscosity_Pas_as_reported": 0.001,
       "velocity_m_per_s": 1e-05,
       "interfacial_tension_mN_m": 0.00034
     },
@@ -6418,7 +6748,7 @@
       "rel": 0.02
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
+    "trap_type": "unit_trap",
     "source_note": "extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)"
   },
   {
@@ -6479,9 +6809,9 @@
       "eor_capillary_number"
     ],
     "difficulty": "medium",
-    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 5.0 mPa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.001 mN/m (polymer-surfactant flood, ultra-low IFT, elevated viscosity). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
+    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 0.005 Pa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.001 mN/m (polymer-surfactant flood, ultra-low IFT, elevated viscosity). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
     "given_data": {
-      "viscosity_mPas": 5.0,
+      "viscosity_Pas_as_reported": 0.005,
       "velocity_m_per_s": 1e-05,
       "interfacial_tension_mN_m": 0.001
     },
@@ -6493,7 +6823,7 @@
       "rel": 0.02
     },
     "grading_method": "numeric_tolerance",
-    "trap_type": "none",
+    "trap_type": "unit_trap",
     "source_note": "polymer-surfactant flood, ultra-low IFT, elevated viscosity"
   },
   {

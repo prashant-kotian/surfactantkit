@@ -63,19 +63,32 @@ def gen() -> list[Question]:
             gold_answer=round(s, 3), tolerance={"rel": 0.01}, source_note=label,
         ))
 
-    for eta, v, ift, label in CA_CASES * 3:
+    for idx, (eta, v, ift, label) in enumerate(CA_CASES * 3):
         i += 1
         ca = capillary_number(eta, v, ift)
-        qs.append(Question(
-            id=next_id("H", i), category="H", subcategory="eor_capillary_number",
-            tools_required=["eor_capillary_number"], difficulty="medium",
-            question_text=(
+        use_unit_trap = idx % 3 == 0
+        if use_unit_trap:
+            eta_pas = eta / 1000.0  # what it would look like in Pa.s
+            text = (
+                f"In an EOR waterflood, the displacing fluid has viscosity {eta_pas} Pa.s and "
+                f"velocity {v} m/s; the oil-water interfacial tension is {ift} mN/m ({label}). "
+                f"Compute the capillary number and state whether flow is capillary-dominated "
+                f"(Ca < 1e-5) or not."
+            )
+            given = {"viscosity_Pas_as_reported": eta_pas, "velocity_m_per_s": v, "interfacial_tension_mN_m": ift}
+        else:
+            text = (
                 f"In an EOR waterflood, the displacing fluid has viscosity {eta} mPa.s and "
                 f"velocity {v} m/s; the oil-water interfacial tension is {ift} mN/m ({label}). "
                 f"Compute the capillary number and state whether flow is capillary-dominated "
                 f"(Ca < 1e-5) or not."
-            ),
-            given_data={"viscosity_mPas": eta, "velocity_m_per_s": v, "interfacial_tension_mN_m": ift},
+            )
+            given = {"viscosity_mPas": eta, "velocity_m_per_s": v, "interfacial_tension_mN_m": ift}
+        qs.append(Question(
+            id=next_id("H", i), category="H", subcategory="eor_capillary_number",
+            tools_required=["eor_capillary_number"], difficulty="medium",
+            trap_type="unit_trap" if use_unit_trap else "none",
+            question_text=text, given_data=given,
             gold_answer={"capillary_number": ca, "regime": "capillary-dominated" if ca < 1e-5 else "transitional/viscous-dominated"},
             tolerance={"rel": 0.02}, source_note=label,
         ))
