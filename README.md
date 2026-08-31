@@ -1,10 +1,10 @@
 # SurfactantKit
 
-Mixed-surfactant micellization theory as a tested, importable Python library: Clint ideal mixing, Rubingh regular-solution theory, and the Gibbs adsorption isotherm. Built to stop AI assistants (and researchers) from hallucinating CMC and interaction-parameter values, and to be genuinely correct rather than plausible-looking.
+Surfactant-science theory as a tested, importable Python library: Clint ideal mixing, Rubingh regular-solution theory, the Gibbs adsorption isotherm, HLB (Griffin's and Davies' methods), and the critical packing parameter (Tanford's formulas + morphology classification). Built to stop AI assistants (and researchers) from hallucinating CMC, interaction-parameter, and HLB values, and to be genuinely correct rather than plausible-looking.
 
 ## Status
 
-Early alpha. Core theory (`surfactantkit.mixed_micelle`, `surfactantkit.adsorption`) is implemented and tested. An MCP server exposing these functions as tools for Claude/Cursor/other AI assistants is planned next.
+Early alpha. Core theory (`surfactantkit.mixed_micelle`, `surfactantkit.adsorption`, `surfactantkit.hlb`, `surfactantkit.cpp`) is implemented and tested. An MCP server exposing these functions as tools for Claude/Cursor/other AI assistants is planned next.
 
 ## Why
 
@@ -30,7 +30,9 @@ beta = rubingh_beta(x1, alpha1=0.25, cmc_mix=6.011, cmc1=14.80)
 
 ## Validation
 
-See `tests/test_mixed_micelle.py`. The Clint ideal CMC formula is checked against real literature values (DTAB-SDS system) to an exact match. The Rubingh solver is checked with mathematically guaranteed round-trip tests, plus a qualitative sign check (synergistic vs. antagonistic) against the same literature system. We deliberately do not assert an exact literature beta value we could not independently reproduce with confidence — see the test module docstring for why.
+See `tests/test_mixed_micelle.py` and `literature_validation_notes.md`. Clint and Rubingh are checked against eight independent published binary surfactant systems (numbers pulled directly from source tables, not paraphrased). Clint ideal CMC and the Rubingh solver's micellar mole fraction (x1) match literature values essentially exactly across the board; the Rubingh beta parameter matches sign and order of magnitude but usually not to the decimal — investigated and documented, not swept under the rug (see the notes file for why). The Rubingh solver is also checked with mathematically guaranteed round-trip tests independent of any external source.
+
+HLB and CPP (see `tests/test_hlb_cpp.py`) use constants verified against cited sources before being hardcoded: Davies' (1957) group numbers, and Tanford's chain-volume/length formulas (cross-checked internally — the commonly-cited shorthand `27.4 + 26.9*nc` is algebraically derived from, and matches exactly, the more detailed per-CH2/CH3 formula). The Davies table intentionally omits groups with no confirmed value (e.g. quaternary ammonium, amide) rather than guessing — `hlb_davies()` raises on an unknown group instead of silently returning a wrong number.
 
 ## License
 
