@@ -11,11 +11,11 @@ from schema import Question, next_id
 
 # (total_solubilized_M, water_solubility_M, surfactant_conc_M, cmc_M, label)
 CASES = [
-    (0.51e-3, 0.01e-3, 10e-3, 2e-3, "PAH solubilization above CMC, e.g. Patel et al.-style"),
+    (0.51e-3, 0.01e-3, 10e-3, 2e-3, "PAH solubilization above CMC"),
     (0.20e-3, 0.005e-3, 5e-3, 1e-3, "moderate solubilization capacity"),
     (1.0e-3, 0.02e-3, 20e-3, 3e-3, "high solubilization capacity gemini system"),
     (0.08e-3, 0.01e-3, 8e-3, 2e-3, "weak solubilization enhancement"),
-    (0.35e-3, 0.015e-3, 15e-3, 4e-3, "bile-salt mixed micelle solubilization, Yadav et al.-style"),
+    (0.35e-3, 0.015e-3, 15e-3, 4e-3, "bile-salt mixed micelle solubilization"),
 ]
 
 # deliberate trap: surfactant concentration below CMC -- no micelles, MSR undefined

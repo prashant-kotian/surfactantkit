@@ -64,4 +64,4 @@ benchmark/
   question_bank_pilot.json  (first pilot batch, for review before scaling)
 ```
 
-Tier 2 (non-tool) categories are written by hand/curated from literature (not generator scripts, since there's no formula to compute a gold answer from) -- planned as a separate pass once Tier 1's pipeline is validated.
+Tier 2 (non-tool) categories are written by hand/curated from literature (not generator scripts, since there's no formula to compute a gold answer from), except Category L (unit conversion), which is script-generated since conversion factors are exact SI/CGS identities. Done -- see `tier2/` for the 6 category modules and `tier2/build_tier2_bank.py` for the assembly script, writing `question_bank_tier2.json`.

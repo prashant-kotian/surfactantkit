@@ -12,8 +12,8 @@ from schema import Question, next_id
 
 # (gamma_LV_mN_m, contact_angle_deg, label)
 WETTING_CASES = [
-    (72.0, 41.3, "gemini surfactant-treated bentonite surface (Murtaza et al.-style)"),
-    (72.0, 62.0, "EAPB + polyelectrolyte treated quartz (Gaynanova et al.-style)"),
+    (72.0, 41.3, "gemini surfactant-treated bentonite surface"),
+    (72.0, 62.0, "EAPB + polyelectrolyte treated quartz"),
     (30.0, 20.0, "low-surface-tension surfactant solution, good wetting"),
     (72.0, 90.0, "neutral wetting, untreated hydrophobic surface"),
     (45.0, 110.0, "poor wetting, hydrophobic-treated surface"),
@@ -26,7 +26,7 @@ CA_CASES = [
     (1.0, 1e-5, 0.01, "surfactant flooding, ultra-low IFT"),
     (5.0, 1e-5, 0.001, "polymer-surfactant flood, ultra-low IFT, elevated viscosity"),
     (1.0, 1e-4, 20.0, "higher injection velocity, normal IFT"),
-    (1.0, 1e-5, 3.4e-4, "extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)"),
+    (1.0, 1e-5, 3.4e-4, "extreme ultra-low IFT, ~3.4e-4 mN/m"),
 ]
 
 

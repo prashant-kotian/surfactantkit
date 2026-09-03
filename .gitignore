@@ -6,3 +6,17 @@ __pycache__/
 venv/
 build/
 dist/
+
+# Secrets — this repo is PUBLIC; never commit API keys or env files
+*.key
+*api*key*
+*API*KEY*
+.env
+.env.*
+*_secrets*
+secrets*
+benchmark/harness/keys.txt
+
+# Benchmark run outputs (may contain long model transcripts; keep out of the repo)
+benchmark/results/
+benchmark/harness/.env
