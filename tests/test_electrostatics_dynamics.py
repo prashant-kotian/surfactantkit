@@ -101,5 +101,20 @@ def test_hydrodynamic_radius_round_trip():
 def test_hydrodynamic_radius_rejects_bad_input():
     with pytest.raises(ValueError):
         hydrodynamic_radius_stokes_einstein(0.0, 0.89)
+
+
+def test_hydrodynamic_radius_matches_independent_hand_calculation():
+    """Real-number check, not a round-trip: found during the 2026-09-04
+    library-wide audit (prompted by the vant_hoff_enthalpy sign bug) that
+    this function had only a round-trip test plus a documented NEGATIVE
+    control (literature_validation_notes.md's Milone et al. entry, where
+    the mismatch was expected and explained away, not a positive match).
+    This is an independent hand-derivation using the exact D value from
+    that same negative-control paper (D=1.56e-6 cm^2/s, water at 298.15K,
+    eta=0.89 mPa.s) worked out by hand outside this function's own code
+    path, giving 1.573 nm -- now locked in as a real regression check."""
+    r_h = hydrodynamic_radius_stokes_einstein(
+        diffusion_coefficient_cm2_per_s=1.56e-6, viscosity_mPas=0.89, temperature_K=298.15)
+    assert r_h == pytest.approx(1.573, abs=0.001)
     with pytest.raises(ValueError):
         hydrodynamic_radius_stokes_einstein(1e-6, -1.0)
