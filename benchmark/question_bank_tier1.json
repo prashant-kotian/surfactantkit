@@ -2950,6 +2950,139 @@
     "source_note": "deliberately includes a group with no cited Davies number"
   },
   {
+    "id": "C-025",
+    "category": "C",
+    "subcategory": "hlb_from_groups",
+    "tools_required": [
+      "hlb_from_groups"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using Davies' group-contribution method, compute the HLB of an alkyl sulfonate anionic surfactant with structural groups: {'sulfonate': 1, 'CH2': 11, 'CH3': 1}.",
+    "given_data": {
+      "group_counts": {
+        "sulfonate": 1,
+        "CH2": 11,
+        "CH3": 1
+      }
+    },
+    "gold_answer": "cannot compute -- one or more groups (e.g. quaternary ammonium, amide) have no verified Davies group number in the literature; do not guess a value",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "deliberately includes a group with no cited Davies number"
+  },
+  {
+    "id": "C-026",
+    "category": "C",
+    "subcategory": "hlb_from_groups",
+    "tools_required": [
+      "hlb_from_groups"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using Davies' group-contribution method, compute the HLB of a carboxybetaine zwitterionic surfactant with structural groups: {'carboxybetaine': 1, 'CH2': 11, 'CH3': 1}.",
+    "given_data": {
+      "group_counts": {
+        "carboxybetaine": 1,
+        "CH2": 11,
+        "CH3": 1
+      }
+    },
+    "gold_answer": "cannot compute -- one or more groups (e.g. quaternary ammonium, amide) have no verified Davies group number in the literature; do not guess a value",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "deliberately includes a group with no cited Davies number"
+  },
+  {
+    "id": "C-027",
+    "category": "C",
+    "subcategory": "hlb_from_groups",
+    "tools_required": [
+      "hlb_from_groups"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using Davies' group-contribution method, compute the HLB of a sultaine zwitterionic surfactant with structural groups: {'sultaine': 1, 'CH2': 11, 'CH3': 1}.",
+    "given_data": {
+      "group_counts": {
+        "sultaine": 1,
+        "CH2": 11,
+        "CH3": 1
+      }
+    },
+    "gold_answer": "cannot compute -- one or more groups (e.g. quaternary ammonium, amide) have no verified Davies group number in the literature; do not guess a value",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "deliberately includes a group with no cited Davies number"
+  },
+  {
+    "id": "C-028",
+    "category": "C",
+    "subcategory": "hlb_from_groups",
+    "tools_required": [
+      "hlb_from_groups"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using Davies' group-contribution method, compute the HLB of a gemini cationic surfactant with a propylene spacer with structural groups: {'quaternary_ammonium': 2, 'spacer_CH2': 3, 'CH2': 22, 'CH3': 2}.",
+    "given_data": {
+      "group_counts": {
+        "quaternary_ammonium": 2,
+        "spacer_CH2": 3,
+        "CH2": 22,
+        "CH3": 2
+      }
+    },
+    "gold_answer": "cannot compute -- one or more groups (e.g. quaternary ammonium, amide) have no verified Davies group number in the literature; do not guess a value",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "deliberately includes a group with no cited Davies number"
+  },
+  {
+    "id": "C-029",
+    "category": "C",
+    "subcategory": "hlb_from_groups",
+    "tools_required": [
+      "hlb_from_groups"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using Davies' group-contribution method, compute the HLB of a phosphate ester surfactant with structural groups: {'phosphate_ester': 1, 'CH2': 13, 'CH3': 1}.",
+    "given_data": {
+      "group_counts": {
+        "phosphate_ester": 1,
+        "CH2": 13,
+        "CH3": 1
+      }
+    },
+    "gold_answer": "cannot compute -- one or more groups (e.g. quaternary ammonium, amide) have no verified Davies group number in the literature; do not guess a value",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "deliberately includes a group with no cited Davies number"
+  },
+  {
+    "id": "C-030",
+    "category": "C",
+    "subcategory": "hlb_from_groups",
+    "tools_required": [
+      "hlb_from_groups"
+    ],
+    "difficulty": "hard",
+    "question_text": "Using Davies' group-contribution method, compute the HLB of an amidoamine-derived imidazoline surfactant with structural groups: {'imidazoline': 1, 'CH2': 15, 'CH3': 1}.",
+    "given_data": {
+      "group_counts": {
+        "imidazoline": 1,
+        "CH2": 15,
+        "CH3": 1
+      }
+    },
+    "gold_answer": "cannot compute -- one or more groups (e.g. quaternary ammonium, amide) have no verified Davies group number in the literature; do not guess a value",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "deliberately includes a group with no cited Davies number"
+  },
+  {
     "id": "D-001",
     "category": "D",
     "subcategory": "tanford_chain_geometry",

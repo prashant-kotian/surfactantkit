@@ -27,11 +27,21 @@ DAVIES_CASES = [
     ({"COOH": 1, "CH2": 15, "CH3": 1}, "a free fatty acid"),
 ]
 
-# Deliberate trap: a group with no verified Davies number (quaternary
-# ammonium) -- gold answer is "cannot compute, group not verified"
+# Deliberate trap: a group with no verified Davies number -- gold answer is
+# "cannot compute, group not verified". Expanded 2026-09-04 from the original
+# 2 cases (quaternary ammonium, amide) to 8, covering the missing-group
+# classes named explicitly in hlb.py's own docstring (sulfonate, and others
+# common in amidoamine/gemini cationic surfactant chemistry) -- gives a
+# statistically meaningful sample instead of n=2 for this trap.
 NO_SOLUTION_DAVIES = [
     ({"quaternary_ammonium": 1, "CH2": 11, "CH3": 1}, "a quaternary ammonium cationic surfactant"),
     ({"amide": 1, "CH2": 11, "CH3": 1}, "an amide-linked surfactant"),
+    ({"sulfonate": 1, "CH2": 11, "CH3": 1}, "an alkyl sulfonate anionic surfactant"),
+    ({"carboxybetaine": 1, "CH2": 11, "CH3": 1}, "a carboxybetaine zwitterionic surfactant"),
+    ({"sultaine": 1, "CH2": 11, "CH3": 1}, "a sultaine zwitterionic surfactant"),
+    ({"quaternary_ammonium": 2, "spacer_CH2": 3, "CH2": 22, "CH3": 2}, "a gemini cationic surfactant with a propylene spacer"),
+    ({"phosphate_ester": 1, "CH2": 13, "CH3": 1}, "a phosphate ester surfactant"),
+    ({"imidazoline": 1, "CH2": 15, "CH3": 1}, "an amidoamine-derived imidazoline surfactant"),
 ]
 
 
