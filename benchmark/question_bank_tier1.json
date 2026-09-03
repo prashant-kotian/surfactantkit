@@ -5448,7 +5448,7 @@
       "cmc2_M": 0.0075,
       "temperature2_K": 313.15
     },
-    "gold_answer": -2.463,
+    "gold_answer": 2.463,
     "tolerance": {
       "rel": 0.03
     },
@@ -5471,7 +5471,7 @@
       "cmc2_M": 0.0155,
       "temperature2_K": 308.15
     },
-    "gold_answer": 3.756,
+    "gold_answer": -3.756,
     "tolerance": {
       "rel": 0.03
     },
@@ -5494,7 +5494,7 @@
       "cmc2_M": 3.8e-05,
       "temperature2_K": 313.15
     },
-    "gold_answer": -1.958,
+    "gold_answer": 1.958,
     "tolerance": {
       "rel": 0.03
     },
@@ -5517,7 +5517,7 @@
       "cmc2_M": 0.0075,
       "temperature2_K": 313.15
     },
-    "gold_answer": -2.463,
+    "gold_answer": 2.463,
     "tolerance": {
       "rel": 0.03
     },
@@ -5540,7 +5540,7 @@
       "cmc2_M": 0.0155,
       "temperature2_K": 308.15
     },
-    "gold_answer": 3.756,
+    "gold_answer": -3.756,
     "tolerance": {
       "rel": 0.03
     },
@@ -5563,7 +5563,7 @@
       "cmc2_M": 3.8e-05,
       "temperature2_K": 313.15
     },
-    "gold_answer": -1.958,
+    "gold_answer": 1.958,
     "tolerance": {
       "rel": 0.03
     },
@@ -5586,7 +5586,7 @@
       "cmc2_M": 0.0075,
       "temperature2_K": 313.15
     },
-    "gold_answer": -2.463,
+    "gold_answer": 2.463,
     "tolerance": {
       "rel": 0.03
     },
@@ -5609,7 +5609,7 @@
       "cmc2_M": 0.0155,
       "temperature2_K": 308.15
     },
-    "gold_answer": 3.756,
+    "gold_answer": -3.756,
     "tolerance": {
       "rel": 0.03
     },
@@ -5632,7 +5632,7 @@
       "cmc2_M": 3.8e-05,
       "temperature2_K": 313.15
     },
-    "gold_answer": -1.958,
+    "gold_answer": 1.958,
     "tolerance": {
       "rel": 0.03
     },
@@ -5655,7 +5655,7 @@
       "cmc2_M": 0.0075,
       "temperature2_K": 313.15
     },
-    "gold_answer": -2.463,
+    "gold_answer": 2.463,
     "tolerance": {
       "rel": 0.03
     },
@@ -5678,7 +5678,7 @@
       "cmc2_M": 0.0155,
       "temperature2_K": 308.15
     },
-    "gold_answer": 3.756,
+    "gold_answer": -3.756,
     "tolerance": {
       "rel": 0.03
     },
@@ -5701,7 +5701,7 @@
       "cmc2_M": 3.8e-05,
       "temperature2_K": 313.15
     },
-    "gold_answer": -1.958,
+    "gold_answer": 1.958,
     "tolerance": {
       "rel": 0.03
     },
@@ -5719,13 +5719,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -35.082 kJ/mol and deltaH_mic = -2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -35.082 kJ/mol and deltaH_mic = 2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -35.082,
-      "deltaH_mic_kJ_per_mol": -2.463,
+      "deltaH_mic_kJ_per_mol": 2.463,
       "temperature_K": 298.15
     },
-    "gold_answer": 109.404,
+    "gold_answer": 125.924,
     "tolerance": {
       "rel": 0.02
     },
@@ -5743,13 +5743,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -35.082 kJ/mol and deltaH_mic = 3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -35.082 kJ/mol and deltaH_mic = -3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -35.082,
-      "deltaH_mic_kJ_per_mol": 3.756,
+      "deltaH_mic_kJ_per_mol": -3.756,
       "temperature_K": 298.15
     },
-    "gold_answer": 130.262,
+    "gold_answer": 105.066,
     "tolerance": {
       "rel": 0.02
     },
@@ -5767,13 +5767,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -35.082 kJ/mol and deltaH_mic = -1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -35.082 kJ/mol and deltaH_mic = 1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -35.082,
-      "deltaH_mic_kJ_per_mol": -1.958,
+      "deltaH_mic_kJ_per_mol": 1.958,
       "temperature_K": 298.15
     },
-    "gold_answer": 111.099,
+    "gold_answer": 124.23,
     "tolerance": {
       "rel": 0.02
     },
@@ -5791,13 +5791,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -28.347 kJ/mol and deltaH_mic = -2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -28.347 kJ/mol and deltaH_mic = 2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -28.347,
-      "deltaH_mic_kJ_per_mol": -2.463,
+      "deltaH_mic_kJ_per_mol": 2.463,
       "temperature_K": 298.15
     },
-    "gold_answer": 86.816,
+    "gold_answer": 103.335,
     "tolerance": {
       "rel": 0.02
     },
@@ -5815,13 +5815,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -28.347 kJ/mol and deltaH_mic = 3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -28.347 kJ/mol and deltaH_mic = -3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -28.347,
-      "deltaH_mic_kJ_per_mol": 3.756,
+      "deltaH_mic_kJ_per_mol": -3.756,
       "temperature_K": 298.15
     },
-    "gold_answer": 107.674,
+    "gold_answer": 82.477,
     "tolerance": {
       "rel": 0.02
     },
@@ -5839,13 +5839,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -28.347 kJ/mol and deltaH_mic = -1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -28.347 kJ/mol and deltaH_mic = 1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -28.347,
-      "deltaH_mic_kJ_per_mol": -1.958,
+      "deltaH_mic_kJ_per_mol": 1.958,
       "temperature_K": 298.15
     },
-    "gold_answer": 88.51,
+    "gold_answer": 101.641,
     "tolerance": {
       "rel": 0.02
     },
@@ -5863,13 +5863,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -30.808 kJ/mol and deltaH_mic = -2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -30.808 kJ/mol and deltaH_mic = 2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -30.808,
-      "deltaH_mic_kJ_per_mol": -2.463,
+      "deltaH_mic_kJ_per_mol": 2.463,
       "temperature_K": 298.15
     },
-    "gold_answer": 95.072,
+    "gold_answer": 111.592,
     "tolerance": {
       "rel": 0.02
     },
@@ -5887,13 +5887,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -30.808 kJ/mol and deltaH_mic = 3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -30.808 kJ/mol and deltaH_mic = -3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -30.808,
-      "deltaH_mic_kJ_per_mol": 3.756,
+      "deltaH_mic_kJ_per_mol": -3.756,
       "temperature_K": 298.15
     },
-    "gold_answer": 115.93,
+    "gold_answer": 90.734,
     "tolerance": {
       "rel": 0.02
     },
@@ -5911,13 +5911,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -30.808 kJ/mol and deltaH_mic = -1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -30.808 kJ/mol and deltaH_mic = 1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -30.808,
-      "deltaH_mic_kJ_per_mol": -1.958,
+      "deltaH_mic_kJ_per_mol": 1.958,
       "temperature_K": 298.15
     },
-    "gold_answer": 96.767,
+    "gold_answer": 109.898,
     "tolerance": {
       "rel": 0.02
     },
@@ -5935,13 +5935,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -59.602 kJ/mol and deltaH_mic = -2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -59.602 kJ/mol and deltaH_mic = 2.463 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -59.602,
-      "deltaH_mic_kJ_per_mol": -2.463,
+      "deltaH_mic_kJ_per_mol": 2.463,
       "temperature_K": 298.15
     },
-    "gold_answer": 191.646,
+    "gold_answer": 208.165,
     "tolerance": {
       "rel": 0.02
     },
@@ -5959,13 +5959,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -59.602 kJ/mol and deltaH_mic = 3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -59.602 kJ/mol and deltaH_mic = -3.756 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -59.602,
-      "deltaH_mic_kJ_per_mol": 3.756,
+      "deltaH_mic_kJ_per_mol": -3.756,
       "temperature_K": 298.15
     },
-    "gold_answer": 212.504,
+    "gold_answer": 187.307,
     "tolerance": {
       "rel": 0.02
     },
@@ -5983,13 +5983,13 @@
       "entropy_of_micellization"
     ],
     "difficulty": "hard",
-    "question_text": "For a surfactant with deltaG_mic = -59.602 kJ/mol and deltaH_mic = -1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
+    "question_text": "For a surfactant with deltaG_mic = -59.602 kJ/mol and deltaH_mic = 1.958 kJ/mol at 298.15 K, compute the entropy of micellization, deltaS_mic, in J/(mol.K).",
     "given_data": {
       "deltaG_mic_kJ_per_mol": -59.602,
-      "deltaH_mic_kJ_per_mol": -1.958,
+      "deltaH_mic_kJ_per_mol": 1.958,
       "temperature_K": 298.15
     },
-    "gold_answer": 193.34,
+    "gold_answer": 206.471,
     "tolerance": {
       "rel": 0.02
     },
@@ -6005,7 +6005,7 @@
       "wetting_work_of_adhesion"
     ],
     "difficulty": "easy",
-    "question_text": "A liquid with surface tension 72.0 mN/m forms a contact angle of 41.3 degrees on a solid surface (gemini surfactant-treated bentonite surface (Murtaza et al.-style)). Compute the Young-Dupre work of adhesion, in mJ/m^2.",
+    "question_text": "A liquid with surface tension 72.0 mN/m forms a contact angle of 41.3 degrees on a solid surface (gemini surfactant-treated bentonite surface). Compute the Young-Dupre work of adhesion, in mJ/m^2.",
     "given_data": {
       "gamma_LV_mN_m": 72.0,
       "contact_angle_deg": 41.3
@@ -6016,7 +6016,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "gemini surfactant-treated bentonite surface (Murtaza et al.-style)"
+    "source_note": "gemini surfactant-treated bentonite surface"
   },
   {
     "id": "H-002",
@@ -6026,7 +6026,7 @@
       "wetting_work_of_adhesion"
     ],
     "difficulty": "easy",
-    "question_text": "A liquid with surface tension 72.0 mN/m forms a contact angle of 62.0 degrees on a solid surface (EAPB + polyelectrolyte treated quartz (Gaynanova et al.-style)). Compute the Young-Dupre work of adhesion, in mJ/m^2.",
+    "question_text": "A liquid with surface tension 72.0 mN/m forms a contact angle of 62.0 degrees on a solid surface (EAPB + polyelectrolyte treated quartz). Compute the Young-Dupre work of adhesion, in mJ/m^2.",
     "given_data": {
       "gamma_LV_mN_m": 72.0,
       "contact_angle_deg": 62.0
@@ -6037,7 +6037,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "EAPB + polyelectrolyte treated quartz (Gaynanova et al.-style)"
+    "source_note": "EAPB + polyelectrolyte treated quartz"
   },
   {
     "id": "H-003",
@@ -6131,7 +6131,7 @@
       "wetting_work_of_adhesion"
     ],
     "difficulty": "easy",
-    "question_text": "A liquid with surface tension 72.0 mN/m forms a contact angle of 41.3 degrees on a solid surface (gemini surfactant-treated bentonite surface (Murtaza et al.-style)). Compute the Young-Dupre work of adhesion, in mJ/m^2.",
+    "question_text": "A liquid with surface tension 72.0 mN/m forms a contact angle of 41.3 degrees on a solid surface (gemini surfactant-treated bentonite surface). Compute the Young-Dupre work of adhesion, in mJ/m^2.",
     "given_data": {
       "gamma_LV_mN_m": 72.0,
       "contact_angle_deg": 41.3
@@ -6142,7 +6142,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "gemini surfactant-treated bentonite surface (Murtaza et al.-style)"
+    "source_note": "gemini surfactant-treated bentonite surface"
   },
   {
     "id": "H-008",
@@ -6152,7 +6152,7 @@
       "wetting_work_of_adhesion"
     ],
     "difficulty": "easy",
-    "question_text": "A liquid with surface tension 72.0 mN/m forms a contact angle of 62.0 degrees on a solid surface (EAPB + polyelectrolyte treated quartz (Gaynanova et al.-style)). Compute the Young-Dupre work of adhesion, in mJ/m^2.",
+    "question_text": "A liquid with surface tension 72.0 mN/m forms a contact angle of 62.0 degrees on a solid surface (EAPB + polyelectrolyte treated quartz). Compute the Young-Dupre work of adhesion, in mJ/m^2.",
     "given_data": {
       "gamma_LV_mN_m": 72.0,
       "contact_angle_deg": 62.0
@@ -6163,7 +6163,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "EAPB + polyelectrolyte treated quartz (Gaynanova et al.-style)"
+    "source_note": "EAPB + polyelectrolyte treated quartz"
   },
   {
     "id": "H-009",
@@ -6257,7 +6257,7 @@
       "wetting_spreading_coefficient"
     ],
     "difficulty": "easy",
-    "question_text": "For the same system (surface tension 72.0 mN/m, contact angle 41.3 degrees, gemini surfactant-treated bentonite surface (Murtaza et al.-style)), compute the spreading coefficient S in mN/m.",
+    "question_text": "For the same system (surface tension 72.0 mN/m, contact angle 41.3 degrees, gemini surfactant-treated bentonite surface), compute the spreading coefficient S in mN/m.",
     "given_data": {
       "gamma_LV_mN_m": 72.0,
       "contact_angle_deg": 41.3
@@ -6268,7 +6268,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "gemini surfactant-treated bentonite surface (Murtaza et al.-style)"
+    "source_note": "gemini surfactant-treated bentonite surface"
   },
   {
     "id": "H-014",
@@ -6278,7 +6278,7 @@
       "wetting_spreading_coefficient"
     ],
     "difficulty": "easy",
-    "question_text": "For the same system (surface tension 72.0 mN/m, contact angle 62.0 degrees, EAPB + polyelectrolyte treated quartz (Gaynanova et al.-style)), compute the spreading coefficient S in mN/m.",
+    "question_text": "For the same system (surface tension 72.0 mN/m, contact angle 62.0 degrees, EAPB + polyelectrolyte treated quartz), compute the spreading coefficient S in mN/m.",
     "given_data": {
       "gamma_LV_mN_m": 72.0,
       "contact_angle_deg": 62.0
@@ -6289,7 +6289,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "EAPB + polyelectrolyte treated quartz (Gaynanova et al.-style)"
+    "source_note": "EAPB + polyelectrolyte treated quartz"
   },
   {
     "id": "H-015",
@@ -6383,7 +6383,7 @@
       "wetting_spreading_coefficient"
     ],
     "difficulty": "easy",
-    "question_text": "For the same system (surface tension 72.0 mN/m, contact angle 41.3 degrees, gemini surfactant-treated bentonite surface (Murtaza et al.-style)), compute the spreading coefficient S in mN/m.",
+    "question_text": "For the same system (surface tension 72.0 mN/m, contact angle 41.3 degrees, gemini surfactant-treated bentonite surface), compute the spreading coefficient S in mN/m.",
     "given_data": {
       "gamma_LV_mN_m": 72.0,
       "contact_angle_deg": 41.3
@@ -6394,7 +6394,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "gemini surfactant-treated bentonite surface (Murtaza et al.-style)"
+    "source_note": "gemini surfactant-treated bentonite surface"
   },
   {
     "id": "H-020",
@@ -6404,7 +6404,7 @@
       "wetting_spreading_coefficient"
     ],
     "difficulty": "easy",
-    "question_text": "For the same system (surface tension 72.0 mN/m, contact angle 62.0 degrees, EAPB + polyelectrolyte treated quartz (Gaynanova et al.-style)), compute the spreading coefficient S in mN/m.",
+    "question_text": "For the same system (surface tension 72.0 mN/m, contact angle 62.0 degrees, EAPB + polyelectrolyte treated quartz), compute the spreading coefficient S in mN/m.",
     "given_data": {
       "gamma_LV_mN_m": 72.0,
       "contact_angle_deg": 62.0
@@ -6415,7 +6415,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "EAPB + polyelectrolyte treated quartz (Gaynanova et al.-style)"
+    "source_note": "EAPB + polyelectrolyte treated quartz"
   },
   {
     "id": "H-021",
@@ -6609,7 +6609,7 @@
       "eor_capillary_number"
     ],
     "difficulty": "medium",
-    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 1.0 mPa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.00034 mN/m (extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
+    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 1.0 mPa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.00034 mN/m (extreme ultra-low IFT, ~3.4e-4 mN/m). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
     "given_data": {
       "viscosity_mPas": 1.0,
       "velocity_m_per_s": 1e-05,
@@ -6624,7 +6624,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)"
+    "source_note": "extreme ultra-low IFT, ~3.4e-4 mN/m"
   },
   {
     "id": "H-030",
@@ -6734,7 +6734,7 @@
       "eor_capillary_number"
     ],
     "difficulty": "medium",
-    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 0.001 Pa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.00034 mN/m (extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
+    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 0.001 Pa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.00034 mN/m (extreme ultra-low IFT, ~3.4e-4 mN/m). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
     "given_data": {
       "viscosity_Pas_as_reported": 0.001,
       "velocity_m_per_s": 1e-05,
@@ -6749,7 +6749,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "unit_trap",
-    "source_note": "extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)"
+    "source_note": "extreme ultra-low IFT, ~3.4e-4 mN/m"
   },
   {
     "id": "H-035",
@@ -6859,7 +6859,7 @@
       "eor_capillary_number"
     ],
     "difficulty": "medium",
-    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 1.0 mPa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.00034 mN/m (extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
+    "question_text": "In an EOR waterflood, the displacing fluid has viscosity 1.0 mPa.s and velocity 1e-05 m/s; the oil-water interfacial tension is 0.00034 mN/m (extreme ultra-low IFT, ~3.4e-4 mN/m). Compute the capillary number and state whether flow is capillary-dominated (Ca < 1e-5) or not.",
     "given_data": {
       "viscosity_mPas": 1.0,
       "velocity_m_per_s": 1e-05,
@@ -6874,7 +6874,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "extreme ultra-low IFT (Ahmad Wazir et al.-style, ~3.4e-4 mN/m)"
+    "source_note": "extreme ultra-low IFT, ~3.4e-4 mN/m"
   },
   {
     "id": "I-001",
@@ -6884,7 +6884,7 @@
       "molar_solubilization_ratio"
     ],
     "difficulty": "medium",
-    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.5100 mM in a surfactant solution at 10.00 mM surfactant concentration (PAH solubilization above CMC, e.g. Patel et al.-style). The intrinsic water solubility of the solubilizate is 0.0100 mM, and the surfactant's CMC is 2.00 mM. Compute the Molar Solubilization Ratio (MSR).",
+    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.5100 mM in a surfactant solution at 10.00 mM surfactant concentration (PAH solubilization above CMC). The intrinsic water solubility of the solubilizate is 0.0100 mM, and the surfactant's CMC is 2.00 mM. Compute the Molar Solubilization Ratio (MSR).",
     "given_data": {
       "total_solubilized_M": 0.00051,
       "intrinsic_water_solubility_M": 1e-05,
@@ -6897,7 +6897,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "PAH solubilization above CMC, e.g. Patel et al.-style"
+    "source_note": "PAH solubilization above CMC"
   },
   {
     "id": "I-002",
@@ -6976,7 +6976,7 @@
       "molar_solubilization_ratio"
     ],
     "difficulty": "medium",
-    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.3500 mM in a surfactant solution at 15.00 mM surfactant concentration (bile-salt mixed micelle solubilization, Yadav et al.-style). The intrinsic water solubility of the solubilizate is 0.0150 mM, and the surfactant's CMC is 4.00 mM. Compute the Molar Solubilization Ratio (MSR).",
+    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.3500 mM in a surfactant solution at 15.00 mM surfactant concentration (bile-salt mixed micelle solubilization). The intrinsic water solubility of the solubilizate is 0.0150 mM, and the surfactant's CMC is 4.00 mM. Compute the Molar Solubilization Ratio (MSR).",
     "given_data": {
       "total_solubilized_M": 0.00035,
       "intrinsic_water_solubility_M": 1.5e-05,
@@ -6989,7 +6989,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "bile-salt mixed micelle solubilization, Yadav et al.-style"
+    "source_note": "bile-salt mixed micelle solubilization"
   },
   {
     "id": "I-006",
@@ -6999,7 +6999,7 @@
       "molar_solubilization_ratio"
     ],
     "difficulty": "medium",
-    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.5100 mM in a surfactant solution at 10.00 mM surfactant concentration (PAH solubilization above CMC, e.g. Patel et al.-style). The intrinsic water solubility of the solubilizate is 0.0100 mM, and the surfactant's CMC is 2.00 mM. Compute the Molar Solubilization Ratio (MSR).",
+    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.5100 mM in a surfactant solution at 10.00 mM surfactant concentration (PAH solubilization above CMC). The intrinsic water solubility of the solubilizate is 0.0100 mM, and the surfactant's CMC is 2.00 mM. Compute the Molar Solubilization Ratio (MSR).",
     "given_data": {
       "total_solubilized_M": 0.00051,
       "intrinsic_water_solubility_M": 1e-05,
@@ -7012,7 +7012,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "PAH solubilization above CMC, e.g. Patel et al.-style"
+    "source_note": "PAH solubilization above CMC"
   },
   {
     "id": "I-007",
@@ -7091,7 +7091,7 @@
       "molar_solubilization_ratio"
     ],
     "difficulty": "medium",
-    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.3500 mM in a surfactant solution at 15.00 mM surfactant concentration (bile-salt mixed micelle solubilization, Yadav et al.-style). The intrinsic water solubility of the solubilizate is 0.0150 mM, and the surfactant's CMC is 4.00 mM. Compute the Molar Solubilization Ratio (MSR).",
+    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.3500 mM in a surfactant solution at 15.00 mM surfactant concentration (bile-salt mixed micelle solubilization). The intrinsic water solubility of the solubilizate is 0.0150 mM, and the surfactant's CMC is 4.00 mM. Compute the Molar Solubilization Ratio (MSR).",
     "given_data": {
       "total_solubilized_M": 0.00035,
       "intrinsic_water_solubility_M": 1.5e-05,
@@ -7104,7 +7104,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "bile-salt mixed micelle solubilization, Yadav et al.-style"
+    "source_note": "bile-salt mixed micelle solubilization"
   },
   {
     "id": "I-011",
@@ -7114,7 +7114,7 @@
       "molar_solubilization_ratio"
     ],
     "difficulty": "medium",
-    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.5100 mM in a surfactant solution at 10.00 mM surfactant concentration (PAH solubilization above CMC, e.g. Patel et al.-style). The intrinsic water solubility of the solubilizate is 0.0100 mM, and the surfactant's CMC is 2.00 mM. Compute the Molar Solubilization Ratio (MSR).",
+    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.5100 mM in a surfactant solution at 10.00 mM surfactant concentration (PAH solubilization above CMC). The intrinsic water solubility of the solubilizate is 0.0100 mM, and the surfactant's CMC is 2.00 mM. Compute the Molar Solubilization Ratio (MSR).",
     "given_data": {
       "total_solubilized_M": 0.00051,
       "intrinsic_water_solubility_M": 1e-05,
@@ -7127,7 +7127,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "PAH solubilization above CMC, e.g. Patel et al.-style"
+    "source_note": "PAH solubilization above CMC"
   },
   {
     "id": "I-012",
@@ -7206,7 +7206,7 @@
       "molar_solubilization_ratio"
     ],
     "difficulty": "medium",
-    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.3500 mM in a surfactant solution at 15.00 mM surfactant concentration (bile-salt mixed micelle solubilization, Yadav et al.-style). The intrinsic water solubility of the solubilizate is 0.0150 mM, and the surfactant's CMC is 4.00 mM. Compute the Molar Solubilization Ratio (MSR).",
+    "question_text": "A hydrophobic solubilizate has total solubilized concentration 0.3500 mM in a surfactant solution at 15.00 mM surfactant concentration (bile-salt mixed micelle solubilization). The intrinsic water solubility of the solubilizate is 0.0150 mM, and the surfactant's CMC is 4.00 mM. Compute the Molar Solubilization Ratio (MSR).",
     "given_data": {
       "total_solubilized_M": 0.00035,
       "intrinsic_water_solubility_M": 1.5e-05,
@@ -7219,7 +7219,7 @@
     },
     "grading_method": "numeric_tolerance",
     "trap_type": "none",
-    "source_note": "bile-salt mixed micelle solubilization, Yadav et al.-style"
+    "source_note": "bile-salt mixed micelle solubilization"
   },
   {
     "id": "I-016",

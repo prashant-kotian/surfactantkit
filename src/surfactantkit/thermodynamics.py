@@ -69,7 +69,25 @@ def gibbs_free_energy_micellization(cmc_mole_fraction: float, temperature_K: flo
 def vant_hoff_enthalpy(cmc1_mole_fraction: float, temperature1_K: float, cmc2_mole_fraction: float, temperature2_K: float) -> float:
     """Van't Hoff enthalpy of micellization, kJ/mol, from CMC (mole
     fraction scale) measured at two temperatures:
-    deltaH_mic = R * (ln(X_cmc,2) - ln(X_cmc,1)) / (1/T1 - 1/T2).
+    deltaH_mic = R * (ln(X_cmc,2) - ln(X_cmc,1)) / (1/T2 - 1/T1).
+
+    Real sign bug found and fixed 2026-09-04: this function previously
+    divided by (1/T1 - 1/T2) instead of (1/T2 - 1/T1), giving the exact
+    opposite sign of the true van't Hoff enthalpy. Caught via two
+    independent, convergent checks: (1) an unaugmented Claude Opus 4.8
+    pilot answer for a real SurfBench question matched textbook Gibbs-
+    Helmholtz-derivation and Le Chatelier physical reasoning exactly
+    (CMC decreasing with rising T => endothermic, positive dH) while
+    this function's old output had the opposite sign; (2) re-examining
+    this project's own existing literature_validation_notes.md entry for
+    this exact function against Fu et al. 2019 (RSC Advances) showed the
+    old two-point estimates (+6.446, +0.462 kJ/mol) had the opposite sign
+    from the paper's own local-derivative value (-4.472 kJ/mol) -- at the
+    time misread as pure two-point-vs-polynomial magnitude noise, but the
+    sign mismatch was real and is this same bug. Full re-derivation from
+    the Gibbs-Helmholtz equation (d(dG/T)/dT = -dH/T^2, with
+    dG = R*T*ln(X_cmc)) gives d(ln X_cmc) = (dH/R) d(1/T), i.e. the
+    (1/T2 - 1/T1) denominator used now, not the old (1/T1 - 1/T2).
 
     Assumes deltaH is constant over the T1-T2 interval -- this
     assumption weakens for wide temperature ranges or when the
@@ -83,7 +101,7 @@ def vant_hoff_enthalpy(cmc1_mole_fraction: float, temperature1_K: float, cmc2_mo
     if not (0.0 < cmc1_mole_fraction < 1.0) or not (0.0 < cmc2_mole_fraction < 1.0):
         raise ValueError("CMC mole fractions must be strictly between 0 and 1")
     delta_ln_cmc = math.log(cmc2_mole_fraction) - math.log(cmc1_mole_fraction)
-    delta_inv_T = (1.0 / temperature1_K) - (1.0 / temperature2_K)
+    delta_inv_T = (1.0 / temperature2_K) - (1.0 / temperature1_K)
     return (R_GAS * delta_ln_cmc / delta_inv_T) / 1000.0
 
 

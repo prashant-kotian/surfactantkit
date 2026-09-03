@@ -12,9 +12,16 @@ from surfactantkit.mcp_server import mcp
 
 
 def call(tool_name: str, args: dict) -> dict:
-    """Call an MCP tool synchronously and parse its JSON text content."""
+    """Call an MCP tool synchronously and parse its JSON text content.
+
+    Real API-shape change found 2026-09-04, alongside the MCPServer ->
+    FastMCP rename (see mcp_server.py): call_tool() in the currently
+    installed mcp SDK (1.27.2) returns the content list directly, not
+    wrapped in a `.content` attribute -- confirmed by actually calling it
+    and inspecting the real return value, not guessed from a changelog.
+    """
     result = asyncio.run(mcp.call_tool(tool_name, args))
-    return json.loads(result.content[0].text)
+    return json.loads(result[0].text)
 
 
 def test_all_expected_tools_are_registered():

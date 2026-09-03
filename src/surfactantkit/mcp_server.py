@@ -12,7 +12,7 @@ Run locally (stdio transport, for Claude Desktop / Cursor):
 
 from __future__ import annotations
 
-from mcp.server import MCPServer
+from mcp.server.fastmcp import FastMCP
 
 from . import mixed_micelle as mm
 from . import adsorption as ads
@@ -24,7 +24,7 @@ from . import thermodynamics as thermo
 from . import wetting
 from . import solubilization as solub
 
-mcp = MCPServer(
+mcp = FastMCP(
     "SurfactantKit",
     instructions=(
         "Surfactant and interfacial-science calculations: Clint ideal mixing, "
