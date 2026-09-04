@@ -21,6 +21,11 @@ _NOSOL_PATTERNS = [
     "not physically", "not meaningful", "does not exist", "no physically",
     "not consistent", "not defined", "no micelle", "below the cmc", "below cmc",
     "not applicable", "no root",
+    # Added 2026-09-04: found via the hardened gibbs_surface_excess trap_audit
+    # -- Claude Opus 4.8 correctly refused all 6 questions but phrased it as
+    # "cannot be determined" / "not solvable" rather than any pattern already
+    # in this list, so a real improvement was being mis-scored as a failure.
+    "cannot be determined", "cannot determine", "not solvable",
 ]
 
 

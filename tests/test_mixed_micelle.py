@@ -314,7 +314,7 @@ def test_excess_free_energy_ideal_limit_is_zero():
 def test_gibbs_adsorption_positive_slope_gives_positive_gamma_max():
     # A surfactant lowering surface tension with concentration has a
     # negative dGamma/d(ln C); Gamma_max must come out positive.
-    gamma_max = gibbs_gamma_max(slope_mn_per_ln_c=-5.0, n_factor=2.0, temperature_k=298.15)
+    gamma_max = gibbs_gamma_max(slope_mn_per_ln_c=-5.0, system_type="ionic_no_added_salt", temperature_k=298.15)
     assert gamma_max > 0
 
 

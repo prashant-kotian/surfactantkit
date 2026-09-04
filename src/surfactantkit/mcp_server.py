@@ -114,14 +114,20 @@ def excess_free_energy(x1: float, f1: float, f2: float, temperature_K: float) ->
 
 
 @mcp.tool()
-def gibbs_surface_excess(slope_mN_per_m_per_lnC: float, n_factor: float, temperature_K: float) -> dict:
+def gibbs_surface_excess(slope_mN_per_m_per_lnC: float, system_type: str, temperature_K: float) -> dict:
     """Maximum surface excess concentration (Gamma_max, mol/m^2) from
     the Gibbs adsorption isotherm, given the pre-CMC slope of surface
-    tension (mN/m) vs ln(concentration), the Gibbs prefactor n (1 for
-    nonionic or ionic-with-excess-electrolyte; commonly 2 for a 1:1
-    ionic surfactant with no added salt -- state which applies, do not
-    assume), and temperature in Kelvin."""
-    value = ads.gibbs_gamma_max(slope_mN_per_m_per_lnC, n_factor, temperature_K)
+    tension (mN/m) vs ln(concentration), temperature in Kelvin, and
+    system_type -- one of 'nonionic', 'ionic_excess_electrolyte', or
+    'ionic_no_added_salt' -- which fixes the Gibbs prefactor n (1 for
+    the first two, 2 for the last). REQUIRED, no default: if the
+    question does not state the surfactant's ionic character AND
+    (for an ionic surfactant) whether excess inert electrolyte is
+    present, DO NOT GUESS a system_type -- this is exactly the kind of
+    silent assumption that produces a real, confidently wrong answer;
+    report that Gamma_max cannot be determined from the given
+    information instead of calling this tool with an assumed value."""
+    value = ads.gibbs_gamma_max(slope_mN_per_m_per_lnC, system_type, temperature_K)
     return {"gamma_max_mol_per_m2": value, "unit": "mol/m^2"}
 
 
@@ -134,7 +140,7 @@ def gibbs_area_per_molecule(gamma_max_mol_per_m2: float) -> dict:
 
 
 @mcp.tool()
-def szyszkowski_predict_surface_tension(concentration: float, gamma0_mN_m: float, gamma_max_mol_per_m2: float, K: float, temperature_K: float = 298.15, n_factor: float = 1.0) -> dict:
+def szyszkowski_predict_surface_tension(concentration: float, gamma0_mN_m: float, gamma_max_mol_per_m2: float, K: float, system_type: str, temperature_K: float = 298.15) -> dict:
     """Predict surface tension (mN/m) at a given surfactant concentration
     via the Szyszkowski/Langmuir equation: gamma = gamma0 -
     n_factor*R*T*Gamma_max*ln(1+K*concentration). K is a fitted
@@ -142,9 +148,13 @@ def szyszkowski_predict_surface_tension(concentration: float, gamma0_mN_m: float
     (not a universal constant -- must come from real data, e.g. a fit to
     measured surface-tension-vs-concentration points). concentration and
     K must use consistent units (K*concentration must be dimensionless).
-    Only valid below the CMC, where surfactant is present as free
-    monomer at the interface."""
-    value = ads.szyszkowski_surface_tension(concentration, gamma0_mN_m, gamma_max_mol_per_m2, K, temperature_K, n_factor)
+    system_type: same required, no-default Gibbs-prefactor selector as
+    gibbs_surface_excess ('nonionic', 'ionic_excess_electrolyte', or
+    'ionic_no_added_salt') -- DO NOT GUESS this if the surfactant's ionic
+    character or electrolyte condition isn't stated; report that surface
+    tension cannot be predicted instead. Only valid below the CMC, where
+    surfactant is present as free monomer at the interface."""
+    value = ads.szyszkowski_surface_tension(concentration, gamma0_mN_m, gamma_max_mol_per_m2, K, system_type, temperature_K)
     return {"surface_tension_mN_m": value, "unit": "mN/m"}
 
 

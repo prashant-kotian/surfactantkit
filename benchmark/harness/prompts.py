@@ -35,7 +35,13 @@ SURFMCP_NOTE = (
     "(e.g. flow_regime, predicted_morphology, synergy_classification) -- when you report "
     "that classification in your final answer, use the tool's own exact wording verbatim, "
     "not a paraphrase or a different term for the same idea, even if your paraphrase seems "
-    "equally correct to you."
+    "equally correct to you. Some tools require a parameter that encodes real domain "
+    "knowledge the question may not give you (e.g. gibbs_surface_excess's system_type, "
+    "hlb_from_groups' group names) -- if the question does not state enough to determine "
+    "that parameter with confidence, do not guess a plausible-looking value just to get the "
+    "tool to run. Report that the quantity cannot be determined from the given information "
+    "instead; a specific number produced from an unstated assumption is a wrong answer, not "
+    "a correct one."
 )
 
 

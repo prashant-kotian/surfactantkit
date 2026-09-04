@@ -144,6 +144,7 @@ def test_vant_hoff_and_entropy_tools_complete_triad():
 def test_szyszkowski_tool_at_zero_concentration_returns_gamma0():
     out = call("szyszkowski_predict_surface_tension", {
         "concentration": 0.0, "gamma0_mN_m": 72.0, "gamma_max_mol_per_m2": 3.0e-6, "K": 50.0,
+        "system_type": "nonionic",
     })
     assert out["surface_tension_mN_m"] == pytest.approx(72.0)
 

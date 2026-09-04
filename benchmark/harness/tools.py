@@ -67,7 +67,7 @@ def _corrin(a):
     return {"predicted_cmc_mM": pred, "corrin_harkins_slope": g, "unit": "mM"}
 
 def _gibbs_gamma(a):
-    v = ads.gibbs_gamma_max(a["slope_mN_per_lnC"], a["n_factor"], a["temperature_K"])
+    v = ads.gibbs_gamma_max(a["slope_mN_per_lnC"], a["system_type"], a["temperature_K"])
     return {"gamma_max_mol_per_m2": v, "unit": "mol/m^2"}
 
 def _gibbs_amin(a):
@@ -77,7 +77,7 @@ def _gibbs_amin(a):
 def _szysz(a):
     v = ads.szyszkowski_surface_tension(
         a["concentration"], a["gamma0_mN_m"], a["gamma_max_mol_per_m2"],
-        a["K"], a.get("temperature_K", 298.15), a.get("n_factor", 1.0))
+        a["K"], a["system_type"], a.get("temperature_K", 298.15))
     return {"surface_tension_mN_m": v, "unit": "mN/m"}
 
 def _hlb_mw(a):
@@ -221,24 +221,32 @@ _TOOL_LIST = [
           ["cmc1_mM", "salt_conc1_mM", "cmc2_mM", "salt_conc2_mM", "salt_conc_target_mM"], _corrin),
     _spec("gibbs_surface_excess",
           "Maximum surface excess Gamma_max (mol/m^2) from the pre-CMC slope of surface tension "
-          "vs ln(concentration).",
+          "vs ln(concentration). Do not guess system_type if the question doesn't state the "
+          "surfactant's ionic character or electrolyte condition -- report no-solution instead.",
           {"slope_mN_per_lnC": _num("d(gamma)/d(lnC) in mN/m (negative for a surfactant)"),
-           "n_factor": _num("Gibbs prefactor: 1 nonionic/excess salt, 2 for 1:1 ionic no salt"),
+           "system_type": {"type": "string",
+                            "enum": ["nonionic", "ionic_excess_electrolyte", "ionic_no_added_salt"],
+                            "description": "fixes the Gibbs prefactor n (1 for the first two, 2 "
+                                            "for the last) -- required, do not guess"},
            "temperature_K": _num("temperature in Kelvin")},
-          ["slope_mN_per_lnC", "n_factor", "temperature_K"], _gibbs_gamma),
+          ["slope_mN_per_lnC", "system_type", "temperature_K"], _gibbs_gamma),
     _spec("gibbs_area_per_molecule",
           "Minimum area per molecule A_min (nm^2) from Gamma_max (mol/m^2).",
           {"gamma_max_mol_per_m2": _num("maximum surface excess (mol/m^2)")},
           ["gamma_max_mol_per_m2"], _gibbs_amin),
     _spec("szyszkowski_predict_surface_tension",
-          "Predict surface tension (mN/m) via the Szyszkowski/Langmuir equation.",
+          "Predict surface tension (mN/m) via the Szyszkowski/Langmuir equation. Do not guess "
+          "system_type if the question doesn't state the surfactant's ionic character or "
+          "electrolyte condition -- report no-solution instead.",
           {"concentration": _num("surfactant concentration (same unit as 1/K)"),
            "gamma0_mN_m": _num("pure-solvent surface tension (mN/m)"),
            "gamma_max_mol_per_m2": _num("saturation surface excess (mol/m^2)"),
            "K": _num("Szyszkowski/Langmuir adsorption constant"),
            "temperature_K": _num("temperature in Kelvin"),
-           "n_factor": _num("Gibbs prefactor (1 or 2)")},
-          ["concentration", "gamma0_mN_m", "gamma_max_mol_per_m2", "K"], _szysz),
+           "system_type": {"type": "string",
+                            "enum": ["nonionic", "ionic_excess_electrolyte", "ionic_no_added_salt"],
+                            "description": "fixes the Gibbs prefactor n -- required, do not guess"}},
+          ["concentration", "gamma0_mN_m", "gamma_max_mol_per_m2", "K", "system_type"], _szysz),
     _spec("hlb_from_mw",
           "HLB by Griffin's method (0-20 scale) from hydrophilic and total molecular weight.",
           {"mw_hydrophilic": _num("hydrophilic-portion MW (g/mol)"),

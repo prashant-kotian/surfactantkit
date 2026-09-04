@@ -11,13 +11,14 @@ from surfactantkit.solubilization import molar_solubilization_ratio
 
 def test_szyszkowski_returns_gamma0_at_zero_concentration():
     # boundary condition, follows directly from ln(1+0)=0
-    g = szyszkowski_surface_tension(0.0, gamma0_mN_m=72.0, gamma_max_mol_per_m2=3.0e-6, K=50.0)
+    g = szyszkowski_surface_tension(0.0, gamma0_mN_m=72.0, gamma_max_mol_per_m2=3.0e-6, K=50.0,
+                                     system_type="nonionic")
     assert g == pytest.approx(72.0)
 
 
 def test_szyszkowski_decreases_monotonically_with_concentration():
-    g_low = szyszkowski_surface_tension(1.0, 72.0, 3.0e-6, 50.0)
-    g_high = szyszkowski_surface_tension(10.0, 72.0, 3.0e-6, 50.0)
+    g_low = szyszkowski_surface_tension(1.0, 72.0, 3.0e-6, 50.0, "nonionic")
+    g_high = szyszkowski_surface_tension(10.0, 72.0, 3.0e-6, 50.0, "nonionic")
     assert g_high < g_low < 72.0
 
 
@@ -30,20 +31,34 @@ def test_szyszkowski_high_concentration_limit_matches_gibbs_slope_method():
     cross-check, not just a unit test."""
     gamma0, gamma_max_true, K, T = 72.0, 3.0e-6, 50.0, 298.15
     C1, C2 = 100.0, 105.0  # K*C ~ 5000-5250, well into the saturation limit
-    g1 = szyszkowski_surface_tension(C1, gamma0, gamma_max_true, K, T)
-    g2 = szyszkowski_surface_tension(C2, gamma0, gamma_max_true, K, T)
+    g1 = szyszkowski_surface_tension(C1, gamma0, gamma_max_true, K, "nonionic", T)
+    g2 = szyszkowski_surface_tension(C2, gamma0, gamma_max_true, K, "nonionic", T)
     slope = (g2 - g1) / (math.log(C2) - math.log(C1))
-    recovered_gamma_max = gibbs_gamma_max(slope, n_factor=1.0, temperature_k=T)
+    recovered_gamma_max = gibbs_gamma_max(slope, system_type="nonionic", temperature_k=T)
     assert recovered_gamma_max == pytest.approx(gamma_max_true, rel=0.005)
 
 
 def test_szyszkowski_rejects_bad_input():
     with pytest.raises(ValueError):
-        szyszkowski_surface_tension(-1.0, 72.0, 3.0e-6, 50.0)
+        szyszkowski_surface_tension(-1.0, 72.0, 3.0e-6, 50.0, "nonionic")
     with pytest.raises(ValueError):
-        szyszkowski_surface_tension(1.0, 72.0, 0.0, 50.0)
+        szyszkowski_surface_tension(1.0, 72.0, 0.0, 50.0, "nonionic")
     with pytest.raises(ValueError):
-        szyszkowski_surface_tension(1.0, 72.0, 3.0e-6, -1.0)
+        szyszkowski_surface_tension(1.0, 72.0, 3.0e-6, -1.0, "nonionic")
+    with pytest.raises(ValueError):
+        szyszkowski_surface_tension(1.0, 72.0, 3.0e-6, 50.0, "not_a_real_system_type")
+
+
+def test_gibbs_gamma_max_rejects_invalid_system_type():
+    """Regression test for the 2026-09-04 hardening: system_type replaced
+    a raw n_factor float precisely because a caller (including an LLM
+    using this as a tool) must not be able to silently pass an
+    unjustified numeric guess. No default is provided and any string
+    outside the three real system types must raise."""
+    with pytest.raises(ValueError):
+        gibbs_gamma_max(-5.0, "made_up_system_type", 298.15)
+    with pytest.raises(TypeError):
+        gibbs_gamma_max(-5.0, temperature_k=298.15)  # system_type omitted entirely -- no default
 
 
 def test_work_of_adhesion_complete_wetting_limit():
