@@ -2410,6 +2410,120 @@
     "source_note": "high-affinity adsorption (large K)"
   },
   {
+    "id": "B-037",
+    "category": "B",
+    "subcategory": "gibbs_surface_excess",
+    "tools_required": [
+      "gibbs_surface_excess"
+    ],
+    "difficulty": "hard",
+    "question_text": "Below the CMC, the slope of surface tension vs ln(concentration), d(gamma)/d(ln C), is -5.5 mN/m for an anionic surfactant (SDS-type), electrolyte condition not stated, at 298.15 K. Compute the maximum surface excess concentration, Gamma_max, in mol/m^2.",
+    "given_data": {
+      "slope_mN_per_lnC": -5.5,
+      "temperature_K": 298.15
+    },
+    "gold_answer": "cannot compute -- Gamma_max requires the Gibbs prefactor n_factor (1 for nonionic or ionic-with-excess-electrolyte, 2 for a 1:1 ionic surfactant with no added salt), which depends on whether excess inert electrolyte is present; this is not stated, so n_factor cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "an anionic surfactant (SDS-type), electrolyte condition not stated"
+  },
+  {
+    "id": "B-038",
+    "category": "B",
+    "subcategory": "gibbs_surface_excess",
+    "tools_required": [
+      "gibbs_surface_excess"
+    ],
+    "difficulty": "hard",
+    "question_text": "Below the CMC, the slope of surface tension vs ln(concentration), d(gamma)/d(ln C), is -7.2 mN/m for a cationic surfactant (CTAB-type), electrolyte condition not stated, at 298.15 K. Compute the maximum surface excess concentration, Gamma_max, in mol/m^2.",
+    "given_data": {
+      "slope_mN_per_lnC": -7.2,
+      "temperature_K": 298.15
+    },
+    "gold_answer": "cannot compute -- Gamma_max requires the Gibbs prefactor n_factor (1 for nonionic or ionic-with-excess-electrolyte, 2 for a 1:1 ionic surfactant with no added salt), which depends on whether excess inert electrolyte is present; this is not stated, so n_factor cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "a cationic surfactant (CTAB-type), electrolyte condition not stated"
+  },
+  {
+    "id": "B-039",
+    "category": "B",
+    "subcategory": "gibbs_surface_excess",
+    "tools_required": [
+      "gibbs_surface_excess"
+    ],
+    "difficulty": "hard",
+    "question_text": "Below the CMC, the slope of surface tension vs ln(concentration), d(gamma)/d(ln C), is -9.0 mN/m for a gemini cationic surfactant, electrolyte condition not stated, at 298.15 K. Compute the maximum surface excess concentration, Gamma_max, in mol/m^2.",
+    "given_data": {
+      "slope_mN_per_lnC": -9.0,
+      "temperature_K": 298.15
+    },
+    "gold_answer": "cannot compute -- Gamma_max requires the Gibbs prefactor n_factor (1 for nonionic or ionic-with-excess-electrolyte, 2 for a 1:1 ionic surfactant with no added salt), which depends on whether excess inert electrolyte is present; this is not stated, so n_factor cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "a gemini cationic surfactant, electrolyte condition not stated"
+  },
+  {
+    "id": "B-040",
+    "category": "B",
+    "subcategory": "gibbs_surface_excess",
+    "tools_required": [
+      "gibbs_surface_excess"
+    ],
+    "difficulty": "hard",
+    "question_text": "Below the CMC, the slope of surface tension vs ln(concentration), d(gamma)/d(ln C), is -4.0 mN/m for a 1:1 anionic surfactant in aqueous solution, electrolyte condition not stated, at 303.15 K. Compute the maximum surface excess concentration, Gamma_max, in mol/m^2.",
+    "given_data": {
+      "slope_mN_per_lnC": -4.0,
+      "temperature_K": 303.15
+    },
+    "gold_answer": "cannot compute -- Gamma_max requires the Gibbs prefactor n_factor (1 for nonionic or ionic-with-excess-electrolyte, 2 for a 1:1 ionic surfactant with no added salt), which depends on whether excess inert electrolyte is present; this is not stated, so n_factor cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "a 1:1 anionic surfactant in aqueous solution, electrolyte condition not stated"
+  },
+  {
+    "id": "B-041",
+    "category": "B",
+    "subcategory": "gibbs_surface_excess",
+    "tools_required": [
+      "gibbs_surface_excess"
+    ],
+    "difficulty": "hard",
+    "question_text": "Below the CMC, the slope of surface tension vs ln(concentration), d(gamma)/d(ln C), is -6.1 mN/m for an alkyl sulfate surfactant, electrolyte condition not stated, at 298.15 K. Compute the maximum surface excess concentration, Gamma_max, in mol/m^2.",
+    "given_data": {
+      "slope_mN_per_lnC": -6.1,
+      "temperature_K": 298.15
+    },
+    "gold_answer": "cannot compute -- Gamma_max requires the Gibbs prefactor n_factor (1 for nonionic or ionic-with-excess-electrolyte, 2 for a 1:1 ionic surfactant with no added salt), which depends on whether excess inert electrolyte is present; this is not stated, so n_factor cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "an alkyl sulfate surfactant, electrolyte condition not stated"
+  },
+  {
+    "id": "B-042",
+    "category": "B",
+    "subcategory": "gibbs_surface_excess",
+    "tools_required": [
+      "gibbs_surface_excess"
+    ],
+    "difficulty": "hard",
+    "question_text": "Below the CMC, the slope of surface tension vs ln(concentration), d(gamma)/d(ln C), is -8.0 mN/m for a quaternary ammonium surfactant, electrolyte condition not stated, at 298.15 K. Compute the maximum surface excess concentration, Gamma_max, in mol/m^2.",
+    "given_data": {
+      "slope_mN_per_lnC": -8.0,
+      "temperature_K": 298.15
+    },
+    "gold_answer": "cannot compute -- Gamma_max requires the Gibbs prefactor n_factor (1 for nonionic or ionic-with-excess-electrolyte, 2 for a 1:1 ionic surfactant with no added salt), which depends on whether excess inert electrolyte is present; this is not stated, so n_factor cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "a quaternary ammonium surfactant, electrolyte condition not stated"
+  },
+  {
     "id": "C-001",
     "category": "C",
     "subcategory": "hlb_from_mw",

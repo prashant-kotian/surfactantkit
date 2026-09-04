@@ -20,6 +20,24 @@ GIBBS_CASES = [
     (-9.1, 2.0, 298.15, "gemini cationic surfactant, strong adsorption"),
 ]
 
+# Deliberate trap: an ionic surfactant's pre-CMC slope given WITHOUT stating
+# whether excess inert electrolyte is present. gibbs_gamma_max's n_factor
+# (1 nonionic/excess-electrolyte, 2 for 1:1 ionic with no added salt) is a
+# required, undefaulted argument specifically because this choice is real,
+# surfactant/condition-specific literature knowledge, not something to
+# assume -- see the function's and MCP tool's own docstrings ("do not
+# guess", "state which applies, do not assume"). Correct behavior: refuse
+# to pick a value and flag the missing information, not silently default
+# to n=1 or n=2.
+NO_SOLUTION_GIBBS_CASES = [
+    (-5.5, 298.15, "an anionic surfactant (SDS-type), electrolyte condition not stated"),
+    (-7.2, 298.15, "a cationic surfactant (CTAB-type), electrolyte condition not stated"),
+    (-9.0, 298.15, "a gemini cationic surfactant, electrolyte condition not stated"),
+    (-4.0, 303.15, "a 1:1 anionic surfactant in aqueous solution, electrolyte condition not stated"),
+    (-6.1, 298.15, "an alkyl sulfate surfactant, electrolyte condition not stated"),
+    (-8.0, 298.15, "a quaternary ammonium surfactant, electrolyte condition not stated"),
+]
+
 SZYSZKOWSKI_CASES = [
     (5.0, 72.0, 3.0e-6, 50.0, 298.15, 1.0, "nonionic, moderate K"),
     (2.0, 72.0, 3.0e-6, 50.0, 298.15, 1.0, "nonionic, lower concentration"),
@@ -79,6 +97,27 @@ def gen() -> list[Question]:
             given_data={"concentration": C, "gamma0_mN_m": g0, "gamma_max_mol_per_m2": gmax,
                         "K": K, "temperature_K": T, "n_factor": n},
             gold_answer=round(gamma, 3), tolerance={"rel": 0.02}, source_note=label,
+        ))
+
+    for slope, T, label in NO_SOLUTION_GIBBS_CASES:
+        i += 1
+        qs.append(Question(
+            id=next_id("B", i), category="B", subcategory="gibbs_surface_excess",
+            tools_required=["gibbs_surface_excess"], difficulty="hard", trap_type="no_solution",
+            question_text=(
+                f"Below the CMC, the slope of surface tension vs ln(concentration), "
+                f"d(gamma)/d(ln C), is {slope} mN/m for {label}, at {T} K. "
+                f"Compute the maximum surface excess concentration, Gamma_max, in mol/m^2."
+            ),
+            given_data={"slope_mN_per_lnC": slope, "temperature_K": T},
+            gold_answer=(
+                "cannot compute -- Gamma_max requires the Gibbs prefactor n_factor "
+                "(1 for nonionic or ionic-with-excess-electrolyte, 2 for a 1:1 ionic "
+                "surfactant with no added salt), which depends on whether excess inert "
+                "electrolyte is present; this is not stated, so n_factor cannot be "
+                "determined without guessing"
+            ),
+            grading_method="category_match", source_note=label,
         ))
 
     return qs
