@@ -35,6 +35,38 @@ def test_hlb_griffin_rejects_bad_input():
         hlb_griffin(10.0, 0.0)
 
 
+def test_hlb_griffin_matches_real_ethoxylate_series_within_explained_tolerance():
+    """Real-value check, not just boundary conditions: closes the
+    long-open hlb_griffin gap (2026-09-04, Kosswig, Ullmann's Encyclopedia
+    of Industrial Chemistry Vol. 35, Table 13 -- see
+    literature_validation_notes.md for the full source and the honest
+    explanation of the small offset). Two chemically different hydrophobe
+    classes (aliphatic octadecanol, aromatic isononylphenol), 6 points
+    total: Mh = n_EO * 44.053 (real ethylene oxide addition-unit mass),
+    M = hydrophobe MW + Mh, both from real atomic weights. Formula gets
+    the right trend and order of magnitude with a small, consistent
+    ~5-7% low offset in the same direction every time (idealized single-
+    species stoichiometry vs. Table 13's real, polydisperse catalogue
+    values) -- a real, explained gap, not scattered error that would
+    indicate a formula bug."""
+    C, H, O = 12.011, 1.008, 15.999
+    mw_eo = 2 * C + 4 * H + O
+
+    mw_octadecanol = 18 * C + 38 * H + O
+    for n_eo, table_hlb in [(10, 13), (12, 14), (16, 15)]:
+        mh = n_eo * mw_eo
+        computed = hlb_griffin(mh, mw_octadecanol + mh)
+        assert computed == pytest.approx(table_hlb, abs=0.8)
+        assert computed < table_hlb  # the offset is consistently negative, not random
+
+    mw_isononylphenol = 15 * C + 24 * H + O
+    for n_eo, table_hlb in [(5, 10.7), (6, 11.5), (7, 12.3)]:
+        mh = n_eo * mw_eo
+        computed = hlb_griffin(mh, mw_isononylphenol + mh)
+        assert computed == pytest.approx(table_hlb, abs=0.8)
+        assert computed < table_hlb
+
+
 def test_hlb_davies_sds_worked_example():
     """SDS = CH3-(CH2)11-SO4Na: 1 CH3 + 11 CH2 + 1 SO4Na headgroup.
     HLB = 7 + 38.6 - 12*0.475 = 39.9, consistent with the commonly-cited
