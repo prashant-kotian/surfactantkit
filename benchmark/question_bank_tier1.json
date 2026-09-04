@@ -4010,6 +4010,86 @@
     "source_note": "long-chain ionic surfactant, moderate headgroup area"
   },
   {
+    "id": "D-036",
+    "category": "D",
+    "subcategory": "critical_packing_parameter",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter"
+    ],
+    "difficulty": "hard",
+    "question_text": "A surfactant is SDS (sodium dodecyl sulfate), with a saturated C12 alkyl tail. Using Tanford's formulas for tail volume and critical chain length, compute the critical packing parameter (CPP) and predict the aggregate morphology.",
+    "given_data": {
+      "n_carbons": 12,
+      "surfactant_name": "SDS (sodium dodecyl sulfate)"
+    },
+    "gold_answer": "cannot compute -- CPP requires an optimal headgroup area (head_area_A2), which is a real, surfactant- and condition-specific quantity (and, per real literature, one that different measurement methods disagree on even for a single well-known surfactant) that cannot be derived from chain length alone; this is not given, so head_area_A2 cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "SDS (sodium dodecyl sulfate)"
+  },
+  {
+    "id": "D-037",
+    "category": "D",
+    "subcategory": "critical_packing_parameter",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter"
+    ],
+    "difficulty": "hard",
+    "question_text": "A surfactant is CTAB (cetyltrimethylammonium bromide), with a saturated C16 alkyl tail. Using Tanford's formulas for tail volume and critical chain length, compute the critical packing parameter (CPP) and predict the aggregate morphology.",
+    "given_data": {
+      "n_carbons": 16,
+      "surfactant_name": "CTAB (cetyltrimethylammonium bromide)"
+    },
+    "gold_answer": "cannot compute -- CPP requires an optimal headgroup area (head_area_A2), which is a real, surfactant- and condition-specific quantity (and, per real literature, one that different measurement methods disagree on even for a single well-known surfactant) that cannot be derived from chain length alone; this is not given, so head_area_A2 cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "CTAB (cetyltrimethylammonium bromide)"
+  },
+  {
+    "id": "D-038",
+    "category": "D",
+    "subcategory": "critical_packing_parameter",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter"
+    ],
+    "difficulty": "hard",
+    "question_text": "A surfactant is DTAB (dodecyltrimethylammonium bromide), with a saturated C12 alkyl tail. Using Tanford's formulas for tail volume and critical chain length, compute the critical packing parameter (CPP) and predict the aggregate morphology.",
+    "given_data": {
+      "n_carbons": 12,
+      "surfactant_name": "DTAB (dodecyltrimethylammonium bromide)"
+    },
+    "gold_answer": "cannot compute -- CPP requires an optimal headgroup area (head_area_A2), which is a real, surfactant- and condition-specific quantity (and, per real literature, one that different measurement methods disagree on even for a single well-known surfactant) that cannot be derived from chain length alone; this is not given, so head_area_A2 cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "DTAB (dodecyltrimethylammonium bromide)"
+  },
+  {
+    "id": "D-039",
+    "category": "D",
+    "subcategory": "critical_packing_parameter",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter"
+    ],
+    "difficulty": "hard",
+    "question_text": "A surfactant is SDBS (sodium dodecylbenzenesulfonate), with a saturated C12 alkyl tail. Using Tanford's formulas for tail volume and critical chain length, compute the critical packing parameter (CPP) and predict the aggregate morphology.",
+    "given_data": {
+      "n_carbons": 12,
+      "surfactant_name": "SDBS (sodium dodecylbenzenesulfonate)"
+    },
+    "gold_answer": "cannot compute -- CPP requires an optimal headgroup area (head_area_A2), which is a real, surfactant- and condition-specific quantity (and, per real literature, one that different measurement methods disagree on even for a single well-known surfactant) that cannot be derived from chain length alone; this is not given, so head_area_A2 cannot be determined without guessing",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "no_solution",
+    "source_note": "SDBS (sodium dodecylbenzenesulfonate)"
+  },
+  {
     "id": "E-001",
     "category": "E",
     "subcategory": "debye_screening_length",
