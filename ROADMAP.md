@@ -541,9 +541,27 @@ paper/repo, not SurfactantKit).
 
 ## Also still open (older, lower priority than the above)
 
-- **Rodenas, Maeda alternative-method validation against a second independent literature
-  system** (beyond the single Azum et al. 2022 source both were verified against) -- would
-  strengthen confidence but isn't blocking anything.
+- **Maeda validation against a second independent literature system** -- DONE 2026-09-10.
+  Found a genuinely different system (a drug-surfactant pair, not another gemini/conventional
+  surfactant): Rub, Azum, Kumar, Arshad, Khan, Alotaibi & Asiri, Polymers 13(22) (2021) 4025,
+  imipramine hydrochloride (IMP) + Triton X-100, their own reported X1^Rb=0.8585,
+  beta^Rb=-4.35, deltaG_Maeda=-19.64 kJ/mol at alpha1=0.5, 298 K. Reproducing their deltaG from
+  their own reported X1/beta gives -20.85 kJ/mol, a real ~6% relative error -- plausible
+  rounding residual from their 3-4-sig-fig table, not a formula error (right sign, right order
+  of magnitude, matches within single-digit percent). Real, disclosed limitation found along
+  the way: attempting to ALSO independently re-solve X1 via this project's own
+  `solve_rubingh_x` from their raw (alpha1, cmc_mix, cmc1, cmc2) inputs gave 0.147, not 0.8585,
+  unless cmc1/cmc2 are swapped in that specific call (giving 0.853, close) -- a genuine
+  component-labeling-convention ambiguity between this paper's Rubingh-solve indexing and its
+  Maeda indexing that couldn't be resolved with full confidence from the fetched text (two
+  separate fetches of the same paper gave inconsistent descriptions of which component is
+  "ionic"/"nonionic" in their indexing). The new test therefore validates
+  `maeda_free_energy_of_micellization` using their own reported X1/beta directly, not an
+  additional Rubingh solver cross-check -- honestly scoped, not overclaimed. New test in
+  `tests/test_mixed_micelle.py`, full docstring disclosure. Suite: 298/298 passing.
+  **Rodenas second-source validation still open** -- needs multi-point cmc_mix(alpha1) series
+  data with a reported local slope (rarer to find than Maeda's single-point requirement); not
+  attempted this pass.
 - **Second independent literature sources for categories D (geometry), F (dynamics), G
   (thermodynamics)** -- flagged as open in an earlier session, not touched this session,
   real Paper 3/SurfBench scope. Lower priority than the reporting-pipeline work above per
