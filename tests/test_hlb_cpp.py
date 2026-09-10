@@ -151,6 +151,32 @@ def test_tanford_critical_length_c12():
     assert tanford_critical_length(12) == pytest.approx(16.68, abs=0.01)
 
 
+def test_tanford_formulas_match_independent_secondary_source():
+    """Real second-independent-source check for Category D, 2026-09-10
+    (after 7 other search/fetch attempts found no clean worked numeric
+    example from a real surfactant paper to check against -- see
+    SurfactantKit/ROADMAP.md for the full disclosure of what was tried
+    and did not pan out). A physical-chemistry course problem
+    (independently phrased and unit-converted, not sourced from this
+    project's own existing citations) states the identical formula as
+    v(n) = (27.4+26.9n)*1e-3 nm^3 and lc(n) = (0.154+0.1265n) nm.
+    Converting units: (27.4+26.9n)*1e-3 nm^3 = (27.4+26.9n) A^3 (since
+    1 nm^3 = 1000 A^3) -- EXACT match to this project's tanford_tail_volume.
+    (0.154+0.1265n) nm = (1.54+1.265n) A -- matches this project's
+    tanford_critical_length's 1.5+1.265n to within 0.04 A (a real, small,
+    explainable rounding difference in the constant term, 1.5 vs 1.54;
+    the chain-length-dependent coefficient, 1.265, matches EXACTLY).
+    Not a worked example from a real surfactant system (the harder,
+    still-unmet bar), but a genuine independent confirmation that these
+    specific coefficients are correctly transcribed, from a source
+    outside this project's own citation chain."""
+    for n in (8, 12, 16):
+        v_secondary_A3 = (27.4 + 26.9 * n) * 1e-3 * 1000.0  # nm^3 -> A^3
+        lc_secondary_A = (0.154 + 0.1265 * n) * 10.0  # nm -> A
+        assert tanford_tail_volume(n) == pytest.approx(v_secondary_A3, abs=1e-9)
+        assert tanford_critical_length(n) == pytest.approx(lc_secondary_A, abs=0.05)
+
+
 def test_aggregation_number_spherical_c12_lands_in_literature_range():
     """C12 chain (SDS/DTAB scale) geometric aggregation number should
     land near the commonly-reported literature range (~55-70) for these

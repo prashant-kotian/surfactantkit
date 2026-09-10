@@ -576,15 +576,22 @@ paper/repo, not SurfactantKit).
     temperatures) could NOT be cross-checked -- their conductivity table only gives DDGC's
     CMC at the single temperature 298 K; a second CMC-vs-T pair for the same surfactant would
     be needed and wasn't found in this pass.
-  - **Category D (CPP/Tanford geometry): still open, real attempts made.** 7 search/fetch
+  - **Category D (CPP/Tanford geometry): partial win after 8 attempts.** 7 search/fetch
     attempts (ResearchGate 403s, an SSL failure on norgwyn.com, several papers citing Tanford
     only qualitatively without reproducing his coefficients or a worked example) found no
-    clean external numeric example to check `tanford_tail_volume`/`tanford_critical_length`
-    against. One real, disclosable finding: secondary sources round the critical-length
-    coefficient slightly differently across the literature (1.265 vs 1.26 vs 1.256) --
-    consistent with the same underlying Tanford reference, not evidence of an error, but
-    confirms this specific coefficient isn't uniformly re-stated to 3 decimal places
-    everywhere it's cited. Not attempted further this pass.
+    clean external numeric example from a real SURFACTANT PAPER to check
+    `tanford_tail_volume`/`tanford_critical_length` against -- that harder bar remains unmet.
+    Along the way found that secondary sources round the critical-length coefficient slightly
+    differently across the literature (1.265 vs 1.26 vs 1.256), consistent with the same
+    underlying Tanford reference, not an error. An 8th attempt found a genuine independent
+    confirmation instead: a physical-chemistry course problem (unrelated to this project's
+    own citations) states v(n)=(27.4+26.9n)e-3 nm^3 and lc(n)=(0.154+0.1265n) nm -- converting
+    units, this is an EXACT match to `tanford_tail_volume` and matches
+    `tanford_critical_length` to within 0.04 Angstrom (a small, explainable rounding
+    difference in the constant term only; the chain-length coefficient, 1.265, matches
+    exactly). New test in `tests/test_hlb_cpp.py`, explicitly disclosed as confirming the
+    FORMULA's correct transcription from an independent source, not a real-surfactant worked
+    example -- a real but narrower win than Category G's.
   - **Category F (dynamics/Stokes-Einstein): still open, real attempt made and a real near-
     miss disclosed rather than accepted.** Found a search-snippet-reported (D, R_h) pair for
     SDS micelles in D2O (D=0.1213e-9 m^2/s, R_h=18.3 Angstrom) -- but independently computing
