@@ -53,6 +53,35 @@ def test_gibbs_free_energy_is_negative_for_spontaneous_micellization():
     assert -60.0 < dg < -10.0
 
 
+def test_gibbs_free_energy_matches_second_independent_literature_system():
+    """Real SECOND independent literature validation for
+    gibbs_free_energy_micellization (2026-09-10), beyond the single Fu
+    et al. 2019 source referenced elsewhere in this project's literature
+    validation notes: a different paper, different chemistry entirely
+    (an alkylguanidinium cationic surfactant, not a conventional
+    ammonium/sulfate headgroup) -- Bouchal, Hamel, Hesemann, In, Prelot
+    & Zajac, Int. J. Mol. Sci. 17(2) (2016) 223, doi:10.3390/ijms17020223,
+    dodecylguanidinium chloride (DDGC) in pure water, their own Table 2
+    (conductivity): CMC = 6.2 mmol/kg, counterion binding degree beta =
+    0.74, at 298 K, with their own reported deltaG_mic = -28.3 +/- 0.9
+    kJ/mol.
+
+    Computing deltaG via this project's counterion_factor = (2-beta)
+    convention (mmol/kg treated as ~mM, dilute-solution approximation,
+    same as elsewhere in this project) reproduces -28.4 kJ/mol -- a
+    ~0.4% relative error, well within the paper's own stated
+    uncertainty (+/-0.9 kJ/mol, ~3.2%). A clean, strong match, not just
+    right sign/order of magnitude -- confirms both the deltaG formula
+    itself and the (2-beta) counterion_factor convention against a
+    second, chemically unrelated real system."""
+    cmc_M = 6.2e-3  # mmol/kg ~= mM, dilute approximation
+    beta = 0.74
+    counterion_factor = 2.0 - beta
+    x_cmc = cmc_to_mole_fraction(cmc_M)
+    dg = gibbs_free_energy_micellization(x_cmc, 298.0, counterion_factor)
+    assert dg == pytest.approx(-28.3, rel=0.01)
+
+
 def test_gibbs_free_energy_nonionic_vs_ionic_factor():
     # same CMC, but the ionic (counterion_factor > 1) case should be
     # more negative than the nonionic (factor=1) case, since 2-beta > 1

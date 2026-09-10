@@ -563,9 +563,37 @@ paper/repo, not SurfactantKit).
   data with a reported local slope (rarer to find than Maeda's single-point requirement); not
   attempted this pass.
 - **Second independent literature sources for categories D (geometry), F (dynamics), G
-  (thermodynamics)** -- flagged as open in an earlier session, not touched this session,
-  real Paper 3/SurfBench scope. Lower priority than the reporting-pipeline work above per
-  the user's own explicit redirect this session, but not abandoned.
+  (thermodynamics)** -- attempted 2026-09-10, mixed real results, all honestly disclosed:
+  - **Category G (thermodynamics): DONE.** Found a genuinely different system (an
+    alkylguanidinium cationic surfactant, not a conventional headgroup) -- Bouchal, Hamel,
+    Hesemann, In, Prelot & Zajac, Int. J. Mol. Sci. 17(2) (2016) 223, dodecylguanidinium
+    chloride, their own reported CMC=6.2 mmol/kg, beta=0.74, deltaG_mic=-28.3 kJ/mol at 298 K.
+    `gibbs_free_energy_micellization` with this project's (2-beta) counterion_factor
+    convention reproduces -28.4 kJ/mol -- ~0.4% relative error, well inside the paper's own
+    +/-0.9 kJ/mol uncertainty. A clean, strong match, confirming both the formula and the
+    counterion_factor convention against a second, chemically unrelated real system. New test
+    in `tests/test_thermodynamics.py`. The same paper's van't Hoff enthalpy (needs CMC at 2+
+    temperatures) could NOT be cross-checked -- their conductivity table only gives DDGC's
+    CMC at the single temperature 298 K; a second CMC-vs-T pair for the same surfactant would
+    be needed and wasn't found in this pass.
+  - **Category D (CPP/Tanford geometry): still open, real attempts made.** 7 search/fetch
+    attempts (ResearchGate 403s, an SSL failure on norgwyn.com, several papers citing Tanford
+    only qualitatively without reproducing his coefficients or a worked example) found no
+    clean external numeric example to check `tanford_tail_volume`/`tanford_critical_length`
+    against. One real, disclosable finding: secondary sources round the critical-length
+    coefficient slightly differently across the literature (1.265 vs 1.26 vs 1.256) --
+    consistent with the same underlying Tanford reference, not evidence of an error, but
+    confirms this specific coefficient isn't uniformly re-stated to 3 decimal places
+    everywhere it's cited. Not attempted further this pass.
+  - **Category F (dynamics/Stokes-Einstein): still open, real attempt made and a real near-
+    miss disclosed rather than accepted.** Found a search-snippet-reported (D, R_h) pair for
+    SDS micelles in D2O (D=0.1213e-9 m^2/s, R_h=18.3 Angstrom) -- but independently computing
+    Stokes-Einstein from that D using D2O's known viscosity gave 16.4 Angstrom, an 11%
+    mismatch, and the primary source (a ResearchGate figure/table) could not be reached
+    directly to confirm whether their reported R_h came from a plain Stokes-Einstein
+    calculation or a more elaborate fit. Deliberately NOT counted as a validated second
+    source given that unresolved discrepancy -- reported as a real near-miss, not silently
+    accepted or silently dropped.
 - **EOMMM's actual multi-point global-fit solver** -- DONE 2026-09-10, with an important
   disclosed caveat. Built `eommm_global_fit()` in `mixed_micelle.py`: fits W12, W21, and every
   point's x1 simultaneously via a genuine (n+2)-parameter nonlinear least-squares, using the
