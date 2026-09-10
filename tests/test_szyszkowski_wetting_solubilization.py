@@ -5,8 +5,14 @@ import math
 import pytest
 
 from surfactantkit.adsorption import szyszkowski_surface_tension, gibbs_gamma_max
-from surfactantkit.wetting import work_of_adhesion, spreading_coefficient, capillary_number
-from surfactantkit.solubilization import molar_solubilization_ratio
+from surfactantkit.wetting import (
+    work_of_adhesion,
+    spreading_coefficient,
+    capillary_number,
+    owens_wendt_solid_surface_energy,
+    van_oss_chaudhury_good_solid_surface_energy,
+)
+from surfactantkit.solubilization import molar_solubilization_ratio, micelle_water_partition_coefficient
 
 
 def test_szyszkowski_returns_gamma0_at_zero_concentration():
@@ -106,6 +112,97 @@ def test_capillary_number_rejects_nonpositive():
         capillary_number(0.0, 1e-5, 20.0)
 
 
+# --- OWRK and van Oss-Chaudhury-Good surface energy decomposition
+# (alternative-methods sweep, 2026-09-10). Sources verified via WebSearch
+# before implementing: OWRK (Owens & Wendt 1969; Rabel 1971; Kaelble 1970),
+# vOCG (van Oss, Chaudhury & Good, Chem. Rev. 88 (1988) 927-941). No
+# external worked numeric table was sourced this pass (same disclosed
+# pattern as other tools this session); validated via mathematically-
+# guaranteed round trips (construct contact angles from chosen true solid
+# surface-energy components via the forward mixing rule, recover them back).
+
+
+def test_owens_wendt_recovers_true_components_round_trip():
+    true_gamma_s_d, true_gamma_s_p = 30.0, 10.0
+    # Real, commonly-tabulated test-liquid dispersive/polar splits (water, diiodomethane, glycerol)
+    liquids_d = [21.8, 50.8, 37.0]
+    liquids_p = [51.0, 0.0, 26.4]
+    liquids_total = [d + p for d, p in zip(liquids_d, liquids_p)]
+
+    contact_angles = []
+    for gt, gd, gp in zip(liquids_total, liquids_d, liquids_p):
+        w = 2.0 * (math.sqrt(true_gamma_s_d * gd) + math.sqrt(true_gamma_s_p * gp))
+        cos_theta = w / gt - 1.0
+        contact_angles.append(math.degrees(math.acos(cos_theta)))
+
+    result = owens_wendt_solid_surface_energy(contact_angles, liquids_d, liquids_p)
+    assert result.gamma_s_dispersive_mN_m == pytest.approx(true_gamma_s_d, abs=1e-3)
+    assert result.gamma_s_polar_mN_m == pytest.approx(true_gamma_s_p, abs=1e-3)
+    assert result.gamma_s_total_mN_m == pytest.approx(true_gamma_s_d + true_gamma_s_p, abs=1e-3)
+    assert result.r_squared == pytest.approx(1.0, abs=1e-6)
+    assert result.n_liquids == 3
+
+
+def test_owens_wendt_purely_dispersive_solid_has_zero_polar_component():
+    """A solid with zero polar character (e.g. PTFE-like) tested against
+    a purely dispersive liquid alone should recover gamma_s_p == 0 when
+    combined with any second liquid -- a real physical sanity check."""
+    true_gamma_s_d = 20.0
+    liquids_d = [21.8, 50.8]
+    liquids_p = [51.0, 0.0]
+    liquids_total = [d + p for d, p in zip(liquids_d, liquids_p)]
+    contact_angles = []
+    for gt, gd, gp in zip(liquids_total, liquids_d, liquids_p):
+        w = 2.0 * math.sqrt(true_gamma_s_d * gd)  # gamma_s_p = 0
+        cos_theta = w / gt - 1.0
+        contact_angles.append(math.degrees(math.acos(cos_theta)))
+
+    result = owens_wendt_solid_surface_energy(contact_angles, liquids_d, liquids_p)
+    assert result.gamma_s_dispersive_mN_m == pytest.approx(true_gamma_s_d, abs=1e-3)
+    assert result.gamma_s_polar_mN_m == pytest.approx(0.0, abs=1e-3)
+
+
+def test_owens_wendt_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        owens_wendt_solid_surface_energy([50.0], [21.8], [51.0])  # too few liquids
+    with pytest.raises(ValueError):
+        owens_wendt_solid_surface_energy([50.0, 60.0], [21.8], [51.0, 0.0])  # mismatched lengths
+    with pytest.raises(ValueError):
+        owens_wendt_solid_surface_energy([50.0, 60.0], [0.0, 50.8], [51.0, 0.0])  # bad dispersive
+
+
+def test_van_oss_chaudhury_good_recovers_true_components_round_trip():
+    true_lw, true_acid, true_base = 25.0, 2.0, 15.0
+    # Real, commonly-tabulated LW/acid/base splits (water, glycerol, diiodomethane)
+    liquids_lw = [21.8, 34.0, 50.8]
+    liquids_acid = [25.5, 3.92, 0.0]
+    liquids_base = [25.5, 57.4, 0.0]
+
+    contact_angles = []
+    for lw, a, b in zip(liquids_lw, liquids_acid, liquids_base):
+        gt = lw + 2.0 * math.sqrt(a * b)
+        w = 2.0 * (math.sqrt(true_lw * lw) + math.sqrt(true_acid * b) + math.sqrt(true_base * a))
+        cos_theta = w / gt - 1.0
+        contact_angles.append(math.degrees(math.acos(cos_theta)))
+
+    result = van_oss_chaudhury_good_solid_surface_energy(contact_angles, liquids_lw, liquids_acid, liquids_base)
+    assert result.gamma_s_lw_mN_m == pytest.approx(true_lw, abs=1e-3)
+    assert result.gamma_s_acid_mN_m == pytest.approx(true_acid, abs=1e-3)
+    assert result.gamma_s_base_mN_m == pytest.approx(true_base, abs=1e-3)
+    expected_total = true_lw + 2.0 * math.sqrt(true_acid * true_base)
+    assert result.gamma_s_total_mN_m == pytest.approx(expected_total, abs=1e-3)
+    assert result.n_liquids == 3
+
+
+def test_van_oss_chaudhury_good_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        van_oss_chaudhury_good_solid_surface_energy([50.0, 60.0], [21.8, 34.0], [25.5, 3.92], [25.5, 57.4])  # only 2 liquids
+    with pytest.raises(ValueError):
+        van_oss_chaudhury_good_solid_surface_energy(
+            [50.0, 60.0, 70.0], [0.0, 34.0, 50.8], [25.5, 3.92, 0.0], [25.5, 57.4, 0.0]
+        )  # bad LW value
+
+
 def test_molar_solubilization_ratio_basic():
     # 0.5 mM extra solubilized (beyond intrinsic 0.01 mM) per (10-2) mM micellized surfactant
     msr = molar_solubilization_ratio(
@@ -123,3 +220,55 @@ def test_molar_solubilization_ratio_rejects_below_cmc():
 def test_molar_solubilization_ratio_rejects_inconsistent_solubility():
     with pytest.raises(ValueError):
         molar_solubilization_ratio(0.005e-3, 0.01e-3, 10e-3, 2e-3)
+
+
+# --- micelle_water_partition_coefficient (alternative-methods sweep,
+# 2026-09-10) -- mole-fraction-basis convention, one of (at least) two
+# real conventions found in the literature (disclosed in the function's
+# own docstring; the other, molar-concentration-ratio basis, is NOT
+# implemented here, same "do not guess a single convention" discipline
+# already used for the Davies HLB gaps elsewhere in this project).
+
+
+def test_micelle_water_partition_coefficient_matches_manual_formula():
+    """Independent recomputation in the test itself, not copy-pasted
+    from the implementation."""
+    total, intrinsic, surf, cmc = 0.51e-3, 0.01e-3, 10e-3, 2e-3
+    x_micelle = (total - intrinsic) / ((total - intrinsic) + (surf - cmc))
+    x_water = intrinsic / 55.5
+    expected = x_micelle / x_water
+    assert micelle_water_partition_coefficient(total, intrinsic, surf, cmc) == pytest.approx(expected)
+
+
+def test_micelle_water_partition_coefficient_large_for_strongly_solubilized_species():
+    """Real physical sanity check: a solute with very low intrinsic
+    water solubility but substantial total solubilized amount (i.e. it
+    strongly favors the micelle) should give Km >> 1."""
+    km = micelle_water_partition_coefficient(
+        total_solubilized_M=1.0e-3, intrinsic_water_solubility_M=1.0e-7,
+        surfactant_concentration_M=10e-3, cmc_M=2e-3,
+    )
+    assert km > 1000.0
+
+
+def test_micelle_water_partition_coefficient_zero_when_nothing_solubilized_in_micelle():
+    km = micelle_water_partition_coefficient(
+        total_solubilized_M=0.01e-3, intrinsic_water_solubility_M=0.01e-3,
+        surfactant_concentration_M=10e-3, cmc_M=2e-3,
+    )
+    assert km == pytest.approx(0.0)
+
+
+def test_micelle_water_partition_coefficient_rejects_below_cmc():
+    with pytest.raises(ValueError):
+        micelle_water_partition_coefficient(0.1e-3, 0.01e-3, 1e-3, 2e-3)
+
+
+def test_micelle_water_partition_coefficient_rejects_zero_intrinsic_solubility():
+    with pytest.raises(ValueError):
+        micelle_water_partition_coefficient(0.1e-3, 0.0, 10e-3, 2e-3)
+
+
+def test_micelle_water_partition_coefficient_rejects_inconsistent_solubility():
+    with pytest.raises(ValueError):
+        micelle_water_partition_coefficient(0.005e-3, 0.01e-3, 10e-3, 2e-3)

@@ -46,10 +46,19 @@ import math
 import pytest
 
 from surfactantkit.mixed_micelle import (
+    R_GAS,
     activity_coefficients,
+    asymmetric_margules_activity_coefficients,
     clint_ideal_cmc,
+    eommm_global_fit,
     excess_free_energy,
+    maeda_free_energy_of_micellization,
+    motomura_ideal_composition,
+    rodenas_activity_coefficients,
+    rodenas_x1,
+    rodenas_x1_series,
     rubingh_beta,
+    rubingh_beta_regression,
     solve_rubingh_x,
 )
 from surfactantkit.adsorption import gibbs_a_min, gibbs_gamma_max
@@ -298,6 +307,93 @@ def test_rubingh_sign_matches_literature_synergy_direction():
     assert beta > 0, "DTAB-rich composition should be antagonistic (positive beta)"
 
 
+# --- rubingh_beta_regression -------------------------------------------
+# Real standard practice (verified via WebSearch before implementing, not
+# guessed): report a single representative beta as the arithmetic mean of
+# the pointwise betas computed at each (alpha1, cmc_mix) composition in a
+# series -- see the function's own docstring. Validated here via a
+# mathematically-guaranteed round trip: for a chosen true beta and a set
+# of x1 values, the closed-form RST mass-balance equations
+# (cmc_mix = x1*f1*cmc1 + (1-x1)*f2*cmc2, alpha1 = x1*f1*cmc1/cmc_mix)
+# construct a self-consistent (alpha1, cmc_mix) series that ALL share
+# that same true beta by construction -- no external literature source
+# needed, same pattern as test_rubingh_round_trip_case_a/b above.
+
+
+def _series_for_true_beta(x1_values, beta_true, cmc1, cmc2):
+    alpha1_series, cmc_mix_series = [], []
+    for x1 in x1_values:
+        f1 = math.exp(beta_true * (1.0 - x1) ** 2)
+        f2 = math.exp(beta_true * x1 ** 2)
+        cmc_mix = x1 * f1 * cmc1 + (1.0 - x1) * f2 * cmc2
+        alpha1 = x1 * f1 * cmc1 / cmc_mix
+        alpha1_series.append(alpha1)
+        cmc_mix_series.append(cmc_mix)
+    return alpha1_series, cmc_mix_series
+
+
+def test_rubingh_beta_regression_recovers_true_beta_round_trip():
+    beta_true = -1.8
+    x1_values = [0.3, 0.4, 0.5, 0.6, 0.7]
+    alpha1_series, cmc_mix_series = _series_for_true_beta(x1_values, beta_true, DTAB_PURE_CMC, SDS_PURE_CMC)
+
+    result = rubingh_beta_regression(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC)
+    assert result.n_points_used == 5
+    assert result.n_points_skipped == 0
+    assert result.beta_mean == pytest.approx(beta_true, abs=1e-3)
+    assert result.beta_std == pytest.approx(0.0, abs=1e-2)
+    for beta in result.betas:
+        assert beta == pytest.approx(beta_true, abs=1e-2)
+
+
+def test_rubingh_beta_regression_antagonistic_case():
+    beta_true = 1.8
+    x1_values = [0.25, 0.4, 0.55, 0.7]
+    alpha1_series, cmc_mix_series = _series_for_true_beta(x1_values, beta_true, DTAB_PURE_CMC, SDS_PURE_CMC)
+
+    result = rubingh_beta_regression(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC)
+    assert result.beta_mean == pytest.approx(beta_true, abs=1e-3)
+    assert result.n_points_used == 4
+
+
+def test_rubingh_beta_regression_skips_unsolvable_points_not_errors(monkeypatch):
+    """solve_rubingh_x's own documented contract is to return None when no
+    root is found (near-ideal or self-inconsistent data). Rather than
+    fight root-finder numerics to contrive a genuinely rootless input
+    (every cmc_mix value tried empirically still admitted some root),
+    this isolates rubingh_beta_regression's own skip-and-continue logic
+    directly by forcing one specific point's solve to report no root."""
+    import surfactantkit.mixed_micelle as mm
+
+    beta_true = -1.5
+    x1_values = [0.3, 0.5, 0.7]
+    alpha1_series, cmc_mix_series = _series_for_true_beta(x1_values, beta_true, DTAB_PURE_CMC, SDS_PURE_CMC)
+    unsolvable_alpha1 = 0.9999
+    alpha1_series.append(unsolvable_alpha1)
+    cmc_mix_series.append(1.0)
+
+    real_solve = mm.solve_rubingh_x
+
+    def fake_solve(alpha1, cmc_mix, cmc1, cmc2, *args, **kwargs):
+        if alpha1 == unsolvable_alpha1:
+            return None
+        return real_solve(alpha1, cmc_mix, cmc1, cmc2, *args, **kwargs)
+
+    monkeypatch.setattr(mm, "solve_rubingh_x", fake_solve)
+
+    result = mm.rubingh_beta_regression(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC)
+    assert result.n_points_used == 3
+    assert result.n_points_skipped == 1
+    assert result.beta_mean == pytest.approx(beta_true, abs=1e-3)
+
+
+def test_rubingh_beta_regression_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        rubingh_beta_regression([0.3], [10.0], DTAB_PURE_CMC, SDS_PURE_CMC)  # too few points
+    with pytest.raises(ValueError):
+        rubingh_beta_regression([0.3, 0.5], [10.0], DTAB_PURE_CMC, SDS_PURE_CMC)  # mismatched lengths
+
+
 def test_activity_coefficients_ideal_limit():
     """At beta = 0 (ideal mixing), both activity coefficients must be 1."""
     f1, f2 = activity_coefficients(x1=0.4, beta=0.0)
@@ -334,3 +430,365 @@ def test_gibbs_a_min_rejects_nonpositive_gamma_max():
         gibbs_a_min(0.0)
     with pytest.raises(ValueError):
         gibbs_a_min(-1.0)
+
+
+# --- Motomura ideal composition (alternative-methods review, 2026-09-07/08) --
+# Source: equation (8), Serafini et al., Colloids Surf. A 562 (2019) 170-181
+# (arXiv:1806.09721), read directly (real fetched PDF, not a search summary).
+
+
+def test_motomura_ideal_composition_equals_alpha_when_cmcs_are_equal():
+    """When both pure CMCs are identical, the ideal composition must
+    trivially equal the bulk composition -- no reason for micellar and
+    bulk mole fractions to differ if the two surfactants are identical
+    in CMC."""
+    x1_id = motomura_ideal_composition(0.37, cmc1=5.0, cmc2=5.0)
+    assert x1_id == pytest.approx(0.37)
+
+
+def test_motomura_ideal_composition_matches_clint_algebraic_identity():
+    """X1_id = alpha1 * CMC_mix_ideal / cmc1 -- an exact algebraic
+    identity between Motomura's and Clint's ideal-mixing formulas
+    (derived from their shared zero-interaction assumption), checked
+    here independent of any external literature value across several
+    of this file's own literature systems."""
+    systems = [
+        (0.75, DTAB_PURE_CMC, SDS_PURE_CMC),
+        (MUHEREI_ALPHA1, MUHEREI_TX100_CMC, MUHEREI_SDS_CMC),
+        (AZUM_ALPHA1, AZUM_G6_CMC, AZUM_TX114_CMC),
+        (LEE_ALPHA1, LEE_TTAB_CMC, LEE_TWEEN20_CMC),
+    ]
+    for alpha1, cmc1, cmc2 in systems:
+        x1_id = motomura_ideal_composition(alpha1, cmc1, cmc2)
+        cmc_mix_id = clint_ideal_cmc(alpha1, cmc1, cmc2)
+        assert x1_id == pytest.approx(alpha1 * cmc_mix_id / cmc1, rel=1e-9)
+
+
+# --- EOMMM asymmetric Margules activity coefficients ------------------------
+# Source: equations (9)-(13), Schulz & Durand, Comput. Chem. Eng. 87 (2016)
+# 145-153 (doi:10.1016/j.compchemeng.2015.12.026), read directly (real fetched
+# PDF, provided by the user after WebFetch attempts on this exact paper
+# failed -- see METHOD_ALTERNATIVES_LITERATURE_REVIEW.md).
+
+
+def test_asymmetric_margules_reduces_to_rst_when_symmetric():
+    """W12 == W21 must reduce EXACTLY to activity_coefficients (RST) --
+    the paper's own stated result (symmetric formulations are the
+    special case of the asymmetric ones), and the real regression guard
+    for this function since no single-point literature case exists to
+    match digit-for-digit (EOMMM's real fit is a multi-point global
+    optimization, not reproduced here -- see the function's docstring)."""
+    for x1, beta in [(0.3, -2.17), (0.5, 1.0), (0.75, -0.78), (0.1, 3.5)]:
+        f1_asym, f2_asym = asymmetric_margules_activity_coefficients(x1, beta, beta)
+        f1_rst, f2_rst = activity_coefficients(x1, beta)
+        assert f1_asym == pytest.approx(f1_rst, rel=1e-9)
+        assert f2_asym == pytest.approx(f2_rst, rel=1e-9)
+
+
+def test_asymmetric_margules_matches_paper_own_binary_symmetric_equations():
+    """Direct check against the paper's own explicitly-stated binary
+    symmetric-case equations (14)-(16): Gexc = x1*x2*beta,
+    ln(f1) = beta*x2^2, ln(f2) = beta*x1^2."""
+    x1, beta = 0.4, -1.5
+    x2 = 1.0 - x1
+    f1, f2 = asymmetric_margules_activity_coefficients(x1, beta, beta)
+    assert math.log(f1) == pytest.approx(beta * x2 ** 2, abs=1e-9)
+    assert math.log(f2) == pytest.approx(beta * x1 ** 2, abs=1e-9)
+
+
+def test_asymmetric_margules_infinite_dilution_limits():
+    """Mathematically guaranteed property of the formula itself,
+    independent of any external source: as x1 -> 0, ln(f1) -> w12
+    (component 1 infinitely dilute in pure component 2); as x1 -> 1,
+    ln(f2) -> w21."""
+    w12, w21 = 2.3, -4.1
+    f1_near0, _ = asymmetric_margules_activity_coefficients(1e-8, w12, w21)
+    _, f2_near1 = asymmetric_margules_activity_coefficients(1.0 - 1e-8, w12, w21)
+    assert math.log(f1_near0) == pytest.approx(w12, abs=1e-5)
+    assert math.log(f2_near1) == pytest.approx(w21, abs=1e-5)
+
+
+def test_asymmetric_margules_hyamine_dtab_literature_case():
+    """Real numeric case from the paper's own Case study 1 (Hyamine(1)-
+    DTAB(2), Section 4.1): W12 = -8836.50 J/mol, W21 = -2204.19 J/mol at
+    298.15 K, with x1(Hy) = 1 - x_DTAB = 1 - 0.192 = 0.808 (their Table
+    1, asymmetric column, alpha_DTAB = 0.25). No exact digit-level
+    literature value for ln(f1)/ln(f2) is given (only a graph, Fig. 1),
+    so this asserts sign/order-of-magnitude consistency with that
+    figure's own stated axis range (-4.00 to 0.50) -- same "sign and
+    order of magnitude only" discipline already used elsewhere in this
+    file for cases without an exact literature match."""
+    temperature_k = 298.15
+    w12 = -8836.50 / (R_GAS * temperature_k)
+    w21 = -2204.19 / (R_GAS * temperature_k)
+    x1_hy = 1.0 - 0.192
+    f1, f2 = asymmetric_margules_activity_coefficients(x1_hy, w12, w21)
+    assert -4.0 <= math.log(f1) <= 0.5
+    assert -4.0 <= math.log(f2) <= 0.5
+
+
+# --- eommm_global_fit (multi-point EOMMM global fit) ------------------------
+# First-principles construction (2026-09-10) -- NOT a verified transcription
+# of Schulz & Durand 2016's exact global-fit procedure (their Eq. 3.2 /
+# S.I. Point 2.3), which was unavailable (primary source paywalled on
+# ScienceDirect; a related open-access companion paper, Serafini et al.,
+# arXiv:1806.09721, defers the exact procedure to its own SI, not included
+# in the fetched copy). See eommm_global_fit's own docstring for the full
+# disclosure and the real multi-root/multi-start numerical findings made
+# while validating this. No external published raw numeric table was
+# available, so validation here is via mathematically-guaranteed round
+# trips only (the closed-form construction below satisfies BOTH mass-
+# balance equations EXACTLY for any chosen W12/W21/x1, not just RST's
+# symmetric case -- verified algebraically in eommm_global_fit's docstring).
+# These tests are slow (a handful of seconds each -- genuine (n+2)-parameter
+# nonlinear optimization, multi-start, no numpy) by the nature of the
+# problem, kept deliberately small (n=3) to bound runtime.
+
+
+def _eommm_series_for_true_params(x1_values, w12_true, w21_true, cmc1, cmc2):
+    alpha1_series, cmc_mix_series = [], []
+    for x1 in x1_values:
+        f1, f2 = asymmetric_margules_activity_coefficients(x1, w12_true, w21_true)
+        d = x1 * f1 * cmc1 + (1.0 - x1) * f2 * cmc2
+        alpha1 = x1 * f1 * cmc1 / d
+        alpha1_series.append(alpha1)
+        cmc_mix_series.append(d)
+    return alpha1_series, cmc_mix_series
+
+
+def test_eommm_global_fit_recovers_true_parameters_round_trip():
+    true_w12, true_w21 = 2.0, -3.0
+    x1_true_values = [0.25, 0.5, 0.75]
+    alpha1_series, cmc_mix_series = _eommm_series_for_true_params(
+        x1_true_values, true_w12, true_w21, DTAB_PURE_CMC, SDS_PURE_CMC
+    )
+
+    result = eommm_global_fit(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC)
+    assert result.W12 == pytest.approx(true_w12, abs=1e-2)
+    assert result.W21 == pytest.approx(true_w21, abs=1e-2)
+    assert result.r_squared == pytest.approx(1.0, abs=1e-4)
+    assert result.n_points == 3
+    for fitted, true_x1 in zip(result.x1_values, x1_true_values):
+        assert fitted == pytest.approx(true_x1, abs=1e-2)
+
+
+def test_eommm_global_fit_reduces_to_rubingh_beta_when_symmetric():
+    """At W12=W21 (the symmetric limit), the fit should recover
+    approximately the same beta that solve_rubingh_x/rubingh_beta find
+    on the identical data -- ties the new global fit back to the
+    already-literature-validated Rubingh machinery, independent of
+    trusting eommm_global_fit's own round-trip alone."""
+    true_beta = -1.8
+    x1_true_values = [0.3, 0.5, 0.7]
+    alpha1_series, cmc_mix_series = _eommm_series_for_true_params(
+        x1_true_values, true_beta, true_beta, DTAB_PURE_CMC, SDS_PURE_CMC
+    )
+
+    result = eommm_global_fit(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC)
+    assert result.W12 == pytest.approx(true_beta, abs=1e-2)
+    assert result.W21 == pytest.approx(true_beta, abs=1e-2)
+
+    for a1, cm in zip(alpha1_series, cmc_mix_series):
+        x1_rub = solve_rubingh_x(a1, cm, DTAB_PURE_CMC, SDS_PURE_CMC)
+        assert x1_rub is not None
+        beta_rub = rubingh_beta(x1_rub, a1, cm, DTAB_PURE_CMC)
+        assert beta_rub == pytest.approx(true_beta, abs=1e-2)
+
+
+def test_eommm_global_fit_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        eommm_global_fit([0.3, 0.5], [10.0, 8.0], DTAB_PURE_CMC, SDS_PURE_CMC)  # too few points
+    with pytest.raises(ValueError):
+        eommm_global_fit([0.3, 0.5, 0.7], [10.0, 8.0], DTAB_PURE_CMC, SDS_PURE_CMC)  # mismatched lengths
+    with pytest.raises(ValueError):
+        eommm_global_fit([0.0, 0.5, 0.7], [10.0, 8.0, 6.0], DTAB_PURE_CMC, SDS_PURE_CMC)  # bad alpha1
+    with pytest.raises(ValueError):
+        eommm_global_fit([0.3, 0.5, 0.7], [10.0, -8.0, 6.0], DTAB_PURE_CMC, SDS_PURE_CMC)  # bad cmc_mix
+    with pytest.raises(ValueError):
+        eommm_global_fit([0.3, 0.5, 0.7], [10.0, 8.0, 6.0], 0.0, SDS_PURE_CMC)  # bad cmc1
+
+
+# --- Rodenas model (alternative-methods review, 2026-09-07/08) --------------
+# Source: equation (10)-(12), Azum, Rub, Alotaibi, Khan & Asiri, Biointerface
+# Res. Appl. Chem. 12(6) (2022) 7416-7428 -- the same G6 gemini paper already
+# used above for Clint/Rubingh validation -- citing Rodenas, Valiente &
+# Villafruela, J. Phys. Chem. B 103(21) (1999) 4549-4554.
+
+
+def test_rodenas_x1_reduces_to_motomura_under_ideal_mixing():
+    """Real, source-independent algebraic identity: when cmc_mix
+    follows Clint's EXACT ideal-mixing law, Rodenas' X1_Rod must equal
+    Motomura's ideal composition formula -- both are zero-interaction
+    limits of otherwise-different methods. The derivative is computed
+    here by central finite difference directly on clint_ideal_cmc, not
+    re-derived by hand, so this doesn't depend on trusting a separate
+    hand-worked formula matching the implementation."""
+    cmc1, cmc2 = 14.80, 8.00
+    for alpha1 in (0.2, 0.4, 0.6, 0.8):
+        h = 1e-6
+        ln_cmc_plus = math.log(clint_ideal_cmc(alpha1 + h, cmc1, cmc2))
+        ln_cmc_minus = math.log(clint_ideal_cmc(alpha1 - h, cmc1, cmc2))
+        dln_cmc_dalpha1 = (ln_cmc_plus - ln_cmc_minus) / (2.0 * h)
+
+        x1_rod = rodenas_x1(alpha1, dln_cmc_dalpha1)
+        x1_motomura = motomura_ideal_composition(alpha1, cmc1, cmc2)
+        assert x1_rod == pytest.approx(x1_motomura, abs=1e-5)
+
+
+def test_rodenas_x1_zero_slope_gives_x1_equals_alpha1():
+    """Direct, trivial consequence of the formula itself: a flat
+    ln(cmc_mix) vs alpha1 curve (slope 0) gives X1_Rod = alpha1."""
+    assert rodenas_x1(0.35, 0.0) == pytest.approx(0.35)
+
+
+# --- rodenas_x1_series -------------------------------------------------
+# Real, standard numerical-differentiation method (verified via WebFetch/
+# WebSearch before implementing -- the source papers describe getting
+# "the slope from the curve" without spelling out their exact numerical
+# procedure): local quadratic (Lagrange) fit through each point's 2
+# nearest neighbors, differentiated analytically. Validated two ways:
+# (1) exact recovery when the underlying ln(cmc_mix) truly IS quadratic
+# in alpha1 (the local fit is then not an approximation at all); (2)
+# exact reduction to the textbook central/forward/backward finite-
+# difference formulas for evenly-spaced data.
+
+
+def test_rodenas_x1_series_exact_for_quadratic_ln_cmc_mix():
+    """If ln(cmc_mix) truly follows a quadratic in alpha1, the local
+    3-point quadratic fit reproduces the EXACT analytic derivative at
+    every point (not just approximately) -- a strong round-trip check."""
+    a, b, c = 0.5, -2.0, 3.0  # ln(cmc_mix) = a*alpha1^2 + b*alpha1 + c
+
+    def ln_cmc(alpha1):
+        return a * alpha1 ** 2 + b * alpha1 + c
+
+    def true_slope(alpha1):
+        return 2.0 * a * alpha1 + b
+
+    alpha1_series = [0.1, 0.25, 0.4, 0.55, 0.7, 0.85]  # unevenly spaced on purpose
+    cmc_mix_series = [math.exp(ln_cmc(a1)) for a1 in alpha1_series]
+
+    result = rodenas_x1_series(alpha1_series, cmc_mix_series)
+    assert result.n_points == 6
+    for a1, slope in zip(result.alpha1_used, result.dln_cmc_mix_dalpha1):
+        assert slope == pytest.approx(true_slope(a1), abs=1e-9)
+
+
+def test_rodenas_x1_series_reduces_to_textbook_central_difference():
+    """Evenly-spaced interior point: must match (y2-y0)/(2h) exactly."""
+    h = 0.1
+    alpha1_series = [0.2, 0.3, 0.4]
+    cmc_mix_series = [1.0, 1.5, 2.6]  # arbitrary, not quadratic
+
+    result = rodenas_x1_series(alpha1_series, cmc_mix_series)
+    ln_cmc = [math.log(c) for c in cmc_mix_series]
+    expected_middle_slope = (ln_cmc[2] - ln_cmc[0]) / (2.0 * h)
+    assert result.dln_cmc_mix_dalpha1[1] == pytest.approx(expected_middle_slope, abs=1e-9)
+
+
+def test_rodenas_x1_series_reduces_to_textbook_forward_difference_at_first_point():
+    """Evenly-spaced first point: must match (-3y0+4y1-y2)/(2h) exactly."""
+    h = 0.1
+    alpha1_series = [0.2, 0.3, 0.4]
+    cmc_mix_series = [1.0, 1.5, 2.6]
+    ln_cmc = [math.log(c) for c in cmc_mix_series]
+    expected_first_slope = (-3 * ln_cmc[0] + 4 * ln_cmc[1] - ln_cmc[2]) / (2.0 * h)
+
+    result = rodenas_x1_series(alpha1_series, cmc_mix_series)
+    assert result.dln_cmc_mix_dalpha1[0] == pytest.approx(expected_first_slope, abs=1e-9)
+
+
+def test_rodenas_x1_series_chains_into_rodenas_x1_correctly():
+    """The returned x1_rodenas must match calling rodenas_x1 directly
+    with the same (alpha1, slope) pairs -- confirms the chaining, not
+    just the slope computation."""
+    alpha1_series = [0.1, 0.25, 0.4, 0.55, 0.7]
+    cmc_mix_series = [8.0, 6.5, 5.2, 4.3, 3.7]
+
+    result = rodenas_x1_series(alpha1_series, cmc_mix_series)
+    for a1, slope, x1 in zip(result.alpha1_used, result.dln_cmc_mix_dalpha1, result.x1_rodenas):
+        assert x1 == pytest.approx(rodenas_x1(a1, slope))
+
+
+def test_rodenas_x1_series_sorts_unordered_input():
+    alpha1_series = [0.7, 0.1, 0.4]
+    cmc_mix_series = [3.7, 8.0, 5.2]  # matching the alpha1 order above
+
+    result = rodenas_x1_series(alpha1_series, cmc_mix_series)
+    assert result.alpha1_used == sorted(alpha1_series)
+
+
+def test_rodenas_x1_series_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        rodenas_x1_series([0.2, 0.4], [1.0, 2.0])  # too few points
+    with pytest.raises(ValueError):
+        rodenas_x1_series([0.2, 0.4, 0.6], [1.0, 2.0])  # mismatched lengths
+    with pytest.raises(ValueError):
+        rodenas_x1_series([0.0, 0.4, 0.6], [1.0, 2.0, 3.0])  # bad alpha1
+    with pytest.raises(ValueError):
+        rodenas_x1_series([0.2, 0.4, 0.6], [1.0, -2.0, 3.0])  # bad cmc_mix
+    with pytest.raises(ValueError):
+        rodenas_x1_series([0.2, 0.4, 0.4], [1.0, 2.0, 3.0])  # duplicate alpha1
+
+
+def test_rodenas_activity_coefficients_basic():
+    alpha1, x1, cmc_mix, cmc1, cmc2 = 0.5, 0.6, 5.0, 10.0, 8.0
+    f1, f2 = rodenas_activity_coefficients(alpha1, x1, cmc_mix, cmc1, cmc2)
+    assert f1 == pytest.approx((0.5 * 5.0) / (0.6 * 10.0))
+    assert f2 == pytest.approx((0.5 * 5.0) / (0.4 * 8.0))
+
+
+def test_rodenas_activity_coefficients_rejects_bad_x1():
+    with pytest.raises(ValueError):
+        rodenas_activity_coefficients(0.5, 0.0, 5.0, 10.0, 8.0)
+    with pytest.raises(ValueError):
+        rodenas_activity_coefficients(0.5, 1.0, 5.0, 10.0, 8.0)
+
+
+# --- Maeda free energy of micellization (alternative-methods review) -------
+# Source: equation (9), Azum, Rub, Alotaibi, Khan & Asiri, Biointerface Res.
+# Appl. Chem. 12(6) (2022) 7416-7428 (same G6 gemini paper as above), citing
+# Maeda, J. Colloid Interface Sci. 172 (1995) 98-105.
+
+
+def test_maeda_b0_matches_real_paper_value():
+    """Real numeric cross-check, not just a formula transcription
+    check: B0 = ln(Xcmc2) computed with this project's own already-
+    validated TX-114 CMC (0.263 mM, AZUM_TX114_CMC, from the same
+    source paper's own Table 1) must match the paper's own reported
+    -B0 = 12.25 for the G6+TX-114 system (independent of alpha1 --
+    B0 depends only on cmc2)."""
+    from surfactantkit.thermodynamics import cmc_to_mole_fraction
+
+    xcmc2 = cmc_to_mole_fraction(AZUM_TX114_CMC / 1000.0)  # mM -> M
+    b0 = math.log(xcmc2)
+    assert -b0 == pytest.approx(12.25, abs=0.02)
+
+
+def test_maeda_free_energy_matches_independent_recomputation():
+    """Independently recompute B0/B1/B2/deltaG_M in the test itself
+    (not copy-pasted from the implementation) and check they agree --
+    catches a transcription bug the implementation and a copy-pasted
+    test would both share."""
+    x1_rub, beta = 0.6, -1.8
+    cmc1_M, cmc2_M, temperature_k = 0.041e-3, 0.263e-3, 298.15
+    xcmc1 = cmc1_M / (cmc1_M + 55.5)
+    xcmc2 = cmc2_M / (cmc2_M + 55.5)
+    b2_expected = -beta
+    b1_expected = math.log(xcmc1 / xcmc2) - b2_expected
+    b0_expected = math.log(xcmc2)
+    delta_g_expected = (R_GAS * temperature_k * (b0_expected + b1_expected * x1_rub + b2_expected * x1_rub ** 2)) / 1000.0
+
+    delta_g = maeda_free_energy_of_micellization(x1_rub, beta, cmc1_M, cmc2_M, temperature_k)
+    assert delta_g == pytest.approx(delta_g_expected, rel=1e-9)
+
+
+def test_motomura_ideal_composition_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        motomura_ideal_composition(0.0, 5.0, 5.0)
+    with pytest.raises(ValueError):
+        motomura_ideal_composition(1.0, 5.0, 5.0)
+    with pytest.raises(ValueError):
+        motomura_ideal_composition(0.5, 0.0, 5.0)
+    with pytest.raises(ValueError):
+        motomura_ideal_composition(0.5, 5.0, -1.0)

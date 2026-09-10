@@ -11,13 +11,22 @@ thresholds at and around each boundary.
 
 import pytest
 
-from surfactantkit.hlb import hlb_griffin, hlb_davies
+from surfactantkit.hlb import (
+    hlb_griffin,
+    hlb_davies,
+    guo_effective_eo_chain_length,
+    guo_effective_alkyl_chain_length,
+    guo_effective_po_chain_length,
+    hlb_davies_guo_ecl,
+)
 from surfactantkit.cpp import (
     tanford_tail_volume,
     tanford_critical_length,
     aggregation_number_spherical,
     critical_packing_parameter,
     classify_aggregate_morphology,
+    nagarajan_debye_huckel_kappa_inverse,
+    nagarajan_equilibrium_area_ionic,
 )
 
 
@@ -78,10 +87,50 @@ def test_hlb_davies_sds_worked_example():
 
 
 def test_hlb_davies_unknown_group_raises_instead_of_guessing():
-    """Quaternary ammonium has no verified Davies number in this table
-    (see hlb.py docstring) -- must raise, not silently return a guess."""
+    """Amide and sulfonate have no verified Davies number in this table
+    (see hlb.py docstring) -- must raise, not silently return a guess.
+    (Quaternary ammonium used to be in this category too, until resolved
+    2026-09-08 -- see the worked-example tests below.)"""
     with pytest.raises(KeyError):
-        hlb_davies({"quaternary_ammonium": 1, "CH2": 11})
+        hlb_davies({"amide": 1, "CH2": 11})
+    with pytest.raises(KeyError):
+        hlb_davies({"sulfonate": 1, "CH2": 11})
+
+
+# --- Quaternary ammonium Davies numbers (resolved 2026-09-08) --------------
+# Source: B.H. O, J. Colloid Interface Sci. 198 (1998) 249 (GN=22.0 for
+# -N+(CH3)3, GN=22.5 for >N+(CH3)2), via Proverbio, Bardavid, Arancibia &
+# Schulz, Colloids Surf. A 214 (2003) 167-171 -- all four values below are
+# the source paper's OWN reported, fully worked HLB examples, reproduced
+# here exactly (not approximately), the strongest possible validation.
+
+
+def test_hlb_davies_dtab_matches_paper_worked_example():
+    """DTAB = decyltrimethylammonium bromide: C10 tail (1 CH3 + 9 CH2)
+    + single-tail trimethylammonium head."""
+    hlb = hlb_davies({"N_quat_trimethyl": 1, "CH2": 9, "CH3": 1})
+    assert hlb == pytest.approx(24.25, abs=0.01)
+
+
+def test_hlb_davies_ltab_matches_paper_worked_example():
+    """LTAB = dodecyltrimethylammonium bromide: C12 tail (1 CH3 + 11 CH2)
+    + single-tail trimethylammonium head."""
+    hlb = hlb_davies({"N_quat_trimethyl": 1, "CH2": 11, "CH3": 1})
+    assert hlb == pytest.approx(23.3, abs=0.01)
+
+
+def test_hlb_davies_ddab_matches_paper_worked_example():
+    """DDAB = didodecyldimethylammonium bromide: two C12 tails
+    (2 CH3 + 22 CH2) + double-tail dimethyl-dialkylammonium head."""
+    hlb = hlb_davies({"N_quat_dimethyl_dialkyl": 1, "CH2": 22, "CH3": 2})
+    assert hlb == pytest.approx(18.1, abs=0.01)
+
+
+def test_hlb_davies_dodab_matches_paper_worked_example():
+    """DODAB = dioctadecyldimethylammonium bromide: two C18 tails
+    (2 CH3 + 34 CH2) + double-tail dimethyl-dialkylammonium head."""
+    hlb = hlb_davies({"N_quat_dimethyl_dialkyl": 1, "CH2": 34, "CH3": 2})
+    assert hlb == pytest.approx(12.4, abs=0.01)
 
 
 def test_tanford_tail_volume_matches_additive_formula():
@@ -171,3 +220,152 @@ def test_classify_aggregate_morphology_rejects_nonpositive():
         classify_aggregate_morphology(0)
     with pytest.raises(ValueError):
         classify_aggregate_morphology(-0.5)
+
+
+# --- Guo/Rong/Ying 2006 nonionic HLB refinement (alternative-methods
+# sweep, 2026-09-10). Source: J. Colloid Interface Sci. 298 (2006)
+# 441-450, doi:10.1016/j.jcis.2005.12.009 (paywalled; exact coefficients
+# below verified via a citing patent, US 11,344,493 B2, which quotes the
+# formulas directly).
+
+
+def test_guo_effective_eo_chain_length_matches_cited_formula():
+    import math
+
+    for n_eo in (1, 5, 10, 20, 50):
+        expected = 13.45 * math.log(n_eo) - 0.16 * n_eo + 1.26
+        assert guo_effective_eo_chain_length(n_eo) == pytest.approx(expected)
+
+
+def test_guo_effective_eo_chain_length_rejects_bad_input():
+    with pytest.raises(ValueError):
+        guo_effective_eo_chain_length(0)
+    with pytest.raises(ValueError):
+        guo_effective_eo_chain_length(51)
+
+
+def test_guo_effective_alkyl_chain_length_matches_cited_formula():
+    for n_ch2 in (5, 10, 15):
+        expected = 0.965 * n_ch2 - 0.178
+        assert guo_effective_alkyl_chain_length(n_ch2) == pytest.approx(expected)
+
+
+def test_guo_effective_alkyl_chain_length_rejects_bad_input():
+    with pytest.raises(ValueError):
+        guo_effective_alkyl_chain_length(0)
+
+
+def test_guo_effective_po_chain_length_matches_cited_formula():
+    for n_po in (1, 5, 10):
+        expected = 2.057 * n_po + 9.06
+        assert guo_effective_po_chain_length(n_po) == pytest.approx(expected)
+
+
+def test_guo_effective_po_chain_length_rejects_bad_input():
+    with pytest.raises(ValueError):
+        guo_effective_po_chain_length(0)
+
+
+def test_hlb_davies_guo_ecl_matches_manual_formula():
+    """Independent recomputation in the test itself, not copy-pasted
+    from the implementation."""
+    n_carbons, n_eo = 12, 9  # C12E9-like nonionic ethoxylate
+    n_ch2_eff = 0.965 * (n_carbons - 1) - 0.178
+    n_eo_eff = 13.45 * __import__("math").log(n_eo) - 0.16 * n_eo + 1.26
+    expected = 7.0 + 1.3 * n_eo_eff - 0.475 * n_ch2_eff - 0.475 * 1
+    assert hlb_davies_guo_ecl(n_carbons, n_eo) == pytest.approx(expected)
+
+
+def test_hlb_davies_guo_ecl_vs_plain_davies_diverges_for_long_eo_chains():
+    """Real point of the refinement: for a long EO chain, the effective
+    (sub-linear) count differs substantially from the actual count, so
+    Guo's HLB should differ meaningfully from plain Davies using the
+    actual (unmodified) EO count -- confirms the ECL correction is doing
+    something real, not silently reducing to the plain formula."""
+    n_carbons, n_eo = 12, 40
+    guo_hlb = hlb_davies_guo_ecl(n_carbons, n_eo)
+    plain_davies_hlb = hlb_davies({"O_ether": n_eo, "CH2": n_carbons - 1, "CH3": 1})
+    assert abs(guo_hlb - plain_davies_hlb) > 1.0
+
+
+def test_hlb_davies_guo_ecl_with_extra_group_counts():
+    base = hlb_davies_guo_ecl(12, 9)
+    with_extra = hlb_davies_guo_ecl(12, 9, extra_group_counts={"OH_free": 1})
+    assert with_extra == pytest.approx(base + 1.9)
+
+
+def test_hlb_davies_guo_ecl_rejects_unknown_extra_group():
+    with pytest.raises(KeyError):
+        hlb_davies_guo_ecl(12, 9, extra_group_counts={"not_a_real_group": 1})
+
+
+def test_hlb_davies_guo_ecl_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        hlb_davies_guo_ecl(1, 9)  # too few carbons
+    with pytest.raises(ValueError):
+        hlb_davies_guo_ecl(12, 0)  # need at least 1 EO unit
+
+
+# --- Nagarajan 2002 ionic-headgroup electrostatics (alternative-methods
+# review, 2026-09-10) -- Table 2's real worked example, sodium alkyl
+# sulfates, n_C=8..16. Source: Nagarajan, Langmuir 18 (2002) 31-38.
+# headgroup_prefactor_A=82.0 is the paper's OWN stated value for this
+# specific table's illustration (sodium-alkyl-sulfate-like headgroup),
+# not a universal constant -- see nagarajan_equilibrium_area_ionic's
+# docstring for the disclosure.
+
+NAGARAJAN_TABLE2 = [
+    # n_C, l0 (A), cmc (M), kappa^-1 (A) [paper], a_e (A^2) [paper]
+    (8, 11.5, 0.032, 17.22, 63.5),
+    (10, 14.0, 0.016, 24.35, 65.4),
+    (12, 16.5, 0.008, 34.43, 67.4),
+    (14, 19.0, 0.004, 48.7, 69.5),
+    (16, 21.5, 0.002, 68.9, 71.6),
+]
+
+
+@pytest.mark.parametrize("n_c, l0, cmc, kappa_inv_paper, a_e_paper", NAGARAJAN_TABLE2)
+def test_nagarajan_kappa_inverse_matches_table2(n_c, l0, cmc, kappa_inv_paper, a_e_paper):
+    kappa_inv = nagarajan_debye_huckel_kappa_inverse(cmc)
+    assert kappa_inv == pytest.approx(kappa_inv_paper, rel=0.01)
+
+
+@pytest.mark.parametrize("n_c, l0, cmc, kappa_inv_paper, a_e_paper", NAGARAJAN_TABLE2)
+def test_nagarajan_equilibrium_area_matches_table2(n_c, l0, cmc, kappa_inv_paper, a_e_paper):
+    a_e = nagarajan_equilibrium_area_ionic(cmc, l0, headgroup_prefactor_A=82.0)
+    assert a_e == pytest.approx(a_e_paper, rel=0.01)
+
+
+def test_nagarajan_equilibrium_area_chains_into_critical_packing_parameter():
+    """The real point of the refinement: a_e -> CPP varies with tail
+    length for ionic surfactants (not constant, contrary to the naive
+    headgroup-only assumption) -- confirm CPP computed via Nagarajan's
+    a_e is NOT constant across the n_C=8..16 series, and decreases
+    (tighter packing) as chain length increases, matching Table 2's own
+    v0/(a_e*l0) column trend (0.331 -> 0.293)."""
+    from surfactantkit.cpp import tanford_tail_volume
+
+    cpps = []
+    for n_c, l0, cmc, _, _ in NAGARAJAN_TABLE2:
+        v0 = tanford_tail_volume(n_c)
+        a_e = nagarajan_equilibrium_area_ionic(cmc, l0, headgroup_prefactor_A=82.0)
+        cpps.append(critical_packing_parameter(v0, a_e, l0))
+    assert cpps == sorted(cpps, reverse=True)  # strictly decreasing with chain length
+    assert cpps[0] == pytest.approx(0.331, rel=0.02)
+    assert cpps[-1] == pytest.approx(0.293, rel=0.02)
+
+
+def test_nagarajan_kappa_inverse_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        nagarajan_debye_huckel_kappa_inverse(0.0)
+    with pytest.raises(ValueError):
+        nagarajan_debye_huckel_kappa_inverse(0.01, temperature_K=0.0)
+    with pytest.raises(ValueError):
+        nagarajan_debye_huckel_kappa_inverse(0.01, dielectric_constant=0.0)
+
+
+def test_nagarajan_equilibrium_area_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        nagarajan_equilibrium_area_ionic(0.01, tail_length_A=0.0, headgroup_prefactor_A=82.0)
+    with pytest.raises(ValueError):
+        nagarajan_equilibrium_area_ionic(0.01, tail_length_A=16.5, headgroup_prefactor_A=0.0)
