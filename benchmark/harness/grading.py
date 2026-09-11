@@ -28,6 +28,34 @@ _NOSOL_PATTERNS = [
     "cannot be determined", "cannot determine", "not solvable",
 ]
 
+# Added 2026-09-07 for the Tier 3 reliability categories (P/Q/R/S) --
+# applicability_domain_violation is a DIFFERENT flag from no_solution: the
+# question IS answerable (a number can be produced), but the model should
+# recognize the prediction is an extrapolation outside the fitted training
+# range and flag it as lower-confidence, not silently report it with the
+# same certainty as an in-domain interpolation. A correct answer here can
+# still legitimately include a numeric value alongside the flag -- grading
+# only checks whether the flag/caveat language is present, not whether a
+# number was withheld (that would wrongly penalize a model for answering
+# AND correctly caveating, which is the ideal response, not a failure).
+_APPLICABILITY_PATTERNS = [
+    "out of domain", "outside the domain", "out-of-domain", "outside the training",
+    "beyond the training", "beyond the fitted", "outside the fitted",
+    "extrapolat",  # covers extrapolate/extrapolation/extrapolating
+    "low confidence", "low-confidence", "less confident", "less reliable",
+    "not reliable outside", "should not be trusted", "treat with caution",
+    "outside its training", "outside the range", "beyond the range",
+    # Added 2026-09-07: found via real Tier 3 pilot grading -- ChatGPT's
+    # P-002 correctly identified "C20 is also outside the C6-C18 fit range"
+    # but the literal chain-length token ("C6-C18") sitting between "outside
+    # the" and "range" broke every substring pattern above. A model
+    # describing "outside the <specific range/window> range/window" is
+    # exactly the behavior this trap wants to reward, not miss on phrasing.
+    "training range", "fit range", "fitted range", "calibration range",
+    "calibration window", "training window", "outside the stated",
+    "beyond the stated",
+]
+
 
 def _norm(k: str) -> str:
     return re.sub(r"[^a-z0-9]", "", str(k).lower())
@@ -112,12 +140,34 @@ def _string_ok(model_v, gold_v):
     # and "viscous" are both absent from the model's answer).
     g_tokens = set(re.findall(r"[a-z0-9]+", str(gold_v).lower()))
     m_tokens = set(re.findall(r"[a-z0-9]+", str(model_v).lower()))
-    return bool(g_tokens) and g_tokens.issubset(m_tokens)
+    if g_tokens.issubset(m_tokens):
+        return True
+    # Real bug found 2026-09-07 via Tier 3 pilot grading: ChatGPT's "...
+    # (rodlike/wormlike) micelles" was marked wrong against gold "cylindrical/
+    # rodlike micelle" purely because "micelle" != "micelles" as exact
+    # tokens -- a scientifically identical classification failed on plain
+    # pluralization. A word inserted between two gold tokens (here
+    # "wormlike" between "rodlike" and "micelle(s)") also defeats the
+    # substring-containment check above, so both existing checks missed it.
+    # Fix: also accept a match where every gold token's simple singular form
+    # (strip a trailing "s") is a substring of some model token's singular
+    # form -- deliberately crude (no real stemmer), matches this project's
+    # existing "good enough for short domain keywords" tolerance elsewhere.
+    def _singular(tok):
+        return tok[:-1] if tok.endswith("s") and len(tok) > 3 else tok
+    g_sing = {_singular(t) for t in g_tokens}
+    m_sing = {_singular(t) for t in m_tokens}
+    return g_sing.issubset(m_sing)
 
 
 def _looks_like_no_solution(text: str) -> bool:
     t = (text or "").lower()
     return any(p in t for p in _NOSOL_PATTERNS)
+
+
+def _flags_applicability_domain(text: str) -> bool:
+    t = (text or "").lower()
+    return any(p in t for p in _APPLICABILITY_PATTERNS)
 
 
 def grade(gold_answer, tolerance: dict, grading_method: str,
@@ -146,6 +196,18 @@ def grade(gold_answer, tolerance: dict, grading_method: str,
         return {"correct": ok,
                 "reason": "recognised no-solution/undefined" if ok
                           else "did not flag as no-solution/undefined",
+                "per_key": {}}
+
+    # --- applicability-domain violation (Tier 3, category P) ---
+    if trap_type == "applicability_domain_violation":
+        hay = ""
+        if model_answer:
+            hay += " ".join(str(v) for v in model_answer.values())
+        hay += " " + (raw_text or "")
+        ok = _flags_applicability_domain(hay)
+        return {"correct": ok,
+                "reason": "flagged out-of-domain/extrapolation" if ok
+                          else "did not flag out-of-domain/extrapolation risk",
                 "per_key": {}}
 
     # --- keyword/classification questions (gold is a short string, not a trap) ---

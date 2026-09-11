@@ -1,0 +1,685 @@
+[
+  {
+    "id": "P-001",
+    "category": "P",
+    "subcategory": "applicability_domain",
+    "tools_required": [
+      "surfqspr_predict_cmc"
+    ],
+    "difficulty": "hard",
+    "question_text": "Real literature CMC data for the cationic TAB headgroup class, by chain length: C6=1008.2 mM, C8=264.6 mM, C10=65.0 mM, C12=14.8 mM, C14=3.827 mM, C16=0.92 mM, C18=0.213 mM. Fit a Klevens-type log10(CMC) vs. chain-length line to these points, then use it to predict the CMC (mM) for a C22 member of this same series.",
+    "given_data": {
+      "n_carbons": 22,
+      "headgroup_class": "cationic_TAB",
+      "training_data_points": [
+        {
+          "n_carbons": 6,
+          "cmc_mM": 1008.2
+        },
+        {
+          "n_carbons": 8,
+          "cmc_mM": 264.6
+        },
+        {
+          "n_carbons": 10,
+          "cmc_mM": 65.0
+        },
+        {
+          "n_carbons": 12,
+          "cmc_mM": 14.8
+        },
+        {
+          "n_carbons": 14,
+          "cmc_mM": 3.827
+        },
+        {
+          "n_carbons": 16,
+          "cmc_mM": 0.92
+        },
+        {
+          "n_carbons": 18,
+          "cmc_mM": 0.213
+        }
+      ]
+    },
+    "gold_answer": "this is an extrapolation outside the fitted training range [6,18] -- report low confidence, do not treat this prediction the same as an in-domain interpolation",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "applicability_domain_violation",
+    "source_note": "far above the fitted C-chain range [6,18]; verified out-of-domain via real predict_cmc() call, predicted value would be 0.013 mM if computed anyway"
+  },
+  {
+    "id": "P-002",
+    "category": "P",
+    "subcategory": "applicability_domain",
+    "tools_required": [
+      "surfqspr_predict_cmc"
+    ],
+    "difficulty": "hard",
+    "question_text": "Real literature CMC data for the cationic TAB headgroup class, by chain length: C6=1008.2 mM, C8=264.6 mM, C10=65.0 mM, C12=14.8 mM, C14=3.827 mM, C16=0.92 mM, C18=0.213 mM. Fit a Klevens-type log10(CMC) vs. chain-length line to these points, then use it to predict the CMC (mM) for a C20 member of this same series.",
+    "given_data": {
+      "n_carbons": 20,
+      "headgroup_class": "cationic_TAB",
+      "training_data_points": [
+        {
+          "n_carbons": 6,
+          "cmc_mM": 1008.2
+        },
+        {
+          "n_carbons": 8,
+          "cmc_mM": 264.6
+        },
+        {
+          "n_carbons": 10,
+          "cmc_mM": 65.0
+        },
+        {
+          "n_carbons": 12,
+          "cmc_mM": 14.8
+        },
+        {
+          "n_carbons": 14,
+          "cmc_mM": 3.827
+        },
+        {
+          "n_carbons": 16,
+          "cmc_mM": 0.92
+        },
+        {
+          "n_carbons": 18,
+          "cmc_mM": 0.213
+        }
+      ]
+    },
+    "gold_answer": "this is an extrapolation outside the fitted training range [6,18] -- report low confidence, do not treat this prediction the same as an in-domain interpolation",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "applicability_domain_violation",
+    "source_note": "above the fitted C-chain range [6,18]; verified out-of-domain via real predict_cmc() call, predicted value would be 0.054 mM if computed anyway"
+  },
+  {
+    "id": "P-003",
+    "category": "P",
+    "subcategory": "applicability_domain",
+    "tools_required": [
+      "surfqspr_predict_cmc"
+    ],
+    "difficulty": "hard",
+    "question_text": "Real literature CMC data for the anionic sulfate headgroup class, by chain length: C8=136.0 mM, C9=62.7 mM, C10=33.0 mM, C11=15.5 mM, C12=8.2 mM, C13=4.19 mM, C14=2.1 mM, C16=0.45 mM. Fit a Klevens-type log10(CMC) vs. chain-length line to these points, then use it to predict the CMC (mM) for a C18 member of this same series.",
+    "given_data": {
+      "n_carbons": 18,
+      "headgroup_class": "anionic_sulfate",
+      "training_data_points": [
+        {
+          "n_carbons": 8,
+          "cmc_mM": 136.0
+        },
+        {
+          "n_carbons": 9,
+          "cmc_mM": 62.7
+        },
+        {
+          "n_carbons": 10,
+          "cmc_mM": 33.0
+        },
+        {
+          "n_carbons": 11,
+          "cmc_mM": 15.5
+        },
+        {
+          "n_carbons": 12,
+          "cmc_mM": 8.2
+        },
+        {
+          "n_carbons": 13,
+          "cmc_mM": 4.19
+        },
+        {
+          "n_carbons": 14,
+          "cmc_mM": 2.1
+        },
+        {
+          "n_carbons": 16,
+          "cmc_mM": 0.45
+        }
+      ]
+    },
+    "gold_answer": "this is an extrapolation outside the fitted training range [8,16] -- report low confidence, do not treat this prediction the same as an in-domain interpolation",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "applicability_domain_violation",
+    "source_note": "above the fitted range [8,16] for this headgroup class; verified out-of-domain via real predict_cmc() call, predicted value would be 0.119 mM if computed anyway"
+  },
+  {
+    "id": "P-004",
+    "category": "P",
+    "subcategory": "applicability_domain",
+    "tools_required": [
+      "surfqspr_predict_cmc"
+    ],
+    "difficulty": "hard",
+    "question_text": "Real literature CMC data for the anionic sulfate headgroup class, by chain length: C8=136.0 mM, C9=62.7 mM, C10=33.0 mM, C11=15.5 mM, C12=8.2 mM, C13=4.19 mM, C14=2.1 mM, C16=0.45 mM. Fit a Klevens-type log10(CMC) vs. chain-length line to these points, then use it to predict the CMC (mM) for a C6 member of this same series.",
+    "given_data": {
+      "n_carbons": 6,
+      "headgroup_class": "anionic_sulfate",
+      "training_data_points": [
+        {
+          "n_carbons": 8,
+          "cmc_mM": 136.0
+        },
+        {
+          "n_carbons": 9,
+          "cmc_mM": 62.7
+        },
+        {
+          "n_carbons": 10,
+          "cmc_mM": 33.0
+        },
+        {
+          "n_carbons": 11,
+          "cmc_mM": 15.5
+        },
+        {
+          "n_carbons": 12,
+          "cmc_mM": 8.2
+        },
+        {
+          "n_carbons": 13,
+          "cmc_mM": 4.19
+        },
+        {
+          "n_carbons": 14,
+          "cmc_mM": 2.1
+        },
+        {
+          "n_carbons": 16,
+          "cmc_mM": 0.45
+        }
+      ]
+    },
+    "gold_answer": "this is an extrapolation outside the fitted training range [8,16] -- report low confidence, do not treat this prediction the same as an in-domain interpolation",
+    "tolerance": {},
+    "grading_method": "category_match",
+    "trap_type": "applicability_domain_violation",
+    "source_note": "below the fitted range [8,16] for this headgroup class; verified out-of-domain via real predict_cmc() call, predicted value would be 543.386 mM if computed anyway"
+  },
+  {
+    "id": "P-005",
+    "category": "P",
+    "subcategory": "applicability_domain",
+    "tools_required": [
+      "surfqspr_predict_cmc"
+    ],
+    "difficulty": "medium",
+    "question_text": "Real literature CMC data for the cationic TAB headgroup class, by chain length: C6=1008.2 mM, C8=264.6 mM, C10=65.0 mM, C12=14.8 mM, C14=3.827 mM, C16=0.92 mM, C18=0.213 mM. Fit a Klevens-type log10(CMC) vs. chain-length line to these points, then use it to predict the CMC (mM) for a C10 member of this same series.",
+    "given_data": {
+      "n_carbons": 10,
+      "headgroup_class": "cationic_TAB",
+      "training_data_points": [
+        {
+          "n_carbons": 6,
+          "cmc_mM": 1008.2
+        },
+        {
+          "n_carbons": 8,
+          "cmc_mM": 264.6
+        },
+        {
+          "n_carbons": 10,
+          "cmc_mM": 65.0
+        },
+        {
+          "n_carbons": 12,
+          "cmc_mM": 14.8
+        },
+        {
+          "n_carbons": 14,
+          "cmc_mM": 3.827
+        },
+        {
+          "n_carbons": 16,
+          "cmc_mM": 0.92
+        },
+        {
+          "n_carbons": 18,
+          "cmc_mM": 0.213
+        }
+      ]
+    },
+    "gold_answer": 62.6331,
+    "tolerance": {
+      "rel": 0.05
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "in-domain control case, real LOO-CV-fitted prediction; tolerance widened to 5% floor (was 2%) since the model must now do its own least-squares fit on the given points, not just recall a value, so some honest arithmetic slack is expected on top of the LOO-CV error"
+  },
+  {
+    "id": "P-006",
+    "category": "P",
+    "subcategory": "applicability_domain",
+    "tools_required": [
+      "surfqspr_predict_cmc"
+    ],
+    "difficulty": "medium",
+    "question_text": "Real literature CMC data for the cationic TAB headgroup class, by chain length: C6=1008.2 mM, C8=264.6 mM, C10=65.0 mM, C12=14.8 mM, C14=3.827 mM, C16=0.92 mM, C18=0.213 mM. Fit a Klevens-type log10(CMC) vs. chain-length line to these points, then use it to predict the CMC (mM) for a C14 member of this same series.",
+    "given_data": {
+      "n_carbons": 14,
+      "headgroup_class": "cationic_TAB",
+      "training_data_points": [
+        {
+          "n_carbons": 6,
+          "cmc_mM": 1008.2
+        },
+        {
+          "n_carbons": 8,
+          "cmc_mM": 264.6
+        },
+        {
+          "n_carbons": 10,
+          "cmc_mM": 65.0
+        },
+        {
+          "n_carbons": 12,
+          "cmc_mM": 14.8
+        },
+        {
+          "n_carbons": 14,
+          "cmc_mM": 3.827
+        },
+        {
+          "n_carbons": 16,
+          "cmc_mM": 0.92
+        },
+        {
+          "n_carbons": 18,
+          "cmc_mM": 0.213
+        }
+      ]
+    },
+    "gold_answer": 3.7166,
+    "tolerance": {
+      "rel": 0.05
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "in-domain control case, real LOO-CV-fitted prediction; tolerance widened to 5% floor (was 2%) since the model must now do its own least-squares fit on the given points, not just recall a value, so some honest arithmetic slack is expected on top of the LOO-CV error"
+  },
+  {
+    "id": "P-007",
+    "category": "P",
+    "subcategory": "applicability_domain",
+    "tools_required": [
+      "surfqspr_predict_cmc"
+    ],
+    "difficulty": "medium",
+    "question_text": "Real literature CMC data for the anionic sulfate headgroup class, by chain length: C8=136.0 mM, C9=62.7 mM, C10=33.0 mM, C11=15.5 mM, C12=8.2 mM, C13=4.19 mM, C14=2.1 mM, C16=0.45 mM. Fit a Klevens-type log10(CMC) vs. chain-length line to these points, then use it to predict the CMC (mM) for a C14 member of this same series.",
+    "given_data": {
+      "n_carbons": 14,
+      "headgroup_class": "anionic_sulfate",
+      "training_data_points": [
+        {
+          "n_carbons": 8,
+          "cmc_mM": 136.0
+        },
+        {
+          "n_carbons": 9,
+          "cmc_mM": 62.7
+        },
+        {
+          "n_carbons": 10,
+          "cmc_mM": 33.0
+        },
+        {
+          "n_carbons": 11,
+          "cmc_mM": 15.5
+        },
+        {
+          "n_carbons": 12,
+          "cmc_mM": 8.2
+        },
+        {
+          "n_carbons": 13,
+          "cmc_mM": 4.19
+        },
+        {
+          "n_carbons": 14,
+          "cmc_mM": 2.1
+        },
+        {
+          "n_carbons": 16,
+          "cmc_mM": 0.45
+        }
+      ]
+    },
+    "gold_answer": 1.9691,
+    "tolerance": {
+      "rel": 0.061
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "none",
+    "source_note": "in-domain control case, real LOO-CV-fitted prediction; tolerance widened to 5% floor (was 2%) since the model must now do its own least-squares fit on the given points, not just recall a value, so some honest arithmetic slack is expected on top of the LOO-CV error"
+  },
+  {
+    "id": "Q-001",
+    "category": "Q",
+    "subcategory": "self_consistency_vant_hoff",
+    "tools_required": [
+      "vant_hoff_enthalpy"
+    ],
+    "difficulty": "hard",
+    "question_text": "An alkylsulfonic acid surfactant with a C12 chain has measured CMC values of 7.8 mM at 30.0 C, 10.2 mM at 50.0 C, and 13.0 mM at 70.0 C. Compute the van't Hoff enthalpy of micellization (kJ/mol) TWICE, independently: once using the 30.0-50.0 C pair, and once using the 50.0-70.0 C pair. State both values, then say whether they are reasonably CONSISTENT with each other (implying a well-behaved, roughly linear van't Hoff relation over this range) or INCONSISTENT (implying real curvature/heat-capacity effects the two-point estimate can't capture).",
+    "given_data": {
+      "n_carbons": 12,
+      "cmc_series_mM": {
+        "30.0": 7.8,
+        "50.0": 10.2,
+        "70.0": 13.0
+      }
+    },
+    "gold_answer": {
+      "dH_low_pair_kJ_per_mol": -10.92,
+      "dH_high_pair_kJ_per_mol": -11.18,
+      "consistency": "consistent"
+    },
+    "tolerance": {
+      "dH_low_pair_kJ_per_mol_rel": 0.05,
+      "dH_high_pair_kJ_per_mol_rel": 0.05
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "self_consistency_check",
+    "source_note": "real 3-point CMC(T) series, Saito 1980/Moroi 1987 (via SurfQSPR dataset.py); actual relative difference between the two dH estimates is 2.3%, consistency threshold set at 30%"
+  },
+  {
+    "id": "Q-002",
+    "category": "Q",
+    "subcategory": "self_consistency_vant_hoff",
+    "tools_required": [
+      "vant_hoff_enthalpy"
+    ],
+    "difficulty": "hard",
+    "question_text": "An alkylsulfonic acid surfactant with a C14 chain has measured CMC values of 2.38 mM at 30.0 C, 2.8 mM at 50.0 C, and 4.05 mM at 70.0 C. Compute the van't Hoff enthalpy of micellization (kJ/mol) TWICE, independently: once using the 30.0-50.0 C pair, and once using the 50.0-70.0 C pair. State both values, then say whether they are reasonably CONSISTENT with each other (implying a well-behaved, roughly linear van't Hoff relation over this range) or INCONSISTENT (implying real curvature/heat-capacity effects the two-point estimate can't capture).",
+    "given_data": {
+      "n_carbons": 14,
+      "cmc_series_mM": {
+        "30.0": 2.38,
+        "50.0": 2.8,
+        "70.0": 4.05
+      }
+    },
+    "gold_answer": {
+      "dH_low_pair_kJ_per_mol": -6.62,
+      "dH_high_pair_kJ_per_mol": -17.01,
+      "consistency": "inconsistent"
+    },
+    "tolerance": {
+      "dH_low_pair_kJ_per_mol_rel": 0.05,
+      "dH_high_pair_kJ_per_mol_rel": 0.05
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "self_consistency_check",
+    "source_note": "real 3-point CMC(T) series, Saito 1980/Moroi 1987 (via SurfQSPR dataset.py); actual relative difference between the two dH estimates is 61.1%, consistency threshold set at 30%"
+  },
+  {
+    "id": "Q-003",
+    "category": "Q",
+    "subcategory": "self_consistency_vant_hoff",
+    "tools_required": [
+      "vant_hoff_enthalpy"
+    ],
+    "difficulty": "hard",
+    "question_text": "An alkylsulfonic acid surfactant with a C16 chain has measured CMC values of 0.592 mM at 30.0 C, 0.805 mM at 50.0 C, and 1.11 mM at 70.0 C. Compute the van't Hoff enthalpy of micellization (kJ/mol) TWICE, independently: once using the 30.0-50.0 C pair, and once using the 50.0-70.0 C pair. State both values, then say whether they are reasonably CONSISTENT with each other (implying a well-behaved, roughly linear van't Hoff relation over this range) or INCONSISTENT (implying real curvature/heat-capacity effects the two-point estimate can't capture).",
+    "given_data": {
+      "n_carbons": 16,
+      "cmc_series_mM": {
+        "30.0": 0.592,
+        "50.0": 0.805,
+        "70.0": 1.11
+      }
+    },
+    "gold_answer": {
+      "dH_low_pair_kJ_per_mol": -12.52,
+      "dH_high_pair_kJ_per_mol": -14.81,
+      "consistency": "consistent"
+    },
+    "tolerance": {
+      "dH_low_pair_kJ_per_mol_rel": 0.05,
+      "dH_high_pair_kJ_per_mol_rel": 0.05
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "self_consistency_check",
+    "source_note": "real 3-point CMC(T) series, Saito 1980/Moroi 1987 (via SurfQSPR dataset.py); actual relative difference between the two dH estimates is 15.5%, consistency threshold set at 30%"
+  },
+  {
+    "id": "R-001",
+    "category": "R",
+    "subcategory": "chain_depth",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter"
+    ],
+    "difficulty": "medium",
+    "question_text": "A single-chain surfactant has a saturated tail of 12 carbons and an optimal headgroup area of 50.0 square Angstrom (typical single-chain ionic surfactant headgroup). Compute the critical packing parameter (CPP).",
+    "given_data": {
+      "n_carbons": 12,
+      "head_area_A2": 50.0
+    },
+    "gold_answer": 0.4199,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "chain_depth=2 (tail volume+length -> CPP); typical single-chain ionic surfactant headgroup"
+  },
+  {
+    "id": "R-002",
+    "category": "R",
+    "subcategory": "chain_depth",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter",
+      "classify_aggregate_morphology"
+    ],
+    "difficulty": "medium",
+    "question_text": "A single-chain surfactant has a saturated tail of 12 carbons and an optimal headgroup area of 50.0 square Angstrom (typical single-chain ionic surfactant headgroup). Compute the critical packing parameter (CPP), then classify the expected aggregate morphology from that CPP value.",
+    "given_data": {
+      "n_carbons": 12,
+      "head_area_A2": 50.0
+    },
+    "gold_answer": {
+      "cpp": 0.4199,
+      "morphology": "cylindrical/rodlike micelle"
+    },
+    "tolerance": {
+      "cpp_rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "chain_depth=3 (+ morphology classification); typical single-chain ionic surfactant headgroup"
+  },
+  {
+    "id": "R-003",
+    "category": "R",
+    "subcategory": "chain_depth",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter",
+      "classify_aggregate_morphology",
+      "aggregation_number"
+    ],
+    "difficulty": "hard",
+    "question_text": "A single-chain surfactant has a saturated tail of 12 carbons and an optimal headgroup area of 50.0 square Angstrom (typical single-chain ionic surfactant headgroup). Compute: (1) the critical packing parameter (CPP), (2) the expected aggregate morphology from that CPP value, and (3) the spherical-micelle aggregation number, using the tail's own extended length as the micelle core radius (the standard Tanford approximation).",
+    "given_data": {
+      "n_carbons": 12,
+      "head_area_A2": 50.0
+    },
+    "gold_answer": {
+      "cpp": 0.4199,
+      "morphology": "cylindrical/rodlike micelle",
+      "n_agg": 55.5
+    },
+    "tolerance": {
+      "cpp_rel": 0.02,
+      "n_agg_rel": 0.05
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "chain_depth=4 (+ aggregation number); typical single-chain ionic surfactant headgroup"
+  },
+  {
+    "id": "R-004",
+    "category": "R",
+    "subcategory": "chain_depth",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter"
+    ],
+    "difficulty": "medium",
+    "question_text": "A single-chain surfactant has a saturated tail of 16 carbons and an optimal headgroup area of 45.0 square Angstrom (long-chain ionic surfactant, moderate headgroup area). Compute the critical packing parameter (CPP).",
+    "given_data": {
+      "n_carbons": 16,
+      "head_area_A2": 45.0
+    },
+    "gold_answer": 0.468,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "chain_depth=2 (tail volume+length -> CPP); long-chain ionic surfactant, moderate headgroup area"
+  },
+  {
+    "id": "R-005",
+    "category": "R",
+    "subcategory": "chain_depth",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter",
+      "classify_aggregate_morphology"
+    ],
+    "difficulty": "medium",
+    "question_text": "A single-chain surfactant has a saturated tail of 16 carbons and an optimal headgroup area of 45.0 square Angstrom (long-chain ionic surfactant, moderate headgroup area). Compute the critical packing parameter (CPP), then classify the expected aggregate morphology from that CPP value.",
+    "given_data": {
+      "n_carbons": 16,
+      "head_area_A2": 45.0
+    },
+    "gold_answer": {
+      "cpp": 0.468,
+      "morphology": "cylindrical/rodlike micelle"
+    },
+    "tolerance": {
+      "cpp_rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "chain_depth=3 (+ morphology classification); long-chain ionic surfactant, moderate headgroup area"
+  },
+  {
+    "id": "R-006",
+    "category": "R",
+    "subcategory": "chain_depth",
+    "tools_required": [
+      "tanford_chain_geometry",
+      "critical_packing_parameter",
+      "classify_aggregate_morphology",
+      "aggregation_number"
+    ],
+    "difficulty": "hard",
+    "question_text": "A single-chain surfactant has a saturated tail of 16 carbons and an optimal headgroup area of 45.0 square Angstrom (long-chain ionic surfactant, moderate headgroup area). Compute: (1) the critical packing parameter (CPP), (2) the expected aggregate morphology from that CPP value, and (3) the spherical-micelle aggregation number, using the tail's own extended length as the micelle core radius (the standard Tanford approximation).",
+    "given_data": {
+      "n_carbons": 16,
+      "head_area_A2": 45.0
+    },
+    "gold_answer": {
+      "cpp": 0.468,
+      "morphology": "cylindrical/rodlike micelle",
+      "n_agg": 94.0
+    },
+    "tolerance": {
+      "cpp_rel": 0.02,
+      "n_agg_rel": 0.05
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "multi_tool_chain",
+    "source_note": "chain_depth=4 (+ aggregation number); long-chain ionic surfactant, moderate headgroup area"
+  },
+  {
+    "id": "S-001",
+    "category": "S",
+    "subcategory": "mass_vs_mole_fraction",
+    "tools_required": [
+      "clint_ideal_cmc"
+    ],
+    "difficulty": "hard",
+    "question_text": "A surfactant blend is 47.0% SDS by weight, with the balance TX-100. SDS has a pure-component CMC of 8.2 mM and molecular weight 288.38 g/mol; TX-100 has a pure-component CMC of 0.24 mM and molecular weight 646.85 g/mol. Using Clint's ideal mixed-CMC equation, what is the mixed CMC (mM) of this blend?",
+    "given_data": {
+      "component1": "SDS",
+      "component2": "TX-100",
+      "weight_pct_component1": 47.0,
+      "cmc1_mM": 8.2,
+      "mw1_g_per_mol": 288.38,
+      "cmc2_mM": 0.24,
+      "mw2_g_per_mol": 646.85
+    },
+    "gold_answer": 0.6779,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "convention_ambiguity",
+    "source_note": "SDS/TX-100, MW ratio ~2.24x; correct mole-fraction-converted answer 0.6779 mM vs. the answer a model gets if it silently treats weight% as mole-fraction alpha1, 0.4414 mM (35% relative gap) -- real, computed both ways, not assumed to differ"
+  },
+  {
+    "id": "S-002",
+    "category": "S",
+    "subcategory": "mass_vs_mole_fraction",
+    "tools_required": [
+      "clint_ideal_cmc"
+    ],
+    "difficulty": "hard",
+    "question_text": "A surfactant blend is 30.0% CTAB by weight, with the balance TX-100. CTAB has a pure-component CMC of 0.92 mM and molecular weight 364.45 g/mol; TX-100 has a pure-component CMC of 0.24 mM and molecular weight 646.85 g/mol. Using Clint's ideal mixed-CMC equation, what is the mixed CMC (mM) of this blend?",
+    "given_data": {
+      "component1": "CTAB",
+      "component2": "TX-100",
+      "weight_pct_component1": 30.0,
+      "cmc1_mM": 0.92,
+      "mw1_g_per_mol": 364.45,
+      "cmc2_mM": 0.24,
+      "mw2_g_per_mol": 646.85
+    },
+    "gold_answer": 0.3526,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "convention_ambiguity",
+    "source_note": "CTAB/TX-100, MW ratio ~1.77x; correct mole-fraction-converted answer 0.3526 mM vs. the answer a model gets if it silently treats weight% as mole-fraction alpha1, 0.3084 mM (13% relative gap) -- real, computed both ways, not assumed to differ"
+  },
+  {
+    "id": "S-003",
+    "category": "S",
+    "subcategory": "mass_vs_mole_fraction",
+    "tools_required": [
+      "clint_ideal_cmc"
+    ],
+    "difficulty": "hard",
+    "question_text": "A surfactant blend is 60.0% SDS by weight, with the balance DTAB. SDS has a pure-component CMC of 8.2 mM and molecular weight 288.38 g/mol; DTAB has a pure-component CMC of 15.0 mM and molecular weight 308.34 g/mol. Using Clint's ideal mixed-CMC equation, what is the mixed CMC (mM) of this blend?",
+    "given_data": {
+      "component1": "SDS",
+      "component2": "DTAB",
+      "weight_pct_component1": 60.0,
+      "cmc1_mM": 8.2,
+      "mw1_g_per_mol": 288.38,
+      "cmc2_mM": 15.0,
+      "mw2_g_per_mol": 308.34
+    },
+    "gold_answer": 9.9286,
+    "tolerance": {
+      "rel": 0.02
+    },
+    "grading_method": "numeric_tolerance",
+    "trap_type": "convention_ambiguity",
+    "source_note": "SDS/DTAB, MW ratio ~0.94x (small effect, control case); correct mole-fraction-converted answer 9.9286 mM vs. the answer a model gets if it silently treats weight% as mole-fraction alpha1, 10.0163 mM (1% relative gap) -- real, computed both ways, not assumed to differ"
+  }
+]

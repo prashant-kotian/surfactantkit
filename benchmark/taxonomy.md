@@ -35,6 +35,22 @@ No SurfactantKit tool applies to these by design. They exist to show tool augmen
 
 **Total: 500**
 
+## Tier 3 -- reliability/robustness categories (19 questions, added 2026-09-07)
+
+Built after the full Tier 1+2 bank scored ~80% unaugmented (both Claude Opus 4.8 and GPT-5.6-sol) on a real manual-transcript run -- well above the ~50% expected, because most of the 500-question bank is standard, fully-specified computation the models have gotten good at regardless of tool access. Tier 3 goes back to what actually differentiated in the original 2026-09-04 no_solution pilot (47-57% unaugmented on a small, deliberately curated trap set) and extends that same philosophy into three related failure modes, plus a methodology-only fourth: does the model know when it *can't* safely compute, not just whether it can do arithmetic.
+
+| Category | What it tests | Count | New trap_type |
+|---|---|---|---|
+| P. Applicability-domain violation | Predicting a value outside a real fitted model's training range (SurfQSPR's own `predict_cmc`), including in-domain controls so a model that just hedges on everything doesn't score well for the wrong reason | 7 (4 trap + 3 control) | `applicability_domain_violation` |
+| Q. Self-consistency under redundant computation | Computing the same quantity (van't Hoff enthalpy) two independent ways from a real 3-point temperature series and checking whether the two answers actually agree | 3 | `self_consistency_check` |
+| R. Computation-chain depth | Same real Tanford->CPP->morphology->N_agg chain, explicitly varied in how many dependent steps one question asks for (depth 2/3/4), to see whether error compounds | 6 | `multi_tool_chain` (reused, `source_note` records depth) |
+| S. Silent convention ambiguity | Surfactant blend composition given as weight % (a real, common industrial framing), which Clint's equation requires converting to mole fraction first -- silently treating weight % as mole fraction gives a real, computed-both-ways wrong answer | 3 | `convention_ambiguity` |
+| **Subtotal** | | **19** | |
+
+Two protocol-only additions apply to ANY existing set (Tier 1/2/3), not new questions: **reproducibility** (run the same question N times, measure answer variance -- a deterministic tool gives the same answer every time by construction, an LLM may not) and **confidence calibration** (does stated/hedged confidence track actual correctness). Not yet run as a formal pass; noted here so they aren't lost.
+
+Source: `generators/reliability_gen.py` (all gold answers computed via real `surfactantkit`/`surfqspr` function calls, same discipline as Tier 1). Bank: `question_bank_tier3.json`. Manual-paste export for Claude/ChatGPT web UI: `tier3/tier3_manual_prompt.txt` (built via `tier3/export_manual_prompts.py`, reuses the harness's real `prompts.py` wording).
+
 ## Question design principles (apply across Tier 1)
 
 1. **Gold answers are computed by SurfactantKit itself, not hand-derived.** Each Tier 1 question is generated from a template + parameter set; a generator script calls the actual library function to produce the gold answer. This guarantees gold-answer correctness is exactly as good as the library's own test suite (106 passing tests, 8 literature-validated systems) and makes the question bank trivial to regenerate if a formula is ever revised.

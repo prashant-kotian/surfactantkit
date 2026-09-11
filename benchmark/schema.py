@@ -9,7 +9,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from typing import Any, Literal
 
-TrapType = Literal["none", "unit_trap", "no_solution", "multi_tool_chain"]
+TrapType = Literal["none", "unit_trap", "no_solution", "multi_tool_chain",
+                    "convention_ambiguity", "applicability_domain_violation",
+                    "self_consistency_check"]
 GradingMethod = Literal["numeric_tolerance", "exact_match", "category_match"]
 
 
