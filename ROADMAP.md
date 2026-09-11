@@ -1045,13 +1045,10 @@ across the flat baseline region -- visually wrong) and now plots the baseline as
 separate flat segment when present. Full suite: 342/342 passing (SurfactantKit),
 48/48 passing (surfactantkit-reports).
 
-**2026-09-12 (same day, follow-up): postmicellar plateau's own regression exposed, and the
-`surfactantkit-reports` UI dropped literature citations in favor of showing real, run-specific
-fitted numbers.** User decision: the researcher-facing UI should not cite papers at all --
-instead it should show the actual formula used and this specific run's own fitted parameter
-values (e.g. the premicellar region characterized via a genuine nonlinear Szyszkowski isotherm
-fit, with real A0/A1/K values from THIS analysis; the postmicellar region via its own linear
-regression). Two changes, one in each repo:
+**2026-09-12 (same day, follow-up): postmicellar plateau's own regression exposed in
+SurfactantKit's core; `surfactantkit-reports` UI dropped literature citations.** User decision:
+the researcher-facing UI should not cite papers at all -- it should show the actual formula
+used and the run's own result numbers instead. Two changes:
 - `CmcFromCurveResult` gained `postmicellar_slope_mN_per_m_per_log10C`,
   `postmicellar_intercept_mN_per_m`, `postmicellar_mean_gamma_mN_per_m`, and
   `r_squared_postmicellar` -- the plateau segment's own regression, computed once after the
@@ -1060,27 +1057,28 @@ regression). Two changes, one in each repo:
   slope, with an explicit note that R^2 is naturally LOW (~0.07) for near-constant data even
   when the fit is visually excellent -- a known statistical property, not a defect, disclosed
   so a researcher doesn't misread it as a bad fit. `mcp_server.py`'s tool wrapper updated to
-  surface these fields too.
-- `surfactantkit-reports`' `run_cmc_surface_tension_report` now ALSO runs a genuine nonlinear
-  least-squares Szyszkowski/Langmuir fit (`szyszkowski_fit_K`, already built and verified
-  2026-09-10) on the premicellar (pre-CMC) data, reporting the classical two-constant form
-  A0=1/K, A1=n*R*T*Gamma_max alongside the CMC-location result -- NOT replacing the (just-
-  fixed) breakpoint CMC-location method, running alongside it as extra adsorption-isotherm
-  characterization, per explicit user decision. Requires a new, REQUIRED `system_type`
-  parameter (no default -- this library never guesses ionic character/electrolyte condition,
-  same discipline as `gibbs_gamma_max`/`szyszkowski_surface_tension`). `gamma0` (pure-solvent
-  baseline) is DERIVED from the data itself (the detected flat baseline's mean, or the lowest-
-  concentration point if no baseline), never guessed. Verified end-to-end against the real
-  researcher dataset: the fitted Szyszkowski curve visibly (and honestly) undershoots the flat
-  baseline region (R^2=0.776, not a misleadingly perfect number) while tracking the true
-  decline well -- a real, disclosed finding that a single-K isotherm doesn't perfectly describe
-  this dataset's full premicellar range, not hidden or forced to look better than it is.
-  `TechniqueSpec`'s `citation` field removed entirely from the UI package; `formula`/
-  `method_name` rewritten to be self-contained (no external reference needed to understand
-  them), and a new `extra_inputs` mechanism added so the UI can require a categorical choice
-  (system_type) before running, with no default, matching the "do not guess" pattern. Full
-  suite: 344/344 passing (SurfactantKit), 48/48 passing (surfactantkit-reports); Streamlit app
-  boot-tested headlessly again after the UI changes (HTTP 200, clean log).
+  surface these fields too. This part stayed permanently -- real, useful, low-risk data the
+  underlying library now exposes.
+- `surfactantkit-reports`: `TechniqueSpec.citation` removed from the UI package entirely;
+  `formula`/`method_name` for all 4 techniques rewritten to be self-contained (no external
+  reference needed), and the "Source:" line dropped from both the on-screen methodology panel
+  and the downloadable `methodology.txt`.
+  **First attempt over-built this**: also added a genuine nonlinear Szyszkowski/Langmuir
+  isotherm fit (`szyszkowski_fit_K`) on the premicellar data as a second, separate
+  characterization step alongside CMC location, plus a new required `system_type` UI input and
+  an `extra_inputs` mechanism to support it -- verified working end-to-end (real, honestly-
+  disclosed R^2=0.776 against the researcher dataset, not a misleadingly perfect number) but
+  the user then clarified the actual ask was simpler: "we will show the result and we will
+  explain how [we] did it, that is it" -- no two-part premicellar/postmicellar breakdown.
+  **Reverted per that feedback**: `run_cmc_surface_tension_report` and `CmcSurfaceTensionReport`
+  back to their simple pre-Szyszkowski shape (just `result`/`png_path`/`agr_path`/`report_data`,
+  no `system_type` parameter); `TechniqueSpec.extra_inputs`/`ExtraInputSpec` removed entirely
+  as now-unused abstraction, not left in as dead infrastructure; `CMC_SURFACE_TENSION`'s
+  `formula`/`result_fields` back to the plain single-paragraph breakpoint-method description,
+  same simple pattern as the other 3 techniques -- citation-free, but not over-engineered.
+  Full suite: 344/344 passing (SurfactantKit), 48/48 passing (surfactantkit-reports); Streamlit
+  app boot-tested headlessly three times across this back-and-forth (HTTP 200, clean log each
+  time).
 
 ---
 
