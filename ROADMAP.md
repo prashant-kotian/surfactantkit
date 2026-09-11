@@ -559,9 +559,20 @@ paper/repo, not SurfactantKit).
   `maeda_free_energy_of_micellization` using their own reported X1/beta directly, not an
   additional Rubingh solver cross-check -- honestly scoped, not overclaimed. New test in
   `tests/test_mixed_micelle.py`, full docstring disclosure. Suite: 298/298 passing.
-  **Rodenas second-source validation still open** -- needs multi-point cmc_mix(alpha1) series
-  data with a reported local slope (rarer to find than Maeda's single-point requirement); not
-  attempted this pass.
+  **Rodenas second-source validation still open for a genuinely different source, but a real
+  related finding landed 2026-09-10.** Found the SAME Azum et al. 2022 paper (not a second
+  source) has a full 5-point G6+T-20 alpha1 series (Table 1/2) with real reported X1_Rod
+  values at every point -- used this to run `rodenas_x1_series` (the numerical local-slope
+  helper, previously only round-trip tested against synthetic exactly-quadratic data) against
+  REAL, sparse, experimentally-noisy multi-point data for the first time. Real, disclosed
+  result: interior points (alpha1=0.4, 0.5, 0.6) match within 3.4-9.1% relative error, but
+  the two series ENDPOINTS are off by ~19-20% (one even landing outside the physically-valid
+  [0,1] range) -- consistent with, not contradicting, the function's own documented weaker
+  one-sided-derivative reliability at series endpoints, now empirically confirmed on real
+  data rather than just a theoretical concern. New test in `tests/test_mixed_micelle.py`,
+  explicitly NOT claimed as a second-source validation (same primary source) and explicitly
+  NOT claimed as proof the function matches literature to the precision the round-trip tests
+  alone would suggest. A genuinely different second source for Rodenas remains unfound.
 - **Second independent literature sources for categories D (geometry), F (dynamics), G
   (thermodynamics)** -- attempted 2026-09-10, mixed real results, all honestly disclosed:
   - **Category G (thermodynamics): DONE.** Found a genuinely different system (an

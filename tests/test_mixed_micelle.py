@@ -731,6 +731,44 @@ def test_rodenas_x1_series_rejects_bad_inputs():
         rodenas_x1_series([0.2, 0.4, 0.4], [1.0, 2.0, 3.0])  # duplicate alpha1
 
 
+def test_rodenas_x1_series_against_real_multipoint_literature_data():
+    """Real test against an actual raw multi-point literature alpha1
+    series (2026-09-10) -- NOT a second independent source (this reuses
+    the same G6+T-20 system, Table 1/2, already used for the single-
+    point rodenas_x1/Maeda validations elsewhere in this file: Azum,
+    Rub, Alotaibi, Khan & Asiri, Biointerface Res. Appl. Chem. 12(6)
+    (2022) 7416-7428), but the FIRST time rodenas_x1_series specifically
+    (the numerical local-slope-from-a-series helper, previously only
+    round-trip tested against synthetic exactly-quadratic data) has been
+    checked against real, sparse (5-point), experimentally-noisy data
+    with a real reported X1_Rod comparison. Real, disclosed finding:
+    this does NOT cleanly reproduce the paper's own reported X1_Rod
+    values -- interior points (alpha1=0.4, 0.5, 0.6) land within
+    3.4-9.1% relative error, but the two series ENDPOINTS (alpha1=0.3,
+    0.8) are off by ~19-20%, with the alpha1=0.8 point even exceeding
+    the physically-valid [0,1] mole-fraction range. This is consistent
+    with (not contradicted by) rodenas_x1_series's own documented
+    one-sided-derivative limitation at series endpoints, and is the
+    most likely explanation (the paper's own local slope was almost
+    certainly obtained by some different method -- a global fit or a
+    graphical read -- not stated in enough detail to reproduce exactly).
+    Kept as a real, honest record of this method's real-world behavior
+    on sparse literature data, not as a validated numeric match -- do
+    not read this as proof the function is correct to the precision the
+    round-trip tests suggest; sparse real series have genuine numerical-
+    differentiation error this function cannot eliminate."""
+    alpha1_series = [0.3, 0.4, 0.5, 0.6, 0.8]
+    cmc_mix_series = [0.060, 0.056, 0.051, 0.048, 0.035]  # mM, paper's own Table 1 'cmc' column
+    paper_x1_rod = [0.520, 0.652, 0.762, 0.852, 0.968]
+
+    result = rodenas_x1_series(alpha1_series, cmc_mix_series)
+    # interior points: real, meaningful agreement
+    for i in (1, 2, 3):
+        assert result.x1_rodenas[i] == pytest.approx(paper_x1_rod[i], rel=0.10)
+    # qualitative check only for the endpoints (real, larger, disclosed error there)
+    assert result.x1_rodenas[0] < result.x1_rodenas[2] < result.x1_rodenas[4]  # monotonic trend preserved
+
+
 def test_rodenas_activity_coefficients_basic():
     alpha1, x1, cmc_mix, cmc1, cmc2 = 0.5, 0.6, 5.0, 10.0, 8.0
     f1, f2 = rodenas_activity_coefficients(alpha1, x1, cmc_mix, cmc1, cmc2)
