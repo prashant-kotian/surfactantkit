@@ -30,6 +30,18 @@ def tanford_tail_volume(n_carbons: int) -> float:
     """Hydrophobic tail volume (cubic Angstrom) for a saturated,
     unbranched alkyl chain of n_carbons carbons. Equivalent to the
     shorthand 27.4 + 26.9*n_carbons.
+
+    CONFIRMED 2026-09-11 directly against a freely-hosted full primary
+    source (Bales, Messina, Vidal, Peric & Nascimento, J. Phys. Chem. B
+    1998, 102, 10347-10358, their eq. 9: Vtail=27.4+26.9*Nc, Nc=12 taken
+    as the number of methylene-equivalent carbons for SDS -- exactly
+    this project's own already-cited value and formula, previously
+    confirmed only via a citing secondary paper's Table 2, now against
+    the primary text itself, hosted free by the author at
+    csun.edu/~vcphy00s/). The same paper's own illustrative example
+    (SDS, 69 mM, salt-free, referencing Cabane's SANS data) uses
+    NA=63 with this exact Vtail=350.2 A^3 -- see
+    tests/test_hlb_cpp.py for both cross-checks.
     """
     if n_carbons < 1:
         raise ValueError("n_carbons must be at least 1")
@@ -164,7 +176,30 @@ def classify_aggregate_morphology(cpp: float) -> str:
     """Expected aggregate morphology from the critical packing parameter.
 
     Thresholds: <=1/3 spherical micelles; (1/3, 1/2] cylindrical/rod
-    micelles; (1/2, 1] vesicles/bilayers; >1 inverted structures.
+    micelles; (1/2, 1] vesicles/bilayers; >1 inverted structures --
+    Israelachvili's classical thresholds.
+
+    Real-world caveat, checked against the primary source (2026-09-11,
+    PDF provided by the user): Schafer, Kolli, Christensen, Bore,
+    Diezemann, Gauss, Milano, Lund & Cascella, Angew. Chem. Int. Ed. 59
+    (2020) 18591-18598 (SAXS/SANS + simulation study of SDS's real
+    sphere-to-cylinder transition). Their own reported number is P=0.493
+    for the effective packing parameter of the paired ("dimeric") SDS
+    subunit that drives the transition -- close to the classical 1/2
+    threshold used here for the cylinder/vesicle boundary, NOT a
+    departure from it, and NOT a bulk-CPP value near 0.2 (an earlier,
+    inaccurate secondary-summary paraphrase of this paper, corrected
+    this pass now that the primary text is in hand). Their own real
+    finding is more subtle than a shifted threshold: only ~10-20% of SDS
+    monomers need to pair into these locally-P=0.493 dimers to drive the
+    sphere-to-cylinder transition, "without any discontinuity in the
+    overall packing parameter" (their own words) -- i.e. the BULK/
+    monomeric CPP computed by this function's own formula does not
+    itself jump at the transition; the local packing of a transient
+    substructure does. Treat this function's classical thresholds as
+    what they are (a monomer-level rule of thumb), not as a claim that
+    real morphology transitions are driven by a single sharp bulk-CPP
+    value crossing 1/3 or 1/2.
     """
     if cpp <= 0:
         raise ValueError("cpp must be positive")

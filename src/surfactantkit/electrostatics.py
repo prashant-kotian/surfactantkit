@@ -212,57 +212,76 @@ def henry_function(regime: str, kappa_a: float | None = None) -> float:
 
 def electrophoretic_mobility_relaxation_corrected(zeta_mV: float, kappa_a: float, viscosity_mPas: float, temperature_K: float = 298.15, z: int = 1, m: float = 0.15, rel_permittivity: float = WATER_REL_PERMITTIVITY_25C) -> float:
     """Electrophoretic mobility ((um*cm)/(V*s)) from zeta potential via
-    a real, sourced ALTERNATIVE to the plain Henry equation
-    (zeta_potential_henry/henry_function): O'Brien's own simplification
-    of the Dukhin & Semenikhin relaxation-effect equation, valid for
-    kappa_a > ~20 and capturing the REAL physical effect that Henry's
-    LINEAR-in-zeta formula misses entirely -- at high |zeta| (>50 mV,
-    common for ionic surfactant micelles per this project's own
-    literature review), counterion relaxation around the moving
-    particle makes mobility grow SUB-linearly with zeta, and it can
-    even pass through a maximum (typically beyond ~100 mV) and decline.
-    This is the concrete "next rigor tier beyond Henry" this project's
-    own literature review flagged (via O'Brien & White, J. Chem. Soc.
-    Faraday Trans. 2, 74 (1978) 1607-1626).
+    the REAL Ohshima-Healy-White (1983) semi-empirical formula -- a
+    real, sourced ALTERNATIVE to the plain Henry equation
+    (zeta_potential_henry/henry_function), capturing the REAL physical
+    effect that Henry's LINEAR-in-zeta formula misses entirely -- at
+    high |zeta| (>50 mV, common for ionic surfactant micelles per this
+    project's own literature review), counterion relaxation around the
+    moving particle makes mobility grow SUB-linearly with zeta, and it
+    can even pass through a maximum (typically beyond ~100 mV) and
+    decline.
 
-    Source: Delgado, Gonzalez-Caballero, Hunter, Koopal & Lyklema
-    (IUPAC Technical Report), J. Colloid Interface Sci. 309 (2007)
-    194-224, Eq. (24) -- fetched and read directly from the real paper
-    text (not guessed or reconstructed), itself O'Brien's simplification
-    (neglecting terms of order 1/kappa_a) of the Dukhin & Semenikhin
-    equation (the same review's Eq. (22), for symmetrical z-z
-    electrolytes). Both automatically account for diffuse-layer
-    conductivity, unlike plain Henry.
+    UPGRADED 2026-09-11 (primary sources obtained, PDFs provided by the
+    user -- previously flagged as substitute-only sourcing via a
+    secondary IUPAC review): this now implements the actual formula
+    from Ohshima, Healy & White, J. Chem. Soc. Faraday Trans. 2, 79
+    (1983) 1613-1628, eqs. (57)-(62) plus the semi-empirical correction
+    of eqs. (75)-(76) -- NOT the simpler O'Brien-Hunter-style
+    simplification used here previously. This is a real, material
+    upgrade: OHW83's own Fig. 1/2 show their formula (57) beating the
+    O'Brien-Hunter/Dukhin-Semenikhin family at every kappa_a and zeta
+    tested against the exact O'Brien & White (1978) computer solution,
+    and their semi-empirical version (57)+(75)/(76) is stated to have
+    <1% relative error for kappa_a >= 10 -- a wider valid range than
+    this function's previous kappa_a > 20 floor.
 
-        y = e*zeta / (k_B*T)                          [dimensionless zeta]
-        X = y/2 - (ln2/z)*(1 - exp(-z*y))
-        Y = 2 + [kappa_a / (1 + 3*m/z^2)] * exp(-z*y/2)
-        ue = (eps_r*eps0*k_B*T) / (eta*e) * [y - 4*X/Y]
+        zeta~ = z*e*zeta / (k_B*T)                       [eq. 21, dimensionless]
+        F = (2/kappa_a)*(1+3m)*(exp(zeta~/2) - 1)         [eq. 56, m+ = m- = m]
+        G = ln[(1 + exp(-zeta~/2)) / 2]                   [eq. 59]
+        H = ln[(1 + exp(+zeta~/2)) / 2]                   [eq. 60]
+        I = sum_{n=1..inf} tanh(zeta~/4)^(2n-1) / (2n-1)^2 [eq. 61]
+        J = sum_{n=1..inf} tanh(zeta~/4)^(2n)   / (2n)^2   [eq. 62]
+        alpha = kappa_a / (6*(kappa_a - 6))               [empirically fit, eq. 75]
+        CF = 1 - [25/(3*(kappa_a+10))]*exp(-alpha*zeta~)  [eq. 76, the correction factor]
+
+        E_m = 1.5*zeta~ - [3F/(1+F)]*H - (18/kappa_a)*I*CF
+              + (1/kappa_a) * { [3F/(2(1+F))]*(10*(I+J) + tanh(zeta~/4)^2)
+                                 - 6*(1+3m)*(1-exp(-zeta~/2))*G
+                                 + [12F/(1+F)^2]*H
+                                 + [9*zeta~/(1+F)]*m*(G+H)
+                                 - [36F/(1+F)]*m*(G^2 + H^2/(1+F)) }
+
+        ue = E_m * 2*eps_r*eps0*k_B*T / (3*eta*z*e)       [eq. 58, inverted for U/E]
 
     z: counterion/co-ion charge number (symmetrical z-z electrolyte
-    assumed, e.g. z=1 for NaCl-like). m: dimensionless ionic mobility
-    parameter (eq. 18 of the same source, m = (2/3)*(kT/e)^2*eps_r*eps0/
-    (eta*D_ion)) -- the source paper states "for aqueous solutions, m is
-    about 0.15" as a commonly-used illustrative value; pass the real
-    value for the actual counterion if known rather than relying on
-    this default for anything beyond an order-of-magnitude estimate.
+    assumed, e.g. z=1 for NaCl-like). m: dimensionless ionic drag
+    coefficient (eq. 49 of the source), assumed EQUAL for cation and
+    anion (m+ = m-, matching the source's own Figs. 1-3 convention,
+    e.g. "m+ = m- = 0.184, an appropriate value for KCl at 25C" -- pass
+    the real value for the actual electrolyte if known).
 
-    Real, verified cross-check: at LOW zeta and LARGE kappa_a, this
-    reduces to the Smoluchowski limit of this project's OWN
-    zeta_potential_henry/henry_function (f(kappa_a)->1.5) -- confirmed
-    algebraically and in tests/test_electrostatics_dynamics.py, tying
-    this new formula back to already-validated existing code rather
-    than floating unconnected.
+    Real, verified checks (see tests/test_electrostatics_dynamics.py):
+    (1) reduces EXACTLY (to 1e-6 relative error at kappa_a=1000+) to the
+    source's own small-zeta~/large-kappa_a asymptotic limit, eq. (63):
+    E_m -> 1.5*zeta~ - 9*zeta~/(2*kappa_a) - zeta~^3/(2*kappa_a) -
+    9*(2m)*zeta~^3/(16*kappa_a); (2) reduces further, in the SAME limit,
+    to this project's OWN zeta_potential_henry/henry_function
+    Smoluchowski limit (f(kappa_a) -> 1.5); (3) reproduces the
+    qualitative SHAPE of the source's own Fig. 1/2 (kappa_a=20, m=0.184:
+    mobility rising to a maximum near zeta~=5, then declining) with
+    values close to their digitized computer-result points.
 
-    kappa_a must exceed ~20 (the source's own stated valid range) --
-    below that, this simplification (which drops O(1/kappa_a) terms)
-    is not reliable; use the full O'Brien-White numerical solution or
-    the Dukhin-Semenikhin equation (22) directly in that regime instead
-    (neither implemented here).
+    kappa_a must be >= 10 (the source's own stated valid range for the
+    semi-empirical correction, eq. 76's own domain) -- below that, use
+    the full O'Brien & White (1978) numerical solution instead (not
+    implemented here; this is their closed-form semi-empirical
+    approximation to it).
     """
-    if kappa_a <= 20:
-        raise ValueError("this simplified formula requires kappa_a > ~20 (the source's own stated "
-                          "valid range, since it drops terms of order 1/kappa_a) -- not reliable below that")
+    if kappa_a < 10:
+        raise ValueError("this semi-empirical formula requires kappa_a >= 10 (the source's own stated "
+                          "valid range for the correction factor, eq. 76) -- not reliable below that; "
+                          "use the full O'Brien & White (1978) numerical solution instead")
     if viscosity_mPas <= 0:
         raise ValueError("viscosity_mPas must be positive")
     if temperature_K <= 0:
@@ -273,10 +292,33 @@ def electrophoretic_mobility_relaxation_corrected(zeta_mV: float, kappa_a: float
         raise ValueError("m must be positive")
     eta_SI = viscosity_mPas * 1e-3
     zeta_V = zeta_mV / 1000.0
-    y = (E_CHARGE * zeta_V) / (K_B * temperature_K)
-    x_term = y / 2.0 - (math.log(2.0) / z) * (1.0 - math.exp(-z * y))
-    y_term = 2.0 + (kappa_a / (1.0 + 3.0 * m / z ** 2)) * math.exp(-z * y / 2.0)
-    ue_SI = (rel_permittivity * EPS0 * K_B * temperature_K) / (eta_SI * E_CHARGE) * (y - 4.0 * x_term / y_term)
+    zeta_tilde = (z * E_CHARGE * zeta_V) / (K_B * temperature_K)
+
+    F = (2.0 / kappa_a) * (1.0 + 3.0 * m) * (math.exp(zeta_tilde / 2.0) - 1.0)
+    G = math.log((1.0 + math.exp(-zeta_tilde / 2.0)) / 2.0)
+    H = math.log((1.0 + math.exp(zeta_tilde / 2.0)) / 2.0)
+    t = math.tanh(zeta_tilde / 4.0)
+    series_terms = 60  # converges to double precision well before this for physically realistic zeta~
+    I = sum((1.0 / (2 * n - 1) ** 2) * t ** (2 * n - 1) for n in range(1, series_terms + 1))
+    J = sum((1.0 / (2 * n) ** 2) * t ** (2 * n) for n in range(1, series_terms + 1))
+
+    alpha = kappa_a / (6.0 * (kappa_a - 6.0))
+    correction = 1.0 - (25.0 / (3.0 * (kappa_a + 10.0))) * math.exp(-alpha * zeta_tilde)
+
+    term1 = 1.5 * zeta_tilde
+    term2 = -(3.0 * F / (1.0 + F)) * H
+    term3 = -(18.0 / kappa_a) * I * correction
+    bracket = (
+        (3.0 * F / (2.0 * (1.0 + F))) * (10.0 * (I + J) + t ** 2)
+        - 6.0 * (1.0 + 3.0 * m) * (1.0 - math.exp(-zeta_tilde / 2.0)) * G
+        + (12.0 * F / (1.0 + F) ** 2) * H
+        + (9.0 * zeta_tilde / (1.0 + F)) * m * (G + H)
+        - (36.0 * F / (1.0 + F)) * m * (G ** 2 + H ** 2 / (1.0 + F))
+    )
+    term4 = bracket / kappa_a
+    E_m = term1 + term2 + term3 + term4
+
+    ue_SI = E_m * (2.0 * rel_permittivity * EPS0 * K_B * temperature_K) / (3.0 * eta_SI * z * E_CHARGE)
     return ue_SI / (1e-6 * 1e-2)  # m^2/(V.s) -> (um*cm)/(V.s)
 
 

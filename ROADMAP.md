@@ -376,15 +376,17 @@ to the same 100%-done bar, real literature verification before implementation ea
    441-450) is paywalled; exact coefficients (NEOeff=13.45*ln(NEO)-0.16*NEO+1.26,
    NCH2eff=0.965*NCH2-0.178, NPOeff=2.057*NPO+9.06) verified via a citing patent (US
    11,344,493 B2) that quotes the formulas directly -- NOT reconstructed or guessed.
-   Honestly disclosed limitation: whether Guo/Rong/Ying also re-fit new per-unit
-   hydrophilic/lipophilic weights (vs. reusing Davies' 1.3/0.475) was not confirmed from the
-   primary source -- `hlb_davies_guo_ecl` assumes Davies' original weights apply to the
-   effective chain lengths, documented as a reasonable but unverified reading, not an exact
-   reproduction of the paper's own numbers. PO chain support is exposed as a standalone
+   **RESOLVED 2026-09-11** (primary source PDF provided by the user): Table 1 of the primary
+   paper lists group numbers under "Davies and Lin" vs. "ECL method" columns side by side, and
+   for CH2/CH3/CH/=CH- and the EO-repeat-unit group they are IDENTICAL (-0.475 and 0.33) --
+   confirming directly that Guo/Rong/Ying reuse Davies' weights unchanged, exactly what
+   `hlb_davies_guo_ecl` already assumed. Also added the previously-unimplemented NEO>=50 branch
+   of the source's own eq. (5') (NEOeff=0.056*NEO+43.08), removing the n_eo<=50 cap
+   `guo_effective_eo_chain_length` used to enforce. PO chain support is exposed as a standalone
    utility only (no verified Davies-scale PO group number exists in this project to chain it
-   into a full HLB). 9 new tests in `tests/test_hlb_cpp.py` -- 50/50 passing in that file.
-   Wired into `__init__.py` and `mcp_server.py` (new `hlb_davies_guo_ecl` tool), registered +
-   end-to-end tested. Full suite: 256/256 passing.
+   into a full HLB). 11 tests (9 original + 2 new, 2026-09-11) in `tests/test_hlb_cpp.py` --
+   52/52 passing in that file. Wired into `__init__.py` and `mcp_server.py` (new
+   `hlb_davies_guo_ecl` tool), registered + end-to-end tested.
 5. **Rusanov/classical mass-action model** -- DONE 2026-09-10. Built
    `mass_action_free_energy_of_micellization()` in `thermodynamics.py`: a real, sourced
    alternative to `gibbs_free_energy_micellization`'s pseudo-phase-separation convention,
@@ -399,35 +401,49 @@ to the same 100%-done bar, real literature verification before implementation ea
    at small n (>0.5 kJ/mol at n=15) -- ties the new model concretely back to the existing one
    rather than floating unconnected. NONIONIC-ONLY, explicitly disclosed: extending to ionic
    surfactants needs a different mass-action treatment (explicit counterion-binding
-   equilibrium) not verified this pass. 5 new tests in `tests/test_thermodynamics.py` --
-   21/21 passing in that file. Wired into `__init__.py` and `mcp_server.py` (new
-   `mass_action_free_energy_of_micellization` tool), registered + end-to-end tested. Full
-   suite: 261/261 passing.
-6. **O'Brien-White relaxation-effect correction** -- DONE 2026-09-10. Built
-   `electrophoretic_mobility_relaxation_corrected()` (forward) and
-   `zeta_potential_relaxation_corrected()` (numerical inverse, grid+bisection like
-   `solve_rubingh_x`) in `electrostatics.py`: a real, sourced alternative to the plain Henry
-   equation for HIGH zeta (>50 mV, common for ionic surfactant micelles) -- Henry is linear in
-   zeta and misses the relaxation effect (mobility grows sub-linearly with zeta, can pass
-   through a maximum beyond ~100 mV) entirely. The primary source (O'Brien & White 1978) and
-   the closed-form OHW83 semi-empirical approximation both proved hard to pin down exactly
-   (several paywalled/inaccessible attempts); found the real, usable, citable formula instead
-   in an IUPAC Technical Report (Delgado et al., J. Colloid Interface Sci. 309 (2007) 194-224,
-   their Eq. 24 -- O'Brien's own simplification of the Dukhin & Semenikhin relaxation
-   equation), fetched and read directly via the PDF's real extractable text layer (not vision-
-   read this time -- a genuine text PDF, confirmed via pypdf). Validated via a real, strong
-   cross-check tying it back to already-validated existing code: at low zeta and large
-   kappa_a, this formula reduces to within 0.1% of the plain Smoluchowski limit of
-   `zeta_potential_henry`/`henry_function` (f(kappa*a)=1.5) -- confirmed algebraically and
-   numerically. Also confirmed the real physical signature (sub-linear mobility growth at high
-   zeta) and a clean round-trip (forward -> inverse solver) across 10-90 mV. Restricted to
-   kappa_a > ~20 (the source's own stated valid range) and zeta in [0, 150] mV by default for
+   equilibrium) not verified this pass. **2026-09-11: primary source PDF obtained (provided by
+   the user)**; confirmed directly against it (Rusanov's own eq. 18, cm=1/Kj=K^(1-n), is the
+   same CMC definition this formula is built on, stated in his own abstract). Also added a new
+   companion function, `critical_micellization_degree()` (same module), implementing the
+   paper's own eqs. (15)-(16) for the critical micellization degree alpha_m under two different
+   curvature-based CMC definitions -- exact-matched to the paper's own worked example (n=100:
+   alpha_m=0.061 via eq. 15, 0.091 via eq. 16), with a guard against the d2alpha_dc2 branch's
+   unphysical negative output for n<2. 10 tests (5 original + 5 new, 2026-09-11) in
+   `tests/test_thermodynamics.py` -- 27/27 passing in that file. Wired into `__init__.py` and
+   `mcp_server.py` (new `mass_action_free_energy_of_micellization` and
+   `critical_micellization_degree` tools), registered + end-to-end tested.
+6. **O'Brien-White relaxation-effect correction** -- DONE 2026-09-10, **UPGRADED 2026-09-11
+   to the real primary-source formula** (old method fully replaced, not left alongside the
+   new one, per the Upgrade Protocol). Built `electrophoretic_mobility_relaxation_corrected()`
+   (forward) and `zeta_potential_relaxation_corrected()` (numerical inverse, grid+bisection
+   like `solve_rubingh_x`) in `electrostatics.py`: a real, sourced alternative to the plain
+   Henry equation for HIGH zeta (>50 mV, common for ionic surfactant micelles) -- Henry is
+   linear in zeta and misses the relaxation effect (mobility grows sub-linearly with zeta, can
+   pass through a maximum beyond ~100 mV) entirely.
+   Originally (2026-09-10) shipped with a substitute formula (an IUPAC Technical Report's
+   restatement of O'Brien's simplification of the Dukhin-Semenikhin equation) because the real
+   primary sources -- O'Brien & White, J. Chem. Soc. Faraday Trans. 2, 74 (1978) 1607-1626, and
+   Ohshima, Healy & White (OHW83), same journal, 79 (1983) 1613-1628 -- were paywalled.
+   2026-09-11: both PDFs obtained (provided by the user); the substitute formula was fully
+   REPLACED with OHW83's own semi-empirical formula (their eqs. 57-62 + the correction eqs.
+   75-76), which their own Fig. 1/2 show beating the old substitute-family formulas at every
+   kappa_a/zeta tested against the exact O'Brien-White computer solution, and widens the valid
+   range from kappa_a > ~20 down to kappa_a >= 10 (the source's own eq. 76 domain, <1% relative
+   error there). Validated three ways: (1) the original Smoluchowski cross-check (low zeta,
+   large kappa_a -> `zeta_potential_henry`/`henry_function`'s f(kappa*a)=1.5 limit) still holds
+   under the new formula; (2) a NEW direct check against the source's own eq. (63) small-zeta/
+   large-kappa_a asymptotic limit, agreeing to 1e-4 relative error; (3) reproduces the
+   qualitative shape of the source's own Fig. 1/2 (kappa_a=20, m=0.184: mobility rising to a
+   maximum near zeta~=5, then declining) closely matching their digitized computer-result
+   points -- checked in a scratch script before wiring into the library, not asserted blind.
+   Also confirmed the real physical signature (sub-linear mobility growth at high zeta) and a
+   clean round-trip (forward -> inverse solver) across 10-90 mV still hold. Restricted to
+   kappa_a >= 10 (the source's own stated valid range) and zeta in [0, 150] mV by default for
    the inverse solve (below the reported non-monotonic-mobility maximum) -- both limits
-   enforced with explicit errors, not silently guessed past. 8 new tests in
-   `tests/test_electrostatics_dynamics.py` -- 39/39 passing in that file. Wired into
-   `__init__.py` and `mcp_server.py` (new `predict_mobility_relaxation_corrected` and
-   `zeta_potential_relaxation_corrected` tools), registered + end-to-end tested. Full suite:
-   268/268 passing.
+   enforced with explicit errors, not silently guessed past. 9 tests (8 original + 1 new eq.-63
+   check) in `tests/test_electrostatics_dynamics.py` -- 45/45 passing in that file. Wired into
+   `__init__.py` and `mcp_server.py` (`predict_mobility_relaxation_corrected` and
+   `zeta_potential_relaxation_corrected` tools, docstrings updated to the new source).
 7. **OWRK / van Oss-Chaudhury-Good surface energy decomposition** -- DONE 2026-09-10. Built
    `owens_wendt_solid_surface_energy()` (2-component, OLS across 2+ test liquids) and
    `van_oss_chaudhury_good_solid_surface_energy()` (3-component LW/acid/base, closed-form 3x3
@@ -537,6 +553,186 @@ sub-models, not a drop-in alternative formula) and QSPR/ML-based HLB prediction 
 2009, Luan et al. 2009 -- needs a training dataset; this is in scope for the separate SurfQSPR
 paper/repo, not SurfactantKit).
 
+**2026-09-11: primary-source paper batch.** User obtained and provided 7 PDFs this session
+(Schulz & Durand main text again -- SI still not among them; Rodenas 1999 primary; Rusanov
+2014 primary; O'Brien & White 1978 primary; Ohshima/Healy/White 1983 primary; Guo/Rong/Ying
+2006 primary; Proverbio et al. 2003, already resolved 2026-09-08 and now independently
+reconfirmed). Net effect: the O'Brien-White relaxation-effect correction was materially
+upgraded to the real OHW83 formula (item 6 above); the Guo/Rong/Ying weight-reuse uncertainty
+was resolved and its NEO>=50 branch added (item 4 above); the Rusanov citation was upgraded to
+direct primary-source confirmation and a new `critical_micellization_degree()` capability was
+added (item 5 above); a genuinely independent second literature system for Rodenas was found
+and tested, disclosed honestly as a worse (not better) numeric match with an explained cause
+(see the Rodenas entry below). Schulz & Durand's SI remains the one item from the original gap
+list still genuinely unresolved. Full suite: 309/309 passing (up from 297).
+
+**2026-09-11 (continued): second paper batch + a genuinely new capability.** More PDFs
+obtained and provided by the user across several rounds: Schulz & Durand's actual SI (mmc1.docx
++ 9 CSV datasets) -- gave the real GAMS objective function and r-parameter/GRDIS wiring, but
+implementing it exactly revealed the free-energy-minimization objective is unbounded below as
+literally transcribed (runs to whatever W12/W21 search box is set, on both synthetic and real
+Hyamine/DTAB data) -- a genuine, disclosed dead end for now, not silently patched around (see
+the EOMMM entry above for the full finding); Bales 1998/2001/2002 (SDS tail volume/aggregation
+number worked example, alpha=0.272 SDS ionization degree, CsDS Krafft-temperature ionization);
+Khademi et al. 2017 + its SI (checked, figures only, confirms the existing round-trip approach
+was already the best available); Vautier-Giongo/Bales 2005 (two new independent Rubingh
+systems, DHPC+SDS and DHPC+DTAB, one of the five DHPC+SDS points a disclosed ~40% outlier,
+likely a table typo in the source); Schafer et al. 2020 (a real CORRECTION, not just an
+addition -- the project's earlier secondary-summary paraphrase of this paper's CPP-threshold
+finding was simply wrong, fixed in `classify_aggregate_morphology`'s own docstring); Sutherland
+et al. 2009 (closed the long-standing Category F/Stokes-Einstein gap for real, with an
+explanation for why 3 earlier attempts had failed: DLS-measured "mutual" diffusion coefficients
+for IONIC surfactants run several-fold too large due to counterion coupling, so a plain
+Stokes-Einstein check needs the true micelle diffusion coefficient specifically, which this
+paper's Taylor-dispersion data provides).
+
+**New capability (not a citation): `derive_davies_group_number_from_griffin()` in `hlb.py`.**
+Built in response to the user's question "can we compute HLB values for amide/sulfonate
+ourselves" -- yes, via the SAME cross-calibration method Davies himself used to build his
+original 1957 table (assume Davies' additive HLB equals Griffin's independent mass-ratio HLB,
+20*Mh/M, for a real reference compound, solve for the one unknown group number) -- the same
+method this project already used once, via a literature source (B.H. O 1998), to resolve the
+quaternary-ammonium gap. Applied it to derive real, disclosed, NON-literature-sourced group
+numbers for **sulfonate** (-SO3Na, calibrated against the sodium alkyl sulfonate series C6-C12,
+converging to ~6.2-6.3 over the practically-relevant C9-C12 range) and two **fatty acid
+alkanolamide** head groups (di- and mono-ethanolamide, -CO-N(CH2CH2OH)2 and -CO-NH-CH2CH2OH,
+e.g. cocamide/lauramide DEA and MEA -- real, common, commercially important nonionic
+surfactants, not bare primary fatty amides which are barely water-soluble), calibrated against
+lauric/myristic/palmitic acid derivatives, self-consistent to ~2-5% across chain lengths.
+Kept in a separate `DAVIES_DERIVED_HYDROPHILIC_GROUPS` table (never merged into the
+literature-only `DAVIES_HYDROPHILIC_GROUPS`), usable via `hlb_davies(..., allow_derived_groups=True)`
+-- an explicit opt-in, so the distinction between "Davies' own literature number" and "this
+project's derived estimate" can never blur at the call site. Honestly disclosed limitation: the
+derived numbers are chain-length-sensitive (U-shaped, not a true asymptote -- expected, since a
+linear-in-chain-length Davies model cannot exactly reproduce Griffin's nonlinear Mh/M ratio at
+every chain length; the two only agree closely over the realistic commercial-surfactant range).
+9 new tests in `tests/test_hlb_cpp.py` (self-consistency across chain lengths, the trivial-by-
+construction Davies/Griffin agreement check, bad-input rejection, opt-in-required behavior, a
+worked lauramide-DEA example landing in the real-world catalog HLB range ~9-10) -- 60/60 passing
+in that file. Wired into `__init__.py` and `mcp_server.py` (new `derive_davies_group_number`
+tool; `hlb_from_groups` gained the `allow_derived_groups` parameter), registered + end-to-end
+tested. Full suite: 322/322 passing.
+
+**2026-09-11 (continued): 4 more bounded items completed using material already in hand.**
+
+1. **Extended the derived-group-number method to 3 more of the SurfBench-flagged gaps.** Same
+   `derive_davies_group_number_from_griffin()` methodology, applied to **sultaine**/alkyl
+   sulfobetaine (-N+(CH3)2-(CH2)3-SO3-, e.g. SB10/SB12 -- the exact zwitterionic compounds
+   already cited via Sutherland et al. 2009; tightest self-consistency of any derived group,
+   ~2.7% spread across C8-C14, GN=8.61 @ C12), **carboxybetaine** (-CO-NH-(CH2)3-N+(CH3)2-CH2-COO-,
+   e.g. cocamidopropyl betaine/CAPB, one of the most common real amphoteric surfactants, GN=9.16
+   @ C12), and **phosphate ester**, disodium monoalkyl (-O-P(=O)(ONa)2, GN=7.79 @ C12).
+   **Imidazoline deliberately skipped, not just unattempted**: real imidazoline surfactants
+   hydrolyze in solution into a genuinely ambiguous mixture of open-chain forms, so there is no
+   single undisputed structure to compute Mh for -- disclosed as a real, structural (not just
+   informational) gap. 7 new tests in `tests/test_hlb_cpp.py` -- 64/64 passing in that file.
+
+2. **Wired Bales 2001's real, precisely-measured SDS ionization degree (alpha=0.272+/-0.017,
+   J. Phys. Chem. B 105 (2001) 6798-6804) into `gibbs_free_energy_micellization`'s docstring and
+   a new worked example**, replacing the previously arbitrary illustrative counterion_factor with
+   a properly sourced one (counterion_factor = 1+alpha = 1.272 for SDS specifically). Along the
+   way, caught and fixed a real error in the planning for this: initially mis-derived
+   counterion_factor = 2-alpha = 1.728 by treating Bales' alpha (a DISSOCIATION degree) as if it
+   were beta (a BINDING degree) -- caught by checking the (2-beta)=(1+alpha) identity against its
+   own physical limits (fully dissociated -> counterion_factor=2; fully bound -> 1) before
+   committing anything to code, not after. New tests confirm both the identity's physical limits
+   and a real worked SDS deltaG_mic (-27.77 kJ/mol using the well-known salt-free cmc0=0.0083 M
+   already cited elsewhere in this project via Bales 1998) -- honestly scoped as a properly-
+   sourced INPUT with a real, physically-sensible output, not a literature-matched deltaG_mic
+   value (none was found to check the final number against). 2 new tests in
+   `tests/test_thermodynamics.py` -- 29/29 passing in that file.
+
+3. **Serafini et al. 2019 SI's SLS-determined micellar masses (Table SI-II)** used as an
+   aggregation-number sanity check: N_agg(TX-100) = 66600/625 = 106.6 (within the well-known,
+   temperature-sensitive literature range ~100-155); N_agg(DTAB) = 16800/308.34 = 54.5 (excellent
+   match to the commonly-cited ~50-60, often ~56). NOT wired into a new function -- N_agg =
+   M_micelle/M_monomer is a one-line ratio with no natural function to attach it to; creating one
+   would be a premature abstraction around a single division. Recorded as a reference/sanity
+   check in `literature_validation_notes.md` instead.
+
+4. **Schulz & Durand 2016 SI's CSV datasets, mmc2.csv and mmc3.csv, wired into
+   `asymmetric_margules_activity_coefficients` validation.** Real insight: at the pure-component
+   boundaries (x1->0, x1->1), the CSVs' own "Gexc/RTx1x2" column is trivially equal to W12 and W21
+   respectively (a direct algebraic consequence of the Margules formula), so W12/W21 can be READ
+   OFF the data directly rather than fitted. This let mmc2.csv's boundary values (-3.567, -0.890
+   RT units) be cross-checked against `test_asymmetric_margules_hyamine_dtab_literature_case`'s
+   existing W12=-8836.50 J/mol, W21=-2204.19 J/mol (Hyamine-DTAB, Case Study 1) -- matching to
+   within CSV rounding, CONFIRMING mmc2.csv is that same system, and upgrading that test from a
+   sign/order-of-magnitude-only check (all that was possible before, with only a graph available)
+   to an exact digit-level match across all 5 interior points. mmc3.csv used the same way for a
+   second real dataset (7 interior points, not confidently identified as a specific named system
+   from the extractable SI text, cited generically) -- also an exact match. **mmc4.csv NOT used**:
+   its "delta theta cmc" quantity is a deviation/residual (confirmed by physically-impossible
+   negative "CMC ideal" values in the raw data), not raw CMC or a directly interpretable
+   dissociation-generalized-Clint output -- genuinely ambiguous from the extractable SI text, not
+   guessed at. **mmc5/6 (and 7/8, 9/10) NOT converted into a precise test**: real experimental
+   Gexc (mmc5/7/9) and EOMMM-fitted Gexc (mmc6/8/10) are reported at DIFFERENT, non-matching
+   composition grids -- qualitatively consistent in magnitude (e.g. mmc5's real -1645.9 J/mol at
+   x=0.308 vs. mmc6's fitted -1698.8 J/mol at x=0.328, ~3% apart) but a precise quantitative test
+   would need interpolation across mismatched grids, not attempted this pass. 2 new/upgraded
+   tests in `tests/test_mixed_micelle.py`. Full suite: 331/331 passing.
+
+**2026-09-11 (continued): `eommm_global_fit` REWRITTEN -- the free-energy dead end resolved.**
+This closes the one item repeatedly flagged as "genuinely hard, still open" throughout this
+whole session. Real history, kept in full because it matters for trusting the result:
+
+1. The Schulz & Durand 2016 SI's own GAMS code gives the real objective as minimizing TOTAL
+   FREE ENERGY OF MICELLIZATION subject to r-generalized mass-balance constraints (CMCexpVar
+   bounded, not pinned, to the experimental CMC). A first attempt to transcribe that literally
+   found it UNBOUNDED BELOW (the Margules mixing term diverges as \|W12\|,\|W21\| grow) -- it ran
+   to whatever W12/W21 search box was set, on both synthetic and real Hyamine/DTAB data.
+   Abandoned rather than shipped broken (documented at the time as a genuine dead end).
+2. A companion paper's SI (Serafini, Fernandez-Leyes, Sanchez M., Pereyra, Schulz E.P., Durand,
+   Schulz P.C. & Ritacco, Colloids Surf. A (2019), TX100-DTAB system) explained the REAL
+   procedure in prose: "the mg [margin] parameter was varied in order to obtain the minimum
+   value that allowed a feasible solution" -- i.e. the real fitting criterion is CONSTRAINT
+   SATISFACTION at the tightest feasible margin, not open-ended free-energy minimization under
+   a fixed generous margin. This is what the rewrite implements: minimize a total INFEASIBILITY
+   measure of the r-generalized cdefp1/cdefp2 constraints at a given `cmc_margin` -- a
+   well-posed, bounded objective, unlike the free-energy approach.
+3. A first working version of this new objective had its own real bug, found and fixed before
+   shipping: using the geometric mean of the two individually-implied CMCvar values to check
+   margin compliance let a badly-mismatched pair (e.g. a 40% relative disagreement between the
+   two mass-balance equations) slip through with a geometric mean that coincidentally landed
+   within 1% of the target CMC -- corrupting the search into spurious non-physical optima.
+   Fixed by penalizing the mismatch between the two equations directly, not just checking
+   whether their average happens to look right.
+4. Two real, separate multi-root/resolution issues were found and fixed, each confirmed via
+   direct numeric investigation (not assumed): (a) coordinate-descent/golden-section refinement
+   of the outer (W12, W21) search, even STARTED exactly at the known true optimum, was found to
+   walk AWAY from it -- replaced with a pure 2-level (coarse-then-fine) grid search, which
+   recovers the true point exactly; (b) the inner per-point x1 solve occasionally landed on a
+   real second root (verified: two different x1 values both gave mismatch=0 to machine
+   precision for the same alpha1/W12/W21) at the original grid_points=40/refine_iters=40
+   resolution -- fixed by raising to 100/60 (the only caller, so no side effects elsewhere).
+5. A real, disclosed, carefully-VERIFIED (not merely claimed) physical property of the
+   resulting model, matching the Serafini SI's own stated rationale for the margin-tightening
+   procedure: at a tight `cmc_margin` (e.g. 1e-6), the round-trip recovers the true (W12, W21)
+   EXACTLY. At the SI's own default `cmc_margin=0.10`, the fit is genuinely NOT always uniquely
+   determined -- a real, still-feasible (total_infeasibility ~0) fit can differ from the true
+   parameters (verified: W12 off by 0.3 in one concrete case). An earlier, more dramatic
+   specific claim about this (a very different alternate feasible point) was tested directly
+   and found to be a resolution artifact from an early prototype, not real -- corrected in the
+   shipped tests rather than left in, since an honest "feasible but not necessarily exact" is
+   the claim that actually holds up.
+6. This function does NOT automate the SI's own margin-tightening search (an automatic
+   binary-search-on-margin was prototyped and found to have a real, unresolved grid-resolution
+   sensitivity of its own, converging to a margin somewhat looser than the true minimum) --
+   disclosed as a genuine remaining limitation, not hidden. Callers wanting the tightest
+   well-determined answer should call this function at a few decreasing `cmc_margin` values
+   themselves, the same diagnostic the SI's own procedure does manually.
+
+New signature: `eommm_global_fit(alpha1_series, cmc_mix_series, cmc1, cmc2, r1=2.0, r2=2.0,
+cmc_margin=0.10, w_bound=30.0)` -- r1/r2 are the real dissociation-number generalization from
+the SI (default 2.0, the classical fully-dissociated convention already used everywhere else
+in this module). `EommmGlobalFitResult` gained `cmc_var_values` and `total_infeasibility`
+(replacing `sse`); `method` field updated. 4 tests in `tests/test_mixed_micelle.py` (exact
+recovery at tight margin, feasible-but-imprecise at default margin, symmetric-limit reduction
+to Rubingh beta, bad-input rejection) -- run in ~20s total, consistent with this project's own
+established "a genuine multi-parameter search, expect several seconds, not an error"
+precedent. Wired into `mcp_server.py` (new `r1`/`r2`/`cmc_margin` parameters, new return
+fields, docstring rewritten with the full history). Full suite: 332/332 passing.
+
 ---
 
 ## Also still open (older, lower priority than the above)
@@ -572,7 +768,21 @@ paper/repo, not SurfactantKit).
   data rather than just a theoretical concern. New test in `tests/test_mixed_micelle.py`,
   explicitly NOT claimed as a second-source validation (same primary source) and explicitly
   NOT claimed as proof the function matches literature to the precision the round-trip tests
-  alone would suggest. A genuinely different second source for Rodenas remains unfound.
+  alone would suggest.
+  **RESOLVED 2026-09-11: a genuinely different second source obtained** -- Rodenas, Valiente &
+  Villafruela, J. Phys. Chem. B 103(21) (1999) 4549-4554, the paper that ORIGINATED this model
+  (not a later paper citing it), PDF provided by the user. Its own Table 1 (a completely
+  different chemical system: C12E4/CTAB, not G6-gemini) has 5 real (alpha1, CMC*, chi1) points.
+  Real, disclosed result: this reproduces WORSE than the Azum-paper check (29-60% relative
+  error at every point, one point -- alpha1=0.5 -- landing slightly outside [0,1]), and the
+  paper's own text explains why: it computes its slope by differentiating a smooth 2-exponential
+  global fit to CMC*(alpha1) (its own eq. 14) analytically, not by finite-differencing 5 sparse,
+  unevenly-spaced (0.025 to 0.7) raw points the way `rodenas_x1_series` does -- and the paper's
+  own text states it excluded the alpha1=0.025 point from its own Figure 4 as unreliable. New
+  test in `tests/test_mixed_micelle.py`, kept as a real, honest record like the Azum-paper
+  check (evidence of the sparse-series numerical-differentiation method's real limits on data
+  this sparse, not evidence the core `rodenas_x1` formula is wrong -- that's separately verified
+  via an exact zero-interaction algebraic identity that doesn't depend on finite differencing).
 - **Second independent literature sources for categories D (geometry), F (dynamics), G
   (thermodynamics)** -- attempted 2026-09-10, mixed real results, all honestly disclosed:
   - **Category G (thermodynamics): DONE.** Found a genuinely different system (an
@@ -645,6 +855,14 @@ paper/repo, not SurfactantKit).
   into `__init__.py` and `mcp_server.py` (new `eommm_global_fit` tool, which documents the
   same first-principles disclosure and expected slowness), registered + end-to-end tested in
   `test_mcp_server.py`. Full suite: 220/220 passing.
+  **RESOLVED 2026-09-11: this first-principles construction was fully REPLACED** (per the
+  Upgrade Protocol -- not kept alongside the new version) with a real, SI-derived transcription,
+  after obtaining both the Schulz & Durand SI itself and a companion paper's SI that explained
+  the real margin-tightening procedure. See the dated 2026-09-11 entry earlier in this file
+  ("`eommm_global_fit` REWRITTEN -- the free-energy dead end resolved") for the complete history
+  -- including a genuinely unbounded free-energy objective that was tried and abandoned first,
+  a real bug found and fixed in the corrected infeasibility objective, and a carefully-verified
+  (not just claimed) margin-dependent uniqueness property of the resulting model.
 - **Ohshima's electrostatics gap for the ionic-dissociation `r` parameter** -- see
   `benchmark/METHOD_ALTERNATIVES_LITERATURE_REVIEW.md` for full detail, not repeated here.
 

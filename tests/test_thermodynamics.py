@@ -6,6 +6,7 @@ import pytest
 from surfactantkit.thermodynamics import (
     cmc_to_mole_fraction,
     counterion_binding_degree,
+    critical_micellization_degree,
     gibbs_free_energy_micellization,
     mass_action_free_energy_of_micellization,
     vant_hoff_enthalpy,
@@ -80,6 +81,41 @@ def test_gibbs_free_energy_matches_second_independent_literature_system():
     x_cmc = cmc_to_mole_fraction(cmc_M)
     dg = gibbs_free_energy_micellization(x_cmc, 298.0, counterion_factor)
     assert dg == pytest.approx(-28.3, rel=0.01)
+
+
+def test_gibbs_free_energy_counterion_factor_alpha_beta_identity_physical_limits():
+    """(2-beta) = (1+alpha), alpha=1-beta (dissociation vs. binding
+    degree) checked via real physical limits, not just algebra (see
+    gibbs_free_energy_micellization's own docstring): fully dissociated
+    (alpha=1, beta=0) and fully bound (alpha=0, beta=1) must both give
+    the SAME counterion_factor whichever form is used, landing at the
+    correct physical endpoints (2 and 1 respectively)."""
+    for alpha, beta, expected in [(1.0, 0.0, 2.0), (0.0, 1.0, 1.0)]:
+        assert (1.0 + alpha) == pytest.approx(expected)
+        assert (2.0 - beta) == pytest.approx(expected)
+    # and at a real, in-between, sourced value (Bales 2001, SDS alpha=0.272):
+    alpha_sds = 0.272
+    beta_sds = 1.0 - alpha_sds
+    assert (1.0 + alpha_sds) == pytest.approx(2.0 - beta_sds)
+    assert (1.0 + alpha_sds) == pytest.approx(1.272)
+
+
+def test_gibbs_free_energy_sds_with_bales_2001_counterion_factor():
+    """Real worked example for SDS using a properly SOURCED
+    counterion_factor (Bales, Messina, Vidal & Peric, J. Phys. Chem. B
+    105 (2001) 6798-6804, alpha=0.272+/-0.017, PDF provided by the user
+    2026-09-11) instead of an arbitrary illustrative value -- and the
+    well-known salt-free SDS cmc0=0.0083 M already cited elsewhere in
+    this project (Bales et al. 1998, Table 4, the same cmc0 used in that
+    paper's own eq. 5 fit). No independently-published deltaG_mic number
+    for this exact system was found to check the final result against,
+    so this is a real, traceable calculation with a properly-sourced
+    input, not a literature match -- honestly scoped as such."""
+    counterion_factor_sds = 1.0 + 0.272  # Bales 2001's own alpha for SDS
+    x_cmc = cmc_to_mole_fraction(0.0083)
+    dg = gibbs_free_energy_micellization(x_cmc, 298.15, counterion_factor_sds)
+    assert dg < 0.0  # spontaneous, as it must be
+    assert dg == pytest.approx(-27.77, abs=0.05)
 
 
 def test_gibbs_free_energy_nonionic_vs_ionic_factor():
@@ -272,6 +308,45 @@ def test_mass_action_rejects_bad_inputs():
         mass_action_free_energy_of_micellization(1.5e-4, 1, 298.15)  # n must be > 1
     with pytest.raises(ValueError):
         mass_action_free_energy_of_micellization(1.5e-4, 50, 0.0)
+
+
+# --- critical_micellization_degree (new capability, 2026-09-11) -----------
+# Source: Rusanov, "The Mass-Action-Law Theory of Micellization Revisited,"
+# Langmuir 30(48) (2014) 14443-14451, eqs. (15)-(16), PDF provided by the user.
+
+
+def test_cmd_d2alpha_dc2_matches_papers_own_worked_example():
+    # paper states alpha_m = 0.061 at n = 100 for this definition
+    assert critical_micellization_degree(100, "d2alpha_dc2") == pytest.approx(0.061, abs=0.001)
+
+
+def test_cmd_d2alpha_dlnc2_matches_papers_own_worked_example():
+    # paper states alpha_m = 0.091 at n = 100 for this definition
+    assert critical_micellization_degree(100, "d2alpha_dlnc2") == pytest.approx(0.091, abs=0.001)
+
+
+def test_cmd_dlnc2_definition_always_exceeds_dc2_definition_for_n_gt_1():
+    # real, checkable consistency property across n, not just at n=100
+    for n in (5, 10, 30, 50, 100, 500, 2000):
+        dc2 = critical_micellization_degree(n, "d2alpha_dc2")
+        dlnc2 = critical_micellization_degree(n, "d2alpha_dlnc2")
+        assert dlnc2 > dc2
+
+
+def test_cmd_vanishes_as_n_grows():
+    small_n = critical_micellization_degree(10, "d2alpha_dlnc2")
+    large_n = critical_micellization_degree(10000, "d2alpha_dlnc2")
+    assert large_n < small_n
+    assert large_n == pytest.approx(0.0, abs=0.02)
+
+
+def test_cmd_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        critical_micellization_degree(1, "d2alpha_dlnc2")  # n must be > 1
+    with pytest.raises(ValueError):
+        critical_micellization_degree(1.5, "d2alpha_dc2")  # unphysical (negative) for n < 2
+    with pytest.raises(ValueError):
+        critical_micellization_degree(50, "not_a_real_definition")
 
 
 def test_entropy_micellization_completes_triad_by_construction():

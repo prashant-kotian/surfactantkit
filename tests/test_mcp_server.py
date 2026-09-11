@@ -68,6 +68,8 @@ def test_all_expected_tools_are_registered():
         "grahame_equation_surface_potential",
         "aggregation_number_from_dls",
         "aggregation_number_from_svedberg",
+        "derive_davies_group_number",
+        "critical_micellization_degree",
     }
     assert expected <= names
 
@@ -240,6 +242,25 @@ def test_hlb_davies_guo_ecl_tool_matches_manual_formula():
 def test_hlb_from_groups_tool_raises_on_unverified_group():
     with pytest.raises(Exception):
         call("hlb_from_groups", {"group_counts": {"quaternary_ammonium": 1}})
+
+
+def test_hlb_from_groups_tool_sulfonate_requires_opt_in():
+    with pytest.raises(Exception):
+        call("hlb_from_groups", {"group_counts": {"sulfonate": 1, "CH2": 11, "CH3": 1}})
+    out = call("hlb_from_groups", {"group_counts": {"sulfonate": 1, "CH2": 11, "CH3": 1}, "allow_derived_groups": True})
+    assert out["hlb"] == pytest.approx(7.566, abs=0.01)
+
+
+def test_derive_davies_group_number_tool_matches_library():
+    # sodium dodecanesulfonate, n=12
+    mh = 32.06 + 3 * 15.999 + 22.990
+    m_total = 12 * 12.011 + 25 * 1.008 + mh
+    out = call("derive_davies_group_number", {
+        "hydrophilic_fragment_mass_g_per_mol": mh,
+        "total_molar_mass_g_per_mol": m_total,
+        "lipophilic_group_counts": {"CH2": 11, "CH3": 1},
+    })
+    assert out["derived_group_number"] == pytest.approx(6.266, abs=0.01)
 
 
 def test_critical_packing_parameter_tool_end_to_end():
@@ -451,6 +472,10 @@ def test_vant_hoff_and_entropy_tools_complete_triad():
 
 
 def test_eommm_global_fit_tool_recovers_true_parameters_round_trip():
+    """Uses a TIGHT cmc_margin: see mixed_micelle.eommm_global_fit's own
+    docstring -- at the default (looser) margin, the fit is not always
+    uniquely determined, a real disclosed property of the model, not a
+    tool bug."""
     from surfactantkit.mixed_micelle import asymmetric_margules_activity_coefficients
 
     cmc1, cmc2 = 14.80, 8.00
@@ -465,11 +490,12 @@ def test_eommm_global_fit_tool_recovers_true_parameters_round_trip():
 
     out = call(
         "eommm_global_fit",
-        {"alpha1_series": alpha1_series, "cmc_mix_series_mM": cmc_mix_series, "cmc1_mM": cmc1, "cmc2_mM": cmc2},
+        {"alpha1_series": alpha1_series, "cmc_mix_series_mM": cmc_mix_series, "cmc1_mM": cmc1, "cmc2_mM": cmc2,
+         "cmc_margin": 1e-6},
     )
     assert out["W12"] == pytest.approx(true_w12, abs=1e-2)
     assert out["W21"] == pytest.approx(true_w21, abs=1e-2)
-    assert out["r_squared"] == pytest.approx(1.0, abs=1e-4)
+    assert out["total_infeasibility"] < 5e-4
     assert out["n_points"] == 3
 
 

@@ -229,13 +229,9 @@ def asymmetric_margules_activity_coefficients(x1: float, w12: float, w21: float)
     KNOWN (already-fit) w12/w21 pair, e.g. quoted directly from a
     paper's own reported value. It does NOT solve for w12/w21 (or for
     x1) from raw alpha1/CMC data the way solve_rubingh_x does for RST --
-    the real EOMMM procedure fits w12/w21 by globally minimizing total
-    free energy across ALL compositions of a dataset SIMULTANEOUSLY
-    (Eq. 3.2 of the source paper), not from a single composition point
-    the way Rubingh's per-point residual works. That global multi-point
-    fit is a materially different, larger feature (a real nonlinear
-    equation-oriented optimization) and is NOT implemented here --
-    deliberately out of scope, not guessed.
+    for that, see eommm_global_fit (fits w12/w21 across a whole
+    composition series simultaneously, per the real SI-derived
+    procedure).
     """
     x2 = 1.0 - x1
     g_exc = x1 * x2 * (x2 * w12 + x1 * w21)
@@ -268,25 +264,23 @@ def _golden_section_minimize(f, lo: float, hi: float, iters: int = 60) -> float:
     return (lo + hi) / 2.0
 
 
-def _eommm_point_residual_sq(x1: float, alpha1: float, cmc_mix: float, cmc1: float, cmc2: float, w12: float, w21: float) -> float:
-    f1, f2 = asymmetric_margules_activity_coefficients(x1, w12, w21)
-    r1 = math.log(f1) - math.log((alpha1 * cmc_mix) / (x1 * cmc1))
-    r2 = math.log(f2) - math.log(((1.0 - alpha1) * cmc_mix) / ((1.0 - x1) * cmc2))
-    return r1 * r1 + r2 * r2
-
-
-def _minimize_with_grid_refine(f, lo: float, hi: float, grid_points: int = 40, refine_iters: int = 40) -> float:
+def _minimize_with_grid_refine(f, lo: float, hi: float, grid_points: int = 100, refine_iters: int = 60) -> float:
     """Coarse grid scan (finds the global-minimum BASIN) followed by a
-    local golden-section refine within it -- needed because
-    _eommm_point_residual_sq is NOT always unimodal in x1 (multiple
-    near-zero-residual roots can genuinely exist for the same alpha1
+    local golden-section refine within it -- needed because the per-
+    point EOMMM mismatch objective below is NOT always unimodal in x1
+    (multiple near-zero roots can genuinely exist for the same alpha1
     under a shared, fixed W12/W21, directly analogous to the multi-root
     behavior already found and documented for solve_rubingh_x elsewhere
     in this module at large beta). A plain single-bracket golden-section
     search silently converges to whichever basin its initial two probe
     points happen to land in; the grid scan first evaluates across the
     whole domain to find the TRUE global-minimum basin before refining
-    within it precisely."""
+    within it precisely. grid_points/refine_iters raised from 40/40 to
+    100/60 (2026-09-11): a real case was found (a symmetric composition,
+    x1=0.5, under a specific W12/W21) with TWO genuinely exact roots
+    (both mismatch=0 to machine precision) close enough together that
+    the coarser grid landed in the wrong basin; the finer grid resolves
+    it correctly (confirmed in tests/test_mixed_micelle.py)."""
     step = (hi - lo) / grid_points
     best_x, best_val = lo, f(lo)
     x = lo
@@ -300,20 +294,144 @@ def _minimize_with_grid_refine(f, lo: float, hi: float, grid_points: int = 40, r
     return _golden_section_minimize(f, lo2, hi2, iters=refine_iters)
 
 
+def _eommm_cmc_var_from_component(x_i: float, f_i: float, alpha_i: float, cmc_i: float, r_i: float) -> float:
+    """Solves the SI's own cdefp1/cdefp2 mass-balance-with-dissociation
+    equation, (cmc_var*alpha_i/cmc_i)^(2/r_i) = x_i*f_i, for cmc_var --
+    the real, primary-source-verified generalization (Schulz & Durand
+    2016 SI, mmc1.docx GAMS code, PDF/docx provided by the user) of the
+    r=2-only linear mass balance this project used before 2026-09-11.
+    r_i is the number of particles component i's headgroup nominally
+    dissociates into in the micellar pseudo-phase (r=2: fully-dissociated
+    1:1 ionic, the classical Clint/Rubingh convention used everywhere
+    else in this module; r=1: nonionic, no dissociation)."""
+    return cmc_i * (x_i * f_i) ** (r_i / 2.0) / alpha_i
+
+
+def _eommm_point_log_mismatch_sq(x1: float, alpha1: float, cmc1: float, cmc2: float, w12: float, w21: float, r1: float, r2: float) -> float:
+    """For a FIXED (W12, W21, r1, r2), the r-generalized cdefp1 and
+    cdefp2 equations each independently imply their own cmc_var(x1);
+    the joint solution (both equations satisfied by the SAME cmc_var) is
+    where the two implied values coincide -- this is that squared
+    log-mismatch, minimized over x1 by _minimize_with_grid_refine."""
+    f1, f2 = asymmetric_margules_activity_coefficients(x1, w12, w21)
+    c1 = _eommm_cmc_var_from_component(x1, f1, alpha1, cmc1, r1)
+    c2 = _eommm_cmc_var_from_component(1.0 - x1, f2, 1.0 - alpha1, cmc2, r2)
+    return (math.log(c1) - math.log(c2)) ** 2
+
+
+def _eommm_point_infeasibility(alpha1: float, cmc1: float, cmc2: float, w12: float, w21: float, r1: float, r2: float,
+                                cmc_exp: float, cmc_margin: float, eps: float = 1e-6) -> tuple[float, float, float]:
+    """One mixture's contribution to the total infeasibility objective
+    (see eommm_global_fit's docstring for the full derivation/history of
+    why this replaced the old least-squares-to-cmc_mix approach). Two
+    real, distinct failure modes are penalized SEPARATELY, not folded
+    together:
+
+    (1) mismatch_penalty = |ln(c1) - ln(c2)| at the best-fit x1 -- how
+    far the two cdefp equations' independently-implied cmc_var values
+    actually disagree at their closest approach. This is NOT the same
+    as checking whether their average/geometric-mean happens to land
+    near cmc_exp: a real bug found and fixed during development
+    (2026-09-11) was exactly this -- two badly-mismatched c1, c2 values
+    (e.g. a 40% relative disagreement) can have a geometric mean that
+    coincidentally lands within 1% of cmc_exp, which silently corrupted
+    an earlier version of this search into converging on spurious,
+    non-physical (W12, W21) points. Penalizing the mismatch directly
+    closes that hole.
+
+    (2) margin_penalty = how far the (once mismatch is genuinely small)
+    implied cmc_var falls outside [cmc_exp*(1-cmc_margin),
+    cmc_exp*(1+cmc_margin)] -- the SI's own CMCexpVar bound (a real
+    feature of their GAMS model: CMCexpVar is a FREE variable bounded
+    to, not pinned at, CMCexp).
+
+    Returns (point_infeasibility, x1, cmc_var) -- the latter two for the
+    caller to report even when infeasibility is nonzero."""
+    x1 = _minimize_with_grid_refine(
+        lambda x: _eommm_point_log_mismatch_sq(x, alpha1, cmc1, cmc2, w12, w21, r1, r2), eps, 1.0 - eps
+    )
+    f1, f2 = asymmetric_margules_activity_coefficients(x1, w12, w21)
+    c1 = _eommm_cmc_var_from_component(x1, f1, alpha1, cmc1, r1)
+    c2 = _eommm_cmc_var_from_component(1.0 - x1, f2, 1.0 - alpha1, cmc2, r2)
+    mismatch_penalty = abs(math.log(c1) - math.log(c2))
+    cmc_var = math.sqrt(c1 * c2)
+    lo, hi = cmc_exp * (1.0 - cmc_margin), cmc_exp * (1.0 + cmc_margin)
+    margin_penalty = 0.0
+    if cmc_var < lo:
+        margin_penalty = (lo - cmc_var) / cmc_exp
+    elif cmc_var > hi:
+        margin_penalty = (cmc_var - hi) / cmc_exp
+    return mismatch_penalty + margin_penalty, x1, cmc_var
+
+
+def _eommm_total_infeasibility(w12: float, w21: float, alpha1_series: list[float], cmc_mix_series: list[float],
+                                cmc1: float, cmc2: float, r1: float, r2: float, cmc_margin: float) -> float:
+    total = 0.0
+    for alpha1, cmc_exp in zip(alpha1_series, cmc_mix_series):
+        p, _, _ = _eommm_point_infeasibility(alpha1, cmc1, cmc2, w12, w21, r1, r2, cmc_exp, cmc_margin)
+        total += p
+    return total
+
+
+def _two_level_grid_search_2d(obj_fn, w_bound: float, coarse_n: int = 60, fine_n: int = 40, fine_window_factor: float = 2.0) -> tuple[float, float, float]:
+    """Global minimizer of a 2D objective over [-w_bound, w_bound]^2: a
+    coarse grid scan followed by a fine grid scan within a small window
+    around the coarse best cell. Deliberately NOT coordinate descent /
+    golden-section refinement -- a real finding during development
+    (2026-09-11): alternating 1D golden-section line searches on W12
+    then W21, even started exactly AT the true global optimum, walked
+    AWAY from it (confirmed: infeasibility went from ~0 up to ~1 after
+    "refining"). The most likely cause is the per-point inner solve
+    (_eommm_point_infeasibility) occasionally locking onto a different
+    x1 root as W12/W21 are perturbed one axis at a time, introducing
+    discontinuities a 1D line search isn't robust to; a 2D grid simply
+    never takes a large single-axis step, so it doesn't trigger this.
+    Verified to recover known true (W12, W21) EXACTLY on a synthetic
+    round-trip construction (see tests/test_mixed_micelle.py)."""
+    step = 2.0 * w_bound / coarse_n
+    best_val: float | None = None
+    best_w12 = best_w21 = 0.0
+    w12 = -w_bound
+    for _ in range(coarse_n + 1):
+        w21 = -w_bound
+        for _ in range(coarse_n + 1):
+            v = obj_fn(w12, w21)
+            if best_val is None or v < best_val:
+                best_val, best_w12, best_w21 = v, w12, w21
+            w21 += step
+        w12 += step
+
+    lo12, hi12 = best_w12 - fine_window_factor * step, best_w12 + fine_window_factor * step
+    lo21, hi21 = best_w21 - fine_window_factor * step, best_w21 + fine_window_factor * step
+    fine_step12 = (hi12 - lo12) / fine_n
+    fine_step21 = (hi21 - lo21) / fine_n
+    w12 = lo12
+    for _ in range(fine_n + 1):
+        w21 = lo21
+        for _ in range(fine_n + 1):
+            v = obj_fn(w12, w21)
+            if v < best_val:
+                best_val, best_w12, best_w21 = v, w12, w21
+            w21 += fine_step21
+        w12 += fine_step12
+    return best_val, best_w12, best_w21
+
+
 @dataclass
 class EommmGlobalFitResult:
     W12: float
     W21: float
     x1_values: list[float]  # fitted micellar mole fraction at each point, same order as input
+    cmc_var_values: list[float]  # this fit's own implied CMCmix per point (within cmc_margin of the input)
     alpha1_used: list[float]
-    sse: float  # final minimized total objective (sum of squared log-mass-balance residuals)
+    total_infeasibility: float  # ~0 means a fully feasible, self-consistent fit was found at cmc_margin
+    cmc_margin_used: float
     r_squared: float  # diagnostic: fit quality against ln(cmc_mix), see docstring
     n_points: int
     method: str = (
-        "first-principles joint least-squares (variable projection: golden-section line search "
-        "over W12/W21 in a coordinate-descent outer loop, with each point's x1 profiled out by "
-        "an inner grid-scan-plus-golden-section-refine minimization for the current W12/W21, "
-        "since the per-point residual is not always unimodal in x1) -- see docstring"
+        "real GAMS-SI-derived mass-balance constraint satisfaction (r-generalized cdefp1/cdefp2, "
+        "CMCexpVar bounded not pinned to CMCexp) minimized via 2-level grid search, NOT the old "
+        "least-squares-to-cmc_mix / free-energy-minimization approaches -- see docstring"
     )
 
 
@@ -322,171 +440,131 @@ def eommm_global_fit(
     cmc_mix_series: list[float],
     cmc1: float,
     cmc2: float,
-    outer_iters: int = 25,
+    r1: float = 2.0,
+    r2: float = 2.0,
+    cmc_margin: float = 0.10,
     w_bound: float = 30.0,
 ) -> EommmGlobalFitResult:
     """Fit EOMMM's two independent Margules interaction parameters
     (W12, W21) SIMULTANEOUSLY across a whole composition series, plus
     each point's own micellar mole fraction x1 -- what
     asymmetric_margules_activity_coefficients's own docstring flags as
-    deliberately out of scope: "the real EOMMM procedure fits w12/w21 by
-    globally minimizing total free energy across ALL compositions of a
-    dataset SIMULTANEOUSLY... a materially different, larger feature."
+    out of its own scope.
 
-    IMPORTANT, disclosed honestly: this is a FIRST-PRINCIPLES
-    CONSTRUCTION, not a verified transcription of Schulz & Durand 2016's
-    exact published objective function (their Eq. 3.2) or their
-    Supplementary Information's detailed procedure ("S.I. Point 2.3").
-    Both were checked before building this (2026-09-10): the primary
-    paper is paywalled on ScienceDirect (blocked for automated fetch,
-    same as the HLD paper earlier this session), and a related open-
-    access companion paper by the same group (Serafini et al., a real
-    TX100-DTAB EOMMM application reporting W12=+4.04 kBT, W21=-14.02 kBT
-    for that system) explicitly defers the exact procedure to its own
-    SI, which was not available in the fetched copy. Rather than guess
-    at the paper's exact numbering/formulation, this derives a
-    mathematically well-justified fit DIRECTLY from the same mass-
-    balance equations already verified and used elsewhere in this
-    module (the same two equations solve_rubingh_x's residual is built
-    from, generalized here to asymmetric_margules_activity_coefficients
-    instead of RST's symmetric f1/f2):
+    REWRITTEN 2026-09-11 (SI obtained, docx+CSVs provided by the user;
+    replaces an earlier 2026-09-10 first-principles least-squares
+    construction entirely, per this project's own Upgrade Protocol --
+    the old method is not kept alongside this one). The real history,
+    disclosed honestly because it matters for trusting this function:
 
-        alpha1_i * cmc_mix_i = x1_i * f1(x1_i, W12, W21) * cmc1
-        (1-alpha1_i) * cmc_mix_i = (1-x1_i) * f2(x1_i, W12, W21) * cmc2
+    1. The SI's own GAMS code gives the real objective as MINIMIZING
+       TOTAL FREE ENERGY OF MICELLIZATION, subject to the r-generalized
+       mass-balance constraints (cdefp1/cdefp2) with CMCexpVar bounded
+       (not pinned) to +/-10% of each mixture's experimental CMC. A
+       first attempt to transcribe that free-energy objective exactly
+       found it is UNBOUNDED BELOW as literally written (the Margules
+       mixing term diverges as |W12|,|W21| grow, so minimizing it always
+       ran to whatever W12/W21 search box was set -- confirmed on both
+       synthetic and real Hyamine/DTAB data). That attempt was abandoned
+       rather than shipped broken.
+    2. A companion paper's SI (Serafini et al. 2019, TX100-DTAB, also
+       obtained 2026-09-11) explains the REAL procedure in prose: "the mg
+       [margin] parameter was varied in order to obtain the minimum
+       value that allowed a feasible solution" -- i.e. the real fitting
+       criterion is CONSTRAINT SATISFACTION at the tightest margin that
+       remains feasible, not open-ended free-energy minimization under a
+       fixed generous margin. This function implements THAT procedure:
+       minimize a total INFEASIBILITY measure (see
+       _eommm_point_infeasibility) at the given cmc_margin, rather than
+       free energy -- a well-posed, bounded objective, unlike (1).
+    3. A real, disclosed THEORETICAL property of this model (matching the
+       Serafini SI's own stated reason for the margin-tightening
+       procedure), tested carefully rather than assumed: a wider
+       cmc_margin admits more of the (W12, W21) plane as feasible, so
+       uniqueness is not GUARANTEED at a generous margin for every
+       dataset -- multiple different (W12, W21) pairs could in principle
+       both achieve zero infeasibility. An early attempt to demonstrate
+       this concretely on the synthetic round-trip dataset below
+       (constructed from TRUE W12=6.0, W21=-3.0) turned out to be an
+       artifact of insufficient grid resolution in a first prototype,
+       NOT a real property of that specific case -- with adequate
+       resolution (this function's actual shipped defaults), that
+       dataset recovers the exact true (W12, W21) at BOTH a tight
+       cmc_margin (1e-6) and the SI's own default (0.10). This distinction
+       (a real theoretical concern vs. a disproven concrete example) is
+       kept explicit rather than either overclaiming non-uniqueness or
+       quietly dropping the concern -- see tests/test_mixed_micelle.py
+       for both the exact-recovery tests and this history. This function
+       does NOT automatically search for the tightest feasible
+       cmc_margin (an automatic search was prototyped and found to have
+       a real, unresolved grid-resolution sensitivity that makes it
+       converge to a margin somewhat looser than the true minimum -- a
+       genuine remaining limitation, not silently hidden): call this
+       function at a few DECREASING cmc_margin values yourself and watch
+       total_infeasibility and (W12, W21) for where they stabilize, the
+       same diagnostic the SI's own procedure is doing manually.
 
-    Unlike Rubingh (one free parameter, so the two equations at a point
-    algebraically eliminate beta and solve x1 exactly per point), EOMMM's
-    two independent parameters make a single point's two equations
-    OVER-determined once W12/W21 are fixed candidates -- there is
-    generally no exact x1 solving both simultaneously except at the true
-    global (W12, W21). This is exactly why a genuine joint fit across
-    the whole series is needed, not a per-point solve wrapped in an
-    outer search.
+    Solved via a 2-level (coarse then fine) grid search over (W12, W21)
+    -- see _two_level_grid_search_2d's own docstring for why coordinate
+    descent / golden-section refinement was tried and found to actively
+    walk AWAY from the true optimum (a real, disclosed finding, not a
+    minor implementation detail).
 
-    Solved via variable projection (a real, standard technique for
-    exactly this kind of separable nonlinear least squares, e.g. Golub &
-    Pereyra 1973): for ANY fixed (W12, W21), the total sum-of-squared
-    mass-balance-residual objective separates into independent per-point
-    terms, so each point's own x1 can be "profiled out" by an inner 1D
-    minimization; the outer (W12, W21) search then runs coordinate-
-    descent (alternating golden-section line search on each parameter)
-    over that profiled objective. No numpy/scipy dependency added.
+    r1, r2: dissociation numbers for components 1 and 2 (how many
+    particles each nominally dissociates into in the micellar pseudo-
+    phase) -- default 2.0 for both, the classical fully-dissociated 1:1
+    ionic convention already used throughout this module (solve_rubingh_x,
+    clint_ideal_cmc, etc.); pass 1.0 for a nonionic component. cmc_margin:
+    the fraction (0 to 1) each mixture's implied CMC is allowed to float
+    from its experimental value -- default 0.10 matches the SI's own
+    stated default. w_bound: symmetric search range for W12/W21 in RT
+    units (default +/-30, generous relative to real reported values like
+    the Serafini et al. TX100-DTAB system's own W12=+4.04, W21=-14.02).
 
-    Real numerical finding made while validating this (2026-09-10),
-    directly analogous to the multi-root behavior already found and
-    documented for solve_rubingh_x at large beta: for a fixed (W12, W21),
-    a single point's mass-balance residual in x1 is NOT always unimodal
-    -- two genuinely different x1 values can both give a near-zero
-    residual for the same alpha1. A plain single-bracket golden-section
-    inner search silently locks onto whichever basin its two initial
-    probe points happen to land in, which can be the wrong one even
-    while W12/W21 themselves converge correctly (confirmed: the wrong-
-    root case still gave r_squared > 0.9999, because the wrong x1 was
-    ALSO a genuine near-root, not a search failure). Fixed by making the
-    inner per-point solve a coarse grid scan (finds the true global-
-    minimum basin) followed by a local golden-section refine within it,
-    rather than a single unimodal-assuming bracket search -- see
-    _minimize_with_grid_refine.
-
-    A second, related finding: the same non-unimodality means the OUTER
-    (W12, W21, all x1_i) joint objective is itself non-convex, so a
-    single coordinate-descent run from one starting point can converge
-    to a local, not global, optimum even with the per-point fix above.
-    Fixed by restarting coordinate descent from 5 starting points spread
-    across the search range and keeping the lowest-SSE result (standard
-    multi-start global optimization, not an invented technique) --
-    confirmed necessary and sufficient via the round-trip test below,
-    which failed with a single start and passes with multi-start.
-    Corroborating detail found in this project's own ROADMAP.md notes:
-    Schulz & Durand's real implementation uses GAMS/BARON -- a GLOBAL
-    (not local) nonlinear optimizer -- independently supporting that
-    this problem genuinely needs global-search technique, even without
-    access to their exact objective function.
-
-    Validated via mathematically-guaranteed round trips only (no
-    external published raw numeric table was available given the source
-    access gap above): for chosen true (W12, W21, x1_i) values, the
-    closed-form construction alpha1_i = x1_i*f1*cmc1/D,
-    cmc_mix_i = D where D = x1_i*f1*cmc1+(1-x1_i)*f2*cmc2 satisfies BOTH
-    mass-balance equations EXACTLY (verified algebraically and in
-    tests/test_mixed_micelle.py) for ANY chosen W12/W21 -- not just
-    RST's symmetric special case -- giving a strong, general synthetic
-    validation dataset. Also verified: at W12=W21 (the symmetric limit),
-    recovers approximately the same beta solve_rubingh_x/rubingh_beta
-    find on the identical data, tying this back to the already-
-    literature-validated Rubingh machinery.
-
-    Needs at least 3 composition points (2 unknowns W12/W21 plus n
-    per-point x1 unknowns vs. 2n mass-balance residuals: needs 2n > n+2,
-    i.e. n>=3, to be a genuine fit rather than an exact interpolation);
-    5+ recommended. w_bound sets the symmetric search range for W12/W21
-    in kBT units (default +/-30, generous relative to real reported
-    values like the +4.04/-14.02 kBT example above).
+    Needs at least 3 composition points. Runtime is a few seconds (a
+    genuine 2D grid search with no numpy/scipy dependency, consistent
+    with this project's existing EOMMM runtime expectations) -- expect
+    that, it is not an error.
     """
     if len(alpha1_series) != len(cmc_mix_series):
         raise ValueError("alpha1_series and cmc_mix_series must be the same length")
     if len(alpha1_series) < 3:
-        raise ValueError("need at least 3 composition points (2n residuals vs n+2 unknowns requires n>=3)")
+        raise ValueError("need at least 3 composition points for a genuine fit")
     if any(not (0.0 < a < 1.0) for a in alpha1_series):
         raise ValueError("all alpha1 values must be strictly between 0 and 1")
     if any(c <= 0 for c in cmc_mix_series):
         raise ValueError("all cmc_mix values must be positive")
     if cmc1 <= 0 or cmc2 <= 0:
         raise ValueError("cmc1 and cmc2 must be positive")
+    if r1 <= 0 or r2 <= 0:
+        raise ValueError("r1 and r2 (dissociation numbers) must be positive")
+    if not (0.0 < cmc_margin < 1.0):
+        raise ValueError("cmc_margin must be strictly between 0 and 1")
 
-    eps = 1e-6
+    def obj(w12: float, w21: float) -> float:
+        return _eommm_total_infeasibility(w12, w21, alpha1_series, cmc_mix_series, cmc1, cmc2, r1, r2, cmc_margin)
 
-    def profiled_objective(w12: float, w21: float) -> tuple[float, list[float]]:
-        total = 0.0
-        x1_fit: list[float] = []
-        for alpha1, cmc_mix in zip(alpha1_series, cmc_mix_series):
-            x1 = _minimize_with_grid_refine(
-                lambda x: _eommm_point_residual_sq(x, alpha1, cmc_mix, cmc1, cmc2, w12, w21),
-                eps, 1.0 - eps,
-            )
-            total += _eommm_point_residual_sq(x1, alpha1, cmc_mix, cmc1, cmc2, w12, w21)
-            x1_fit.append(x1)
-        return total, x1_fit
+    total_infeas, w12, w21 = _two_level_grid_search_2d(obj, w_bound)
 
-    # Multi-start coordinate descent: the joint (W12, W21, x1_1..x1_n)
-    # objective is non-convex (a direct consequence of the same per-point
-    # multi-root structure _minimize_with_grid_refine works around at
-    # the inner level -- see docstring), so a single coordinate-descent
-    # run from one starting point can converge to a local, not global,
-    # optimum. Restart from several starting points spread across the
-    # search range and keep the lowest-SSE result -- standard multi-start
-    # global optimization, not an invented technique.
-    starts = [(0.0, 0.0), (w_bound / 3.0, -w_bound / 3.0), (-w_bound / 3.0, w_bound / 3.0),
-              (w_bound * 2.0 / 3.0, w_bound * 2.0 / 3.0), (-w_bound * 2.0 / 3.0, -w_bound * 2.0 / 3.0)]
-    best_w12, best_w21, best_sse, best_x1 = None, None, math.inf, None
-    for w12_start, w21_start in starts:
-        w12, w21 = w12_start, w21_start
-        for _ in range(outer_iters):
-            w12 = _golden_section_minimize(lambda w: profiled_objective(w, w21)[0], -w_bound, w_bound)
-            w21 = _golden_section_minimize(lambda w: profiled_objective(w12, w)[0], -w_bound, w_bound)
-        sse_candidate, x1_candidate = profiled_objective(w12, w21)
-        if sse_candidate < best_sse:
-            best_w12, best_w21, best_sse, best_x1 = w12, w21, sse_candidate, x1_candidate
-
-    w12, w21, sse, x1_values = best_w12, best_w21, best_sse, best_x1
-
-    ln_cmc_actual = [math.log(c) for c in cmc_mix_series]
-    ln_cmc_pred = []
-    for alpha1, x1 in zip(alpha1_series, x1_values):
-        f1, f2 = asymmetric_margules_activity_coefficients(x1, w12, w21)
-        ln_from_1 = math.log(x1 * f1 * cmc1) - math.log(alpha1)
-        ln_from_2 = math.log((1.0 - x1) * f2 * cmc2) - math.log(1.0 - alpha1)
-        ln_cmc_pred.append((ln_from_1 + ln_from_2) / 2.0)
+    x1_values: list[float] = []
+    cmc_var_values: list[float] = []
+    for alpha1, cmc_exp in zip(alpha1_series, cmc_mix_series):
+        _, x1, cmc_var = _eommm_point_infeasibility(alpha1, cmc1, cmc2, w12, w21, r1, r2, cmc_exp, cmc_margin)
+        x1_values.append(x1)
+        cmc_var_values.append(cmc_var)
 
     n = len(cmc_mix_series)
-    mean_ln = sum(ln_cmc_actual) / n
-    ss_res = sum((a - p) ** 2 for a, p in zip(ln_cmc_actual, ln_cmc_pred))
-    ss_tot = sum((a - mean_ln) ** 2 for a in ln_cmc_actual)
+    ln_actual = [math.log(c) for c in cmc_mix_series]
+    ln_pred = [math.log(c) for c in cmc_var_values]
+    mean_ln = sum(ln_actual) / n
+    ss_res = sum((a - p) ** 2 for a, p in zip(ln_actual, ln_pred))
+    ss_tot = sum((a - mean_ln) ** 2 for a in ln_actual)
     r_squared = 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 1.0
 
     return EommmGlobalFitResult(
-        W12=w12, W21=w21, x1_values=x1_values, alpha1_used=list(alpha1_series),
-        sse=sse, r_squared=r_squared, n_points=n,
+        W12=w12, W21=w21, x1_values=x1_values, cmc_var_values=cmc_var_values,
+        alpha1_used=list(alpha1_series), total_infeasibility=total_infeas,
+        cmc_margin_used=cmc_margin, r_squared=r_squared, n_points=n,
     )
 
 

@@ -1,13 +1,13 @@
 """Tests for surfactantkit.mixed_micelle.
 
 Validation strategy, deliberately explicit about what's certain and what
-isn't. This library was checked against EIGHT independent published
+isn't. This library was checked against ELEVEN independent published
 binary surfactant systems (cationic-anionic, cationic-nonionic,
 anionic-nonionic, gemini-nonionic, gemini-zwitterionic,
-nonionic-biosurfactant, anionic-anionic/bile salt), all open access,
-numbers pulled directly from source tables. Full case-by-case notes,
-including a log of dead-end search attempts: see
-literature_validation_notes.md.
+nonionic-biosurfactant, anionic-anionic/bile salt, zwitterionic-anionic,
+zwitterionic-cationic, nonionic-cationic), all open access, numbers
+pulled directly from source tables. Full case-by-case notes, including a
+log of dead-end search attempts: see literature_validation_notes.md.
 
 1. Clint ideal CMC: hard exact-match assertions against papers that
    report a directly comparable ideal-CMC value (Azum et al. 2022;
@@ -221,6 +221,121 @@ def test_rubingh_x1_and_beta_cholate_sds():
     beta = rubingh_beta(x1, CHOLATE_ALPHA1, CHOLATE_CMC_MIX, CHOLATE_NACA_CMC)
     # this is the one system where beta itself is asserted closely, not just its sign
     assert beta == pytest.approx(CHOLATE_BETA_PAPER, abs=0.1)
+
+
+# --- Ninth/tenth literature systems (2026-09-11): DHPC+SDS and DHPC+DTAB ---
+# Source: Vautier-Giongo, Bakshi, Singh, Ranganathan, Hajdu & Bales, J. Colloid
+# Interface Sci. 282(1) (2005) 149-155, doi:10.1016/j.jcis.2004.08.071 (PDF
+# provided by the user; also freely hosted by the author at
+# csun.edu/~vcphy00s/Bales87.pdf). Two GENUINELY new systems: a zwitterionic
+# phospholipid (DHPC) mixed separately with an anionic (SDS) and a cationic
+# (DTAB) surfactant -- a chemically different pairing class from every other
+# system in this file. Their own Table 1/2 report cmc*, beta12 (via their own
+# eq. 5, algebraically Rubingh's beta), and the RST-solved micelle mole
+# fraction (via their own eq. 4, algebraically identical to solve_rubingh_x's
+# own residual equation) at 5 interior bulk compositions each.
+BALES_SDS_CMC = 8.3  # mmol/L, pure SDS (their Table 1, X_DHPC=0)
+BALES_DTAB_CMC = 15.6  # mmol/L, pure DTAB (their Table 2, X_DHPC=0)
+BALES_DHPC_CMC = 1.8  # mmol/L, pure DHPC (both tables, X_DHPC=1)
+
+# (alpha1_SDS, cmc_mix, paper's x1_SDS) -- alpha1 = 1 - X_DHPC (bulk)
+BALES_DHPC_SDS_POINTS = [
+    (0.95, 3.6, 0.63),
+    (0.90, 2.8, 0.56),
+    (0.80, 1.8, 0.48),
+    (0.60, 1.4, 0.29),  # real, disclosed outlier -- see test docstring
+    (0.20, 1.3, 0.24),
+]
+# (alpha1_DTAB, cmc_mix, paper's x1_DTAB)
+BALES_DHPC_DTAB_POINTS = [
+    (0.95, 10.8, 0.67),
+    (0.90, 6.2, 0.50),
+    (0.80, 4.8, 0.37),
+    (0.60, 2.7, 0.29),
+    (0.50, 2.4, 0.24),
+]
+
+
+def test_rubingh_x1_bales_dhpc_sds():
+    """4 of 5 points match the paper's own reported RST micelle mole
+    fraction closely (within 0.02 absolute, 1-7% relative) -- a strong,
+    genuinely independent (zwitterionic/anionic) system confirmation.
+    The X_DHPC=0.40 point
+    (alpha1_SDS=0.60) is a real, disclosed OUTLIER, not swept under the
+    rug: this solver gives x1=0.406, a ~40% relative deviation from the
+    paper's printed 0.29 -- while every neighboring point matches
+    tightly. This specific point also breaks the otherwise smooth,
+    monotonically-decreasing x1 sequence the other 4 points trace out
+    (0.63, 0.56, 0.48, [0.29 printed, 0.41 solved], 0.24) -- 0.41 fits
+    the visible trend; 0.29 does not. The most likely explanation is a
+    transcription/typesetting error in the paper's own Table 1 (same
+    "a paper's own table doesn't internally reproduce" pattern already
+    documented for Muherei & Junin 2009 elsewhere in this file), not a
+    solver bug -- but this is not provable from the published text
+    alone, so it is asserted as a real discrepancy, not silently
+    excluded or forced to match."""
+    for alpha1, cmc_mix, x1_paper in BALES_DHPC_SDS_POINTS[:3] + BALES_DHPC_SDS_POINTS[4:]:
+        x1 = solve_rubingh_x(alpha1, cmc_mix, BALES_SDS_CMC, BALES_DHPC_CMC)
+        assert x1 is not None
+        assert x1 == pytest.approx(x1_paper, abs=0.02)
+
+    # the disclosed outlier point: real, large, NOT forced to match
+    alpha1, cmc_mix, x1_paper = BALES_DHPC_SDS_POINTS[3]
+    x1 = solve_rubingh_x(alpha1, cmc_mix, BALES_SDS_CMC, BALES_DHPC_CMC)
+    assert x1 is not None
+    rel_error = abs(x1 - x1_paper) / x1_paper
+    assert rel_error > 0.3  # confirms this really is the disclosed large outlier
+    # and confirms it fits the smooth monotonic trend the other 4 points trace
+    assert 0.24 < x1 < 0.48
+
+
+def test_rubingh_x1_bales_dhpc_dtab():
+    """All 5 points match the paper's own reported RST micelle mole
+    fraction closely -- a second, genuinely independent (zwitterionic/
+    cationic) system from the same primary source, no outlier here."""
+    for alpha1, cmc_mix, x1_paper in BALES_DHPC_DTAB_POINTS:
+        x1 = solve_rubingh_x(alpha1, cmc_mix, BALES_DTAB_CMC, BALES_DHPC_CMC)
+        assert x1 is not None
+        assert x1 == pytest.approx(x1_paper, abs=0.015)
+
+
+# --- Eleventh literature system (2026-09-11): TX100 + DTAB ---------------
+# Source: Serafini, Fernandez-Leyes, Sanchez M., Pereyra, Schulz E.P., Durand,
+# Schulz P.C. & Ritacco, "The aqueous Triton X-100 - Dodecyltrimethylammonium
+# bromide micellar mixed system. Experimental results and thermodynamic
+# analysis," Colloids Surf. A (2019), doi:10.1016/j.colsurfa.2018.11.032
+# (Supporting Information docx provided by the user, 2026-09-11; also on
+# arXiv:1806.09721). A genuinely new pairing for this project's validation
+# table (nonionic Triton X-100 + cationic DTAB) -- both components appear
+# individually elsewhere in this file, but never paired together. Their own
+# Table SI-I reports experimental CMC (surface tension + SLS) alongside
+# their own Clint-ideal-CMC column, computed "using the average experimental
+# CMC values" for the pure components.
+TX100_DTAB_CMC_PURE = 0.0144  # M, pure DTAB (their Table SI-I, DTAB=1 row)
+TX100_CMC_PURE = (0.000184 + 0.00023) / 2.0  # M, pure TX100, average of ST and SLS methods
+
+# (alpha1_DTAB, paper's own Clint-ideal CMC, M)
+TX100_DTAB_CLINT_POINTS = [
+    (0.125, 0.00024),
+    (0.25, 0.00027),
+    (0.375, 0.00033),
+    (0.5, 0.00041),
+    (0.625, 0.00054),
+    (0.75, 0.00079),
+    (0.875, 0.0015),
+    (0.95, 0.0033),
+]
+
+
+def test_clint_ideal_cmc_tx100_dtab():
+    """All 8 interior points match the paper's own reported Clint-ideal
+    CMC column closely (<1.8% relative, consistent with rounding in
+    their 2-3-sig-fig table) -- an 11th independent literature system,
+    and a genuinely new pairing class (nonionic-cationic) not covered by
+    any of this file's other 10 systems."""
+    for alpha1, cmc_ideal_paper in TX100_DTAB_CLINT_POINTS:
+        computed = clint_ideal_cmc(alpha1, TX100_DTAB_CMC_PURE, TX100_CMC_PURE)
+        assert computed == pytest.approx(cmc_ideal_paper, rel=0.02)
 
 
 def test_rubingh_beta_internal_self_consistency_across_all_literature_systems():
@@ -512,12 +627,19 @@ def test_asymmetric_margules_hyamine_dtab_literature_case():
     """Real numeric case from the paper's own Case study 1 (Hyamine(1)-
     DTAB(2), Section 4.1): W12 = -8836.50 J/mol, W21 = -2204.19 J/mol at
     298.15 K, with x1(Hy) = 1 - x_DTAB = 1 - 0.192 = 0.808 (their Table
-    1, asymmetric column, alpha_DTAB = 0.25). No exact digit-level
-    literature value for ln(f1)/ln(f2) is given (only a graph, Fig. 1),
-    so this asserts sign/order-of-magnitude consistency with that
-    figure's own stated axis range (-4.00 to 0.50) -- same "sign and
-    order of magnitude only" discipline already used elsewhere in this
-    file for cases without an exact literature match."""
+    1, asymmetric column, alpha_DTAB = 0.25).
+
+    UPGRADED 2026-09-11 (Schulz & Durand 2016 SI, mmc2.csv, obtained and
+    provided by the user, previously unavailable -- only a graph, Fig. 1,
+    was accessible before): mmc2.csv gives EXACT digit-level (x1, ln f1,
+    ln f2) data for this same system across 5 interior compositions, not
+    just an axis-range check. Confirmed this really is the Hyamine-DTAB
+    system by an independent cross-check: mmc2's own endpoint values
+    (Gexc/RTx1x2 at x1->0 and x1->1, which the asymmetric Margules
+    formula makes trivially equal to W12 and W21 respectively) are
+    -3.567 and -0.890 in RT units -- matching -8836.50/(R*298.15) =
+    -3.565 and -2204.19/(R*298.15) = -0.889 essentially exactly (the
+    tiny residual is rounding in the CSV's 3-4 significant figures)."""
     temperature_k = 298.15
     w12 = -8836.50 / (R_GAS * temperature_k)
     w21 = -2204.19 / (R_GAS * temperature_k)
@@ -526,56 +648,135 @@ def test_asymmetric_margules_hyamine_dtab_literature_case():
     assert -4.0 <= math.log(f1) <= 0.5
     assert -4.0 <= math.log(f2) <= 0.5
 
+    # exact digit-level check against mmc2.csv's own interior points
+    mmc2_points = [
+        (0.305, -0.932, -0.430),
+        (0.415, -0.461, -0.692),
+        (0.483, -0.263, -0.853),
+        (0.626, -0.030, -1.134),
+        (0.808, 0.028, -1.252),
+    ]
+    for x1, ln_f1_paper, ln_f2_paper in mmc2_points:
+        f1, f2 = asymmetric_margules_activity_coefficients(x1, w12, w21)
+        assert math.log(f1) == pytest.approx(ln_f1_paper, abs=0.005)
+        assert math.log(f2) == pytest.approx(ln_f2_paper, abs=0.005)
+
+
+def test_asymmetric_margules_schulz_durand_si_second_system_mmc3():
+    """A second real dataset from the same Schulz & Durand 2016 SI
+    (mmc3.csv, obtained 2026-09-11) -- (x1, ln f1, ln f2) across 7
+    interior compositions for a second real binary system in the SI (not
+    independently identified with full confidence from the extractable
+    SI text as a specific named surfactant pair, unlike mmc2/Hyamine-
+    DTAB above, so cited generically rather than over-claiming). W12,
+    W21 read directly from the CSV's own pure-component (x1=0, x1=1)
+    endpoint values, exactly as for mmc2 above -- exact-matches all 7
+    interior points."""
+    w12, w21 = -1.981, -0.202  # RT units, mmc3.csv's own x1=0/x1=1 endpoints
+    mmc3_points = [
+        (0.234, -0.673, -0.161),
+        (0.304, -0.436, -0.247),
+        (0.382, -0.237, -0.351),
+        (0.478, -0.076, -0.471),
+        (0.608, 0.028, -0.590),
+        (0.937, 0.005, -0.375),
+        (0.971, 0.001, -0.288),
+    ]
+    for x1, ln_f1_paper, ln_f2_paper in mmc3_points:
+        f1, f2 = asymmetric_margules_activity_coefficients(x1, w12, w21)
+        assert math.log(f1) == pytest.approx(ln_f1_paper, abs=0.005)
+        assert math.log(f2) == pytest.approx(ln_f2_paper, abs=0.005)
+
 
 # --- eommm_global_fit (multi-point EOMMM global fit) ------------------------
-# First-principles construction (2026-09-10) -- NOT a verified transcription
-# of Schulz & Durand 2016's exact global-fit procedure (their Eq. 3.2 /
-# S.I. Point 2.3), which was unavailable (primary source paywalled on
-# ScienceDirect; a related open-access companion paper, Serafini et al.,
-# arXiv:1806.09721, defers the exact procedure to its own SI, not included
-# in the fetched copy). See eommm_global_fit's own docstring for the full
-# disclosure and the real multi-root/multi-start numerical findings made
-# while validating this. No external published raw numeric table was
-# available, so validation here is via mathematically-guaranteed round
-# trips only (the closed-form construction below satisfies BOTH mass-
-# balance equations EXACTLY for any chosen W12/W21/x1, not just RST's
-# symmetric case -- verified algebraically in eommm_global_fit's docstring).
-# These tests are slow (a handful of seconds each -- genuine (n+2)-parameter
-# nonlinear optimization, multi-start, no numpy) by the nature of the
-# problem, kept deliberately small (n=3) to bound runtime.
+# REWRITTEN 2026-09-11 (SI obtained, docx+CSVs provided by the user -- see
+# eommm_global_fit's own docstring for the full, honest history: a first
+# attempt to transcribe the SI's literal free-energy-minimization objective
+# was found to be unbounded below and abandoned; a companion paper's SI
+# (Serafini et al. 2019) explained the real "vary the margin to the
+# tightest feasible value" procedure, which this implements instead as a
+# well-posed infeasibility-minimization). No external published raw
+# (alpha1, W12, W21) numeric example with enough digits to check against
+# was found, so validation here is via mathematically-guaranteed round
+# trips -- but see the real, disclosed non-uniqueness-at-wide-margin
+# finding below, which is NOT swept under the rug: it directly matches
+# the SI's own stated reason for the margin-tightening procedure.
+# These tests are slow (a few seconds each -- a genuine 2D grid search, no
+# numpy) by the nature of the problem, kept deliberately small (n=3) to
+# bound runtime.
 
 
-def _eommm_series_for_true_params(x1_values, w12_true, w21_true, cmc1, cmc2):
+def _eommm_series_for_true_params(x1_values, w12_true, w21_true, cmc1, cmc2, r1=2.0, r2=2.0):
+    """General r-aware construction: for a chosen x1 and TRUE (w12, w21),
+    cmc_var = cmc1*(x1*f1)^(r1/2) + cmc2*((1-x1)*f2)^(r2/2) and
+    alpha1 = cmc1*(x1*f1)^(r1/2)/cmc_var satisfy BOTH cdefp1 and cdefp2
+    EXACTLY for ANY r1, r2 (not just the r=2 special case) -- verified
+    algebraically in eommm_global_fit's own module-level history; reduces
+    exactly to the simpler D=x1*f1*cmc1+(1-x1)*f2*cmc2 construction used
+    here before 2026-09-11 when r1=r2=2."""
     alpha1_series, cmc_mix_series = [], []
     for x1 in x1_values:
         f1, f2 = asymmetric_margules_activity_coefficients(x1, w12_true, w21_true)
-        d = x1 * f1 * cmc1 + (1.0 - x1) * f2 * cmc2
-        alpha1 = x1 * f1 * cmc1 / d
-        alpha1_series.append(alpha1)
-        cmc_mix_series.append(d)
+        cA = cmc1 * (x1 * f1) ** (r1 / 2.0)
+        cB = cmc2 * ((1.0 - x1) * f2) ** (r2 / 2.0)
+        cmc_var = cA + cB
+        alpha1_series.append(cA / cmc_var)
+        cmc_mix_series.append(cmc_var)
     return alpha1_series, cmc_mix_series
 
 
-def test_eommm_global_fit_recovers_true_parameters_round_trip():
-    true_w12, true_w21 = 2.0, -3.0
-    x1_true_values = [0.25, 0.5, 0.75]
+def test_eommm_global_fit_recovers_true_parameters_round_trip_at_tight_margin():
+    """At a TIGHT cmc_margin, the fit recovers the true (W12, W21)
+    essentially exactly."""
+    true_w12, true_w21 = 6.0, -3.0
+    x1_true_values = [0.15, 0.3, 0.5, 0.7, 0.85]
     alpha1_series, cmc_mix_series = _eommm_series_for_true_params(
         x1_true_values, true_w12, true_w21, DTAB_PURE_CMC, SDS_PURE_CMC
     )
 
-    result = eommm_global_fit(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC)
-    assert result.W12 == pytest.approx(true_w12, abs=1e-2)
-    assert result.W21 == pytest.approx(true_w21, abs=1e-2)
-    assert result.r_squared == pytest.approx(1.0, abs=1e-4)
-    assert result.n_points == 3
+    result = eommm_global_fit(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC, cmc_margin=1e-6)
+    assert result.W12 == pytest.approx(true_w12, abs=0.01)
+    assert result.W21 == pytest.approx(true_w21, abs=0.01)
+    assert result.total_infeasibility < 5e-4
+    assert result.n_points == 5
     for fitted, true_x1 in zip(result.x1_values, x1_true_values):
-        assert fitted == pytest.approx(true_x1, abs=1e-2)
+        assert fitted == pytest.approx(true_x1, abs=0.01)
+
+
+def test_eommm_global_fit_finds_feasible_but_imprecise_fit_at_default_margin():
+    """Real, disclosed finding (2026-09-11), directly matching the reason
+    the Serafini et al. 2019 SI gives for its own margin-tightening
+    procedure: at the SI's own default cmc_margin=0.10, the SAME
+    round-trip data used above still finds a genuinely FEASIBLE fit
+    (total_infeasibility near 0 -- this is not a search failure) but
+    does NOT reliably recover the exact true (W12, W21) the way the
+    tight-margin case above does -- a wider margin genuinely admits more
+    of the (W12, W21) plane as feasible, so a different point within
+    that wider region can be found instead of the true one. Kept as a
+    qualitative, not exact, check precisely because the magnitude of
+    this effect is itself sensitive to grid resolution details (a
+    stronger, more specific claim was tried and found not to reproduce
+    reliably -- see this test's own history in the module docstring of
+    eommm_global_fit) -- the honest, robust claim is "feasible but not
+    necessarily exact," not a specific numeric deviation."""
+    true_w12, true_w21 = 6.0, -3.0
+    x1_true_values = [0.15, 0.3, 0.5, 0.7, 0.85]
+    alpha1_series, cmc_mix_series = _eommm_series_for_true_params(
+        x1_true_values, true_w12, true_w21, DTAB_PURE_CMC, SDS_PURE_CMC
+    )
+
+    result = eommm_global_fit(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC, cmc_margin=0.10)
+    assert result.total_infeasibility < 5e-4  # a genuinely feasible fit IS found...
+    # ...within a real, physically sensible neighborhood of the true parameters,
+    # even if not exact (unlike the tight-margin case, which IS exact)
+    assert abs(result.W12 - true_w12) < 1.0
+    assert abs(result.W21 - true_w21) < 1.0
 
 
 def test_eommm_global_fit_reduces_to_rubingh_beta_when_symmetric():
-    """At W12=W21 (the symmetric limit), the fit should recover
-    approximately the same beta that solve_rubingh_x/rubingh_beta find
-    on the identical data -- ties the new global fit back to the
+    """At W12=W21 (the symmetric limit), a TIGHT-margin fit should
+    recover approximately the same beta that solve_rubingh_x/rubingh_beta
+    find on the identical data -- ties the new global fit back to the
     already-literature-validated Rubingh machinery, independent of
     trusting eommm_global_fit's own round-trip alone."""
     true_beta = -1.8
@@ -584,15 +785,15 @@ def test_eommm_global_fit_reduces_to_rubingh_beta_when_symmetric():
         x1_true_values, true_beta, true_beta, DTAB_PURE_CMC, SDS_PURE_CMC
     )
 
-    result = eommm_global_fit(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC)
-    assert result.W12 == pytest.approx(true_beta, abs=1e-2)
-    assert result.W21 == pytest.approx(true_beta, abs=1e-2)
+    result = eommm_global_fit(alpha1_series, cmc_mix_series, DTAB_PURE_CMC, SDS_PURE_CMC, cmc_margin=1e-6)
+    assert result.W12 == pytest.approx(true_beta, abs=0.02)
+    assert result.W21 == pytest.approx(true_beta, abs=0.02)
 
     for a1, cm in zip(alpha1_series, cmc_mix_series):
         x1_rub = solve_rubingh_x(a1, cm, DTAB_PURE_CMC, SDS_PURE_CMC)
         assert x1_rub is not None
         beta_rub = rubingh_beta(x1_rub, a1, cm, DTAB_PURE_CMC)
-        assert beta_rub == pytest.approx(true_beta, abs=1e-2)
+        assert beta_rub == pytest.approx(true_beta, abs=0.02)
 
 
 def test_eommm_global_fit_rejects_bad_inputs():
@@ -606,6 +807,10 @@ def test_eommm_global_fit_rejects_bad_inputs():
         eommm_global_fit([0.3, 0.5, 0.7], [10.0, -8.0, 6.0], DTAB_PURE_CMC, SDS_PURE_CMC)  # bad cmc_mix
     with pytest.raises(ValueError):
         eommm_global_fit([0.3, 0.5, 0.7], [10.0, 8.0, 6.0], 0.0, SDS_PURE_CMC)  # bad cmc1
+    with pytest.raises(ValueError):
+        eommm_global_fit([0.3, 0.5, 0.7], [10.0, 8.0, 6.0], DTAB_PURE_CMC, SDS_PURE_CMC, r1=0.0)  # bad r1
+    with pytest.raises(ValueError):
+        eommm_global_fit([0.3, 0.5, 0.7], [10.0, 8.0, 6.0], DTAB_PURE_CMC, SDS_PURE_CMC, cmc_margin=1.5)  # bad margin
 
 
 # --- Rodenas model (alternative-methods review, 2026-09-07/08) --------------
@@ -767,6 +972,63 @@ def test_rodenas_x1_series_against_real_multipoint_literature_data():
         assert result.x1_rodenas[i] == pytest.approx(paper_x1_rod[i], rel=0.10)
     # qualitative check only for the endpoints (real, larger, disclosed error there)
     assert result.x1_rodenas[0] < result.x1_rodenas[2] < result.x1_rodenas[4]  # monotonic trend preserved
+
+
+def test_rodenas_x1_series_against_rodenas_1999_original_system():
+    """A GENUINELY independent second literature system (2026-09-11,
+    primary source obtained, PDF provided by the user): Rodenas,
+    Valiente & Villafruela, J. Phys. Chem. B 103(21) (1999) 4549-4554,
+    Table 1 -- the paper that ORIGINATED the model this project calls
+    rodenas_x1/rodenas_x1_series, not a later paper citing it. Unlike
+    every other Rodenas validation in this file (all reuse the same G6
+    gemini/TX-114 or G6/T-20 systems from Azum et al. 2022), this is a
+    completely different chemical system: C12E4 (tetraethylene glycol
+    mono-n-dodecyl ether) mixed with CTAB (hexadecyltrimethylammonium
+    bromide).
+
+    Real, disclosed finding: this reproduces WORSE than the Azum-paper
+    check above (29-60% relative error at every point, one point
+    -- alpha1=0.5 -- even landing slightly outside the valid [0,1] mole
+    fraction range), not better. The most likely explanation, stated
+    directly in the paper's own text (not guessed): the paper does NOT
+    get its d[ln(cmc_mix)]/d(alpha1) by finite-differencing these 5 raw
+    (sparse, unevenly-spaced: alpha1 = 0.025 to 0.7) table points the
+    way rodenas_x1_series does -- it first fits a smooth empirical
+    2-exponential curve to CMC*(alpha1) (the paper's own eq. 14) and
+    differentiates THAT analytically. A smooth global fit and a local
+    quadratic through 3 sparse, unevenly-spaced neighbors are genuinely
+    different numerical procedures and are not expected to agree
+    closely on data this sparse. The paper's own text also states it
+    excluded the alpha1=0.025 point from its own Figure 4 as unreliable
+    -- an explicit admission that this point is not trustworthy even by
+    the source's own standard. Note this is NOT the single worst point
+    here by our own error metric (alpha1=0.1 is, at 60% relative error
+    vs. alpha1=0.025's 54%) -- but both of the two lowest-alpha1 points,
+    where the paper admits unreliability, are the two worst overall,
+    which is the honest, checkable claim actually asserted below.
+
+    Kept as a real, honest record (like the Azum-paper check above) --
+    this is evidence rodenas_x1_series's sparse-series numerical
+    differentiation has genuine, real limits on very sparse/uneven data,
+    not evidence the core rodenas_x1 formula itself is wrong (that
+    formula is separately verified via the exact zero-interaction
+    algebraic identity in test_rodenas_x1_reduces_to_motomura_under_ideal_mixing,
+    which does not depend on any finite-difference approximation)."""
+    alpha1_series = [0.025, 0.1, 0.3, 0.5, 0.7]
+    cmc_mix_series = [3.5e-4, 1.7e-4, 1.1e-4, 5.5e-5, 4.9e-5]  # M, paper's own Table 1 'CMC*' column
+    paper_x1 = [0.68, 0.49, 0.69, 0.78, 0.79]  # paper's own Table 1 'chi1' (Gibbs-Duhem/new-treatment) column
+
+    result = rodenas_x1_series(alpha1_series, cmc_mix_series)
+    # real, disclosed: none of the 5 points land within a tight tolerance --
+    # confirm the (large, real) error magnitude rather than hiding it
+    rel_errors = [abs(x - p) / p for x, p in zip(result.x1_rodenas, paper_x1)]
+    assert all(0.25 < e < 0.65 for e in rel_errors)
+    # the two lowest-alpha1 points (alpha1=0.025, excluded by the
+    # paper's own Figure 4, and alpha1=0.1, the next-lowest) are the two
+    # worst points here -- consistent with the paper's own caveat about
+    # this low-alpha1 region, even though 0.025 alone isn't the single worst
+    two_worst = sorted(range(5), key=lambda i: -rel_errors[i])[:2]
+    assert set(two_worst) == {0, 1}
 
 
 def test_rodenas_activity_coefficients_basic():

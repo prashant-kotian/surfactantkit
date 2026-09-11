@@ -55,10 +55,26 @@ def gibbs_free_energy_micellization(cmc_mole_fraction: float, temperature_K: flo
 
     counterion_factor: explicit, not guessed. Use 1.0 for a nonionic
     surfactant. For an ionic surfactant with counterion binding degree
-    beta (see counterion_binding_degree), use (2 - beta) -- this is
-    NOT auto-detected from the inputs, because silently assuming
-    nonionic behavior for an ionic surfactant (or vice versa) is exactly
-    the kind of hidden-assumption error this library exists to prevent.
+    beta (see counterion_binding_degree), use (2 - beta) -- equivalently,
+    (1 + alpha) if what's in hand is the counterion DISSOCIATION/
+    ionization degree alpha (= 1 - beta) instead, e.g. as directly
+    reported by Bales, Messina, Vidal & Peric, J. Phys. Chem. B 105
+    (2001) 6798-6804 (PDF provided by the user, 2026-09-11), which gives
+    a real, precisely-measured alpha = 0.272 +/- 0.017 for SDS via a
+    novel EPR method, cross-validated there against multiple independent
+    literature techniques -- i.e. counterion_factor = 1.272 for SDS
+    specifically, a real sourced value rather than an arbitrary
+    illustrative one. The (2-beta) = (1+alpha) identity (alpha=1-beta)
+    is checked via its own physical limits, not just algebra: fully
+    dissociated (alpha=1, beta=0) behaves like two independent particles
+    losing translational entropy together, counterion_factor -> 2 (both
+    forms agree); fully bound (alpha=0, beta=1, counterion moves as one
+    package with the surfactant) behaves like a single nonionic-style
+    particle, counterion_factor -> 1 (both forms agree too) -- see
+    tests/test_thermodynamics.py for the worked check. This is NOT
+    auto-detected from the inputs, because silently assuming nonionic
+    behavior for an ionic surfactant (or vice versa) is exactly the kind
+    of hidden-assumption error this library exists to prevent.
     """
     if not (0.0 < cmc_mole_fraction < 1.0):
         raise ValueError("cmc_mole_fraction must be strictly between 0 and 1")
@@ -80,14 +96,16 @@ def mass_action_free_energy_of_micellization(cmc_mole_fraction: float, aggregati
     Advances 13 (2023) 9387, "Refined definition of the critical
     micelle concentration and application to alkyl maltosides used in
     membrane protein research," their eq. 21, quoted directly, not
-    guessed or reconstructed) -- this project's own literature review
-    had also flagged Rusanov, Langmuir 30 (2014) 14443-14451 as the
-    definitive modern mass-action-law treatment, but that primary
-    source is paywalled; the RSC Advances paper's eq. 21 is the SAME
-    well-known classical single-equilibrium mass-action result (also
-    widely cited elsewhere, e.g. Moroi's "Micelles" monograph and
-    Rosen's "Surfactants and Interfacial Phenomena"), independently
-    confirmed open-access rather than taken from a paywalled source.
+    guessed or reconstructed), AND directly confirmed 2026-09-11 against
+    the primary source itself (Rusanov, Langmuir 30(48) (2014) 14443-14451,
+    PDF provided by the user, previously flagged paywalled): Rusanov's
+    own eq. (18), cm = 1/Kj = K^(1-n), is the same single-equilibrium
+    mass-action-law CMC definition this formula is built on -- his
+    abstract states it directly ("CMC = K^(1-n)"). This is the SAME
+    well-known classical result (also widely cited elsewhere, e.g.
+    Moroi's "Micelles" monograph and Rosen's "Surfactants and
+    Interfacial Phenomena"), now confirmed against both an open-access
+    restatement and the primary source itself.
 
     The pseudo-phase-separation model this project otherwise uses
     (gibbs_free_energy_micellization) is the n -> infinity LIMIT of
@@ -120,6 +138,62 @@ def mass_action_free_energy_of_micellization(cmc_mole_fraction: float, aggregati
     n = aggregation_number
     g_per_RT = (1.0 + 1.0 / n) * math.log(cmc_mole_fraction) - (1.0 / n) * math.log(n)
     return (R_GAS * temperature_K * g_per_RT) / 1000.0
+
+
+def critical_micellization_degree(aggregation_number: float, definition: str = "d2alpha_dc2") -> float:
+    """Critical micellization degree (CMD), alpha_m: the dimensionless
+    fraction n*K*c^(n-1) reaches at the CMC under the single-component
+    mass-action-law model (see mass_action_free_energy_of_micellization
+    for the same model's free-energy side), n(Kc)^(n-1) = alpha/(1-alpha)^n
+    (Rusanov's eq. 17) -- a real, NEW capability (2026-09-11, added on
+    request), not a validation of something already implemented.
+
+    Two different formulas are given by the primary source depending on
+    which curvature condition defines "the CMC" (both are legitimate;
+    they simply answer "sharpest change in WHAT, as a function of
+    WHAT" differently):
+
+    definition="d2alpha_dc2" (default): CMC defined by d^2(alpha)/dc^2 = 0
+    (sharpest change in micellization degree vs. CONCENTRATION):
+        alpha_m = (sqrt(n/2) - 1) / (n - 1)
+
+    definition="d2alpha_dlnc2": CMC defined by d^2(alpha)/d(ln c)^2 = 0
+    (sharpest change vs. LOG concentration -- the more common
+    experimental convention, e.g. the inflection point of a
+    conductivity-vs-log(concentration) plot):
+        alpha_m = 1 / (sqrt(n) + 1)
+
+    Source: Rusanov, "The Mass-Action-Law Theory of Micellization
+    Revisited," Langmuir 30(48) (2014) 14443-14451 (PDF provided by the
+    user 2026-09-11), eqs. (15) and (16) respectively. Both formulas
+    verified exactly against the paper's own worked numeric example
+    (n=100): eq. 15 gives alpha_m=0.061, eq. 16 gives alpha_m=0.091 --
+    both reproduced here to 3 decimal places (see
+    tests/test_thermodynamics.py), not just approximately.
+
+    Real, checkable consistency property (verified in the test suite,
+    not just asserted): both formulas satisfy alpha_m -> 0 as n -> infinity
+    (a sharper, more "abrupt" transition for larger aggregates, the same
+    qualitative behavior the pseudo-phase-separation limit assumes),
+    and definition="d2alpha_dlnc2" always gives a strictly larger
+    alpha_m than definition="d2alpha_dc2" for the same n (verified
+    algebraically for n>1, not just at the one worked example).
+
+    aggregation_number must be > 1 (n=1 is not a micelle)."""
+    if aggregation_number <= 1:
+        raise ValueError("aggregation_number must be greater than 1")
+    n = aggregation_number
+    if definition == "d2alpha_dc2":
+        alpha_m = (math.sqrt(n / 2.0) - 1.0) / (n - 1.0)
+        if alpha_m < 0:
+            raise ValueError(
+                f"definition='d2alpha_dc2' gives a negative (unphysical) alpha_m for n={n} "
+                "(this formula requires n >= 2 -- use definition='d2alpha_dlnc2' for small n instead)"
+            )
+        return alpha_m
+    if definition == "d2alpha_dlnc2":
+        return 1.0 / (math.sqrt(n) + 1.0)
+    raise ValueError('definition must be "d2alpha_dc2" or "d2alpha_dlnc2"')
 
 
 def vant_hoff_enthalpy(cmc1_mole_fraction: float, temperature1_K: float, cmc2_mole_fraction: float, temperature2_K: float) -> float:

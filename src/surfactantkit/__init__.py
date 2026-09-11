@@ -42,6 +42,7 @@ from .hlb import (
     guo_effective_alkyl_chain_length,
     guo_effective_po_chain_length,
     hlb_davies_guo_ecl,
+    derive_davies_group_number_from_griffin,
 )
 from .hld import (
     hld_ionic,
@@ -77,6 +78,7 @@ from .dynamics import (
 from .thermodynamics import (
     cmc_to_mole_fraction,
     counterion_binding_degree,
+    critical_micellization_degree,
     gibbs_free_energy_micellization,
     mass_action_free_energy_of_micellization,
     vant_hoff_enthalpy,
@@ -131,6 +133,7 @@ __all__ = [
     "guo_effective_alkyl_chain_length",
     "guo_effective_po_chain_length",
     "hlb_davies_guo_ecl",
+    "derive_davies_group_number_from_griffin",
     "hld_ionic",
     "hld_nonionic",
     "cc_mixing_rule",
@@ -156,6 +159,7 @@ __all__ = [
     "hydrodynamic_radius_perrin_corrected",
     "cmc_to_mole_fraction",
     "counterion_binding_degree",
+    "critical_micellization_degree",
     "gibbs_free_energy_micellization",
     "mass_action_free_energy_of_micellization",
     "vant_hoff_enthalpy",

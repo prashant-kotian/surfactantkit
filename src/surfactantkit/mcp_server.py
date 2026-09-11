@@ -221,36 +221,55 @@ def asymmetric_margules_activity_coefficients(x1: float, w12: float, w21: float)
 
 
 @mcp.tool()
-def eommm_global_fit(alpha1_series: list[float], cmc_mix_series_mM: list[float], cmc1_mM: float, cmc2_mM: float) -> dict:
+def eommm_global_fit(alpha1_series: list[float], cmc_mix_series_mM: list[float], cmc1_mM: float, cmc2_mM: float,
+                      r1: float = 2.0, r2: float = 2.0, cmc_margin: float = 0.10) -> dict:
     """Fit EOMMM's two independent Margules interaction parameters
     (W12, W21) -- and each point's own micellar mole fraction x1 --
     SIMULTANEOUSLY across a whole composition series, closing the gap
     asymmetric_margules_activity_coefficients's own docstring flags
     (it only computes activity coefficients for an already-known
-    w12/w21 pair). IMPORTANT, disclosed honestly: this is a FIRST-
-    PRINCIPLES construction (least-squares over the same mass-balance
-    equations rubingh_solve uses, generalized to asymmetric activity
-    coefficients, solved via variable projection with multi-start
-    coordinate descent), NOT a verified transcription of Schulz &
-    Durand 2016's exact published procedure (their Eq. 3.2), which was
-    unavailable (paywalled; see this project's own ROADMAP.md for the
-    full disclosure). Validated via mathematically-guaranteed round
-    trips only -- no external published raw dataset was available to
-    check against. This is a genuine multi-parameter nonlinear
-    optimization with no numpy/scipy dependency, so it is noticeably
-    slower than other tools in this server (a few seconds for a small
-    dataset) -- expect that, it is not an error. alpha1_series and
-    cmc_mix_series_mM must be the same length, at least 3 points (5+
-    recommended); cmc1_mM/cmc2_mM are the pure-component CMCs. Returns
-    W12, W21, the fitted x1 at each point, the fit's r_squared (against
-    ln(cmc_mix)), and the raw sse objective value."""
-    result = mm.eommm_global_fit(alpha1_series, cmc_mix_series_mM, cmc1_mM, cmc2_mM)
+    w12/w21 pair).
+
+    REWRITTEN 2026-09-11: now a real, sourced transcription of the
+    Schulz & Durand 2016 SI's own GAMS-derived procedure (docx+CSVs
+    obtained, provided by the user), not the earlier first-principles
+    least-squares construction. Minimizes total INFEASIBILITY of the
+    r-generalized mass-balance constraints (cdefp1/cdefp2, allowing
+    partial dissociation via r1/r2) at the given cmc_margin -- the real
+    SI procedure varies this margin to the tightest feasible value; this
+    tool does NOT automate that search (a real, disclosed limitation --
+    call it yourself at a few decreasing cmc_margin values and watch
+    total_infeasibility/W12/W21 for where they stabilize). IMPORTANT,
+    disclosed honestly: a WIDER cmc_margin genuinely admits more of the
+    (W12, W21) plane as feasible, so the fit is not always uniquely
+    determined at the default cmc_margin=0.10 (the SI's own default) --
+    a tighter margin gives a more uniquely-determined answer at the risk
+    of becoming infeasible if the data doesn't agree that tightly (see
+    eommm_global_fit's own full docstring in mixed_micelle.py for the
+    complete history, including a free-energy-objective approach that
+    was tried first and found to be unbounded, and abandoned rather than
+    shipped broken).
+
+    This is a genuine 2D grid-search optimization with no numpy/scipy
+    dependency, so it is noticeably slower than other tools in this
+    server (several seconds for a small dataset) -- expect that, it is
+    not an error. alpha1_series and cmc_mix_series_mM must be the same
+    length, at least 3 points (5+ recommended); cmc1_mM/cmc2_mM are the
+    pure-component CMCs. r1/r2: dissociation numbers (default 2.0, the
+    classical fully-dissociated 1:1 ionic convention; use 1.0 for a
+    nonionic component). Returns W12, W21, the fitted x1 and implied
+    cmc_var at each point, total_infeasibility (near 0 means a fully
+    feasible fit was found at cmc_margin), and the fit's r_squared
+    (against ln(cmc_mix))."""
+    result = mm.eommm_global_fit(alpha1_series, cmc_mix_series_mM, cmc1_mM, cmc2_mM, r1, r2, cmc_margin)
     return {
         "W12": result.W12,
         "W21": result.W21,
         "x1_values": result.x1_values,
+        "cmc_var_values": result.cmc_var_values,
         "alpha1_used": result.alpha1_used,
-        "sse": result.sse,
+        "total_infeasibility": result.total_infeasibility,
+        "cmc_margin_used": result.cmc_margin_used,
         "r_squared": result.r_squared,
         "n_points": result.n_points,
         "method": result.method,
@@ -387,7 +406,7 @@ def hlb_from_mw(mw_hydrophilic: float, mw_total: float) -> dict:
 
 
 @mcp.tool()
-def hlb_from_groups(group_counts: dict[str, int]) -> dict:
+def hlb_from_groups(group_counts: dict[str, int], allow_derived_groups: bool = False) -> dict:
     """Hydrophile-Lipophile Balance via Davies' (1957) group-contribution
     method (extended with a real, source-verified quaternary ammonium
     number -- see below): HLB = 7 + sum(hydrophilic group numbers) -
@@ -401,10 +420,54 @@ def hlb_from_groups(group_counts: dict[str, int]) -> dict:
     double-tail quaternary ammonium head (e.g. DDAB, DODAB) -- both
     assume a Cl-/Br- counterion (not verified for others, e.g. tosylate).
     Raises an error for any other group name rather than guessing a
-    value -- most notably, amide and sulfonate groups still have NO
-    verified number in this table; do not estimate one."""
-    value = hlb_mod.hlb_davies(group_counts)
+    value.
+
+    allow_derived_groups: False by default. When True, ALSO accepts
+    {sulfonate, amide_dialkanolamide, amide_monoalkanolamide, sultaine,
+    carboxybetaine, phosphate_diNa} -- real, disclosed, NON-guessed
+    group numbers this project itself derived (2026-09-11) via the same
+    Griffin-Davies cross-calibration method Davies himself used to build
+    his original table -- but they are NOT independently literature-
+    published Davies numbers, unlike everything else in this table,
+    hence opt-in only. See derive_davies_group_number_from_griffin for
+    the full method and its honest chain-length-sensitivity caveat."""
+    value = hlb_mod.hlb_davies(group_counts, allow_derived_groups=allow_derived_groups)
     return {"hlb": value, "scale": "Davies (7 = neutral reference point)"}
+
+
+@mcp.tool()
+def derive_davies_group_number(hydrophilic_fragment_mass_g_per_mol: float, total_molar_mass_g_per_mol: float, lipophilic_group_counts: dict[str, int]) -> dict:
+    """Derive a NEW Davies-scale hydrophilic group number for a
+    functional group not in Davies' own 1957 table -- the general
+    methodology this project used (2026-09-11) to fill the amide and
+    sulfonate gaps (see hlb_from_groups' allow_derived_groups option for
+    the ready-made results). Cross-calibrates against Griffin's
+    independent mass-ratio HLB formula for ONE real reference compound:
+    assumes Davies' additive HLB (7 + GN_unknown - lipophilic
+    contributions) equals Griffin's HLB (20*Mh/M) for that compound, and
+    solves for GN_unknown. This is the SAME method Davies himself used
+    to build his original table, and the same method a prior gap in this
+    project (quaternary ammonium) was independently resolved with via a
+    real literature source (B.H. O 1998).
+
+    hydrophilic_fragment_mass_g_per_mol: molar mass of the compound's
+    entire polar head fragment (Griffin's Mh convention -- includes any
+    heteroatom-bearing carbon that's chemically part of the functional
+    group itself, e.g. an amide's carbonyl carbon).
+    total_molar_mass_g_per_mol: the whole reference compound's molar mass.
+    lipophilic_group_counts: the rest of the molecule's ALREADY-VERIFIED
+    Davies lipophilic groups (e.g. {"CH2": 10, "CH3": 1}).
+
+    IMPORTANT, disclosed honestly: run this at SEVERAL real reference
+    chain lengths before trusting a single result -- a Davies-style
+    additive model is linear in chain length while Griffin's Mh/M ratio
+    is not, so the two only agree closely over the practically-relevant
+    commercial-surfactant range (roughly C8-C16); a number derived from
+    one compound alone can be chain-length-biased. This function returns
+    ONE compound's derived value, not an automatically-averaged one."""
+    value = hlb_mod.derive_davies_group_number_from_griffin(
+        hydrophilic_fragment_mass_g_per_mol, total_molar_mass_g_per_mol, lipophilic_group_counts)
+    return {"derived_group_number": value, "scale": "Davies (additive HLB group-contribution units)"}
 
 
 @mcp.tool()
@@ -419,19 +482,15 @@ def hlb_davies_guo_ecl(n_carbons_alkyl: int, n_eo: int, extra_group_counts: dict
     actual counts into plain Davies -- because a polyoxyethylene
     chain's hydrophilic contribution is genuinely sub-linear in EO
     count, which plain Davies (linear) cannot capture. n_carbons_alkyl:
-    total carbons in the hydrophobic tail. n_eo: actual EO units
-    (<=50, the source paper's own valid range). extra_group_counts:
+    total carbons in the hydrophobic tail. n_eo: actual EO units (any
+    positive value -- both branches of the source's own piecewise
+    formula, NEO<=50 and NEO>=50, are implemented). extra_group_counts:
     optional additional Davies group contributions (e.g. an ester
-    headgroup) not covered by the alkyl tail or EO chain. IMPORTANT,
-    disclosed honestly: the primary source is paywalled -- only the
-    effective-chain-length transform equations were independently
-    confirmed (via a citing patent); this function assumes Davies'
-    original per-unit weights (not independently confirmed from the
-    primary source) apply to the effective chain lengths, a reasonable
-    but unverified reading of "based on Davies' approach." Treat as a
-    real, citable improvement over plain hlb_from_groups for this
-    surfactant class, not an exact reproduction of the paper's own
-    numbers."""
+    headgroup) not covered by the alkyl tail or EO chain. RESOLVED
+    2026-09-11 (primary source PDF obtained): Table 1 of the primary
+    paper confirms Davies' original per-unit weights (CH2/CH3=-0.475,
+    EO-unit=0.33) are reused UNCHANGED for the effective chain lengths
+    -- previously an unverified assumption, now directly confirmed."""
     value = hlb_mod.hlb_davies_guo_ecl(n_carbons_alkyl, n_eo, extra_group_counts)
     return {"hlb": value, "scale": "Davies (7 = neutral reference point), Guo/Rong/Ying effective-chain-length correction"}
 
@@ -877,21 +936,22 @@ def zeta_potential_relaxation_corrected(electrophoretic_mobility_um_cm_per_Vs: f
     Henry's formula is LINEAR in zeta and misses the relaxation effect
     entirely (counterion relaxation around the moving particle makes
     mobility grow sub-linearly with zeta, and it can even pass through
-    a maximum beyond ~100 mV). Uses O'Brien's simplification of the
-    Dukhin-Semenikhin relaxation equation (J. Colloid Interface Sci. 309
-    (2007) 194-224, Eq. 24), requires kappa_a > ~20 (the source's own
-    stated valid range -- raises otherwise, use zeta_potential/'ohshima'
-    etc. for lower kappa_a). z: counterion/co-ion charge number
-    (symmetrical z-z electrolyte assumed). m: dimensionless ionic
-    mobility parameter (source's Eq. 18) -- default 0.15 is the source's
-    own stated typical value for aqueous solutions; pass the real value
-    for the actual counterion if known. Solved numerically (grid+
-    bisection) and restricted to zeta in [0, 150] mV by default (below
-    the reported mobility maximum) -- raises if the given mobility has
-    no solution in that range rather than silently returning a wrong
-    branch."""
+    a maximum beyond ~100 mV). Uses the Ohshima, Healy & White (1983)
+    semi-empirical mobility formula (J. Chem. Soc. Faraday Trans. 2, 79
+    (1983) 1613-1628, eqs. 57-62 + 75-76), requires kappa_a >= 10 (the
+    source's own stated valid range -- raises otherwise, use
+    zeta_potential/'ohshima' etc. for lower kappa_a). z: counterion/
+    co-ion charge number (symmetrical z-z electrolyte assumed). m:
+    dimensionless ionic drag coefficient (source's eq. 49), assumed
+    equal for cation and anion -- default 0.15 is a commonly used
+    illustrative aqueous-solution value (the source's own Figs. 1-3 use
+    0.184 for KCl); pass the real value for the actual counterion if
+    known. Solved numerically (grid+bisection) and restricted to zeta in
+    [0, 150] mV by default (below the reported mobility maximum) --
+    raises if the given mobility has no solution in that range rather
+    than silently returning a wrong branch."""
     value = elec.zeta_potential_relaxation_corrected(electrophoretic_mobility_um_cm_per_Vs, kappa_a, viscosity_mPas, temperature_K, z, m)
-    return {"zeta_potential_mV": value, "unit": "mV", "model": "relaxation-corrected (O'Brien/Dukhin-Semenikhin)"}
+    return {"zeta_potential_mV": value, "unit": "mV", "model": "relaxation-corrected (Ohshima-Healy-White 1983)"}
 
 
 @mcp.tool()
@@ -973,6 +1033,24 @@ def mass_action_free_energy_of_micellization(cmc_M: float, aggregation_number: f
     x_cmc = thermo.cmc_to_mole_fraction(cmc_M)
     value = thermo.mass_action_free_energy_of_micellization(x_cmc, aggregation_number, temperature_K)
     return {"deltaG_mic_kJ_per_mol": value, "unit": "kJ/mol", "cmc_mole_fraction_used": x_cmc, "model": "mass-action-law"}
+
+
+@mcp.tool()
+def critical_micellization_degree(aggregation_number: float, definition: str = "d2alpha_dc2") -> dict:
+    """Critical micellization degree (CMD, dimensionless), the
+    mass-action-law model's own definition of "how far along" the
+    aggregation reaction is at the CMC -- a companion result to
+    mass_action_free_energy_of_micellization under the same
+    single-equilibrium mass-action model. Two real, sourced formulas
+    are available depending on which curvature condition defines "the
+    CMC": definition="d2alpha_dc2" (default, requires aggregation_number
+    >= 2) uses the inflection point of micellization degree vs.
+    CONCENTRATION; definition="d2alpha_dlnc2" uses the inflection point
+    vs. LOG concentration (the more common experimental convention,
+    e.g. a conductivity-vs-log(concentration) plot). Source: Rusanov,
+    Langmuir 30(48) (2014) 14443-14451, eqs. (15) and (16)."""
+    value = thermo.critical_micellization_degree(aggregation_number, definition)
+    return {"alpha_m": value, "definition": definition, "aggregation_number": aggregation_number}
 
 
 @mcp.tool()
