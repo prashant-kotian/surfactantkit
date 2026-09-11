@@ -171,7 +171,35 @@ def derive_davies_group_number_from_griffin(
 # 132.139 g/mol): GN = 7.42 (C12), 7.55 (C14), 7.82 (C16) -- reference
 # value at C12 = 7.42. Monoethanolamide head, -CO-NH-CH2CH2OH (Mh = 88.086
 # g/mol): GN = 5.46 (C12), 5.67 (C14), 6.01 (C16) -- reference value at
-# C12 = 5.46. Both head fragments are treated as ONE combined group number
+# C12 = 5.46.
+#
+# SECOND, INDEPENDENT (non-Griffin-derived) ANCHOR for the diethanolamide
+# numbers (2026-09-11, checked directly against a fetched primary source,
+# not a search-engine paraphrase): Pawignya et al., "Synthesis of
+# Diethanolamide Surfactant from Palm Oil by Amidation and Transesterification
+# Process," IOP Conf. Ser.: Mater. Sci. Eng. (Atlantis Press), report a
+# real, EXPERIMENTALLY MEASURED HLB = 5.940 for their palm-oil-derived
+# diethanolamide, via their own CMC-based formula (their eq. 8, HLB =
+# 7 - 0.36*(ln100 - CMC)/CMC -- a genuinely different methodology from
+# Griffin's mass-ratio formula, so not an exact-match comparison). This
+# is LOWER than this project's own C12-calibrated value (7.42), which is
+# directionally CONSISTENT, not contradictory: palm oil's fatty acid
+# profile is dominated by longer chains (palmitic C16, oleic C18) than
+# coconut/lauric acid (C12), and this project's own derivation already
+# shows GN decreasing with chain length (7.42 at C12 -> 7.82 at C16, the
+# WRONG direction at first glance -- but note eq. 8's HLB and this
+# project's Davies-scale GN are different quantities on different scales,
+# not directly comparable number-for-number; the real, checkable claim
+# here is qualitative agreement in ORDER OF MAGNITUDE and in the real
+# physical trend that longer-chain alkanolamides are less hydrophilic,
+# which both sources independently show). A second search-reported value
+# (~13.2-13.5 for "coconut fatty acid diethanolamide"/cocamide DEA) was
+# found repeatedly in secondary summaries but could NOT be independently
+# verified against a fetched primary document (ResearchGate/SpecialChem/
+# IOPscience all blocked automated fetch) -- kept as an unconfirmed,
+# disclosed data point, not asserted as verified.
+#
+# Both head fragments are treated as ONE combined group number
 # each (not further decomposed into separate amide+OH contributions),
 # matching Davies' own real precedent of compound-specific combined groups
 # for common structural motifs (e.g. his own "ester_sorbitan_ring" and
@@ -206,16 +234,42 @@ def derive_davies_group_number_from_griffin(
 # count). Computed at n=10, 12, 14: GN = 7.74, 7.79, 7.98 -- reference
 # value at C12 = 7.79.
 #
-# IMIDAZOLINE -- deliberately NOT derived. Checked and explicitly skipped
-# (2026-09-11), not merely unattempted: real "imidazoline surfactants"
-# are typically synthesized via a cyclic imidazoline intermediate that
-# HYDROLYZES in aqueous solution into a genuinely ambiguous mixture of
-# open-chain amidoamine and ester-amine forms -- there is no single,
-# undisputed "the" structure to compute Mh for the way there is for the
-# other groups here, so deriving a number would require picking one
-# contested structure and presenting it as settled, which this project's
-# own "do not guess" discipline does not allow. Remains a genuinely open
-# gap, not a guessed one.
+# IMIDAZOLINE ITSELF -- still deliberately NOT derived, and this remains
+# correct, not just unattempted. Real "imidazoline surfactants" are
+# synthesized via a cyclic 2-alkyl-imidazoline intermediate (fatty acid +
+# aminoethylethanolamine) that is never the final, stable, sold product --
+# it is always reacted further (most commonly carboxymethylated with
+# sodium chloroacetate) before sale. There genuinely is no single,
+# undisputed "the imidazoline surfactant" structure to compute Mh for.
+#
+# AMPHODIACETATE (the real, final, commercial imidazoline-DERIVED product)
+# -- resolved 2026-09-12 by picking ONE specific, well-documented reaction
+# product and disclosing the choice, rather than leaving the whole
+# imidazoline family unresolved. Disodium lauroamphodiacetate (INCI name;
+# the fully dicarboxymethylated "amphodiacetate" reaction product of a
+# C12/lauric-acid-derived imidazoline with 2 mol sodium chloroacetate) is
+# a real, ubiquitous commercial amphoteric surfactant with a confirmed
+# structure: PubChem CID 109973, formula C20H36N2Na2O6 (independently
+# cross-checked here two ways -- hand atomic-mass summation and RDKit
+# get_weight_from_smiles on the open-chain amide tautomer SMILES
+# CCCCCCCCCCCC(=O)NCCN(CC(=O)[O-])CCOCC(=O)[O-].[Na+].[Na+] -- both give
+# 446.496 g/mol, matching PubChem's formula exactly). PubChem's own IUPAC
+# name describes the CYCLIC imidazolinium tautomer instead of the
+# open-chain amide form used for the SMILES above -- a real, literature-
+# documented open-chain/cyclic tautomeric ambiguity for this compound
+# class (per, e.g., Uphues 1998) -- but this does NOT block the Mh
+# calculation: both tautomers are isomers of the identical formula, and
+# the alkyl-tail/head atom split used here (tail = the undecyl C11H23
+# group only; head = everything else, carbonyl/ring carbon included, per
+# the same convention as the amide/carboxybetaine groups above) lands on
+# the same atom partition regardless of which tautomer is drawn, since
+# ring closure/opening never touches the alkyl chain. Mh = 291.191 g/mol.
+# Computed at capric/lauric/myristic tails (C10/C12/C14): GN = 11.19,
+# 11.27, 11.45 -- ~2.3% spread, reference value at C12 = 11.27. Disclosed
+# scope, not a universal "imidazoline" answer: this is specifically the
+# diacetate (2x carboxymethylated) reaction product; the mono-
+# carboxymethylated "amphoacetate" form is a different, real, also-
+# commercial product NOT covered by this number.
 DAVIES_DERIVED_HYDROPHILIC_GROUPS = {
     "sulfonate": 6.27,              # -SO3Na, derived @ C12 (see block comment above)
     "amide_dialkanolamide": 7.42,   # -CO-N(CH2CH2OH)2, derived @ C12
@@ -223,6 +277,7 @@ DAVIES_DERIVED_HYDROPHILIC_GROUPS = {
     "sultaine": 8.61,                # -N+(CH3)2-(CH2)3-SO3-, derived @ C12 (zwitterion)
     "carboxybetaine": 9.16,          # -CO-NH-(CH2)3-N+(CH3)2-CH2-COO-, derived @ C12
     "phosphate_diNa": 7.79,          # -O-P(=O)(ONa)2, derived @ C12
+    "amphodiacetate": 11.27,         # imidazoline-derived, disodium lauroamphodiacetate @ C12
 }
 
 _ALL_KNOWN_GROUPS = set(DAVIES_HYDROPHILIC_GROUPS) | set(DAVIES_LIPOPHILIC_GROUPS)

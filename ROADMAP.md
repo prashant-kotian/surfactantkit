@@ -97,8 +97,11 @@ non-guessing error messages; a blank template committed under `templates/`; a `R
 builder that reconstructs (never re-fits) the fitted line(s) from the library result's own
 returned fields; PNG + `.agr` output from that single shared object; and a real
 `verify_agr_matches_report_data` regression gate against the "PNG and .agr silently disagree"
-failure mode in every test file. `surfactantkit-reports` is git-initialized at
-`H:\CodeProjects\surfactantkit-reports` but not yet committed/pushed -- ask before doing so.
+failure mode in every test file. `surfactantkit-reports` lives at
+`H:\CodeProjects\surfactantkit-reports`, committed and pushed to
+`github.com/prashant-kotian/surfactantkit-reports` (confirmed 2026-09-12: `git status` clean,
+up to date with `origin/master`, its own 36/36 tests re-run and still passing against
+SurfactantKit's current state despite the many changes made to this repo since 2026-09-10).
 
 **Not started / explicitly out of scope for this package**: any technique not already
 implemented in `curve_analysis.py` (i.e. everything in SurfactantKit that still takes a
@@ -626,6 +629,23 @@ tested. Full suite: 322/322 passing.
    hydrolyze in solution into a genuinely ambiguous mixture of open-chain forms, so there is no
    single undisputed structure to compute Mh for -- disclosed as a real, structural (not just
    informational) gap. 7 new tests in `tests/test_hlb_cpp.py` -- 64/64 passing in that file.
+   **RESOLVED 2026-09-12, not left as a permanent gap.** "Imidazoline" itself still isn't
+   derivable (it's genuinely never the final sold product -- always a synthesis intermediate
+   reacted further before sale), but the real, final, commercial imidazoline-DERIVED family
+   is: disodium lauroamphodiacetate (INCI; the fully dicarboxymethylated reaction product,
+   PubChem CID 109973, confirmed formula C20H36N2Na2O6 two independent ways -- hand
+   atomic-mass summation and RDKit `get_weight_from_smiles` on the open-chain amide tautomer,
+   both landing on 446.496 g/mol). PubChem's own IUPAC name describes the cyclic
+   imidazolinium tautomer instead -- a real, literature-documented open-chain/cyclic
+   tautomer ambiguity for this compound class -- but it doesn't block the Mh calculation
+   since both tautomers are isomers of the identical formula and the tail/head atom split
+   used (tail = the undecyl C11H23 group only) lands the same either way. GN=11.27 @ C12
+   (computed self-consistently at C10/C12/C14, ~2.3% spread). Added as
+   `"amphodiacetate"` in `DAVIES_DERIVED_HYDROPHILIC_GROUPS`, with full derivation and the
+   tautomer-ambiguity disclosure in `hlb.py`'s own block comment, and disclosed scope (this
+   is specifically the diacetate product; the mono-carboxymethylated "amphoacetate" form is
+   a different, also-real, also-commercial product not covered here). New test:
+   `test_derive_davies_group_number_amphodiacetate_self_consistent` in `tests/test_hlb_cpp.py`.
 
 2. **Wired Bales 2001's real, precisely-measured SDS ionization degree (alpha=0.272+/-0.017,
    J. Phys. Chem. B 105 (2001) 6798-6804) into `gibbs_free_energy_micellization`'s docstring and
@@ -732,6 +752,51 @@ to Rubingh beta, bad-input rejection) -- run in ~20s total, consistent with this
 established "a genuine multi-parameter search, expect several seconds, not an error"
 precedent. Wired into `mcp_server.py` (new `r1`/`r2`/`cmc_margin` parameters, new return
 fields, docstring rewritten with the full history). Full suite: 332/332 passing.
+
+**2026-09-11 (continued): three more bounded items completed.**
+
+1. **A second, independent anchor for the amide HLB numbers.** Checked directly against a
+   fetched primary source (not a search-engine paraphrase): Pawignya et al. (IOP Conf. Ser.:
+   Mater. Sci. Eng., Atlantis Press) report a real, EXPERIMENTALLY MEASURED HLB=5.940 for a
+   palm-oil-derived diethanolamide, via their own CMC-based formula (genuinely different from
+   Griffin's mass-ratio formula this project's numbers are calibrated against -- not an exact-
+   match comparison). Honestly scoped as a qualitative cross-check: palm oil's longer-chain
+   fatty-acid profile (C16-C18-dominant vs coconut/lauric C12) giving a lower HLB than this
+   project's C12-calibrated value is directionally consistent with this project's own
+   already-documented chain-length trend, and both land in the same broad order of magnitude.
+   A second, repeatedly-cited search-reported value (~13.2-13.5 for cocamide DEA) could NOT be
+   independently verified against a fetched primary document (ResearchGate/SpecialChem/
+   IOPscience all blocked automated fetch) -- kept as an unconfirmed, disclosed data point.
+   1 new test in `tests/test_hlb_cpp.py`.
+2. **mmc4.csv's "Δθcmc" quantity -- checked and confirmed genuinely unresolvable from the
+   extractable SI text, not guessed at.** Searched the SI's own prose text specifically for
+   "theta" -- zero mentions anywhere except the image-only Figure 7 caption/axis label
+   ("Variation of the critical micellar concentration mixture (Δθcmc) with αDTAB"). No defining
+   equation exists anywhere in the extractable body text; the symbol is only ever shown
+   rendered inside a figure. The negative values in the raw table confirm it IS a real
+   deviation/difference quantity (a raw CMC can never be negative), but the specific reference
+   subtracted was never written down in recoverable text. A genuine, confirmed dead end from
+   this source -- not silently dropped, actively investigated with evidence.
+3. **mmc5/7/9 (real experimental) vs. mmc6/8/10 (EOMMM-fitted) Gexc comparison, converted into
+   real, precise tests.** Two results, of very different strength:
+   - **The strong result**: since Gexc/RT = x1*x2^2*W12 + x1^2*x2*W21 is LINEAR in (W12, W21)
+     for a fixed composition, (W12, W21) can be solved EXACTLY from any 2 of mmc6/mmc8/mmc10's
+     own interior points (a real 2x2 linear system, not curve-fitting) -- and
+     `asymmetric_margules_activity_coefficients`/`excess_free_energy` then reproduce ALL of
+     each curve's OTHER points to <0.25% relative error. This is a real, precise, third-through-
+     fifth confirmation that this project's formula is exactly the one Schulz & Durand used to
+     generate their own EOMMM-fitted curves for the C8E4-SDS system (Case Study 3) -- much
+     stronger than the originally-planned interpolation comparison. 3 new tests.
+   - **The weaker, honestly-disclosed result**: comparing the REAL experimental data
+     (mmc5/7/9, from Hey et al. 1985) against the fitted curves via piecewise-linear
+     interpolation (pure data comparison, not a test of this project's own code) shows a real,
+     methodologically-explained pattern -- compositions well within the fitted curve's dense
+     coverage agree closely (<3% relative), while compositions near the edges (where the
+     nearest fitted points are far away and linear interpolation poorly approximates the true,
+     presumably-curved approach to zero at the boundary) disagree by 9-21%. 1 new test
+     documents this pattern explicitly rather than hiding it.
+
+   4 new tests total in `tests/test_mixed_micelle.py`. Full suite: 337/337 passing.
 
 ---
 
@@ -865,6 +930,82 @@ fields, docstring rewritten with the full history). Full suite: 332/332 passing.
   (not just claimed) margin-dependent uniqueness property of the resulting model.
 - **Ohshima's electrostatics gap for the ionic-dissociation `r` parameter** -- see
   `benchmark/METHOD_ALTERNATIVES_LITERATURE_REVIEW.md` for full detail, not repeated here.
+
+**2026-09-12: EOMMM minimal-feasible-margin search AUTOMATED -- the earlier grid-resolution
+disclaimer no longer applies.** When `eommm_global_fit` was rewritten (2026-09-11 entry
+above), an automatic "binary-search the margin down to the tightest feasible value" wrapper
+was tried and shelved: an early prototype showed real grid-resolution sensitivity, because
+it was tested against the objective/grid resolution *before* the two bugs documented in that
+same entry were fixed (the geometric-mean feasibility-check bug, and the too-coarse default
+grid that missed a genuine second root). Rather than assume that limitation still held,
+the automation was re-tried from scratch against the current, already-fixed
+`_eommm_point_infeasibility` / `_two_level_grid_search_2d` / `_minimize_with_grid_refine`.
+It now works reliably: a synthetic round-trip converges monotonically to the exact true
+(W12, W21) at every intermediate margin tested down to ~1e-6, and real Hyamine/DTAB data
+converges to a genuine, stable, nonzero minimal margin (~6.2%) reflecting real measurement
+noise rather than search noise. **Methodological lesson worth keeping**: a previously-shelved
+approach should be re-tested after its underlying dependencies are independently fixed, not
+assumed permanently blocked just because it failed once.
+
+Implemented as `eommm_find_minimal_feasible_margin(alpha1_series, cmc_mix_series, cmc1, cmc2,
+r1=2.0, r2=2.0, w_bound=30.0, margin_hi=0.30, feasibility_tolerance=1e-3,
+binary_search_iters=20)` in `mixed_micelle.py`, immediately after `eommm_global_fit`. Binary-
+searches the margin between 0 and `margin_hi`, at each step calling `eommm_global_fit` and
+checking `total_infeasibility` against `feasibility_tolerance`; raises `ValueError` up front
+if even `margin_hi` itself is infeasible (a real data/model inconsistency, not a search-
+precision issue -- distinct from the search simply not converging). `eommm_global_fit`'s own
+docstring updated to point here instead of disclaiming automation as unresolved. Wired into
+`__init__.py` (import + `__all__`) and `mcp_server.py` (new `eommm_find_minimal_feasible_margin`
+tool, exposing `binary_search_iters` so callers can bound runtime). Tests: round-trip and
+bad-`margin_hi`-rejection tests added to `tests/test_mixed_micelle.py`; MCP end-to-end
+round-trip test added to `tests/test_mcp_server.py` (both use a reduced `binary_search_iters=8`
+to bound runtime, since each iteration re-runs the full two-level grid search). Full suite:
+340/340 passing.
+
+**2026-09-12: Muherei & Junin 2009 and DTAB-SDS (PMC6554738) beta mismatch re-investigated.**
+Both flagged as low-priority, "likely dead ends" by the user, with instruction to actually
+investigate rather than leave stale. Re-checked with fresh primary-source access attempts
+rather than re-stating the old notes as-is:
+- **DTAB-SDS (PMC6554738)**: substantially resolved. Fetched the paper's real Table 3 directly.
+  Its own stated ideal CMC (9.04 mM) reproduces from `clint_ideal_cmc()` to 4 sig figs (9.038 mM).
+  The earlier "beta did not reproduce" comparison had implicitly used Table 3's x=0.5 row
+  (beta=-2.5674) -- but x=0.5 is a mathematical identity point of the RST equations (Table 3's
+  own f1Rub and f2Rub columns are printed IDENTICAL there, 0.526377=0.526377, true for ANY
+  beta at x=0.5), so that row is very likely an illustrative scan entry, not the paper's actual
+  solved root for the stated composition. Solving this library's own `solve_rubingh_x`/
+  `rubingh_beta` on the paper's directly-stated data point (alpha_DTAB=0.25, CMCmix=6.011 mM)
+  gives x1=0.3045, beta=-2.27 -- a ~12% magnitude difference from -2.5674, correct sign,
+  squarely inside the same 5-20% pointwise-vs-regression gap already documented for every
+  other system in `literature_validation_notes.md`. No longer an unexplained anomaly.
+- **Muherei & Junin 2009**: confirmed genuine dead end, with new evidence rather than an
+  assumption. Found and fetched the real open-access source (`scialert.net`, Asian J. Appl.
+  Sci. 2(2), 115-127) -- confirmed the paper's own CMCid formula is exactly Clint's relation
+  and its pure-component CMCs (0.387, 3.468 mM) exactly match what this project already uses,
+  so the mismatch is not a wrong-formula/wrong-input problem on this project's side. The
+  blocker: Table 2A's exact alpha-to-CMCid row mapping is an embedded image, unreadable by
+  text extraction (same limitation as mmc4.csv's I_I,cmc). Two PDF-download attempts to get
+  past this (the journal's own redirect, a ResearchGate copy of a related companion paper)
+  were both blocked (JS-gated shell; HTTP 403). Confirmed unresolvable without manual/
+  institutional access, not a library defect.
+Full detail: `literature_validation_notes.md`'s "Notes on individual systems" section.
+
+**2026-09-12: Category D's harder bar met -- a true, independent, real-surfactant CPP worked
+example found.** The 2026-09-10 entry above closed Category D with a course-problem formula-
+transcription check only, explicitly disclosed as "not a worked example from a real surfactant
+system -- that harder bar remains unmet." Re-attempted rather than left as a permanent gap:
+found Kamboj, Kaur, Bhalla et al., *R. Soc. Open Sci.* 6, 181979 (2019), PMC6458362 (SDS-DTAB
+mixed micelles with dyes), Table 2. Both surfactants are 12-carbon chains (shared Tanford
+V0/lc), and the paper reports Amin from its own real Gibbs-isotherm surface-tension-slope
+measurement (not assumed) at 3 temperatures for each of the SDS-rich and DTAB-rich systems --
+6 independent (Amin, P) pairs total. Chaining `tanford_tail_volume(12)` ->
+`tanford_critical_length(12)` -> `critical_packing_parameter()` reproduces the paper's own P
+to within 1.2% at every point, and `classify_aggregate_morphology()` matches the paper's own
+"cylindrical or rod-shaped micelles" call at every point -- the residual <1.2% offset is the
+same already-documented 1.265-vs-1.26 lc-coefficient rounding, not a new gap. This is the real
+thing Category D was missing: a paper's own experimentally-derived input feeding this
+project's own full CPP pipeline and landing on that same paper's own reported output. New test:
+`test_critical_packing_parameter_matches_real_sds_dtab_paper` in `tests/test_hlb_cpp.py`.
+Full detail: `literature_validation_notes.md`'s CPP/Tanford geometry section.
 
 ---
 

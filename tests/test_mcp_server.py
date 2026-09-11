@@ -70,6 +70,7 @@ def test_all_expected_tools_are_registered():
         "aggregation_number_from_svedberg",
         "derive_davies_group_number",
         "critical_micellization_degree",
+        "eommm_find_minimal_feasible_margin",
     }
     assert expected <= names
 
@@ -497,6 +498,34 @@ def test_eommm_global_fit_tool_recovers_true_parameters_round_trip():
     assert out["W21"] == pytest.approx(true_w21, abs=1e-2)
     assert out["total_infeasibility"] < 5e-4
     assert out["n_points"] == 3
+
+
+def test_eommm_find_minimal_feasible_margin_tool_round_trip():
+    """Reduced binary_search_iters (8) to keep this end-to-end test's
+    runtime bounded (~30s) -- see mixed_micelle.eommm_find_minimal_feasible_margin's
+    own docstring for the full re-verification of why this automatic
+    search (previously disclosed as unshippable) now works reliably."""
+    from surfactantkit.mixed_micelle import asymmetric_margules_activity_coefficients
+
+    cmc1, cmc2 = 14.80, 8.00
+    true_w12, true_w21 = 2.0, -3.0
+    x1_true_values = [0.25, 0.5, 0.75]
+    alpha1_series, cmc_mix_series = [], []
+    for x1 in x1_true_values:
+        f1, f2 = asymmetric_margules_activity_coefficients(x1, true_w12, true_w21)
+        d = x1 * f1 * cmc1 + (1.0 - x1) * f2 * cmc2
+        alpha1_series.append(x1 * f1 * cmc1 / d)
+        cmc_mix_series.append(d)
+
+    out = call(
+        "eommm_find_minimal_feasible_margin",
+        {"alpha1_series": alpha1_series, "cmc_mix_series_mM": cmc_mix_series, "cmc1_mM": cmc1, "cmc2_mM": cmc2,
+         "binary_search_iters": 8},
+    )
+    assert out["W12"] == pytest.approx(true_w12, abs=1e-2)
+    assert out["W21"] == pytest.approx(true_w21, abs=1e-2)
+    assert out["total_infeasibility"] < 5e-4
+    assert out["minimal_feasible_cmc_margin"] < 0.01
 
 
 def test_rodenas_x1_from_series_tool_matches_library():

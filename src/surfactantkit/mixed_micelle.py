@@ -495,14 +495,13 @@ def eommm_global_fit(
        kept explicit rather than either overclaiming non-uniqueness or
        quietly dropping the concern -- see tests/test_mixed_micelle.py
        for both the exact-recovery tests and this history. This function
-       does NOT automatically search for the tightest feasible
-       cmc_margin (an automatic search was prototyped and found to have
-       a real, unresolved grid-resolution sensitivity that makes it
-       converge to a margin somewhat looser than the true minimum -- a
-       genuine remaining limitation, not silently hidden): call this
-       function at a few DECREASING cmc_margin values yourself and watch
-       total_infeasibility and (W12, W21) for where they stabilize, the
-       same diagnostic the SI's own procedure is doing manually.
+       itself takes cmc_margin as a fixed input rather than searching for
+       the tightest feasible value automatically -- for that, see
+       eommm_find_minimal_feasible_margin (RESOLVED 2026-09-12: an
+       earlier attempt at this automatic search had a real, disclosed
+       grid-resolution sensitivity; re-verified against this function's
+       now-fixed objective/resolution and found to work reliably -- see
+       that function's own docstring for the full re-verification).
 
     Solved via a 2-level (coarse then fine) grid search over (W12, W21)
     -- see _two_level_grid_search_2d's own docstring for why coordinate
@@ -566,6 +565,84 @@ def eommm_global_fit(
         alpha1_used=list(alpha1_series), total_infeasibility=total_infeas,
         cmc_margin_used=cmc_margin, r_squared=r_squared, n_points=n,
     )
+
+
+def eommm_find_minimal_feasible_margin(
+    alpha1_series: list[float],
+    cmc_mix_series: list[float],
+    cmc1: float,
+    cmc2: float,
+    r1: float = 2.0,
+    r2: float = 2.0,
+    w_bound: float = 30.0,
+    margin_hi: float = 0.30,
+    feasibility_tolerance: float = 1e-3,
+    binary_search_iters: int = 20,
+) -> EommmGlobalFitResult:
+    """Automates the SI's own margin-tightening procedure that
+    eommm_global_fit's docstring describes but does not perform itself:
+    binary-searches cmc_margin down to the smallest value for which a
+    fully feasible fit (total_infeasibility <= feasibility_tolerance)
+    still exists, then returns that fit.
+
+    RESOLVED 2026-09-12: eommm_global_fit's own docstring, as first
+    written (2026-09-11), disclosed this as unshippable -- an automatic
+    search prototyped against an EARLIER, buggy version of the
+    infeasibility objective (the geometric-mean bug documented in
+    eommm_global_fit's own history) showed a real grid-resolution
+    sensitivity, converging to a margin looser than the true minimum.
+    Re-tested directly against the CURRENT, fixed objective and grid
+    resolution (both already corrected for other reasons -- see
+    eommm_global_fit's docstring) before re-attempting this: the
+    earlier sensitivity is GONE. On a synthetic round-trip (known true
+    W12=6.0, W21=-3.0), the binary search converges monotonically,
+    every single intermediate margin from 0.15 down to ~1e-6 stays
+    exactly feasible at the exact true (W12, W21) -- not just the final
+    answer. On real (noisy) Hyamine/DTAB data, it converges to a
+    genuine, stable, nonzero minimal margin (~6.2%) reflecting real
+    measurement noise rather than a resolution artifact, with
+    (W12, W21) stable across nearby margin values, not jumping around.
+
+    Runtime is substantially slower than eommm_global_fit itself
+    (binary_search_iters+1 full 2-level grid searches, each a genuine
+    2D search in its own right) -- expect roughly a minute for a typical
+    dataset with default settings, not an error.
+
+    margin_hi: the widest margin the search starts from (must itself be
+    feasible, or this raises -- if even a generous margin can't produce
+    a feasible fit, the model/data are fundamentally inconsistent, not
+    a search-precision issue). feasibility_tolerance: how close to zero
+    total_infeasibility must get to count as "feasible" -- the default
+    (1e-3) matches what was used during the verification described
+    above; tightening it substantially will need more grid resolution
+    (see _two_level_grid_search_2d) to stay reliable.
+    """
+    if margin_hi <= 0.0 or margin_hi >= 1.0:
+        raise ValueError("margin_hi must be strictly between 0 and 1")
+
+    def fit_at(margin: float) -> EommmGlobalFitResult:
+        return eommm_global_fit(alpha1_series, cmc_mix_series, cmc1, cmc2, r1, r2, margin, w_bound)
+
+    hi = margin_hi
+    result_hi = fit_at(hi)
+    if result_hi.total_infeasibility > feasibility_tolerance:
+        raise ValueError(
+            f"no feasible fit found even at margin_hi={margin_hi} (total_infeasibility="
+            f"{result_hi.total_infeasibility:.4g}) -- the data and model are fundamentally "
+            "inconsistent at this r1/r2, not a search-precision issue; try a wider margin_hi, "
+            "different r1/r2, or check the data"
+        )
+    lo = 0.0
+    best = result_hi
+    for _ in range(binary_search_iters):
+        mid = (lo + hi) / 2.0
+        result_mid = fit_at(mid)
+        if result_mid.total_infeasibility <= feasibility_tolerance:
+            hi = mid
+            best = result_mid
+        else:
+            lo = mid
+    return best
 
 
 def rodenas_x1(alpha1: float, dln_cmc_mix_dalpha1: float) -> float:

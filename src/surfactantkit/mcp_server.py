@@ -277,6 +277,50 @@ def eommm_global_fit(alpha1_series: list[float], cmc_mix_series_mM: list[float],
 
 
 @mcp.tool()
+def eommm_find_minimal_feasible_margin(alpha1_series: list[float], cmc_mix_series_mM: list[float], cmc1_mM: float, cmc2_mM: float,
+                                        r1: float = 2.0, r2: float = 2.0, binary_search_iters: int = 20) -> dict:
+    """Automates the margin-tightening procedure eommm_global_fit's own
+    docstring describes but doesn't perform: binary-searches cmc_margin
+    down to the smallest value for which a fully feasible fit still
+    exists, then returns that fit -- the SI's own real fitting
+    criterion (a wide margin can admit multiple different (W12, W21)
+    solutions; the tightest still-feasible margin gives the most
+    uniquely-determined answer).
+
+    RESOLVED 2026-09-12 (previously disclosed as unshippable due to a
+    grid-resolution sensitivity found in an earlier prototype -- that
+    prototype used an EARLIER, buggy version of the underlying
+    objective; re-tested against the current, fixed version and found
+    reliable, see eommm_find_minimal_feasible_margin's own docstring in
+    mixed_micelle.py for the full re-verification).
+
+    Runtime is substantially slower than eommm_global_fit itself
+    (roughly a minute for a typical dataset, ~20 full grid searches) --
+    expect that, it is not an error. Same parameters as eommm_global_fit
+    except no cmc_margin (that's what this searches for). Raises if even
+    a generous margin (default search ceiling 0.30) can't produce a
+    feasible fit -- that means the data and model are fundamentally
+    inconsistent at this r1/r2, not a search-precision issue. binary_search_iters:
+    default 20 (thorough, ~1 minute); pass fewer (e.g. 8) for a faster,
+    slightly less precise search."""
+    result = mm.eommm_find_minimal_feasible_margin(
+        alpha1_series, cmc_mix_series_mM, cmc1_mM, cmc2_mM, r1, r2,
+        binary_search_iters=binary_search_iters)
+    return {
+        "W12": result.W12,
+        "W21": result.W21,
+        "x1_values": result.x1_values,
+        "cmc_var_values": result.cmc_var_values,
+        "alpha1_used": result.alpha1_used,
+        "total_infeasibility": result.total_infeasibility,
+        "minimal_feasible_cmc_margin": result.cmc_margin_used,
+        "r_squared": result.r_squared,
+        "n_points": result.n_points,
+        "method": result.method,
+    }
+
+
+@mcp.tool()
 def maeda_free_energy_of_micellization(x1_rub: float, beta: float, cmc1_M: float, cmc2_M: float, temperature_K: float) -> dict:
     """Maeda's free energy of micellization (kJ/mol) for a binary
     ionic/nonionic mixed micelle -- built specifically for ionic-
