@@ -8,13 +8,35 @@ original plan tested models on pre-parameterized textbook questions, but the
 actual research workflow starts from raw measured data, and that's the gap
 this module (and the benchmark built on top of it) targets.
 
-Method: two-segment (piecewise) linear regression break-point detection --
-the same real method described in Shah/Das/Bhattarai 2025 (Heliyon,
+Method: piecewise-linear break-point detection on gamma vs log10(C) -- the
+same real method described in Shah/Das/Bhattarai 2025 (Heliyon,
 PMC11835642): "A graph is plotted with gamma and log C... gamma shows a
 breakpoint -- this point is called CMC." Standard, not invented: fit every
 possible split of the sorted (log C, gamma) points into a declining
 premicellar line and a flat-ish post-CMC segment, and take the split that
 minimizes total residual sum of squares across both segments.
+
+UPGRADED 2026-09-12 after a real researcher-submitted dataset exposed a
+genuine failure mode of the plain two-segment version: real tensiometry
+data often has a flat "lag" baseline at low concentration (surface tension
+near pure solvent, below where surfactant adsorption becomes significant)
+BEFORE the real declining Gibbs-adsorption-linear region starts. The plain
+two-segment model can't represent three regimes (flat baseline, decline,
+flat plateau) and, verified numerically on the real submitted data, picks
+the WRONG breakpoint (baseline-to-decline instead of decline-to-plateau)
+because forcing one line through [decline+plateau] combined can score a
+deceptively lower combined RSS than forcing one line through [baseline+
+decline] combined -- even though the latter split is the physically
+correct one. Fixed by also trying a three-segment (baseline, decline,
+plateau) fit and choosing between the two- and three-segment models via
+BIC (Bayesian Information Criterion, the standard statistic for this exact
+model-selection problem in segmented/piecewise regression -- penalizes the
+three-segment model's extra parameters so it is only selected when a real
+third regime is present, not merely because more segments can always fit
+at least as well). Verified this does not regress the existing literature
+validation: the AOT pilot dataset (Shah/Das/Bhattarai 2025, no baseline
+lag) still correctly selects the two-segment model and reports the same
+CMC as before.
 """
 
 from __future__ import annotations
@@ -42,13 +64,63 @@ def _linreg(xs: list[float], ys: list[float]) -> tuple[float, float, float]:
 class CmcFromCurveResult:
     cmc_mM: float
     premicellar_slope_mN_per_m_per_lnC: float  # dGamma/d(ln C), the form
-                                                 # gibbs_gamma_max() expects
+                                                 # gibbs_gamma_max() expects --
+                                                 # always the DECLINING segment's
+                                                 # slope, whether or not a flat
+                                                 # baseline was also detected
     premicellar_slope_mN_per_m_per_log10C: float  # as directly fit, for reference
     gamma_at_cmc_mN_per_m: float
-    r_squared_premicellar: float
-    n_premicellar_points: int
+    r_squared_premicellar: float  # of the declining segment specifically
+    n_premicellar_points: int  # points in the declining segment specifically
     n_postmicellar_points: int
+    premicellar_x_min_mM: float  # lowest concentration actually in the declining
+                                   # segment -- NOT necessarily the dataset's lowest
+                                   # concentration when a flat baseline was detected
+    n_baseline_points: int = 0  # 0 when no flat pre-onset baseline was detected/used
     method: str = "two-segment linear regression break-point (min total RSS)"
+
+
+def _bic(total_rss: float, n: int, n_params: int) -> float:
+    """Bayesian Information Criterion for a piecewise-linear regression
+    with n_params total parameters (2 per segment for slope+intercept,
+    plus 1 per internal breakpoint). Standard model-selection statistic
+    for choosing the number of segments in segmented regression -- lower
+    is better; penalizes extra segments unless they genuinely reduce
+    the residual enough to be worth their added parameters."""
+    safe_rss = total_rss if total_rss > 0.0 else 1e-300
+    return n * math.log(safe_rss / n) + n_params * math.log(n)
+
+
+def _best_two_segment_split(log_c: list[float], gamma: list[float], n: int, min_points_per_segment: int):
+    """Returns (total_rss, split, pre_slope, pre_intercept, pre_rss)
+    minimizing combined RSS across exactly 2 segments."""
+    best = None
+    for split in range(min_points_per_segment, n - min_points_per_segment + 1):
+        pre_slope, pre_intercept, pre_rss = _linreg(log_c[:split], gamma[:split])
+        _, _, post_rss = _linreg(log_c[split:], gamma[split:])
+        total_rss = pre_rss + post_rss
+        if best is None or total_rss < best[0]:
+            best = (total_rss, split, pre_slope, pre_intercept, pre_rss)
+    return best
+
+
+def _best_three_segment_split(log_c: list[float], gamma: list[float], n: int, min_points_per_segment: int):
+    """Returns (total_rss, split1, split2, decline_slope, decline_intercept,
+    decline_rss) minimizing combined RSS across exactly 3 segments
+    (baseline, decline, plateau). None if there aren't enough points for
+    3 segments of min_points_per_segment each."""
+    if n < 3 * min_points_per_segment:
+        return None
+    best = None
+    for split1 in range(min_points_per_segment, n - 2 * min_points_per_segment + 1):
+        for split2 in range(split1 + min_points_per_segment, n - min_points_per_segment + 1):
+            _, _, base_rss = _linreg(log_c[:split1], gamma[:split1])
+            decline_slope, decline_intercept, decline_rss = _linreg(log_c[split1:split2], gamma[split1:split2])
+            _, _, plateau_rss = _linreg(log_c[split2:], gamma[split2:])
+            total_rss = base_rss + decline_rss + plateau_rss
+            if best is None or total_rss < best[0]:
+                best = (total_rss, split1, split2, decline_slope, decline_intercept, decline_rss)
+    return best
 
 
 def cmc_from_surface_tension_curve(
@@ -66,6 +138,13 @@ def cmc_from_surface_tension_curve(
     Shah/Das/Bhattarai 2025 describe doing by eye/software ("the breakpoint
     -- this point is called CMC"), just made a deterministic, repeatable
     algorithm instead of a by-eye read.
+
+    Also tries a 3-segment model (flat baseline, decline, flat plateau) for
+    data with a flat pre-onset lag region at low concentration, and picks
+    between the 2- and 3-segment models via BIC -- see this module's own
+    docstring for the real dataset that made this necessary. The returned
+    premicellar_slope/r_squared/n_premicellar_points always describe the
+    DECLINING segment specifically, whether or not a baseline was found.
     """
     if len(concentrations_mM) != len(surface_tensions_mN_per_m):
         raise ValueError("concentrations and surface tensions must be the same length")
@@ -80,43 +159,55 @@ def cmc_from_surface_tension_curve(
     gamma = [g for _, g in pairs]
     n = len(pairs)
 
-    best = None
-    for split in range(min_points_per_segment, n - min_points_per_segment + 1):
-        pre_x, pre_y = log_c[:split], gamma[:split]
-        post_x, post_y = log_c[split:], gamma[split:]
-        pre_slope, pre_intercept, pre_rss = _linreg(pre_x, pre_y)
-        _, _, post_rss = _linreg(post_x, post_y)
-        total_rss = pre_rss + post_rss
-        if best is None or total_rss < best[0]:
-            best = (total_rss, split, pre_slope, pre_intercept, pre_rss)
+    two_seg = _best_two_segment_split(log_c, gamma, n, min_points_per_segment)
+    three_seg = _best_three_segment_split(log_c, gamma, n, min_points_per_segment)
 
-    _, split, pre_slope, pre_intercept, pre_rss = best
-    pre_x, pre_y = log_c[:split], gamma[:split]
-    mean_y = sum(pre_y) / len(pre_y)
-    ss_tot = sum((y - mean_y) ** 2 for y in pre_y)
-    r_squared = 1.0 - (pre_rss / ss_tot) if ss_tot > 0 else 1.0
+    use_three_seg = False
+    if three_seg is not None:
+        bic_two = _bic(two_seg[0], n, n_params=2 * 2 + 1)
+        bic_three = _bic(three_seg[0], n, n_params=2 * 3 + 2)
+        use_three_seg = bic_three < bic_two
 
-    # CMC = concentration at the boundary between the two fitted segments --
-    # the midpoint (in log-concentration space) between the last premicellar
-    # point and the first post-micellar point, matching how a break-point is
-    # actually read off a real plot (the intersection region between the two
-    # branches, not either branch's own last/first raw data point).
+    if use_three_seg:
+        _, split1, split, decline_slope, decline_intercept, decline_rss = three_seg
+        n_baseline_points = split1
+        method = "three-segment linear regression break-point (baseline + decline + plateau, BIC-selected)"
+    else:
+        _, split, decline_slope, decline_intercept, decline_rss = two_seg
+        split1 = 0
+        n_baseline_points = 0
+        method = "two-segment linear regression break-point (min total RSS)"
+
+    decline_x, decline_y = log_c[split1:split], gamma[split1:split]
+    mean_y = sum(decline_y) / len(decline_y)
+    ss_tot = sum((y - mean_y) ** 2 for y in decline_y)
+    r_squared = 1.0 - (decline_rss / ss_tot) if ss_tot > 0 else 1.0
+
+    # CMC = concentration at the boundary between the declining segment and
+    # the postmicellar (plateau) segment -- the midpoint (in log-concentration
+    # space) between the last declining point and the first postmicellar
+    # point, matching how a break-point is actually read off a real plot
+    # (the intersection region between the two branches, not either branch's
+    # own last/first raw data point).
     cmc_log_c = (log_c[split - 1] + log_c[split]) / 2.0
     cmc_mM = 10 ** cmc_log_c
-    gamma_at_cmc = pre_slope * cmc_log_c + pre_intercept
+    gamma_at_cmc = decline_slope * cmc_log_c + decline_intercept
 
     # d(gamma)/d(ln C) = d(gamma)/d(log10 C) / ln(10) -- the form
     # gibbs_gamma_max() actually consumes.
-    slope_per_lnC = pre_slope / math.log(10)
+    slope_per_lnC = decline_slope / math.log(10)
 
     return CmcFromCurveResult(
         cmc_mM=cmc_mM,
         premicellar_slope_mN_per_m_per_lnC=slope_per_lnC,
-        premicellar_slope_mN_per_m_per_log10C=pre_slope,
+        premicellar_slope_mN_per_m_per_log10C=decline_slope,
         gamma_at_cmc_mN_per_m=gamma_at_cmc,
         r_squared_premicellar=r_squared,
-        n_premicellar_points=split,
+        n_premicellar_points=split - split1,
         n_postmicellar_points=n - split,
+        premicellar_x_min_mM=10 ** log_c[split1],
+        n_baseline_points=n_baseline_points,
+        method=method,
     )
 
 

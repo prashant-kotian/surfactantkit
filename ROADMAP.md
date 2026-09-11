@@ -1007,6 +1007,44 @@ project's own full CPP pipeline and landing on that same paper's own reported ou
 `test_critical_packing_parameter_matches_real_sds_dtab_paper` in `tests/test_hlb_cpp.py`.
 Full detail: `literature_validation_notes.md`'s CPP/Tanford geometry section.
 
+**2026-09-12: real bug in `cmc_from_surface_tension_curve` found via a researcher-submitted
+dataset in the new browser UI (`surfactantkit-reports`) -- fixed, not a dataset problem.**
+A researcher uploaded a genuinely clean, standard-shaped tensiometry curve with a flat
+pre-onset "lag" baseline (surface tension near pure water) at low concentration BEFORE the
+real decline starts, then a real decline, then a real plateau -- three regimes. The tool
+reported CMC = 1.16 mM; the true breakpoint (visually and physically obvious from the plot)
+was ~10.7-13 mM. Diagnosed by reproducing the algorithm's own split-search RSS table by hand
+on the exact submitted data (not guessed): the plain two-segment model can't represent three
+regimes, and forcing one straight line through [decline+plateau] combined scored a lower
+combined RSS (~41) than forcing one line through [baseline+decline] combined (~469) at the
+true breakpoint -- so minimizing raw RSS picked the wrong pairing every time, even though the
+data itself was unambiguous by eye. Root cause confirmed both numerically (RSS table) and
+visually (the PNG) before any fix was attempted, per this project's own "verify against real
+source when debugging" discipline.
+
+**Fix**: `cmc_from_surface_tension_curve` now also tries a 3-segment model (flat baseline +
+decline + flat plateau) and selects between the 2- and 3-segment models via BIC (Bayesian
+Information Criterion -- the standard statistic for this exact segmented-regression model-
+selection problem, penalizes the 3-segment model's extra parameters so it's only chosen when
+a real third regime is present). Verified on both datasets: the researcher's data now
+correctly selects the 3-segment model, CMC = 13.17 mM (R^2 = 0.99996 on the true declining
+segment), matching the visually obvious breakpoint; the existing AOT literature pilot dataset
+(Shah/Das/Bhattarai 2025, no baseline lag) still correctly selects the 2-segment model and
+reports the SAME CMC as before (2.51 mM, unchanged) -- confirmed no regression, not just
+assumed. `CmcFromCurveResult` gained `premicellar_x_min_mM` and `n_baseline_points` fields
+(0 when no baseline detected) so downstream consumers know when/where a baseline was
+excluded; `premicellar_slope`/`r_squared_premicellar`/`n_premicellar_points` now always
+describe the DECLINING segment specifically (unchanged behavior for 2-regime data, since
+that already equaled the "premicellar" segment before). 2 new tests in
+`tests/test_curve_analysis.py` using this exact real submitted dataset plus a regression
+guard on the AOT case. `mcp_server.py`'s `cmc_from_surface_tension_curve` tool updated to
+surface the 2 new fields. `surfactantkit-reports`' `pipeline.py` fixed to use
+`premicellar_x_min_mM` directly (was recomputing the fit-line's x-range from a stale
+"everything <= CMC" filter, which would have drawn the steep decline line stretched back
+across the flat baseline region -- visually wrong) and now plots the baseline as its own
+separate flat segment when present. Full suite: 342/342 passing (SurfactantKit),
+48/48 passing (surfactantkit-reports).
+
 ---
 
 ## Standing reminder for whoever resumes this (from the user, 2026-09-08)

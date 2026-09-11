@@ -830,7 +830,16 @@ def cmc_from_surface_tension_curve(concentrations_mM: list[float], surface_tensi
     line and a flat post-CMC segment, picks the split minimizing total
     residual sum of squares. Also returns the premicellar slope in the
     exact form gibbs_surface_excess expects, so this chains directly
-    into that tool without unit conversion."""
+    into that tool without unit conversion.
+
+    Also tries a 3-segment model (flat pre-onset baseline + decline +
+    plateau) and picks between 2- and 3-segment via BIC -- real data
+    often has a flat lag region at low concentration before the decline
+    starts, which a plain 2-segment fit can misread as the breakpoint
+    (see curve_analysis.py's own module docstring, upgraded 2026-09-12
+    after a real submitted dataset exposed this). n_baseline_points > 0
+    and premicellar_x_min_mM > the dataset's own lowest concentration
+    together indicate a baseline was detected and excluded."""
     result = curve.cmc_from_surface_tension_curve(concentrations_mM, surface_tensions_mN_per_m)
     return {
         "cmc_mM": result.cmc_mM,
@@ -839,6 +848,8 @@ def cmc_from_surface_tension_curve(concentrations_mM: list[float], surface_tensi
         "r_squared_premicellar": result.r_squared_premicellar,
         "n_premicellar_points": result.n_premicellar_points,
         "n_postmicellar_points": result.n_postmicellar_points,
+        "n_baseline_points": result.n_baseline_points,
+        "premicellar_x_min_mM": result.premicellar_x_min_mM,
         "method": result.method,
     }
 

@@ -36,6 +36,53 @@ def test_cmc_from_surface_tension_curve_aot_literature_case():
     assert result.r_squared_premicellar > 0.99
 
 
+def test_cmc_from_surface_tension_curve_aot_case_does_not_spuriously_detect_baseline():
+    """Regression guard for the 3-segment upgrade below: the AOT dataset
+    has no flat pre-onset lag region, so the 2-segment model must still
+    win via BIC and n_baseline_points must stay 0 -- the CMC must not
+    move from the paper's own reported value just because a 3-segment
+    model is now also tried."""
+    concentrations = [0.01585, 0.03981, 0.10000, 0.25119, 0.63096, 1.58489,
+                       3.981, 6.31, 10.0]
+    tensions = [62.22, 55.66, 49.10, 42.54, 35.98, 29.42,
+                27.5, 27.8, 28.0]
+    result = cmc_from_surface_tension_curve(concentrations, tensions)
+    assert result.n_baseline_points == 0
+    assert result.method.startswith("two-segment")
+    assert result.premicellar_x_min_mM == pytest.approx(0.01585)
+
+
+def test_cmc_from_surface_tension_curve_detects_flat_baseline_and_finds_true_breakpoint():
+    """Real, researcher-submitted dataset (2026-09-12) that exposed a
+    genuine bug in the plain 2-segment model: it has a flat pre-onset
+    lag region (surface tension near pure water, ~71 mN/m) from
+    0.056-0.9484 mM BEFORE the real decline starts, then a real decline
+    to 10.7 mM, then a real plateau at ~37.8 mN/m. The plain 2-segment
+    model picked the WRONG breakpoint (1.16 mM, the baseline/decline
+    boundary) instead of the true one (the decline/plateau boundary,
+    ~10.7-13 mM) -- verified directly against this exact data before
+    the fix (see SurfactantKit/ROADMAP.md's 2026-09-12 entry for the
+    full RSS-table diagnosis). After the fix, the 3-segment model wins
+    via BIC and lands on the physically correct breakpoint."""
+    concentrations = [0.056, 0.0839, 0.1257, 0.1883, 0.2821, 0.4226, 0.633, 0.9484,
+                       1.4208, 2.1284, 3.1886, 4.7769, 7.1563, 10.7208, 10.8,
+                       16.0609, 24.0608, 36.0456, 54.0]
+    tensions = [71.0, 70.93, 70.74, 70.69, 70.68, 70.6, 70.58, 70.41,
+                50.46, 47.92, 45.45, 42.92, 40.33, 37.89, 37.81,
+                37.78, 37.81, 37.81, 37.79]
+    result = cmc_from_surface_tension_curve(concentrations, tensions)
+
+    assert result.method.startswith("three-segment")
+    assert result.n_baseline_points == 8
+    assert result.premicellar_x_min_mM == pytest.approx(1.4208)
+    # true breakpoint is visually/physically between 10.7 and 16.06 mM
+    # (where the decline meets the plateau) -- NOT 1.16 mM, which is
+    # where the old 2-segment model wrongly landed.
+    assert 10.0 < result.cmc_mM < 17.0
+    assert result.r_squared_premicellar > 0.999  # the true decline segment is a very clean line
+    assert result.premicellar_slope_mN_per_m_per_log10C < -10.0  # a real steep decline, not the ~-0.4 the old baseline-as-premicellar fit gave
+
+
 def test_cmc_from_surface_tension_curve_rejects_mismatched_lengths():
     with pytest.raises(ValueError):
         cmc_from_surface_tension_curve([1.0, 2.0], [50.0])
