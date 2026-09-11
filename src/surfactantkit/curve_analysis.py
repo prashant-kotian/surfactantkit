@@ -76,6 +76,17 @@ class CmcFromCurveResult:
     premicellar_x_min_mM: float  # lowest concentration actually in the declining
                                    # segment -- NOT necessarily the dataset's lowest
                                    # concentration when a flat baseline was detected
+    postmicellar_slope_mN_per_m_per_log10C: float = 0.0  # the plateau segment's own
+                                                            # fitted slope -- near 0
+                                                            # for a real flat plateau;
+                                                            # a real diagnostic, not
+                                                            # assumed to be exactly 0
+    postmicellar_intercept_mN_per_m: float = 0.0
+    postmicellar_mean_gamma_mN_per_m: float = 0.0  # the plateau's mean measured
+                                                      # surface tension -- the simplest,
+                                                      # most directly citable "postmicellar
+                                                      # plateau value"
+    r_squared_postmicellar: float = 0.0
     n_baseline_points: int = 0  # 0 when no flat pre-onset baseline was detected/used
     method: str = "two-segment linear regression break-point (min total RSS)"
 
@@ -197,6 +208,15 @@ def cmc_from_surface_tension_curve(
     # gibbs_gamma_max() actually consumes.
     slope_per_lnC = decline_slope / math.log(10)
 
+    # Postmicellar (plateau) segment's own regression -- computed once here
+    # rather than threaded through the split-search helpers, since it's not
+    # needed during the search itself, only for reporting.
+    post_x, post_y = log_c[split:], gamma[split:]
+    post_slope, post_intercept, post_rss = _linreg(post_x, post_y)
+    post_mean_y = sum(post_y) / len(post_y)
+    post_ss_tot = sum((y - post_mean_y) ** 2 for y in post_y)
+    r_squared_post = 1.0 - (post_rss / post_ss_tot) if post_ss_tot > 0 else 1.0
+
     return CmcFromCurveResult(
         cmc_mM=cmc_mM,
         premicellar_slope_mN_per_m_per_lnC=slope_per_lnC,
@@ -206,6 +226,10 @@ def cmc_from_surface_tension_curve(
         n_premicellar_points=split - split1,
         n_postmicellar_points=n - split,
         premicellar_x_min_mM=10 ** log_c[split1],
+        postmicellar_slope_mN_per_m_per_log10C=post_slope,
+        postmicellar_intercept_mN_per_m=post_intercept,
+        postmicellar_mean_gamma_mN_per_m=post_mean_y,
+        r_squared_postmicellar=r_squared_post,
         n_baseline_points=n_baseline_points,
         method=method,
     )

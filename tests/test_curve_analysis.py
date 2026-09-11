@@ -82,6 +82,14 @@ def test_cmc_from_surface_tension_curve_detects_flat_baseline_and_finds_true_bre
     assert result.r_squared_premicellar > 0.999  # the true decline segment is a very clean line
     assert result.premicellar_slope_mN_per_m_per_log10C < -10.0  # a real steep decline, not the ~-0.4 the old baseline-as-premicellar fit gave
 
+    # postmicellar plateau regression: near-zero slope, mean gamma close to
+    # the plateau's actual measured values (~37.8 mN/m). Note R^2 is
+    # naturally LOW here (~0.07) even though the fit is visually excellent --
+    # a known, expected statistical property of R^2 for near-constant data
+    # (ss_tot is tiny, so it's dominated by measurement noise), not a defect.
+    assert abs(result.postmicellar_slope_mN_per_m_per_log10C) < 0.5
+    assert result.postmicellar_mean_gamma_mN_per_m == pytest.approx(37.8, abs=0.1)
+
 
 def test_cmc_from_surface_tension_curve_rejects_mismatched_lengths():
     with pytest.raises(ValueError):

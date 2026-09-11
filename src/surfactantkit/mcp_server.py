@@ -850,6 +850,9 @@ def cmc_from_surface_tension_curve(concentrations_mM: list[float], surface_tensi
         "n_postmicellar_points": result.n_postmicellar_points,
         "n_baseline_points": result.n_baseline_points,
         "premicellar_x_min_mM": result.premicellar_x_min_mM,
+        "postmicellar_slope_mN_per_m_per_log10C": result.postmicellar_slope_mN_per_m_per_log10C,
+        "postmicellar_mean_gamma_mN_per_m": result.postmicellar_mean_gamma_mN_per_m,
+        "r_squared_postmicellar": result.r_squared_postmicellar,
         "method": result.method,
     }
 
