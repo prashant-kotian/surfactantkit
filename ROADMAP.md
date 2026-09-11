@@ -1080,6 +1080,41 @@ used and the run's own result numbers instead. Two changes:
   app boot-tested headlessly three times across this back-and-forth (HTTP 200, clean log each
   time).
 
+**2026-09-12 (Phase 2): all 6 remaining raw-multi-point-series techniques added to
+`surfactantkit-reports`' browser UI -- all 10 SurfactantKit techniques with a raw-dataset-in,
+real-result-out shape are now in the reporting pipeline.** Rubingh beta regression, Rodenas x1
+series, HLD-NAC salinity-scan fit, van't Hoff multi-point fit, Szyszkowski K fit, and EOMMM
+global fit each got: an Excel template writer/reader (following the exact same metadata-block-
+plus-data-table or plain-two-column pattern already proven for the first 4), a `build_X_report_
+data()`/`run_X_report()` pair in `pipeline.py`, a `TechniqueSpec` entry in the UI registry
+(citation-free formula description, real result fields, an honestly-typed accuracy metric --
+`r_squared` for the 4 genuine curve fits, a `diagnostic` string for Rubingh's beta-mean-+/-std
+and Rodenas's local-differentiation method note, since neither of those is a curve fit in the
+R^2 sense), and a dedicated pipeline test file. `excel_io.py` gained a new mixed float/string
+metadata reader (`_read_metadata_and_data_template_mixed`) for Szyszkowski's `system_type`, a
+required categorical input this library never guesses -- validated strictly by
+`szyszkowski_fit_K` itself on read, not re-validated in the reader.
+
+Every test dataset reused exact, already-verified numbers from SurfactantKit's own test suite
+(Rubingh: the beta=-1.8 round-trip construction from `test_mixed_micelle.py`; Rodenas: the real
+Azum et al. 2022 G6+T-20 literature system; HLD/van't Hoff/Szyszkowski/EOMMM: the same
+mathematically-guaranteed round-trip constructions already validated there, with HLD/van't
+Hoff's true parameters re-chosen to land in a physically realistic magnitude range rather than
+the original tests' purely-mathematical values) -- not re-derived or invented.
+
+**Real finding, not just a routine addition**: EOMMM's automatic margin search is genuinely
+slow in a UI context -- a single 5-point fit at the library's default `binary_search_iters=20`
+took long enough during this feature's own end-to-end verification that the pipeline's own
+`run_eommm_report` now explicitly passes `binary_search_iters=10` (confirmed correct, not just
+faster: still recovers the true W12/W21 to within 0.05), and the UI shows a spinner with an
+explicit "can take up to a minute" caption rather than leaving the researcher guessing whether
+it's frozen. This is a real, disclosed UX tradeoff (precision vs. wait time), not hidden.
+
+Full suite: 344/344 passing (SurfactantKit unchanged, no changes made there this phase), all of `surfactantkit-reports`'
+technique-registry, template, and pipeline tests passing for all 10 techniques (see that
+repo's own test files for the current count). Streamlit app boot-tested headlessly again after
+wiring in the 6 new techniques.
+
 ---
 
 ## Standing reminder for whoever resumes this (from the user, 2026-09-08)
