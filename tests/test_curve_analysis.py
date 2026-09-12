@@ -36,6 +36,66 @@ def test_cmc_from_surface_tension_curve_aot_literature_case():
     assert result.r_squared_premicellar > 0.99
 
 
+def test_c20_matches_aot_case_and_is_physically_below_cmc():
+    """C20/pC20 (surfactant efficiency parameter, added 2026-09-12).
+    Regression guard using the same AOT dataset: gamma0=62.22 mN/m (the
+    lowest-concentration point, no baseline detected for this dataset),
+    C20 must land well below the CMC (2.51 mM) -- the real physical
+    expectation confirmed against an open-access primary source (a
+    cardanol-surfactant paper, pC20=4.03 for a different surfactant,
+    C20 << CMC there too)."""
+    concentrations = [0.01585, 0.03981, 0.10000, 0.25119, 0.63096, 1.58489,
+                       3.981, 6.31, 10.0]
+    tensions = [62.22, 55.66, 49.10, 42.54, 35.98, 29.42,
+                27.5, 27.8, 28.0]
+    result = cmc_from_surface_tension_curve(concentrations, tensions)
+    assert result.gamma0_mN_m == pytest.approx(62.22)
+    assert result.c20_mM is not None
+    assert result.c20_mM == pytest.approx(0.2627, rel=1e-3)
+    assert result.pC20 == pytest.approx(3.580, abs=1e-2)
+    assert result.c20_mM < result.cmc_mM
+
+
+def test_c20_exact_round_trip_construction():
+    """Mathematically-guaranteed round trip: construct an EXACT premicellar
+    line (known slope/intercept, no baseline lag), verify C20 solves
+    exactly against gamma0 as THIS function actually defines it when no
+    baseline is detected -- the lowest-concentration point's own gamma,
+    not an abstract C->0 asymptote (a real, disclosed practical proxy,
+    not the same thing)."""
+    import math as _math
+
+    true_slope = -15.0  # mN/m per decade
+    true_intercept = 80.0
+    cmc_true = 8.0
+    concentrations = [0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0]
+    tensions = [
+        true_slope * _math.log10(c) + true_intercept if c < cmc_true
+        else true_slope * _math.log10(cmc_true) + true_intercept
+        for c in concentrations
+    ]
+
+    result = cmc_from_surface_tension_curve(concentrations, tensions)
+    expected_gamma0 = true_slope * _math.log10(min(concentrations)) + true_intercept
+    expected_log_c20 = ((expected_gamma0 - 20.0) - true_intercept) / true_slope
+    expected_c20_mM = 10 ** expected_log_c20
+
+    assert result.gamma0_mN_m == pytest.approx(expected_gamma0, abs=1e-6)
+    assert result.c20_mM == pytest.approx(expected_c20_mM, rel=1e-6)
+
+
+def test_c20_none_when_premicellar_drop_under_20mNm():
+    """Real, disclosed 'not defined' case: a weak surfactant whose total
+    premicellar drop never reaches 20 mN/m before the CMC must return
+    c20_mM=None/pC20=None, not an extrapolated value past the CMC."""
+    concentrations = [0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0]
+    # only a 10 mN/m total premicellar drop (72 -> 62) before a flat plateau
+    tensions = [72.0, 70.5, 68.0, 65.5, 63.0, 62.0, 62.0, 62.0]
+    result = cmc_from_surface_tension_curve(concentrations, tensions)
+    assert result.c20_mM is None
+    assert result.pC20 is None
+
+
 def test_cmc_from_surface_tension_curve_aot_case_does_not_spuriously_detect_baseline():
     """Regression guard for the 3-segment upgrade below: the AOT dataset
     has no flat pre-onset lag region, so the 2-segment model must still

@@ -1115,6 +1115,23 @@ technique-registry, template, and pipeline tests passing for all 10 techniques (
 repo's own test files for the current count). Streamlit app boot-tested headlessly again after
 wiring in the 6 new techniques.
 
+**2026-09-12 (same day): C20/pC20 added to `cmc_from_surface_tension_curve` -- a genuinely new
+capability, not a wiring task.** While building a full property-dependency map of the library
+(for a diagram), the user's own example of "what a tensiometry curve gives you" named C20 --
+which turned out not to exist anywhere in SurfactantKit. C20 (concentration needed to reduce
+gamma0 by 20 mN/m) and pC20 (-log10(C20 in mol/L)) are the standard surfactant efficiency
+parameter (Rosen's "Surfactants and Interfacial Phenomena"), confirmed against a real open-
+access primary source before implementing (a cardanol-surfactant paper reporting pC20=4.03
+alongside CMC/gamma_CMC from the same curve, C20 << CMC as physically expected -- not guessed).
+Computed for free from the SAME premicellar line already fitted for CMC (no new curve-fitting
+machinery needed): `CmcFromCurveResult` gained `gamma0_mN_m` (the pure-solvent-like baseline,
+reusing the same detected-flat-baseline-or-lowest-point logic already built for the 2026-09-12
+baseline fix), `c20_mM`, and `pC20` (both `None` when the premicellar decline never reaches a
+20 mN/m drop before the CMC -- a real "not defined for this system" case, not extrapolated past
+where the fit is valid). Verified against the AOT literature dataset (C20=0.263 mM, well below
+its 2.51 mM CMC) and an exact synthetic round-trip. `mcp_server.py`'s tool wrapper updated to
+surface all 3 new fields. Full suite: 347/347 passing.
+
 ---
 
 ## Standing reminder for whoever resumes this (from the user, 2026-09-08)

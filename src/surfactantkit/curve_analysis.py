@@ -88,6 +88,17 @@ class CmcFromCurveResult:
                                                       # plateau value"
     r_squared_postmicellar: float = 0.0
     n_baseline_points: int = 0  # 0 when no flat pre-onset baseline was detected/used
+    gamma0_mN_m: float = 0.0  # pure-solvent-like surface tension: the detected flat
+                                # baseline's own mean if one was found, else the
+                                # dataset's own lowest-concentration point (the
+                                # standard practical proxy for a true C=0 blank) --
+                                # real measured data, never a looked-up constant
+    c20_mM: float | None = None  # concentration needed to reduce gamma0 by 20 mN/m
+                                    # (the standard surfactant efficiency parameter) --
+                                    # None if the premicellar decline never reaches a
+                                    # 20 mN/m drop before the CMC (a real, disclosed
+                                    # "not defined for this system" case, not an error)
+    pC20: float | None = None  # -log10(c20_mM/1000) on the molar scale; None with c20_mM
     method: str = "two-segment linear regression break-point (min total RSS)"
 
 
@@ -156,6 +167,19 @@ def cmc_from_surface_tension_curve(
     docstring for the real dataset that made this necessary. The returned
     premicellar_slope/r_squared/n_premicellar_points always describe the
     DECLINING segment specifically, whether or not a baseline was found.
+
+    Also returns C20/pC20, the standard surfactant efficiency parameter
+    (added 2026-09-12): C20 is the concentration required to reduce gamma0
+    (the pure-solvent-like baseline surface tension, itself derived from
+    THIS curve's own data -- the detected flat baseline's mean, or the
+    lowest-concentration point if no baseline was found) by exactly
+    20 mN/m; pC20 = -log10(C20 in mol/L). Confirmed real, standard
+    definition against an open-access primary source (a cardanol-
+    surfactant paper reporting pC20=4.03 alongside CMC/gamma_CMC from the
+    same curve, C20 << CMC as physically expected). c20_mM/pC20 are None
+    when the premicellar decline never reaches a 20 mN/m drop before the
+    CMC -- a real "not defined for this system" case, not extrapolated
+    past where the fit is valid.
     """
     if len(concentrations_mM) != len(surface_tensions_mN_per_m):
         raise ValueError("concentrations and surface tensions must be the same length")
@@ -217,6 +241,29 @@ def cmc_from_surface_tension_curve(
     post_ss_tot = sum((y - post_mean_y) ** 2 for y in post_y)
     r_squared_post = 1.0 - (post_rss / post_ss_tot) if post_ss_tot > 0 else 1.0
 
+    # gamma0 (pure-solvent-like surface tension): the detected flat baseline's own
+    # mean if one was found, else the dataset's own lowest-concentration point --
+    # real measured data, never a looked-up pure-water constant.
+    if n_baseline_points > 0:
+        gamma0 = sum(gamma[:split1]) / split1
+    else:
+        gamma0 = gamma[0]
+
+    # C20 (surfactant efficiency parameter): the concentration at which the
+    # premicellar decline line has reduced gamma0 by exactly 20 mN/m -- real,
+    # standard definition (Rosen's "Surfactants and Interfacial Phenomena";
+    # confirmed 2026-09-12 against an open-access primary source, Table 1 of a
+    # real cardanol-surfactant paper reporting pC20 alongside CMC/gamma_CMC from
+    # the same curve). Only defined if the premicellar decline actually reaches
+    # a 20 mN/m drop before the CMC -- NOT extrapolated past that point.
+    c20_mM = None
+    pc20 = None
+    if (gamma0 - gamma_at_cmc) >= 20.0:
+        target_gamma = gamma0 - 20.0
+        log_c20 = (target_gamma - decline_intercept) / decline_slope
+        c20_mM = 10 ** log_c20
+        pc20 = -math.log10(c20_mM / 1000.0)
+
     return CmcFromCurveResult(
         cmc_mM=cmc_mM,
         premicellar_slope_mN_per_m_per_lnC=slope_per_lnC,
@@ -231,6 +278,9 @@ def cmc_from_surface_tension_curve(
         postmicellar_mean_gamma_mN_per_m=post_mean_y,
         r_squared_postmicellar=r_squared_post,
         n_baseline_points=n_baseline_points,
+        gamma0_mN_m=gamma0,
+        c20_mM=c20_mM,
+        pC20=pc20,
         method=method,
     )
 

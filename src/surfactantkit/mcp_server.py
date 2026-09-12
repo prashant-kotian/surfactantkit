@@ -839,7 +839,13 @@ def cmc_from_surface_tension_curve(concentrations_mM: list[float], surface_tensi
     (see curve_analysis.py's own module docstring, upgraded 2026-09-12
     after a real submitted dataset exposed this). n_baseline_points > 0
     and premicellar_x_min_mM > the dataset's own lowest concentration
-    together indicate a baseline was detected and excluded."""
+    together indicate a baseline was detected and excluded.
+
+    Also returns C20/pC20 (added 2026-09-12), the standard surfactant
+    efficiency parameter: the concentration needed to reduce gamma0 (this
+    curve's own pure-solvent-like baseline) by 20 mN/m. c20_mM/pC20 are
+    null when the premicellar decline never reaches a 20 mN/m drop before
+    the CMC -- a real 'not defined for this system' case, not an error."""
     result = curve.cmc_from_surface_tension_curve(concentrations_mM, surface_tensions_mN_per_m)
     return {
         "cmc_mM": result.cmc_mM,
@@ -850,6 +856,9 @@ def cmc_from_surface_tension_curve(concentrations_mM: list[float], surface_tensi
         "n_postmicellar_points": result.n_postmicellar_points,
         "n_baseline_points": result.n_baseline_points,
         "premicellar_x_min_mM": result.premicellar_x_min_mM,
+        "gamma0_mN_m": result.gamma0_mN_m,
+        "c20_mM": result.c20_mM,
+        "pC20": result.pC20,
         "postmicellar_slope_mN_per_m_per_log10C": result.postmicellar_slope_mN_per_m_per_log10C,
         "postmicellar_mean_gamma_mN_per_m": result.postmicellar_mean_gamma_mN_per_m,
         "r_squared_postmicellar": result.r_squared_postmicellar,
