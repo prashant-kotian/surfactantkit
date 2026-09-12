@@ -1162,6 +1162,60 @@ calls, the download button's count updates live as branches are added). Full sui
 passing (`surfactantkit-reports`); SurfactantKit itself unchanged this pass except the earlier
 C20 addition above.
 
+**2026-09-12 (same day): the property cascade extended to all 9 remaining techniques -- every
+technique in the browser UI now derives its own full downstream tree, not just CMC-from-
+surface-tension.** User's ask, verbatim: "extend it for remaining 9." One cascade module per
+technique (`cascade_cmc_conductivity.py`, `cascade_aggregation_number.py` shared by SSFQ/SLS,
+`cascade_rubingh.py`, `cascade_rodenas.py`, `cascade_eommm.py`, `cascade_hld.py`,
+`cascade_vant_hoff.py`, `cascade_szyszkowski.py`), each following the exact same shape as the
+first: a free base-properties function plus one function per optional branch, gated on real
+required inputs, never guessing.
+
+Sized honestly to each technique's REAL dependency tree (per the earlier diagram audit), not
+padded to look uniform: CMC-conductivity gets nearly CMC-surface-tension's full richness (minus
+the Gamma_max/A_min branch, which needs a surface-tension slope this technique never measures)
+-- but its own measured beta lets counterion_factor for Delta G_mic be computed as (2-beta)
+directly, a real value, better than surface-tension's case where it has to be asked for
+separately. Rubingh, EOMMM, and Rodenas each add small, real branches (activity coefficients,
+excess/Maeda free energy) using data already in hand or one or two genuinely new inputs (Rodenas
+deliberately never collects the two pure-component CMCs Rubingh needs, so those become new
+inputs there specifically). van't Hoff's own result is already the complete thermodynamic
+triad, so its only further branch is a free (already-in-hand) enthalpy-driven/entropy-driven
+classification -- not padded with anything artificial. HLD and Szyszkowski both get genuinely
+predictive branches (HLD/S* at a new oil or salinity; predicted surface tension at a new
+concentration, plus a real Frumkin refinement).
+
+Two real bugs caught during construction, both before shipping:
+- Three formula-comment strings written from memory were WRONG when checked against the actual
+  source: EOMMM's activity-coefficient formula (used the wrong closed form entirely -- the real
+  one is via G_exc/RT = x1*x2*(x2*W12+x1*W21), not what was first written), Rubingh's
+  excess_free_energy comment (omitted the R*T/1000 prefactor), both fixed by re-reading
+  `mixed_micelle.py`'s actual implementation line by line rather than trusting a paraphrase.
+  Real reminder that "verify against real source" applies to methodology-comment TEXT, not just
+  the computed numbers -- the numbers were always correct (called the real function), only the
+  human-readable formula string next to them was briefly wrong.
+- Rodenas' real, already-documented endpoint limitation (the literature dataset's last
+  composition solves x1 > 1, a known numerical-differentiation artifact at series endpoints)
+  crashed `rodenas_activity_coefficients` with a raw ValueError the first time the cascade was
+  run against it. Fixed by skipping out-of-range points with a disclosed "points skipped"
+  property, the same skip-don't-error pattern `rubingh_beta_regression` already uses for its
+  own no-root points -- not silently hidden, not a crash.
+
+`pipeline.py`'s report dataclasses (Ssfq/Sls/Rubingh/Rodenas/HldSalinityScan/VantHoff/
+Szyszkowski) gained new fields to carry each technique's own raw template inputs forward (e.g.
+Rubingh's cmc1/cmc2, SSFQ's own already-collected CMC) so cascade branches can reuse them
+without re-reading the uploaded Excel file a second time. `cascade_excel.py` generalized from
+a hardcoded 2-column raw-data sheet to accept any {column: values} mapping plus an optional
+scalar-metadata block, since several of these templates have more than a plain 2-column shape.
+
+Verified: unit tests for all 8 new modules against direct library calls (11 new tests in
+`test_cascade_remaining_techniques.py`; the existing 6 in `test_cascade_cmc_surface_tension.py`
+reconfirmed after the Excel-writer generalization), full suite now 102/102 passing (up from
+91), and a second live browser click-through (Szyszkowski: predicted-tension and Frumkin-
+refinement branches both verified computing correctly with real gating) confirming the pattern
+holds for a structurally different technique than the first browser-verified one (CMC-surface-
+tension).
+
 ---
 
 ## Standing reminder for whoever resumes this (from the user, 2026-09-08)
