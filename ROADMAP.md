@@ -1132,6 +1132,36 @@ where the fit is valid). Verified against the AOT literature dataset (C20=0.263 
 its 2.51 mM CMC) and an exact synthetic round-trip. `mcp_server.py`'s tool wrapper updated to
 surface all 3 new fields. Full suite: 347/347 passing.
 
+**2026-09-12 (same day): `surfactantkit-reports` gained a full property CASCADE for CMC-from-
+surface-tension -- one raw dataset now yields every derivable downstream property, not just
+the technique's own direct result.** User's ask: pick a raw dataset (their own example:
+tensiometry), run it, and get back everything derivable from it -- graphs, final values, and
+an Excel sheet where clicking any column shows the formula used. Per a Pre-Execution Study
+(this is a real architecture change, not wiring): most Set B/C/D properties in the dependency
+map genuinely need MORE than the raw curve provides (system_type, a second technique's own
+aggregation number, solubilization concentrations, etc.), and this library never guesses those
+-- so the cascade computes the free base result immediately, then offers 3 collapsed, clearly-
+labeled optional branches (adsorption & thermodynamics; micelle geometry/CPP, ionic-no-added-
+salt only; solubilization), each computing only once its own real required inputs are filled
+in. A first attempt also tried a bar-chart summary of every numeric property on one shared
+axis -- caught before shipping (screenshot review) that mixing Gamma_max (~1e-6) with Delta
+G_mic (~-50) on one scale made most bars invisible; dropped in favor of adding a C20 marker to
+the existing curve plot (a real, correctly-scaled visual) and leaving the heterogeneous scalar
+properties to metric tiles/the Excel table, where they belong. Excel export: one property per
+COLUMN with a native Excel comment (openpyxl `Comment`) on each header cell containing the
+exact method+formula, plus a Raw data sheet. New modules: `cascade_cmc_surface_tension.py`
+(the branch calculations, each literally calling the already-tested SurfactantKit functions --
+no new science) and `cascade_excel.py`. Fixed a real Streamlit session-state bug caught before
+shipping: the cascade's own interactive widgets (selects/checkboxes) trigger a full script
+rerun same as the main "Run analysis" button, which would have silently discarded the already-
+computed report; fixed by persisting it in `st.session_state` keyed to the selected technique.
+Verified end-to-end three ways: unit tests against direct library calls (6 new tests, all
+passing), and a real browser click-through (Chrome, via browser automation) confirming the
+gating (`-- select --` blocks computation, a checked box computes, values match direct Python
+calls, the download button's count updates live as branches are added). Full suite: 91/91
+passing (`surfactantkit-reports`); SurfactantKit itself unchanged this pass except the earlier
+C20 addition above.
+
 ---
 
 ## Standing reminder for whoever resumes this (from the user, 2026-09-08)
