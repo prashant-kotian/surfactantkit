@@ -192,3 +192,155 @@ def classify_surfactant_charge_type(smiles: str) -> ChargeClassificationResult:
                  "cover, it would be silently missed. Flagged as moderate, not high, "
                  "confidence for exactly this reason."],
     )
+
+
+# --- structural-family classification (orthogonal to charge type) --------
+#
+# Real, previously-missing capability flagged by TOOLKIT_CAPABILITY_AUDIT.md:
+# classify_surfactant_charge_type only determines charge type (anionic/
+# cationic/zwitterionic/nonionic) -- it says nothing about whether a
+# surfactant is a gemini/dimeric (two headgroups, one molecule), a glycolipid
+# biosurfactant (rhamnolipid/sophorolipid-type), or an ordinary single-
+# headgroup ("monomeric") surfactant. This closes that gap using the same
+# real RDKit SMARTS substructure-matching discipline as the charge-type
+# classifier above, verified against real, sourced structures before being
+# treated as correct (not guessed):
+#   - gemini/dimeric: G6 and 12-4-12 (real, literature-verified bis-
+#     quaternary-ammonium gemini surfactants already used elsewhere in this
+#     project -- see SurfQSPR's GEMINI_CANDIDATE_STRUCTURES) each show the
+#     SAME strong ionic headgroup pattern matching exactly TWICE, vs exactly
+#     ONCE for monomeric DTAB/CTAB -- confirmed directly, not assumed.
+#   - glycolipid biosurfactant: real monorhamnolipid (PubChem CID 162246,
+#     CAS 37134-61-5) and sophorolipid (PubChem CID 11856871) both match a
+#     real pyranose-sugar-ring pattern combined with a long hydrocarbon
+#     chain; every plain surfactant already in this project's own test
+#     suite (SDS, DTAB, CTAB, an ethoxylate) shows zero sugar-ring matches,
+#     and bare glucose (a sugar with NO lipid tail, not a surfactant at all)
+#     is correctly excluded by also requiring a long chain.
+#
+# Honest limitation, disclosed rather than silently resolved: this
+# heuristic (exactly 2 matching strong ionic headgroups in one molecule)
+# cannot structurally distinguish a true gemini (two separate tail+head
+# units joined near the headgroups by a short spacer) from a bolaform
+# surfactant (a single long hydrophobic backbone with one headgroup at
+# EACH end, no separate spacer/tail pair) -- both real structural classes
+# produce the same "2 matching headgroups" signal. Bolaform surfactants are
+# a real but comparatively rare structural class; this function reports
+# "dimeric (gemini-type)" and discloses the bolaform ambiguity explicitly
+# in caveats rather than silently picking one, matching this module's
+# standing "do not guess, disclose the gap" discipline.
+
+_SUGAR_RING_PATTERN = "[C;R1]1([OX2,OH])[C;R1]([OX2,OH])[C;R1][C;R1]([OX2,OH])[C;R1][O;R1]1"
+_LONG_CHAIN_PATTERN = "[CH2][CH2][CH2][CH2][CH2][CH2]"  # >=6 contiguous CH2 -- crude but real long-tail signal
+
+_COMPILED_SUGAR_RING = Chem.MolFromSmarts(_SUGAR_RING_PATTERN)
+_COMPILED_LONG_CHAIN = Chem.MolFromSmarts(_LONG_CHAIN_PATTERN)
+
+
+@dataclass
+class StructuralFamilyResult:
+    smiles: str
+    structural_family: str  # "dimeric_gemini_type" | "glycolipid_biosurfactant" | "monomeric" | "unparseable"
+    n_strong_ionic_headgroups: int  # count of the SAME strong charge-type pattern found, deduplicated across types
+    n_sugar_rings: int
+    n_long_chain_matches: int
+    confidence: str = ""
+    caveats: list[str] = field(default_factory=list)
+
+
+def classify_surfactant_structural_family(smiles: str) -> StructuralFamilyResult:
+    """Determine a surfactant's structural family (dimeric/gemini-type,
+    glycolipid biosurfactant, or ordinary monomeric) from its real SMILES
+    structure -- orthogonal to classify_surfactant_charge_type's charge-type
+    axis (a gemini surfactant can be cationic, anionic, or nonionic; a
+    glycolipid biosurfactant is typically anionic via its own fatty-acid
+    carboxylate, already caught by classify_surfactant_charge_type
+    separately). See this module's own comment block above for the real,
+    sourced structures this was verified against before shipping.
+
+    Counts the largest number of matches among the SAME strong ionic
+    headgroup pattern (quaternary ammonium, quaternary ammonium in a ring,
+    sulfate ester, sulfonate, phosphate ester -- the "strong" patterns
+    already used by classify_surfactant_charge_type, reused here rather
+    than duplicated) -- exactly 2 matches of the SAME pattern is this
+    function's real, verified signal for a dimeric/gemini-type structure.
+    A count of 3+ is flagged as low-confidence (a real oligomeric/trimeric
+    surfactant, or a false-positive multi-match on an unusual structure)
+    rather than silently forced into "dimeric".
+
+    Separately checks for a real pyranose-sugar-ring pattern combined with
+    a long hydrocarbon chain -- the real structural signature of a
+    glycolipid biosurfactant (rhamnolipid/sophorolipid-type), distinct from
+    a bare sugar (no lipid tail, not a surfactant) or an ordinary
+    surfactant (no sugar ring at all).
+    """
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return StructuralFamilyResult(
+            smiles=smiles, structural_family="unparseable",
+            n_strong_ionic_headgroups=0, n_sugar_rings=0, n_long_chain_matches=0,
+            confidence="none",
+            caveats=[f"RDKit could not parse this SMILES: '{smiles}'. Check for typos/invalid valence."],
+        )
+
+    strong_headgroup_counts = []
+    for name, smarts, _strength in _ANIONIC_PATTERNS + _CATIONIC_STRONG_PATTERNS:
+        if _strength_of(name) != "strong":
+            continue
+        patt = Chem.MolFromSmarts(smarts)
+        if patt is not None:
+            strong_headgroup_counts.append(len(mol.GetSubstructMatches(patt)))
+    max_headgroup_count = max(strong_headgroup_counts) if strong_headgroup_counts else 0
+
+    n_sugar_rings = len(mol.GetSubstructMatches(_COMPILED_SUGAR_RING)) if _COMPILED_SUGAR_RING is not None else 0
+    n_long_chain = len(mol.GetSubstructMatches(_COMPILED_LONG_CHAIN)) if _COMPILED_LONG_CHAIN is not None else 0
+
+    is_glycolipid = n_sugar_rings >= 1 and n_long_chain >= 1
+
+    if is_glycolipid:
+        return StructuralFamilyResult(
+            smiles=smiles, structural_family="glycolipid_biosurfactant",
+            n_strong_ionic_headgroups=max_headgroup_count, n_sugar_rings=n_sugar_rings,
+            n_long_chain_matches=n_long_chain, confidence="high",
+            caveats=[],
+        )
+
+    if max_headgroup_count == 2:
+        return StructuralFamilyResult(
+            smiles=smiles, structural_family="dimeric_gemini_type",
+            n_strong_ionic_headgroups=2, n_sugar_rings=n_sugar_rings,
+            n_long_chain_matches=n_long_chain, confidence="high",
+            caveats=["This structural signal (2 matching strong ionic headgroups in one molecule) "
+                     "cannot distinguish a true gemini (two separate tail+head units joined near the "
+                     "headgroups by a short spacer) from a bolaform surfactant (a single long "
+                     "hydrophobic backbone with one headgroup at EACH end, no separate spacer/tail "
+                     "pair) -- both produce the same signal. Bolaform surfactants are real but "
+                     "comparatively rare; confirm against the actual connectivity if this distinction "
+                     "matters for your use case."],
+        )
+
+    if max_headgroup_count >= 3:
+        return StructuralFamilyResult(
+            smiles=smiles, structural_family="monomeric",
+            n_strong_ionic_headgroups=max_headgroup_count, n_sugar_rings=n_sugar_rings,
+            n_long_chain_matches=n_long_chain, confidence="low",
+            caveats=[f"{max_headgroup_count} matches of the same strong ionic headgroup pattern were "
+                     "found -- not confidently classified as dimeric/gemini-type (which this function "
+                     "only asserts at exactly 2) or as a genuinely different oligomeric structural "
+                     "class; reported as monomeric by default but flagged low-confidence rather than "
+                     "silently picked."],
+        )
+
+    return StructuralFamilyResult(
+        smiles=smiles, structural_family="monomeric",
+        n_strong_ionic_headgroups=max_headgroup_count, n_sugar_rings=n_sugar_rings,
+        n_long_chain_matches=n_long_chain, confidence="high" if max_headgroup_count <= 1 else "moderate",
+        caveats=[],
+    )
+
+
+def _strength_of(pattern_name: str) -> str:
+    for name, _smarts, strength in _ANIONIC_PATTERNS + _CATIONIC_STRONG_PATTERNS:
+        if name == pattern_name:
+            return strength
+    return ""

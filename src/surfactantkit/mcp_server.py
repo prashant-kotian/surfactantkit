@@ -1398,6 +1398,43 @@ def classify_surfactant_charge_type(smiles: str) -> dict:
 
 
 @mcp.tool()
+def classify_surfactant_structural_family(smiles: str) -> dict:
+    """Determine a surfactant's structural family -- dimeric/gemini-type
+    (two headgroups in one molecule, e.g. bis-quaternary-ammonium gemini
+    surfactants), glycolipid biosurfactant (rhamnolipid/sophorolipid-type:
+    a real pyranose sugar ring plus a long hydrocarbon chain), or ordinary
+    monomeric -- from its real SMILES structure. Orthogonal to
+    classify_surfactant_charge_type's charge-type axis: a gemini surfactant
+    can be cationic, anionic, or nonionic; call both tools for the full
+    picture.
+
+    Real, verified signal (not guessed): exactly 2 matches of the SAME
+    strong ionic headgroup pattern (quaternary ammonium, sulfate ester,
+    sulfonate, phosphate ester) is this tool's real gemini/dimeric signal,
+    confirmed directly against real literature gemini surfactants (G6,
+    12-4-12) vs. their monomeric analogues (CTAB, DTAB). Honest limitation
+    disclosed in caveats when this fires: this signal cannot structurally
+    distinguish a true gemini (two separate tail+head units joined by a
+    short spacer) from a rarer bolaform surfactant (one long backbone with
+    a headgroup at each end) -- both produce the same count.
+
+    Glycolipid detection requires BOTH a sugar ring AND a long chain (a
+    bare sugar with no lipid tail is not a surfactant at all, and is
+    correctly excluded) -- verified against real PubChem-sourced
+    monorhamnolipid and sophorolipid structures."""
+    r = classify_mod.classify_surfactant_structural_family(smiles)
+    return {
+        "smiles": r.smiles,
+        "structural_family": r.structural_family,
+        "n_strong_ionic_headgroups": r.n_strong_ionic_headgroups,
+        "n_sugar_rings": r.n_sugar_rings,
+        "n_long_chain_matches": r.n_long_chain_matches,
+        "confidence": r.confidence,
+        "caveats": r.caveats,
+    }
+
+
+@mcp.tool()
 def derive_all_properties_from_smiles_and_curve(
     smiles: str,
     concentrations_mM: list[float],
