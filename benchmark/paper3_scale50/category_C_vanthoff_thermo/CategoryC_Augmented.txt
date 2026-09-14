@@ -1,0 +1,109 @@
+C-01
+[reference only, do not paste -- source: Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's vant_hoff_enthalpy tool -- call it to analyze the real data below. Do not compute anything by hand; use the tool, and report exactly what it returns.
+
+Compound: 1-dodecanesulfonic acid (C12)
+SMILES: CCCCCCCCCCCCS(=O)(=O)O
+Real CMC measured at each of the following temperatures (all from the same source):
+  T = 30.0 C, CMC = 7.8 mM
+  T = 50.0 C, CMC = 10.2 mM
+  T = 70.0 C, CMC = 13.0 mM
+
+Call vant_hoff_enthalpy(cmc1_M, temperature1_K, cmc2_M, temperature2_K) -- CMC in molarity (mol/L, i.e. mM/1000), temperature in Kelvin (C + 273.15) -- once using the lowest and highest given temperature (the endpoint value), and ALSO once per adjacent pair of temperatures if 3 or more are given (sub-intervals). Do not attempt a sub-interval calculation if only 2 temperatures are given. Compare the sub-interval values (if computed) to assess whether they are reasonably self-consistent with each other. Report the tool's own returned values faithfully -- do not override, "correct", or second-guess what it returns.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "delta_h_endpoint_kJ_per_mol": <number or null>,
+  "endpoint_temps_C": [<lower>, <upper>],
+  "sub_intervals": [{"t_lo_C": <number>, "t_hi_C": <number>, "delta_h_kJ_per_mol": <number>}, ...] or null,
+  "self_consistent": true, false, or null,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+C-02
+[reference only, do not paste -- source: Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's vant_hoff_enthalpy tool -- call it to analyze the real data below. Do not compute anything by hand; use the tool, and report exactly what it returns.
+
+Compound: 1-tetradecanesulfonic acid (C14)
+SMILES: CCCCCCCCCCCCCCS(=O)(=O)O
+Real CMC measured at each of the following temperatures (all from the same source):
+  T = 30.0 C, CMC = 2.38 mM
+  T = 50.0 C, CMC = 2.8 mM
+  T = 70.0 C, CMC = 4.05 mM
+
+Call vant_hoff_enthalpy(cmc1_M, temperature1_K, cmc2_M, temperature2_K) -- CMC in molarity (mol/L, i.e. mM/1000), temperature in Kelvin (C + 273.15) -- once using the lowest and highest given temperature (the endpoint value), and ALSO once per adjacent pair of temperatures if 3 or more are given (sub-intervals). Do not attempt a sub-interval calculation if only 2 temperatures are given. Compare the sub-interval values (if computed) to assess whether they are reasonably self-consistent with each other. Report the tool's own returned values faithfully -- do not override, "correct", or second-guess what it returns.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "delta_h_endpoint_kJ_per_mol": <number or null>,
+  "endpoint_temps_C": [<lower>, <upper>],
+  "sub_intervals": [{"t_lo_C": <number>, "t_hi_C": <number>, "delta_h_kJ_per_mol": <number>}, ...] or null,
+  "self_consistent": true, false, or null,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+C-03
+[reference only, do not paste -- source: Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's vant_hoff_enthalpy tool -- call it to analyze the real data below. Do not compute anything by hand; use the tool, and report exactly what it returns.
+
+Compound: 1-hexadecanesulfonic acid (C16)
+SMILES: CCCCCCCCCCCCCCCCS(=O)(=O)O
+Real CMC measured at each of the following temperatures (all from the same source):
+  T = 30.0 C, CMC = 0.592 mM
+  T = 50.0 C, CMC = 0.805 mM
+  T = 70.0 C, CMC = 1.11 mM
+
+Call vant_hoff_enthalpy(cmc1_M, temperature1_K, cmc2_M, temperature2_K) -- CMC in molarity (mol/L, i.e. mM/1000), temperature in Kelvin (C + 273.15) -- once using the lowest and highest given temperature (the endpoint value), and ALSO once per adjacent pair of temperatures if 3 or more are given (sub-intervals). Do not attempt a sub-interval calculation if only 2 temperatures are given. Compare the sub-interval values (if computed) to assess whether they are reasonably self-consistent with each other. Report the tool's own returned values faithfully -- do not override, "correct", or second-guess what it returns.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "delta_h_endpoint_kJ_per_mol": <number or null>,
+  "endpoint_temps_C": [<lower>, <upper>],
+  "sub_intervals": [{"t_lo_C": <number>, "t_hi_C": <number>, "delta_h_kJ_per_mol": <number>}, ...] or null,
+  "self_consistent": true, false, or null,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+C-04
+[reference only, do not paste -- source: Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's vant_hoff_enthalpy tool -- call it to analyze the real data below. Do not compute anything by hand; use the tool, and report exactly what it returns.
+
+Compound: 1-octadecanesulfonic acid (C18)
+SMILES: CCCCCCCCCCCCCCCCCCS(=O)(=O)O
+Real CMC measured at each of the following temperatures (all from the same source):
+  T = 50.0 C, CMC = 0.226 mM
+  T = 70.0 C, CMC = 0.317 mM
+
+Call vant_hoff_enthalpy(cmc1_M, temperature1_K, cmc2_M, temperature2_K) -- CMC in molarity (mol/L, i.e. mM/1000), temperature in Kelvin (C + 273.15) -- once using the lowest and highest given temperature (the endpoint value), and ALSO once per adjacent pair of temperatures if 3 or more are given (sub-intervals). Do not attempt a sub-interval calculation if only 2 temperatures are given. Compare the sub-interval values (if computed) to assess whether they are reasonably self-consistent with each other. Report the tool's own returned values faithfully -- do not override, "correct", or second-guess what it returns.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "delta_h_endpoint_kJ_per_mol": <number or null>,
+  "endpoint_temps_C": [<lower>, <upper>],
+  "sub_intervals": [{"t_lo_C": <number>, "t_hi_C": <number>, "delta_h_kJ_per_mol": <number>}, ...] or null,
+  "self_consistent": true, false, or null,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<

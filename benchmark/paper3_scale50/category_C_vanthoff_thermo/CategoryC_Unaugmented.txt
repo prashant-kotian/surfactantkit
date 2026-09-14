@@ -1,0 +1,109 @@
+C-01
+[reference only, do not paste -- source: Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's micellization thermodynamics using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a deltaH_mic value for this compound from your own training; derive it from the real van't Hoff (Gibbs-Helmholtz) relationship applied to the numbers given.
+
+Compound: 1-dodecanesulfonic acid (C12)
+SMILES: CCCCCCCCCCCCS(=O)(=O)O
+Real CMC measured at each of the following temperatures (all from the same source):
+  T = 30.0 C, CMC = 7.8 mM
+  T = 50.0 C, CMC = 10.2 mM
+  T = 70.0 C, CMC = 13.0 mM
+
+Compute the enthalpy of micellization (deltaH_mic, kJ/mol) using the WIDEST available temperature span (the lowest and highest temperature given). If 3 or more temperatures are given, ALSO compute deltaH_mic for each adjacent pair of temperatures separately (sub-intervals), and assess whether these sub-interval values are reasonably self-consistent with each other (i.e. whether the "deltaH_mic is constant over this temperature range" assumption a two-point estimate always makes actually holds here) -- do not claim a self-consistency assessment if only 2 temperatures are given, since no sub-interval comparison is possible with 2 points.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "delta_h_endpoint_kJ_per_mol": <number or null>,
+  "endpoint_temps_C": [<lower>, <upper>],
+  "sub_intervals": [{"t_lo_C": <number>, "t_hi_C": <number>, "delta_h_kJ_per_mol": <number>}, ...] or null,
+  "self_consistent": true, false, or null,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+C-02
+[reference only, do not paste -- source: Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's micellization thermodynamics using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a deltaH_mic value for this compound from your own training; derive it from the real van't Hoff (Gibbs-Helmholtz) relationship applied to the numbers given.
+
+Compound: 1-tetradecanesulfonic acid (C14)
+SMILES: CCCCCCCCCCCCCCS(=O)(=O)O
+Real CMC measured at each of the following temperatures (all from the same source):
+  T = 30.0 C, CMC = 2.38 mM
+  T = 50.0 C, CMC = 2.8 mM
+  T = 70.0 C, CMC = 4.05 mM
+
+Compute the enthalpy of micellization (deltaH_mic, kJ/mol) using the WIDEST available temperature span (the lowest and highest temperature given). If 3 or more temperatures are given, ALSO compute deltaH_mic for each adjacent pair of temperatures separately (sub-intervals), and assess whether these sub-interval values are reasonably self-consistent with each other (i.e. whether the "deltaH_mic is constant over this temperature range" assumption a two-point estimate always makes actually holds here) -- do not claim a self-consistency assessment if only 2 temperatures are given, since no sub-interval comparison is possible with 2 points.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "delta_h_endpoint_kJ_per_mol": <number or null>,
+  "endpoint_temps_C": [<lower>, <upper>],
+  "sub_intervals": [{"t_lo_C": <number>, "t_hi_C": <number>, "delta_h_kJ_per_mol": <number>}, ...] or null,
+  "self_consistent": true, false, or null,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+C-03
+[reference only, do not paste -- source: Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's micellization thermodynamics using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a deltaH_mic value for this compound from your own training; derive it from the real van't Hoff (Gibbs-Helmholtz) relationship applied to the numbers given.
+
+Compound: 1-hexadecanesulfonic acid (C16)
+SMILES: CCCCCCCCCCCCCCCCS(=O)(=O)O
+Real CMC measured at each of the following temperatures (all from the same source):
+  T = 30.0 C, CMC = 0.592 mM
+  T = 50.0 C, CMC = 0.805 mM
+  T = 70.0 C, CMC = 1.11 mM
+
+Compute the enthalpy of micellization (deltaH_mic, kJ/mol) using the WIDEST available temperature span (the lowest and highest temperature given). If 3 or more temperatures are given, ALSO compute deltaH_mic for each adjacent pair of temperatures separately (sub-intervals), and assess whether these sub-interval values are reasonably self-consistent with each other (i.e. whether the "deltaH_mic is constant over this temperature range" assumption a two-point estimate always makes actually holds here) -- do not claim a self-consistency assessment if only 2 temperatures are given, since no sub-interval comparison is possible with 2 points.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "delta_h_endpoint_kJ_per_mol": <number or null>,
+  "endpoint_temps_C": [<lower>, <upper>],
+  "sub_intervals": [{"t_lo_C": <number>, "t_hi_C": <number>, "delta_h_kJ_per_mol": <number>}, ...] or null,
+  "self_consistent": true, false, or null,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+C-04
+[reference only, do not paste -- source: Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's micellization thermodynamics using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a deltaH_mic value for this compound from your own training; derive it from the real van't Hoff (Gibbs-Helmholtz) relationship applied to the numbers given.
+
+Compound: 1-octadecanesulfonic acid (C18)
+SMILES: CCCCCCCCCCCCCCCCCCS(=O)(=O)O
+Real CMC measured at each of the following temperatures (all from the same source):
+  T = 50.0 C, CMC = 0.226 mM
+  T = 70.0 C, CMC = 0.317 mM
+
+Compute the enthalpy of micellization (deltaH_mic, kJ/mol) using the WIDEST available temperature span (the lowest and highest temperature given). If 3 or more temperatures are given, ALSO compute deltaH_mic for each adjacent pair of temperatures separately (sub-intervals), and assess whether these sub-interval values are reasonably self-consistent with each other (i.e. whether the "deltaH_mic is constant over this temperature range" assumption a two-point estimate always makes actually holds here) -- do not claim a self-consistency assessment if only 2 temperatures are given, since no sub-interval comparison is possible with 2 points.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "delta_h_endpoint_kJ_per_mol": <number or null>,
+  "endpoint_temps_C": [<lower>, <upper>],
+  "sub_intervals": [{"t_lo_C": <number>, "t_hi_C": <number>, "delta_h_kJ_per_mol": <number>}, ...] or null,
+  "self_consistent": true, false, or null,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<

@@ -1,0 +1,118 @@
+[
+  {
+    "id": "C-01",
+    "n_carbons": 12,
+    "compound_name": "1-dodecanesulfonic acid (C12)",
+    "smiles": "CCCCCCCCCCCCS(=O)(=O)O",
+    "source": "Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)",
+    "given_temps_C_cmc_mM": {
+      "30.0": 7.8,
+      "50.0": 10.2,
+      "70.0": 13.0
+    },
+    "gold": {
+      "delta_h_endpoint_kJ_per_mol": -11.043552357097875,
+      "endpoint_temps_C": [
+        30.0,
+        70.0
+      ],
+      "sub_intervals": [
+        {
+          "t_lo_C": 30.0,
+          "t_hi_C": 50.0,
+          "delta_h_kJ_per_mol": -10.923411523311163
+        },
+        {
+          "t_lo_C": 50.0,
+          "t_hi_C": 70.0,
+          "delta_h_kJ_per_mol": -11.17954551927472
+        }
+      ],
+      "self_consistent": true
+    }
+  },
+  {
+    "id": "C-02",
+    "n_carbons": 14,
+    "compound_name": "1-tetradecanesulfonic acid (C14)",
+    "smiles": "CCCCCCCCCCCCCCS(=O)(=O)O",
+    "source": "Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)",
+    "given_temps_C_cmc_mM": {
+      "30.0": 2.38,
+      "50.0": 2.8,
+      "70.0": 4.05
+    },
+    "gold": {
+      "delta_h_endpoint_kJ_per_mol": -11.494485942857466,
+      "endpoint_temps_C": [
+        30.0,
+        70.0
+      ],
+      "sub_intervals": [
+        {
+          "t_lo_C": 30.0,
+          "t_hi_C": 50.0,
+          "delta_h_kJ_per_mol": -6.61834882287945
+        },
+        {
+          "t_lo_C": 50.0,
+          "t_hi_C": 70.0,
+          "delta_h_kJ_per_mol": -17.014019021269018
+        }
+      ],
+      "self_consistent": false
+    }
+  },
+  {
+    "id": "C-03",
+    "n_carbons": 16,
+    "compound_name": "1-hexadecanesulfonic acid (C16)",
+    "smiles": "CCCCCCCCCCCCCCCCS(=O)(=O)O",
+    "source": "Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)",
+    "given_temps_C_cmc_mM": {
+      "30.0": 0.592,
+      "50.0": 0.805,
+      "70.0": 1.11
+    },
+    "gold": {
+      "delta_h_endpoint_kJ_per_mol": -13.592197635471393,
+      "endpoint_temps_C": [
+        30.0,
+        70.0
+      ],
+      "sub_intervals": [
+        {
+          "t_lo_C": 30.0,
+          "t_hi_C": 50.0,
+          "delta_h_kJ_per_mol": -12.51622692462097
+        },
+        {
+          "t_lo_C": 50.0,
+          "t_hi_C": 70.0,
+          "delta_h_kJ_per_mol": -14.810140401192402
+        }
+      ],
+      "self_consistent": true
+    }
+  },
+  {
+    "id": "C-04",
+    "n_carbons": 18,
+    "compound_name": "1-octadecanesulfonic acid (C18)",
+    "smiles": "CCCCCCCCCCCCCCCCCCS(=O)(=O)O",
+    "source": "Saito, Moroi, Matuura 1980, J. Colloid Interface Sci. 76(1), 256-258, Table I (real conductivity CMC, n-alkylsulfonic acid series)",
+    "given_temps_C_cmc_mM": {
+      "50.0": 0.226,
+      "70.0": 0.317
+    },
+    "gold": {
+      "delta_h_endpoint_kJ_per_mol": -15.598324824829518,
+      "endpoint_temps_C": [
+        50.0,
+        70.0
+      ],
+      "sub_intervals": null,
+      "self_consistent": null
+    }
+  }
+]
