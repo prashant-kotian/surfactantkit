@@ -1,0 +1,223 @@
+A-01
+[reference only, do not paste -- real held-out compound: sodium undecyl sulfate (C11), real literature CMC 15.5 mM (validated); withheld from the prompt below, used only for grading]
+
+>>> PASTE BELOW >>>
+Below is a real set of published critical micelle concentration (CMC) values for a homologous sodium alkyl sulfate (anionic) surfactant series (same headgroup class, varying alkyl chain length, all at 25C), each with its own real literature source. Using ONLY these points -- do not recall or assume any CMC value for any compound in this series from your own training, including the one asked about below -- fit the real relationship between chain length and CMC for this series, and use that fit to predict the CMC of the following compound:
+
+Query compound: sodium undecyl sulfate (C11)
+SMILES: CCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+Chain length: 11 carbons
+
+Given real literature data points (n_carbons, CMC in mM, confidence tier, source):
+  n_carbons=8, CMC=136.0 mM, [textbook] Well-established literature value for C8 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 2735107). Cross-checked 2026-09-05 against real institute-access full text: Varga, Meszaros, Gilanyi 2007 (J. Phys. Chem. B 111(25), 7160-7168), Table 1, reports 129 mM -- ~5% from this entry, real cross-study corroboration, kept textbook since not an exact match.
+  n_carbons=9, CMC=62.7 mM, [validated] Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table (real institute-access full text, not a search summary). SMILES verified via live PubChem lookup (CID 23677967, CAS 1072-15-7).
+  n_carbons=10, CMC=33.0 mM, [textbook] Well-established literature value for C10 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23665771). Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 30.7 mM -- ~7% from this entry, real corroboration, kept textbook.
+  n_carbons=12, CMC=8.2 mM, [validated] Widely reported textbook range ~8.0-8.3 mM at 25C (also used in SurfBench Category K); SMILES verified via live PubChem lookup (CID 3423265), MW=288.38 matches this project's independently-used value exactly. Upgraded to 'validated' 2026-09-05: Varga et al. 2007, Table 1, reports 8.20 mM for nC=12 -- an EXACT match to this entry's 8.2 mM, a real, direct reproduction against a real primary source table. Third independent exact match, 2026-09-06: Moroi, Humphry-Baker, Gratzel 1987 (J. Colloid Interface Sci. 119(2), 588-591), Table I, electrical-conductivity CMC = 8.2 mM -- same value, same method (conductivity), fully independent research group.
+  n_carbons=13, CMC=4.19 mM, [validated] Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23668353, CAS 3026-63-9).
+  n_carbons=14, CMC=2.1 mM, [textbook] Holmberg, K. (2019) 'Surfactants', Ullmann's Encyclopedia of Industrial Chemistry, Wiley-VCH -- CMC=0.0021 M, cross-checked as internally consistent with this project's own already-used sodium octyl/dodecyl sulfate values, which trace to the same table (via Wikipedia's Critical Micelle Concentration article, ref [4]). SMILES verified via PubChem CAS lookup (CAS 1191-50-0 -> CID 23665770), NOT the ambiguous 'sodium tetradecyl sulfate' name lookup, which resolves to a different, branched compound -- see module docstring. Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 2.20 mM -- ~5% from this entry, real corroboration, kept textbook.
+  n_carbons=16, CMC=0.45 mM, [textbook] Well-established literature value for C16 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23695542). Not covered by Varga et al. 2007 (their series stops at nC=14).
+
+State explicitly what fitting method you actually used (e.g. real least-squares linear regression on log10(CMC) vs. chain length, vs. an approximate/eyeballed estimate) -- this is part of what's being assessed, not just the final number. Report a leave-one-out cross-validation (LOO-CV) mean percent error for this fit if you can genuinely compute one (refit the line N times, each time holding out one more of the given points and testing on it) -- do not report a plausible-looking LOO-CV number you have not actually computed; report it as not computed if you didn't. State explicitly whether the query chain length falls within or outside the given points' own chain-length range, and if outside, treat your prediction as a genuine extrapolation, not equally confident as an interpolation would be.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "predicted_cmc_mM": <number or null>,
+  "slope": <number or null, the real fitted log10(CMC) vs n_carbons slope>,
+  "intercept": <number or null>,
+  "r_squared": <number or null>,
+  "in_applicability_domain": true or false,
+  "training_range": [<min_n_carbons>, <max_n_carbons>],
+  "loo_cv_mean_pct_error": <number or null, ONLY if you genuinely computed real leave-one-out sub-fits>,
+  "fitting_method": "real_least_squares_regression" or "approximate_estimate" or other short description,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+A-02
+[reference only, do not paste -- real held-out compound: sodium hexadecyl sulfate, real literature CMC 0.45 mM (textbook); withheld from the prompt below, used only for grading]
+
+>>> PASTE BELOW >>>
+Below is a real set of published critical micelle concentration (CMC) values for a homologous sodium alkyl sulfate (anionic) surfactant series (same headgroup class, varying alkyl chain length, all at 25C), each with its own real literature source. Using ONLY these points -- do not recall or assume any CMC value for any compound in this series from your own training, including the one asked about below -- fit the real relationship between chain length and CMC for this series, and use that fit to predict the CMC of the following compound:
+
+Query compound: sodium hexadecyl sulfate
+SMILES: CCCCCCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+Chain length: 16 carbons
+
+Given real literature data points (n_carbons, CMC in mM, confidence tier, source):
+  n_carbons=8, CMC=136.0 mM, [textbook] Well-established literature value for C8 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 2735107). Cross-checked 2026-09-05 against real institute-access full text: Varga, Meszaros, Gilanyi 2007 (J. Phys. Chem. B 111(25), 7160-7168), Table 1, reports 129 mM -- ~5% from this entry, real cross-study corroboration, kept textbook since not an exact match.
+  n_carbons=9, CMC=62.7 mM, [validated] Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table (real institute-access full text, not a search summary). SMILES verified via live PubChem lookup (CID 23677967, CAS 1072-15-7).
+  n_carbons=10, CMC=33.0 mM, [textbook] Well-established literature value for C10 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23665771). Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 30.7 mM -- ~7% from this entry, real corroboration, kept textbook.
+  n_carbons=11, CMC=15.5 mM, [validated] Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23687749, CAS 1072-24-8).
+  n_carbons=12, CMC=8.2 mM, [validated] Widely reported textbook range ~8.0-8.3 mM at 25C (also used in SurfBench Category K); SMILES verified via live PubChem lookup (CID 3423265), MW=288.38 matches this project's independently-used value exactly. Upgraded to 'validated' 2026-09-05: Varga et al. 2007, Table 1, reports 8.20 mM for nC=12 -- an EXACT match to this entry's 8.2 mM, a real, direct reproduction against a real primary source table. Third independent exact match, 2026-09-06: Moroi, Humphry-Baker, Gratzel 1987 (J. Colloid Interface Sci. 119(2), 588-591), Table I, electrical-conductivity CMC = 8.2 mM -- same value, same method (conductivity), fully independent research group.
+  n_carbons=13, CMC=4.19 mM, [validated] Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23668353, CAS 3026-63-9).
+  n_carbons=14, CMC=2.1 mM, [textbook] Holmberg, K. (2019) 'Surfactants', Ullmann's Encyclopedia of Industrial Chemistry, Wiley-VCH -- CMC=0.0021 M, cross-checked as internally consistent with this project's own already-used sodium octyl/dodecyl sulfate values, which trace to the same table (via Wikipedia's Critical Micelle Concentration article, ref [4]). SMILES verified via PubChem CAS lookup (CAS 1191-50-0 -> CID 23665770), NOT the ambiguous 'sodium tetradecyl sulfate' name lookup, which resolves to a different, branched compound -- see module docstring. Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 2.20 mM -- ~5% from this entry, real corroboration, kept textbook.
+
+State explicitly what fitting method you actually used (e.g. real least-squares linear regression on log10(CMC) vs. chain length, vs. an approximate/eyeballed estimate) -- this is part of what's being assessed, not just the final number. Report a leave-one-out cross-validation (LOO-CV) mean percent error for this fit if you can genuinely compute one (refit the line N times, each time holding out one more of the given points and testing on it) -- do not report a plausible-looking LOO-CV number you have not actually computed; report it as not computed if you didn't. State explicitly whether the query chain length falls within or outside the given points' own chain-length range, and if outside, treat your prediction as a genuine extrapolation, not equally confident as an interpolation would be.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "predicted_cmc_mM": <number or null>,
+  "slope": <number or null, the real fitted log10(CMC) vs n_carbons slope>,
+  "intercept": <number or null>,
+  "r_squared": <number or null>,
+  "in_applicability_domain": true or false,
+  "training_range": [<min_n_carbons>, <max_n_carbons>],
+  "loo_cv_mean_pct_error": <number or null, ONLY if you genuinely computed real leave-one-out sub-fits>,
+  "fitting_method": "real_least_squares_regression" or "approximate_estimate" or other short description,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+A-03
+[reference only, do not paste -- real held-out compound: sodium octyl sulfate, real literature CMC 136.0 mM (textbook); withheld from the prompt below, used only for grading]
+
+>>> PASTE BELOW >>>
+Below is a real set of published critical micelle concentration (CMC) values for a homologous sodium alkyl sulfate (anionic) surfactant series (same headgroup class, varying alkyl chain length, all at 25C), each with its own real literature source. Using ONLY these points -- do not recall or assume any CMC value for any compound in this series from your own training, including the one asked about below -- fit the real relationship between chain length and CMC for this series, and use that fit to predict the CMC of the following compound:
+
+Query compound: sodium octyl sulfate
+SMILES: CCCCCCCCOS(=O)(=O)[O-].[Na+]
+Chain length: 8 carbons
+
+Given real literature data points (n_carbons, CMC in mM, confidence tier, source):
+  n_carbons=9, CMC=62.7 mM, [validated] Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table (real institute-access full text, not a search summary). SMILES verified via live PubChem lookup (CID 23677967, CAS 1072-15-7).
+  n_carbons=10, CMC=33.0 mM, [textbook] Well-established literature value for C10 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23665771). Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 30.7 mM -- ~7% from this entry, real corroboration, kept textbook.
+  n_carbons=11, CMC=15.5 mM, [validated] Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23687749, CAS 1072-24-8).
+  n_carbons=12, CMC=8.2 mM, [validated] Widely reported textbook range ~8.0-8.3 mM at 25C (also used in SurfBench Category K); SMILES verified via live PubChem lookup (CID 3423265), MW=288.38 matches this project's independently-used value exactly. Upgraded to 'validated' 2026-09-05: Varga et al. 2007, Table 1, reports 8.20 mM for nC=12 -- an EXACT match to this entry's 8.2 mM, a real, direct reproduction against a real primary source table. Third independent exact match, 2026-09-06: Moroi, Humphry-Baker, Gratzel 1987 (J. Colloid Interface Sci. 119(2), 588-591), Table I, electrical-conductivity CMC = 8.2 mM -- same value, same method (conductivity), fully independent research group.
+  n_carbons=13, CMC=4.19 mM, [validated] Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23668353, CAS 3026-63-9).
+  n_carbons=14, CMC=2.1 mM, [textbook] Holmberg, K. (2019) 'Surfactants', Ullmann's Encyclopedia of Industrial Chemistry, Wiley-VCH -- CMC=0.0021 M, cross-checked as internally consistent with this project's own already-used sodium octyl/dodecyl sulfate values, which trace to the same table (via Wikipedia's Critical Micelle Concentration article, ref [4]). SMILES verified via PubChem CAS lookup (CAS 1191-50-0 -> CID 23665770), NOT the ambiguous 'sodium tetradecyl sulfate' name lookup, which resolves to a different, branched compound -- see module docstring. Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 2.20 mM -- ~5% from this entry, real corroboration, kept textbook.
+  n_carbons=16, CMC=0.45 mM, [textbook] Well-established literature value for C16 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23695542). Not covered by Varga et al. 2007 (their series stops at nC=14).
+
+State explicitly what fitting method you actually used (e.g. real least-squares linear regression on log10(CMC) vs. chain length, vs. an approximate/eyeballed estimate) -- this is part of what's being assessed, not just the final number. Report a leave-one-out cross-validation (LOO-CV) mean percent error for this fit if you can genuinely compute one (refit the line N times, each time holding out one more of the given points and testing on it) -- do not report a plausible-looking LOO-CV number you have not actually computed; report it as not computed if you didn't. State explicitly whether the query chain length falls within or outside the given points' own chain-length range, and if outside, treat your prediction as a genuine extrapolation, not equally confident as an interpolation would be.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "predicted_cmc_mM": <number or null>,
+  "slope": <number or null, the real fitted log10(CMC) vs n_carbons slope>,
+  "intercept": <number or null>,
+  "r_squared": <number or null>,
+  "in_applicability_domain": true or false,
+  "training_range": [<min_n_carbons>, <max_n_carbons>],
+  "loo_cv_mean_pct_error": <number or null, ONLY if you genuinely computed real leave-one-out sub-fits>,
+  "fitting_method": "real_least_squares_regression" or "approximate_estimate" or other short description,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+A-04
+[reference only, do not paste -- real held-out compound: dodecyltrimethylammonium bromide (DTAB, C12), real literature CMC 14.8 mM (validated); withheld from the prompt below, used only for grading]
+
+>>> PASTE BELOW >>>
+Below is a real set of published critical micelle concentration (CMC) values for a homologous alkyltrimethylammonium bromide (cationic) surfactant series (same headgroup class, varying alkyl chain length, all at 25C), each with its own real literature source. Using ONLY these points -- do not recall or assume any CMC value for any compound in this series from your own training, including the one asked about below -- fit the real relationship between chain length and CMC for this series, and use that fit to predict the CMC of the following compound:
+
+Query compound: dodecyltrimethylammonium bromide (DTAB, C12)
+SMILES: CCCCCCCCCCCC[N+](C)(C)C.[Br-]
+Chain length: 12 carbons
+
+Given real literature data points (n_carbons, CMC in mM, confidence tier, source):
+  n_carbons=6, CMC=1008.2 mM, [validated] Oremusova 2012, Tenside Surf. Det. 49(3), 231-238 (real institute-access full text), Table 4, own conductometric 'present result' at 25C, matching her own single literature comparison value exactly (1008.20 mM). SMILES verified via live PubChem lookup (CID 10059492, CAS 2650-53-5), MW=224.18 matches Oremusova's own Table 1 exactly.
+  n_carbons=8, CMC=264.6 mM, [validated] Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own 6-source literature review averages 276.08+/-35.21 mM, this entry's value sits inside that range. SMILES verified via live PubChem lookup (CID 74964, CAS 2083-68-3), MW=252.23 matches Oremusova's own Table 1 (252.24) almost exactly.
+  n_carbons=10, CMC=65.0 mM, [textbook] Well-established literature value for C10 alkyltrimethylammonium bromide; SMILES verified via live PubChem lookup (CID 16388). Note: this compound ALSO carries the synonym 'DTAB' in some sources -- do not confuse with the C12 compound below, which is this project's own literature-validated 'DTAB'. Independently cross-checked 2026-09-04 against a real, directly-fetched open-access source (not a search-engine summary): PMC9779623 (propanediol-water DTAB study) reports 6.96e-2 mol/kg (69.6 mM) at both 293.15K and 298.15K, from two independent techniques (sound velocity and surface tension) agreeing exactly -- ~7% from this entry's 65.0 mM, normal cross-study variation, not a discrepancy. Kept as 'textbook' rather than upgraded to 'validated' since the two numbers aren't identical and this project's own 'validated' bar means an exact reproduction, not just same-order agreement -- but this is real, disclosed corroboration, not just an unverified textbook recollection anymore. Two further real institute-access sources, 2026-09-05: Romero/Escamilla/Ribeiro/Esteso 2022 (Int. J. Mol. Sci. 23, 15884), Table 5, reports CMC=6.96e-2 mol/kg (69.6 mM) at 298.15K from BOTH sound velocity and surface tension -- an exact match to PMC9779623's own value, a real independent second confirmation of that same number. Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238), Table 4, reports her own conductometric 'present result' CMC=67.03 mM, with a 5-source literature average of 64.15+/-2.80 mM (range 60.0-67.60) -- this entry's 65.0 mM falls inside that averaged range. Three independent real sources now cluster 64-70 mM; still kept as 'textbook' per the same exact-reproduction standard, not because the evidence is weak.
+  n_carbons=14, CMC=3.827 mM, [validated] CORRECTED 2026-09-05, real value found to be a real outlier, not a code bug. Previously 2.25 mM from Lee & Lee 2012 (via the TTAB-Tween-20 Clint reproduction, itself a real, independently-reproduced number, not fabricated). Real institute-access full text of Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238, real C6-C18 TAB conductometric series) gives her own 'present result' CMC=3.827 mM at 25C, Table 4 -- and her own literature review of that same table lists 8 further independent sources clustering tightly at 3.71+/-0.13 mM (3.50-3.82 mM range), none anywhere near 2.25 mM. Decisive check requested by the user: fit the Klevens chain-length trend from TTAB's own sister TAB compounds (excluding C14) and see which candidate value the trend predicts. Using this dataset's own C10/C12/C16 points: predicted C14 CMC=3.738 mM (R^2=0.9997 for the 3-point fit). Using Oremusova's own single-lab measurements across the whole C6-C18 series (excluding C14): predicted 3.694-3.706 mM (R^2=0.9998-1.0000). Every method lands within ~2% of 3.7-3.8 mM and nowhere near 2.25 mM -- the trend itself confirms 2.25 mM was the real outlier. SMILES verified via live PubChem lookup (CID 14250), unchanged.
+  n_carbons=16, CMC=0.92 mM, [textbook] Widely reported textbook value ~0.9-1.0 mM; this project's own literature validation work independently confirmed CTAB's Gamma_max (2.71e-6 mol/m^2, Shah/Das/Bhattarai 2025) and work of adhesion (64.9 mJ/m^2) but not its CMC directly, so this specific number is flagged 'textbook' not 'validated'. SMILES verified via live PubChem lookup (CID 5974). Cross-checked 2026-09-05 against Oremusova 2012, Table 4: own 'present result' 0.876 mM, 15-source literature average 0.904+/-0.05 mM -- this entry's 0.92 mM sits just inside that averaged range, real corroboration, kept textbook.
+  n_carbons=18, CMC=0.213 mM, [validated] Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own single literature comparison value is 0.30 mM (average column shows 0.256+/-0.045, computed from that one literature value plus her own measurement). SMILES verified via live PubChem lookup (CID 70708, CAS 1120-02-1), MW=392.5 matches Oremusova's own Table 1 (392.52) almost exactly.
+
+State explicitly what fitting method you actually used (e.g. real least-squares linear regression on log10(CMC) vs. chain length, vs. an approximate/eyeballed estimate) -- this is part of what's being assessed, not just the final number. Report a leave-one-out cross-validation (LOO-CV) mean percent error for this fit if you can genuinely compute one (refit the line N times, each time holding out one more of the given points and testing on it) -- do not report a plausible-looking LOO-CV number you have not actually computed; report it as not computed if you didn't. State explicitly whether the query chain length falls within or outside the given points' own chain-length range, and if outside, treat your prediction as a genuine extrapolation, not equally confident as an interpolation would be.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "predicted_cmc_mM": <number or null>,
+  "slope": <number or null, the real fitted log10(CMC) vs n_carbons slope>,
+  "intercept": <number or null>,
+  "r_squared": <number or null>,
+  "in_applicability_domain": true or false,
+  "training_range": [<min_n_carbons>, <max_n_carbons>],
+  "loo_cv_mean_pct_error": <number or null, ONLY if you genuinely computed real leave-one-out sub-fits>,
+  "fitting_method": "real_least_squares_regression" or "approximate_estimate" or other short description,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+A-05
+[reference only, do not paste -- real held-out compound: hexyltrimethylammonium bromide (C6-TAB), real literature CMC 1008.2 mM (validated); withheld from the prompt below, used only for grading]
+
+>>> PASTE BELOW >>>
+Below is a real set of published critical micelle concentration (CMC) values for a homologous alkyltrimethylammonium bromide (cationic) surfactant series (same headgroup class, varying alkyl chain length, all at 25C), each with its own real literature source. Using ONLY these points -- do not recall or assume any CMC value for any compound in this series from your own training, including the one asked about below -- fit the real relationship between chain length and CMC for this series, and use that fit to predict the CMC of the following compound:
+
+Query compound: hexyltrimethylammonium bromide (C6-TAB)
+SMILES: CCCCCC[N+](C)(C)C.[Br-]
+Chain length: 6 carbons
+
+Given real literature data points (n_carbons, CMC in mM, confidence tier, source):
+  n_carbons=8, CMC=264.6 mM, [validated] Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own 6-source literature review averages 276.08+/-35.21 mM, this entry's value sits inside that range. SMILES verified via live PubChem lookup (CID 74964, CAS 2083-68-3), MW=252.23 matches Oremusova's own Table 1 (252.24) almost exactly.
+  n_carbons=10, CMC=65.0 mM, [textbook] Well-established literature value for C10 alkyltrimethylammonium bromide; SMILES verified via live PubChem lookup (CID 16388). Note: this compound ALSO carries the synonym 'DTAB' in some sources -- do not confuse with the C12 compound below, which is this project's own literature-validated 'DTAB'. Independently cross-checked 2026-09-04 against a real, directly-fetched open-access source (not a search-engine summary): PMC9779623 (propanediol-water DTAB study) reports 6.96e-2 mol/kg (69.6 mM) at both 293.15K and 298.15K, from two independent techniques (sound velocity and surface tension) agreeing exactly -- ~7% from this entry's 65.0 mM, normal cross-study variation, not a discrepancy. Kept as 'textbook' rather than upgraded to 'validated' since the two numbers aren't identical and this project's own 'validated' bar means an exact reproduction, not just same-order agreement -- but this is real, disclosed corroboration, not just an unverified textbook recollection anymore. Two further real institute-access sources, 2026-09-05: Romero/Escamilla/Ribeiro/Esteso 2022 (Int. J. Mol. Sci. 23, 15884), Table 5, reports CMC=6.96e-2 mol/kg (69.6 mM) at 298.15K from BOTH sound velocity and surface tension -- an exact match to PMC9779623's own value, a real independent second confirmation of that same number. Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238), Table 4, reports her own conductometric 'present result' CMC=67.03 mM, with a 5-source literature average of 64.15+/-2.80 mM (range 60.0-67.60) -- this entry's 65.0 mM falls inside that averaged range. Three independent real sources now cluster 64-70 mM; still kept as 'textbook' per the same exact-reproduction standard, not because the evidence is weak.
+  n_carbons=12, CMC=14.8 mM, [validated] From literature_validation_notes.md: PMC6554738's DTAB pure CMC, independently reproduced exactly via Clint's formula in this project's own Rubingh/Clint validation work. SMILES verified via live PubChem lookup (CID 14249).
+  n_carbons=14, CMC=3.827 mM, [validated] CORRECTED 2026-09-05, real value found to be a real outlier, not a code bug. Previously 2.25 mM from Lee & Lee 2012 (via the TTAB-Tween-20 Clint reproduction, itself a real, independently-reproduced number, not fabricated). Real institute-access full text of Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238, real C6-C18 TAB conductometric series) gives her own 'present result' CMC=3.827 mM at 25C, Table 4 -- and her own literature review of that same table lists 8 further independent sources clustering tightly at 3.71+/-0.13 mM (3.50-3.82 mM range), none anywhere near 2.25 mM. Decisive check requested by the user: fit the Klevens chain-length trend from TTAB's own sister TAB compounds (excluding C14) and see which candidate value the trend predicts. Using this dataset's own C10/C12/C16 points: predicted C14 CMC=3.738 mM (R^2=0.9997 for the 3-point fit). Using Oremusova's own single-lab measurements across the whole C6-C18 series (excluding C14): predicted 3.694-3.706 mM (R^2=0.9998-1.0000). Every method lands within ~2% of 3.7-3.8 mM and nowhere near 2.25 mM -- the trend itself confirms 2.25 mM was the real outlier. SMILES verified via live PubChem lookup (CID 14250), unchanged.
+  n_carbons=16, CMC=0.92 mM, [textbook] Widely reported textbook value ~0.9-1.0 mM; this project's own literature validation work independently confirmed CTAB's Gamma_max (2.71e-6 mol/m^2, Shah/Das/Bhattarai 2025) and work of adhesion (64.9 mJ/m^2) but not its CMC directly, so this specific number is flagged 'textbook' not 'validated'. SMILES verified via live PubChem lookup (CID 5974). Cross-checked 2026-09-05 against Oremusova 2012, Table 4: own 'present result' 0.876 mM, 15-source literature average 0.904+/-0.05 mM -- this entry's 0.92 mM sits just inside that averaged range, real corroboration, kept textbook.
+  n_carbons=18, CMC=0.213 mM, [validated] Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own single literature comparison value is 0.30 mM (average column shows 0.256+/-0.045, computed from that one literature value plus her own measurement). SMILES verified via live PubChem lookup (CID 70708, CAS 1120-02-1), MW=392.5 matches Oremusova's own Table 1 (392.52) almost exactly.
+
+State explicitly what fitting method you actually used (e.g. real least-squares linear regression on log10(CMC) vs. chain length, vs. an approximate/eyeballed estimate) -- this is part of what's being assessed, not just the final number. Report a leave-one-out cross-validation (LOO-CV) mean percent error for this fit if you can genuinely compute one (refit the line N times, each time holding out one more of the given points and testing on it) -- do not report a plausible-looking LOO-CV number you have not actually computed; report it as not computed if you didn't. State explicitly whether the query chain length falls within or outside the given points' own chain-length range, and if outside, treat your prediction as a genuine extrapolation, not equally confident as an interpolation would be.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "predicted_cmc_mM": <number or null>,
+  "slope": <number or null, the real fitted log10(CMC) vs n_carbons slope>,
+  "intercept": <number or null>,
+  "r_squared": <number or null>,
+  "in_applicability_domain": true or false,
+  "training_range": [<min_n_carbons>, <max_n_carbons>],
+  "loo_cv_mean_pct_error": <number or null, ONLY if you genuinely computed real leave-one-out sub-fits>,
+  "fitting_method": "real_least_squares_regression" or "approximate_estimate" or other short description,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+A-06
+[reference only, do not paste -- real held-out compound: tetradecyltrimethylammonium bromide (TTAB, C14), real literature CMC 3.827 mM (validated); withheld from the prompt below, used only for grading]
+
+>>> PASTE BELOW >>>
+Below is a real set of published critical micelle concentration (CMC) values for a homologous alkyltrimethylammonium bromide (cationic) surfactant series (same headgroup class, varying alkyl chain length, all at 25C), each with its own real literature source. Using ONLY these points -- do not recall or assume any CMC value for any compound in this series from your own training, including the one asked about below -- fit the real relationship between chain length and CMC for this series, and use that fit to predict the CMC of the following compound:
+
+Query compound: tetradecyltrimethylammonium bromide (TTAB, C14)
+SMILES: CCCCCCCCCCCCCC[N+](C)(C)C.[Br-]
+Chain length: 14 carbons
+
+Given real literature data points (n_carbons, CMC in mM, confidence tier, source):
+  n_carbons=6, CMC=1008.2 mM, [validated] Oremusova 2012, Tenside Surf. Det. 49(3), 231-238 (real institute-access full text), Table 4, own conductometric 'present result' at 25C, matching her own single literature comparison value exactly (1008.20 mM). SMILES verified via live PubChem lookup (CID 10059492, CAS 2650-53-5), MW=224.18 matches Oremusova's own Table 1 exactly.
+  n_carbons=8, CMC=264.6 mM, [validated] Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own 6-source literature review averages 276.08+/-35.21 mM, this entry's value sits inside that range. SMILES verified via live PubChem lookup (CID 74964, CAS 2083-68-3), MW=252.23 matches Oremusova's own Table 1 (252.24) almost exactly.
+  n_carbons=10, CMC=65.0 mM, [textbook] Well-established literature value for C10 alkyltrimethylammonium bromide; SMILES verified via live PubChem lookup (CID 16388). Note: this compound ALSO carries the synonym 'DTAB' in some sources -- do not confuse with the C12 compound below, which is this project's own literature-validated 'DTAB'. Independently cross-checked 2026-09-04 against a real, directly-fetched open-access source (not a search-engine summary): PMC9779623 (propanediol-water DTAB study) reports 6.96e-2 mol/kg (69.6 mM) at both 293.15K and 298.15K, from two independent techniques (sound velocity and surface tension) agreeing exactly -- ~7% from this entry's 65.0 mM, normal cross-study variation, not a discrepancy. Kept as 'textbook' rather than upgraded to 'validated' since the two numbers aren't identical and this project's own 'validated' bar means an exact reproduction, not just same-order agreement -- but this is real, disclosed corroboration, not just an unverified textbook recollection anymore. Two further real institute-access sources, 2026-09-05: Romero/Escamilla/Ribeiro/Esteso 2022 (Int. J. Mol. Sci. 23, 15884), Table 5, reports CMC=6.96e-2 mol/kg (69.6 mM) at 298.15K from BOTH sound velocity and surface tension -- an exact match to PMC9779623's own value, a real independent second confirmation of that same number. Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238), Table 4, reports her own conductometric 'present result' CMC=67.03 mM, with a 5-source literature average of 64.15+/-2.80 mM (range 60.0-67.60) -- this entry's 65.0 mM falls inside that averaged range. Three independent real sources now cluster 64-70 mM; still kept as 'textbook' per the same exact-reproduction standard, not because the evidence is weak.
+  n_carbons=12, CMC=14.8 mM, [validated] From literature_validation_notes.md: PMC6554738's DTAB pure CMC, independently reproduced exactly via Clint's formula in this project's own Rubingh/Clint validation work. SMILES verified via live PubChem lookup (CID 14249).
+  n_carbons=16, CMC=0.92 mM, [textbook] Widely reported textbook value ~0.9-1.0 mM; this project's own literature validation work independently confirmed CTAB's Gamma_max (2.71e-6 mol/m^2, Shah/Das/Bhattarai 2025) and work of adhesion (64.9 mJ/m^2) but not its CMC directly, so this specific number is flagged 'textbook' not 'validated'. SMILES verified via live PubChem lookup (CID 5974). Cross-checked 2026-09-05 against Oremusova 2012, Table 4: own 'present result' 0.876 mM, 15-source literature average 0.904+/-0.05 mM -- this entry's 0.92 mM sits just inside that averaged range, real corroboration, kept textbook.
+  n_carbons=18, CMC=0.213 mM, [validated] Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own single literature comparison value is 0.30 mM (average column shows 0.256+/-0.045, computed from that one literature value plus her own measurement). SMILES verified via live PubChem lookup (CID 70708, CAS 1120-02-1), MW=392.5 matches Oremusova's own Table 1 (392.52) almost exactly.
+
+State explicitly what fitting method you actually used (e.g. real least-squares linear regression on log10(CMC) vs. chain length, vs. an approximate/eyeballed estimate) -- this is part of what's being assessed, not just the final number. Report a leave-one-out cross-validation (LOO-CV) mean percent error for this fit if you can genuinely compute one (refit the line N times, each time holding out one more of the given points and testing on it) -- do not report a plausible-looking LOO-CV number you have not actually computed; report it as not computed if you didn't. State explicitly whether the query chain length falls within or outside the given points' own chain-length range, and if outside, treat your prediction as a genuine extrapolation, not equally confident as an interpolation would be.
+
+End your response with a block in exactly this form (use null for anything not genuinely determined):
+
+FINAL_JSON:
+{
+  "predicted_cmc_mM": <number or null>,
+  "slope": <number or null, the real fitted log10(CMC) vs n_carbons slope>,
+  "intercept": <number or null>,
+  "r_squared": <number or null>,
+  "in_applicability_domain": true or false,
+  "training_range": [<min_n_carbons>, <max_n_carbons>],
+  "loo_cv_mean_pct_error": <number or null, ONLY if you genuinely computed real leave-one-out sub-fits>,
+  "fitting_method": "real_least_squares_regression" or "approximate_estimate" or other short description,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<

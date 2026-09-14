@@ -1,0 +1,467 @@
+[
+  {
+    "id": "A-01",
+    "series_label": "sodium alkyl sulfate (anionic)",
+    "holdout_n_carbons": 11,
+    "held_out_compound": {
+      "name": "sodium undecyl sulfate (C11)",
+      "smiles": "CCCCCCCCCCCOS(=O)(=O)[O-].[Na+]",
+      "real_literature_cmc_mM": 15.5,
+      "confidence": "validated",
+      "source": "Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23687749, CAS 1072-24-8)."
+    },
+    "given_points": [
+      {
+        "n_carbons": 8,
+        "name": "sodium octyl sulfate",
+        "cmc_mM": 136.0,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C8 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 2735107). Cross-checked 2026-09-05 against real institute-access full text: Varga, Meszaros, Gilanyi 2007 (J. Phys. Chem. B 111(25), 7160-7168), Table 1, reports 129 mM -- ~5% from this entry, real cross-study corroboration, kept textbook since not an exact match."
+      },
+      {
+        "n_carbons": 9,
+        "name": "sodium nonyl sulfate (C9)",
+        "cmc_mM": 62.7,
+        "confidence": "validated",
+        "source": "Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table (real institute-access full text, not a search summary). SMILES verified via live PubChem lookup (CID 23677967, CAS 1072-15-7)."
+      },
+      {
+        "n_carbons": 10,
+        "name": "sodium decyl sulfate",
+        "cmc_mM": 33.0,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C10 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23665771). Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 30.7 mM -- ~7% from this entry, real corroboration, kept textbook."
+      },
+      {
+        "n_carbons": 12,
+        "name": "sodium dodecyl sulfate (SDS)",
+        "cmc_mM": 8.2,
+        "confidence": "validated",
+        "source": "Widely reported textbook range ~8.0-8.3 mM at 25C (also used in SurfBench Category K); SMILES verified via live PubChem lookup (CID 3423265), MW=288.38 matches this project's independently-used value exactly. Upgraded to 'validated' 2026-09-05: Varga et al. 2007, Table 1, reports 8.20 mM for nC=12 -- an EXACT match to this entry's 8.2 mM, a real, direct reproduction against a real primary source table. Third independent exact match, 2026-09-06: Moroi, Humphry-Baker, Gratzel 1987 (J. Colloid Interface Sci. 119(2), 588-591), Table I, electrical-conductivity CMC = 8.2 mM -- same value, same method (conductivity), fully independent research group."
+      },
+      {
+        "n_carbons": 13,
+        "name": "sodium tridecyl sulfate (C13)",
+        "cmc_mM": 4.19,
+        "confidence": "validated",
+        "source": "Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23668353, CAS 3026-63-9)."
+      },
+      {
+        "n_carbons": 14,
+        "name": "sodium myristyl sulfate (C14, straight-chain)",
+        "cmc_mM": 2.1,
+        "confidence": "textbook",
+        "source": "Holmberg, K. (2019) 'Surfactants', Ullmann's Encyclopedia of Industrial Chemistry, Wiley-VCH -- CMC=0.0021 M, cross-checked as internally consistent with this project's own already-used sodium octyl/dodecyl sulfate values, which trace to the same table (via Wikipedia's Critical Micelle Concentration article, ref [4]). SMILES verified via PubChem CAS lookup (CAS 1191-50-0 -> CID 23665770), NOT the ambiguous 'sodium tetradecyl sulfate' name lookup, which resolves to a different, branched compound -- see module docstring. Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 2.20 mM -- ~5% from this entry, real corroboration, kept textbook."
+      },
+      {
+        "n_carbons": 16,
+        "name": "sodium hexadecyl sulfate",
+        "cmc_mM": 0.45,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C16 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23695542). Not covered by Varga et al. 2007 (their series stops at nC=14)."
+      }
+    ],
+    "gold": {
+      "predicted_cmc_mM": 16.31279954586023,
+      "slope": -0.30538388477305434,
+      "intercept": 4.571751232046935,
+      "r_squared": 0.9993752598099384,
+      "in_applicability_domain": true,
+      "training_range": [
+        8,
+        16
+      ],
+      "loo_cv_mean_pct_error": 6.068365413039149
+    },
+    "gold_cross_check": {
+      "real_literature_cmc_mM": 15.5,
+      "tool_predicted_cmc_mM": 16.31279954586023,
+      "pct_difference_tool_vs_literature": 5.243868037807935,
+      "note": "Interpolation (query within the given points' range) -- tool prediction and the real independently-published literature CMC agree to within 5.2%."
+    }
+  },
+  {
+    "id": "A-02",
+    "series_label": "sodium alkyl sulfate (anionic)",
+    "holdout_n_carbons": 16,
+    "held_out_compound": {
+      "name": "sodium hexadecyl sulfate",
+      "smiles": "CCCCCCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]",
+      "real_literature_cmc_mM": 0.45,
+      "confidence": "textbook",
+      "source": "Well-established literature value for C16 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23695542). Not covered by Varga et al. 2007 (their series stops at nC=14)."
+    },
+    "given_points": [
+      {
+        "n_carbons": 8,
+        "name": "sodium octyl sulfate",
+        "cmc_mM": 136.0,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C8 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 2735107). Cross-checked 2026-09-05 against real institute-access full text: Varga, Meszaros, Gilanyi 2007 (J. Phys. Chem. B 111(25), 7160-7168), Table 1, reports 129 mM -- ~5% from this entry, real cross-study corroboration, kept textbook since not an exact match."
+      },
+      {
+        "n_carbons": 9,
+        "name": "sodium nonyl sulfate (C9)",
+        "cmc_mM": 62.7,
+        "confidence": "validated",
+        "source": "Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table (real institute-access full text, not a search summary). SMILES verified via live PubChem lookup (CID 23677967, CAS 1072-15-7)."
+      },
+      {
+        "n_carbons": 10,
+        "name": "sodium decyl sulfate",
+        "cmc_mM": 33.0,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C10 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23665771). Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 30.7 mM -- ~7% from this entry, real corroboration, kept textbook."
+      },
+      {
+        "n_carbons": 11,
+        "name": "sodium undecyl sulfate (C11)",
+        "cmc_mM": 15.5,
+        "confidence": "validated",
+        "source": "Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23687749, CAS 1072-24-8)."
+      },
+      {
+        "n_carbons": 12,
+        "name": "sodium dodecyl sulfate (SDS)",
+        "cmc_mM": 8.2,
+        "confidence": "validated",
+        "source": "Widely reported textbook range ~8.0-8.3 mM at 25C (also used in SurfBench Category K); SMILES verified via live PubChem lookup (CID 3423265), MW=288.38 matches this project's independently-used value exactly. Upgraded to 'validated' 2026-09-05: Varga et al. 2007, Table 1, reports 8.20 mM for nC=12 -- an EXACT match to this entry's 8.2 mM, a real, direct reproduction against a real primary source table. Third independent exact match, 2026-09-06: Moroi, Humphry-Baker, Gratzel 1987 (J. Colloid Interface Sci. 119(2), 588-591), Table I, electrical-conductivity CMC = 8.2 mM -- same value, same method (conductivity), fully independent research group."
+      },
+      {
+        "n_carbons": 13,
+        "name": "sodium tridecyl sulfate (C13)",
+        "cmc_mM": 4.19,
+        "confidence": "validated",
+        "source": "Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23668353, CAS 3026-63-9)."
+      },
+      {
+        "n_carbons": 14,
+        "name": "sodium myristyl sulfate (C14, straight-chain)",
+        "cmc_mM": 2.1,
+        "confidence": "textbook",
+        "source": "Holmberg, K. (2019) 'Surfactants', Ullmann's Encyclopedia of Industrial Chemistry, Wiley-VCH -- CMC=0.0021 M, cross-checked as internally consistent with this project's own already-used sodium octyl/dodecyl sulfate values, which trace to the same table (via Wikipedia's Critical Micelle Concentration article, ref [4]). SMILES verified via PubChem CAS lookup (CAS 1191-50-0 -> CID 23665770), NOT the ambiguous 'sodium tetradecyl sulfate' name lookup, which resolves to a different, branched compound -- see module docstring. Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 2.20 mM -- ~5% from this entry, real corroboration, kept textbook."
+      }
+    ],
+    "gold": {
+      "predicted_cmc_mM": 0.5199860420141232,
+      "slope": -0.29959878443328236,
+      "intercept": 4.509572236956541,
+      "r_squared": 0.9994540519231813,
+      "in_applicability_domain": false,
+      "training_range": [
+        8,
+        14
+      ],
+      "loo_cv_mean_pct_error": 3.8907379168313865
+    },
+    "gold_cross_check": {
+      "real_literature_cmc_mM": 0.45,
+      "tool_predicted_cmc_mM": 0.5199860420141232,
+      "pct_difference_tool_vs_literature": 15.552453780916272,
+      "note": "Extrapolation (query outside the given points' range) -- tool prediction and the real independently-published literature CMC agree to within 15.6%."
+    }
+  },
+  {
+    "id": "A-03",
+    "series_label": "sodium alkyl sulfate (anionic)",
+    "holdout_n_carbons": 8,
+    "held_out_compound": {
+      "name": "sodium octyl sulfate",
+      "smiles": "CCCCCCCCOS(=O)(=O)[O-].[Na+]",
+      "real_literature_cmc_mM": 136.0,
+      "confidence": "textbook",
+      "source": "Well-established literature value for C8 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 2735107). Cross-checked 2026-09-05 against real institute-access full text: Varga, Meszaros, Gilanyi 2007 (J. Phys. Chem. B 111(25), 7160-7168), Table 1, reports 129 mM -- ~5% from this entry, real cross-study corroboration, kept textbook since not an exact match."
+    },
+    "given_points": [
+      {
+        "n_carbons": 9,
+        "name": "sodium nonyl sulfate (C9)",
+        "cmc_mM": 62.7,
+        "confidence": "validated",
+        "source": "Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table (real institute-access full text, not a search summary). SMILES verified via live PubChem lookup (CID 23677967, CAS 1072-15-7)."
+      },
+      {
+        "n_carbons": 10,
+        "name": "sodium decyl sulfate",
+        "cmc_mM": 33.0,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C10 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23665771). Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 30.7 mM -- ~7% from this entry, real corroboration, kept textbook."
+      },
+      {
+        "n_carbons": 11,
+        "name": "sodium undecyl sulfate (C11)",
+        "cmc_mM": 15.5,
+        "confidence": "validated",
+        "source": "Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23687749, CAS 1072-24-8)."
+      },
+      {
+        "n_carbons": 12,
+        "name": "sodium dodecyl sulfate (SDS)",
+        "cmc_mM": 8.2,
+        "confidence": "validated",
+        "source": "Widely reported textbook range ~8.0-8.3 mM at 25C (also used in SurfBench Category K); SMILES verified via live PubChem lookup (CID 3423265), MW=288.38 matches this project's independently-used value exactly. Upgraded to 'validated' 2026-09-05: Varga et al. 2007, Table 1, reports 8.20 mM for nC=12 -- an EXACT match to this entry's 8.2 mM, a real, direct reproduction against a real primary source table. Third independent exact match, 2026-09-06: Moroi, Humphry-Baker, Gratzel 1987 (J. Colloid Interface Sci. 119(2), 588-591), Table I, electrical-conductivity CMC = 8.2 mM -- same value, same method (conductivity), fully independent research group."
+      },
+      {
+        "n_carbons": 13,
+        "name": "sodium tridecyl sulfate (C13)",
+        "cmc_mM": 4.19,
+        "confidence": "validated",
+        "source": "Varga, Meszaros, Gilanyi 2007, J. Phys. Chem. B 111(25), 7160-7168 (DOI 10.1021/jp071344f), Table 1, real cmc value directly from the source table. SMILES verified via live PubChem lookup (CID 23668353, CAS 3026-63-9)."
+      },
+      {
+        "n_carbons": 14,
+        "name": "sodium myristyl sulfate (C14, straight-chain)",
+        "cmc_mM": 2.1,
+        "confidence": "textbook",
+        "source": "Holmberg, K. (2019) 'Surfactants', Ullmann's Encyclopedia of Industrial Chemistry, Wiley-VCH -- CMC=0.0021 M, cross-checked as internally consistent with this project's own already-used sodium octyl/dodecyl sulfate values, which trace to the same table (via Wikipedia's Critical Micelle Concentration article, ref [4]). SMILES verified via PubChem CAS lookup (CAS 1191-50-0 -> CID 23665770), NOT the ambiguous 'sodium tetradecyl sulfate' name lookup, which resolves to a different, branched compound -- see module docstring. Cross-checked 2026-09-05 against Varga et al. 2007, Table 1: 2.20 mM -- ~5% from this entry, real corroboration, kept textbook."
+      },
+      {
+        "n_carbons": 16,
+        "name": "sodium hexadecyl sulfate",
+        "cmc_mM": 0.45,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C16 sodium alkyl sulfate; SMILES verified via live PubChem lookup (CID 23695542). Not covered by Varga et al. 2007 (their series stops at nC=14)."
+      }
+    ],
+    "gold": {
+      "predicted_cmc_mM": 131.64599646379943,
+      "slope": -0.30407864587261113,
+      "intercept": 4.552036823130017,
+      "r_squared": 0.9990122210719706,
+      "in_applicability_domain": false,
+      "training_range": [
+        9,
+        16
+      ],
+      "loo_cv_mean_pct_error": 7.328185591823447
+    },
+    "gold_cross_check": {
+      "real_literature_cmc_mM": 136.0,
+      "tool_predicted_cmc_mM": 131.64599646379943,
+      "pct_difference_tool_vs_literature": 3.2014731883827685,
+      "note": "Extrapolation (query outside the given points' range) -- tool prediction and the real independently-published literature CMC agree to within 3.2%."
+    }
+  },
+  {
+    "id": "A-04",
+    "series_label": "alkyltrimethylammonium bromide (cationic)",
+    "holdout_n_carbons": 12,
+    "held_out_compound": {
+      "name": "dodecyltrimethylammonium bromide (DTAB, C12)",
+      "smiles": "CCCCCCCCCCCC[N+](C)(C)C.[Br-]",
+      "real_literature_cmc_mM": 14.8,
+      "confidence": "validated",
+      "source": "From literature_validation_notes.md: PMC6554738's DTAB pure CMC, independently reproduced exactly via Clint's formula in this project's own Rubingh/Clint validation work. SMILES verified via live PubChem lookup (CID 14249)."
+    },
+    "given_points": [
+      {
+        "n_carbons": 6,
+        "name": "hexyltrimethylammonium bromide (C6-TAB)",
+        "cmc_mM": 1008.2,
+        "confidence": "validated",
+        "source": "Oremusova 2012, Tenside Surf. Det. 49(3), 231-238 (real institute-access full text), Table 4, own conductometric 'present result' at 25C, matching her own single literature comparison value exactly (1008.20 mM). SMILES verified via live PubChem lookup (CID 10059492, CAS 2650-53-5), MW=224.18 matches Oremusova's own Table 1 exactly."
+      },
+      {
+        "n_carbons": 8,
+        "name": "octyltrimethylammonium bromide (C8-TAB)",
+        "cmc_mM": 264.6,
+        "confidence": "validated",
+        "source": "Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own 6-source literature review averages 276.08+/-35.21 mM, this entry's value sits inside that range. SMILES verified via live PubChem lookup (CID 74964, CAS 2083-68-3), MW=252.23 matches Oremusova's own Table 1 (252.24) almost exactly."
+      },
+      {
+        "n_carbons": 10,
+        "name": "decyltrimethylammonium bromide (C10-TAB)",
+        "cmc_mM": 65.0,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C10 alkyltrimethylammonium bromide; SMILES verified via live PubChem lookup (CID 16388). Note: this compound ALSO carries the synonym 'DTAB' in some sources -- do not confuse with the C12 compound below, which is this project's own literature-validated 'DTAB'. Independently cross-checked 2026-09-04 against a real, directly-fetched open-access source (not a search-engine summary): PMC9779623 (propanediol-water DTAB study) reports 6.96e-2 mol/kg (69.6 mM) at both 293.15K and 298.15K, from two independent techniques (sound velocity and surface tension) agreeing exactly -- ~7% from this entry's 65.0 mM, normal cross-study variation, not a discrepancy. Kept as 'textbook' rather than upgraded to 'validated' since the two numbers aren't identical and this project's own 'validated' bar means an exact reproduction, not just same-order agreement -- but this is real, disclosed corroboration, not just an unverified textbook recollection anymore. Two further real institute-access sources, 2026-09-05: Romero/Escamilla/Ribeiro/Esteso 2022 (Int. J. Mol. Sci. 23, 15884), Table 5, reports CMC=6.96e-2 mol/kg (69.6 mM) at 298.15K from BOTH sound velocity and surface tension -- an exact match to PMC9779623's own value, a real independent second confirmation of that same number. Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238), Table 4, reports her own conductometric 'present result' CMC=67.03 mM, with a 5-source literature average of 64.15+/-2.80 mM (range 60.0-67.60) -- this entry's 65.0 mM falls inside that averaged range. Three independent real sources now cluster 64-70 mM; still kept as 'textbook' per the same exact-reproduction standard, not because the evidence is weak."
+      },
+      {
+        "n_carbons": 14,
+        "name": "tetradecyltrimethylammonium bromide (TTAB, C14)",
+        "cmc_mM": 3.827,
+        "confidence": "validated",
+        "source": "CORRECTED 2026-09-05, real value found to be a real outlier, not a code bug. Previously 2.25 mM from Lee & Lee 2012 (via the TTAB-Tween-20 Clint reproduction, itself a real, independently-reproduced number, not fabricated). Real institute-access full text of Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238, real C6-C18 TAB conductometric series) gives her own 'present result' CMC=3.827 mM at 25C, Table 4 -- and her own literature review of that same table lists 8 further independent sources clustering tightly at 3.71+/-0.13 mM (3.50-3.82 mM range), none anywhere near 2.25 mM. Decisive check requested by the user: fit the Klevens chain-length trend from TTAB's own sister TAB compounds (excluding C14) and see which candidate value the trend predicts. Using this dataset's own C10/C12/C16 points: predicted C14 CMC=3.738 mM (R^2=0.9997 for the 3-point fit). Using Oremusova's own single-lab measurements across the whole C6-C18 series (excluding C14): predicted 3.694-3.706 mM (R^2=0.9998-1.0000). Every method lands within ~2% of 3.7-3.8 mM and nowhere near 2.25 mM -- the trend itself confirms 2.25 mM was the real outlier. SMILES verified via live PubChem lookup (CID 14250), unchanged."
+      },
+      {
+        "n_carbons": 16,
+        "name": "cetyltrimethylammonium bromide (CTAB, C16)",
+        "cmc_mM": 0.92,
+        "confidence": "textbook",
+        "source": "Widely reported textbook value ~0.9-1.0 mM; this project's own literature validation work independently confirmed CTAB's Gamma_max (2.71e-6 mol/m^2, Shah/Das/Bhattarai 2025) and work of adhesion (64.9 mJ/m^2) but not its CMC directly, so this specific number is flagged 'textbook' not 'validated'. SMILES verified via live PubChem lookup (CID 5974). Cross-checked 2026-09-05 against Oremusova 2012, Table 4: own 'present result' 0.876 mM, 15-source literature average 0.904+/-0.05 mM -- this entry's 0.92 mM sits just inside that averaged range, real corroboration, kept textbook."
+      },
+      {
+        "n_carbons": 18,
+        "name": "octadecyltrimethylammonium bromide (C18-TAB)",
+        "cmc_mM": 0.213,
+        "confidence": "validated",
+        "source": "Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own single literature comparison value is 0.30 mM (average column shows 0.256+/-0.045, computed from that one literature value plus her own measurement). SMILES verified via live PubChem lookup (CID 70708, CAS 1120-02-1), MW=392.5 matches Oremusova's own Table 1 (392.52) almost exactly."
+      }
+    ],
+    "gold": {
+      "predicted_cmc_mM": 15.334841697764233,
+      "slope": -0.3066635747932213,
+      "intercept": 4.865642194619532,
+      "r_squared": 0.9998841262172249,
+      "in_applicability_domain": true,
+      "training_range": [
+        6,
+        18
+      ],
+      "loo_cv_mean_pct_error": 5.0701142221182165
+    },
+    "gold_cross_check": {
+      "real_literature_cmc_mM": 14.8,
+      "tool_predicted_cmc_mM": 15.334841697764233,
+      "pct_difference_tool_vs_literature": 3.6137952551637316,
+      "note": "Interpolation (query within the given points' range) -- tool prediction and the real independently-published literature CMC agree to within 3.6%."
+    }
+  },
+  {
+    "id": "A-05",
+    "series_label": "alkyltrimethylammonium bromide (cationic)",
+    "holdout_n_carbons": 6,
+    "held_out_compound": {
+      "name": "hexyltrimethylammonium bromide (C6-TAB)",
+      "smiles": "CCCCCC[N+](C)(C)C.[Br-]",
+      "real_literature_cmc_mM": 1008.2,
+      "confidence": "validated",
+      "source": "Oremusova 2012, Tenside Surf. Det. 49(3), 231-238 (real institute-access full text), Table 4, own conductometric 'present result' at 25C, matching her own single literature comparison value exactly (1008.20 mM). SMILES verified via live PubChem lookup (CID 10059492, CAS 2650-53-5), MW=224.18 matches Oremusova's own Table 1 exactly."
+    },
+    "given_points": [
+      {
+        "n_carbons": 8,
+        "name": "octyltrimethylammonium bromide (C8-TAB)",
+        "cmc_mM": 264.6,
+        "confidence": "validated",
+        "source": "Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own 6-source literature review averages 276.08+/-35.21 mM, this entry's value sits inside that range. SMILES verified via live PubChem lookup (CID 74964, CAS 2083-68-3), MW=252.23 matches Oremusova's own Table 1 (252.24) almost exactly."
+      },
+      {
+        "n_carbons": 10,
+        "name": "decyltrimethylammonium bromide (C10-TAB)",
+        "cmc_mM": 65.0,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C10 alkyltrimethylammonium bromide; SMILES verified via live PubChem lookup (CID 16388). Note: this compound ALSO carries the synonym 'DTAB' in some sources -- do not confuse with the C12 compound below, which is this project's own literature-validated 'DTAB'. Independently cross-checked 2026-09-04 against a real, directly-fetched open-access source (not a search-engine summary): PMC9779623 (propanediol-water DTAB study) reports 6.96e-2 mol/kg (69.6 mM) at both 293.15K and 298.15K, from two independent techniques (sound velocity and surface tension) agreeing exactly -- ~7% from this entry's 65.0 mM, normal cross-study variation, not a discrepancy. Kept as 'textbook' rather than upgraded to 'validated' since the two numbers aren't identical and this project's own 'validated' bar means an exact reproduction, not just same-order agreement -- but this is real, disclosed corroboration, not just an unverified textbook recollection anymore. Two further real institute-access sources, 2026-09-05: Romero/Escamilla/Ribeiro/Esteso 2022 (Int. J. Mol. Sci. 23, 15884), Table 5, reports CMC=6.96e-2 mol/kg (69.6 mM) at 298.15K from BOTH sound velocity and surface tension -- an exact match to PMC9779623's own value, a real independent second confirmation of that same number. Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238), Table 4, reports her own conductometric 'present result' CMC=67.03 mM, with a 5-source literature average of 64.15+/-2.80 mM (range 60.0-67.60) -- this entry's 65.0 mM falls inside that averaged range. Three independent real sources now cluster 64-70 mM; still kept as 'textbook' per the same exact-reproduction standard, not because the evidence is weak."
+      },
+      {
+        "n_carbons": 12,
+        "name": "dodecyltrimethylammonium bromide (DTAB, C12)",
+        "cmc_mM": 14.8,
+        "confidence": "validated",
+        "source": "From literature_validation_notes.md: PMC6554738's DTAB pure CMC, independently reproduced exactly via Clint's formula in this project's own Rubingh/Clint validation work. SMILES verified via live PubChem lookup (CID 14249)."
+      },
+      {
+        "n_carbons": 14,
+        "name": "tetradecyltrimethylammonium bromide (TTAB, C14)",
+        "cmc_mM": 3.827,
+        "confidence": "validated",
+        "source": "CORRECTED 2026-09-05, real value found to be a real outlier, not a code bug. Previously 2.25 mM from Lee & Lee 2012 (via the TTAB-Tween-20 Clint reproduction, itself a real, independently-reproduced number, not fabricated). Real institute-access full text of Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238, real C6-C18 TAB conductometric series) gives her own 'present result' CMC=3.827 mM at 25C, Table 4 -- and her own literature review of that same table lists 8 further independent sources clustering tightly at 3.71+/-0.13 mM (3.50-3.82 mM range), none anywhere near 2.25 mM. Decisive check requested by the user: fit the Klevens chain-length trend from TTAB's own sister TAB compounds (excluding C14) and see which candidate value the trend predicts. Using this dataset's own C10/C12/C16 points: predicted C14 CMC=3.738 mM (R^2=0.9997 for the 3-point fit). Using Oremusova's own single-lab measurements across the whole C6-C18 series (excluding C14): predicted 3.694-3.706 mM (R^2=0.9998-1.0000). Every method lands within ~2% of 3.7-3.8 mM and nowhere near 2.25 mM -- the trend itself confirms 2.25 mM was the real outlier. SMILES verified via live PubChem lookup (CID 14250), unchanged."
+      },
+      {
+        "n_carbons": 16,
+        "name": "cetyltrimethylammonium bromide (CTAB, C16)",
+        "cmc_mM": 0.92,
+        "confidence": "textbook",
+        "source": "Widely reported textbook value ~0.9-1.0 mM; this project's own literature validation work independently confirmed CTAB's Gamma_max (2.71e-6 mol/m^2, Shah/Das/Bhattarai 2025) and work of adhesion (64.9 mJ/m^2) but not its CMC directly, so this specific number is flagged 'textbook' not 'validated'. SMILES verified via live PubChem lookup (CID 5974). Cross-checked 2026-09-05 against Oremusova 2012, Table 4: own 'present result' 0.876 mM, 15-source literature average 0.904+/-0.05 mM -- this entry's 0.92 mM sits just inside that averaged range, real corroboration, kept textbook."
+      },
+      {
+        "n_carbons": 18,
+        "name": "octadecyltrimethylammonium bromide (C18-TAB)",
+        "cmc_mM": 0.213,
+        "confidence": "validated",
+        "source": "Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own single literature comparison value is 0.30 mM (average column shows 0.256+/-0.045, computed from that one literature value plus her own measurement). SMILES verified via live PubChem lookup (CID 70708, CAS 1120-02-1), MW=392.5 matches Oremusova's own Table 1 (392.52) almost exactly."
+      }
+    ],
+    "gold": {
+      "predicted_cmc_mM": 1098.2846230238065,
+      "slope": -0.3086547289018011,
+      "intercept": 4.892643276539762,
+      "r_squared": 0.999897400336067,
+      "in_applicability_domain": false,
+      "training_range": [
+        8,
+        18
+      ],
+      "loo_cv_mean_pct_error": 3.0619868589782553
+    },
+    "gold_cross_check": {
+      "real_literature_cmc_mM": 1008.2,
+      "tool_predicted_cmc_mM": 1098.2846230238065,
+      "pct_difference_tool_vs_literature": 8.935193713926449,
+      "note": "Extrapolation (query outside the given points' range) -- tool prediction and the real independently-published literature CMC agree to within 8.9%."
+    }
+  },
+  {
+    "id": "A-06",
+    "series_label": "alkyltrimethylammonium bromide (cationic)",
+    "holdout_n_carbons": 14,
+    "held_out_compound": {
+      "name": "tetradecyltrimethylammonium bromide (TTAB, C14)",
+      "smiles": "CCCCCCCCCCCCCC[N+](C)(C)C.[Br-]",
+      "real_literature_cmc_mM": 3.827,
+      "confidence": "validated",
+      "source": "CORRECTED 2026-09-05, real value found to be a real outlier, not a code bug. Previously 2.25 mM from Lee & Lee 2012 (via the TTAB-Tween-20 Clint reproduction, itself a real, independently-reproduced number, not fabricated). Real institute-access full text of Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238, real C6-C18 TAB conductometric series) gives her own 'present result' CMC=3.827 mM at 25C, Table 4 -- and her own literature review of that same table lists 8 further independent sources clustering tightly at 3.71+/-0.13 mM (3.50-3.82 mM range), none anywhere near 2.25 mM. Decisive check requested by the user: fit the Klevens chain-length trend from TTAB's own sister TAB compounds (excluding C14) and see which candidate value the trend predicts. Using this dataset's own C10/C12/C16 points: predicted C14 CMC=3.738 mM (R^2=0.9997 for the 3-point fit). Using Oremusova's own single-lab measurements across the whole C6-C18 series (excluding C14): predicted 3.694-3.706 mM (R^2=0.9998-1.0000). Every method lands within ~2% of 3.7-3.8 mM and nowhere near 2.25 mM -- the trend itself confirms 2.25 mM was the real outlier. SMILES verified via live PubChem lookup (CID 14250), unchanged."
+    },
+    "given_points": [
+      {
+        "n_carbons": 6,
+        "name": "hexyltrimethylammonium bromide (C6-TAB)",
+        "cmc_mM": 1008.2,
+        "confidence": "validated",
+        "source": "Oremusova 2012, Tenside Surf. Det. 49(3), 231-238 (real institute-access full text), Table 4, own conductometric 'present result' at 25C, matching her own single literature comparison value exactly (1008.20 mM). SMILES verified via live PubChem lookup (CID 10059492, CAS 2650-53-5), MW=224.18 matches Oremusova's own Table 1 exactly."
+      },
+      {
+        "n_carbons": 8,
+        "name": "octyltrimethylammonium bromide (C8-TAB)",
+        "cmc_mM": 264.6,
+        "confidence": "validated",
+        "source": "Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own 6-source literature review averages 276.08+/-35.21 mM, this entry's value sits inside that range. SMILES verified via live PubChem lookup (CID 74964, CAS 2083-68-3), MW=252.23 matches Oremusova's own Table 1 (252.24) almost exactly."
+      },
+      {
+        "n_carbons": 10,
+        "name": "decyltrimethylammonium bromide (C10-TAB)",
+        "cmc_mM": 65.0,
+        "confidence": "textbook",
+        "source": "Well-established literature value for C10 alkyltrimethylammonium bromide; SMILES verified via live PubChem lookup (CID 16388). Note: this compound ALSO carries the synonym 'DTAB' in some sources -- do not confuse with the C12 compound below, which is this project's own literature-validated 'DTAB'. Independently cross-checked 2026-09-04 against a real, directly-fetched open-access source (not a search-engine summary): PMC9779623 (propanediol-water DTAB study) reports 6.96e-2 mol/kg (69.6 mM) at both 293.15K and 298.15K, from two independent techniques (sound velocity and surface tension) agreeing exactly -- ~7% from this entry's 65.0 mM, normal cross-study variation, not a discrepancy. Kept as 'textbook' rather than upgraded to 'validated' since the two numbers aren't identical and this project's own 'validated' bar means an exact reproduction, not just same-order agreement -- but this is real, disclosed corroboration, not just an unverified textbook recollection anymore. Two further real institute-access sources, 2026-09-05: Romero/Escamilla/Ribeiro/Esteso 2022 (Int. J. Mol. Sci. 23, 15884), Table 5, reports CMC=6.96e-2 mol/kg (69.6 mM) at 298.15K from BOTH sound velocity and surface tension -- an exact match to PMC9779623's own value, a real independent second confirmation of that same number. Oremusova 2012 (Tenside Surf. Det. 49(3), 231-238), Table 4, reports her own conductometric 'present result' CMC=67.03 mM, with a 5-source literature average of 64.15+/-2.80 mM (range 60.0-67.60) -- this entry's 65.0 mM falls inside that averaged range. Three independent real sources now cluster 64-70 mM; still kept as 'textbook' per the same exact-reproduction standard, not because the evidence is weak."
+      },
+      {
+        "n_carbons": 12,
+        "name": "dodecyltrimethylammonium bromide (DTAB, C12)",
+        "cmc_mM": 14.8,
+        "confidence": "validated",
+        "source": "From literature_validation_notes.md: PMC6554738's DTAB pure CMC, independently reproduced exactly via Clint's formula in this project's own Rubingh/Clint validation work. SMILES verified via live PubChem lookup (CID 14249)."
+      },
+      {
+        "n_carbons": 16,
+        "name": "cetyltrimethylammonium bromide (CTAB, C16)",
+        "cmc_mM": 0.92,
+        "confidence": "textbook",
+        "source": "Widely reported textbook value ~0.9-1.0 mM; this project's own literature validation work independently confirmed CTAB's Gamma_max (2.71e-6 mol/m^2, Shah/Das/Bhattarai 2025) and work of adhesion (64.9 mJ/m^2) but not its CMC directly, so this specific number is flagged 'textbook' not 'validated'. SMILES verified via live PubChem lookup (CID 5974). Cross-checked 2026-09-05 against Oremusova 2012, Table 4: own 'present result' 0.876 mM, 15-source literature average 0.904+/-0.05 mM -- this entry's 0.92 mM sits just inside that averaged range, real corroboration, kept textbook."
+      },
+      {
+        "n_carbons": 18,
+        "name": "octadecyltrimethylammonium bromide (C18-TAB)",
+        "cmc_mM": 0.213,
+        "confidence": "validated",
+        "source": "Oremusova 2012, Tenside Surf. Det. 49(3), 231-238, Table 4, own conductometric 'present result' at 25C; her own single literature comparison value is 0.30 mM (average column shows 0.256+/-0.045, computed from that one literature value plus her own measurement). SMILES verified via live PubChem lookup (CID 70708, CAS 1120-02-1), MW=392.5 matches Oremusova's own Table 1 (392.52) almost exactly."
+      }
+    ],
+    "gold": {
+      "predicted_cmc_mM": 3.6930641152456696,
+      "slope": -0.30693985362761994,
+      "intercept": 4.864544798284853,
+      "r_squared": 0.9998786026033492,
+      "in_applicability_domain": true,
+      "training_range": [
+        6,
+        18
+      ],
+      "loo_cv_mean_pct_error": 5.062992595449807
+    },
+    "gold_cross_check": {
+      "real_literature_cmc_mM": 3.827,
+      "tool_predicted_cmc_mM": 3.6930641152456696,
+      "pct_difference_tool_vs_literature": 3.4997618174635585,
+      "note": "Interpolation (query within the given points' range) -- tool prediction and the real independently-published literature CMC agree to within 3.5%."
+    }
+  }
+]
