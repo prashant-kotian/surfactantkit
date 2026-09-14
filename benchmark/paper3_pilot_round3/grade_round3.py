@@ -41,15 +41,32 @@ NUMERIC_FIELDS = ["cmc_mM", "gamma_max_mol_per_m2", "a_min_nm2", "frumkin_a", "d
 CATEGORICAL_FIELDS = ["charge_type", "isotherm_model"]
 ALL_FIELDS = CATEGORICAL_FIELDS + NUMERIC_FIELDS
 
-_SECTION_RE = re.compile(r"^#?\s*(R3-0[1-8])\s*$", re.MULTILINE)
+_SECTION_RE = re.compile(r"^#?\s*(R3-0[1-8])\b", re.MULTILINE)
+# Anchored to LINE START + word boundary after the id (not full-line-only
+# anymore, per the 2026-09-14 augmented-condition transcripts which have
+# trailing text on the same header line, e.g.
+# "R3-02  (SMILES: CCCCCCCCCCCCN+(C)C.[Br-], 296.35 K)"). Still safe against
+# inline mid-paragraph mentions (e.g. "Contrast R3-01 (same SDS...)") since
+# those never start a line.
+
+# 2026-09-14: the SMILES pasted into Claude for the augmented run had its
+# [N+] bracket notation stripped on these 4 questions (confirmed by directly
+# comparing against Round3_Questions_Augmented.txt's real content -- not the
+# same corruption in the ChatGPT transcript, which has all 8 SMILES intact).
+# The tool correctly refused to parse the malformed SMILES on all 4 ("charge_
+# type": "unparseable") rather than silently guessing -- a real, disciplined,
+# correct response to a BAD INPUT, not a reasoning failure. Graded normally
+# against gold below (so the aggregate score reflects reality), but flagged
+# separately so this data-corruption artifact isn't silently blended into
+# Claude's real augmented-condition performance without explanation.
+CORRUPTED_INPUT = {("claude", "augmented", qid) for qid in ("R3-02", "R3-03", "R3-06", "R3-08")}
 
 
 def split_transcript(text: str) -> dict[str, str]:
     """Split a transcript into {question_id: response_text} using the real
-    header lines (standalone 'R3-0N' or '# R3-0N' lines) -- deliberately
-    anchored to a FULL LINE match so inline mentions elsewhere in the prose
-    (e.g. Claude's own "Contrast R3-01 (same SDS...)") are not mistaken for
-    section boundaries."""
+    header lines -- deliberately anchored to LINE START so inline mentions
+    elsewhere in the prose (e.g. Claude's own "Contrast R3-01 (same SDS...)")
+    are not mistaken for section boundaries."""
     matches = list(_SECTION_RE.finditer(text))
     if not matches:
         raise ValueError(f"No 'R3-0N' section headers found in transcript -- check the format.")
@@ -81,77 +98,106 @@ def grade_field(field: str, gold_v, model_v) -> bool:
     return _num_ok(model_v, float(gold_v), REL_TOLERANCE, None)
 
 
+RUNS = [
+    ("chatgpt", "unaugmented", HERE / "unagumented manual" / "R3-01_to_R3-08_answers chatgpt.txt"),
+    ("claude", "unaugmented", HERE / "unagumented manual" / "R3_surfactant_analyses claude.txt"),
+    ("chatgpt", "augmented", HERE / "aggumented manual" / "R3-01_to_R3-08_generated_outputs gpt.txt"),
+    ("claude", "augmented", HERE / "aggumented manual" / "R3_answers claude.txt"),
+]
+
+
 def main():
     questions = {q["id"]: q for q in json.loads((HERE / "round3_questions.json").read_text(encoding="utf-8"))}
 
-    transcripts = {
-        "chatgpt": HERE / "unagumented manual" / "R3-01_to_R3-08_answers chatgpt.txt",
-        "claude": HERE / "unagumented manual" / "R3_surfactant_analyses claude.txt",
-    }
+    results = {}     # (model,cond) -> qid -> field -> bool
+    extracted = {}   # (model,cond) -> qid -> parsed FINAL_JSON dict (or None)
 
-    results = {}  # model -> qid -> field -> bool
-    extracted = {}  # model -> qid -> parsed FINAL_JSON dict (or None)
-
-    for model, path in transcripts.items():
+    for model, cond, path in RUNS:
+        key = (model, cond)
         text = path.read_text(encoding="utf-8")
         sections = split_transcript(text)
-        results[model] = {}
-        extracted[model] = {}
+        results[key] = {}
+        extracted[key] = {}
         for qid, q in questions.items():
             resp = sections.get(qid)
             ans = extract_final(resp) if resp else None
-            extracted[model][qid] = ans
+            extracted[key][qid] = ans
             gold = q["gold"]
             field_results = {}
             for field in ALL_FIELDS:
                 model_v = ans.get(field) if ans else None
                 field_results[field] = grade_field(field, gold.get(field), model_v)
-            results[model][qid] = field_results
+            results[key][qid] = field_results
 
     # ---- per-question x per-field table ----
-    print("=" * 100)
+    print("=" * 110)
     print("ROUND 3 GRADING -- per-question, per-field (P=pass, F=fail)")
     print(f"Numeric tolerance: {REL_TOLERANCE*100:.0f}% relative. Null-vs-value mismatch always fails "
           f"(no partial credit for a caveated-but-wrong FINAL_JSON value).")
-    print("=" * 100)
-    header = f"{'QID':6s} {'Model':8s} " + " ".join(f"{f[:10]:10s}" for f in ALL_FIELDS) + "  Score"
+    print("* = corrupted-SMILES input (see CORRUPTED_INPUT) -- graded normally but flag before trusting.")
+    print("=" * 110)
+    header = f"{'QID':6s} {'Model':8s} {'Cond':12s} " + " ".join(f"{f[:10]:10s}" for f in ALL_FIELDS) + "  Score"
     print(header)
     print("-" * len(header))
-    totals = {m: 0 for m in transcripts}
-    max_total = {m: 0 for m in transcripts}
-    field_totals = {m: {f: 0 for f in ALL_FIELDS} for m in transcripts}
+    totals = {k: 0 for k in results}
+    max_total = {k: 0 for k in results}
+    field_totals = {k: {f: 0 for f in ALL_FIELDS} for k in results}
+    totals_clean = {k: 0 for k in results}       # excluding corrupted-input rows
+    max_total_clean = {k: 0 for k in results}
 
     for qid in questions:
-        for model in transcripts:
-            fr = results[model][qid]
+        for model, cond, _ in RUNS:
+            key = (model, cond)
+            fr = results[key][qid]
+            corrupted = key + (qid,) in CORRUPTED_INPUT
+            flag = "*" if corrupted else " "
             row = " ".join(f"{'PASS' if fr[f] else 'FAIL':10s}" for f in ALL_FIELDS)
             n_pass = sum(fr.values())
-            totals[model] += n_pass
-            max_total[model] += len(ALL_FIELDS)
+            totals[key] += n_pass
+            max_total[key] += len(ALL_FIELDS)
+            if not corrupted:
+                totals_clean[key] += n_pass
+                max_total_clean[key] += len(ALL_FIELDS)
             for f in ALL_FIELDS:
-                field_totals[model][f] += int(fr[f])
-            print(f"{qid:6s} {model:8s} {row}  {n_pass}/{len(ALL_FIELDS)}")
+                field_totals[key][f] += int(fr[f])
+            print(f"{qid:5s}{flag} {model:8s} {cond:12s} {row}  {n_pass}/{len(ALL_FIELDS)}")
         print()
 
     # ---- summary ----
-    print("=" * 100)
-    print("SUMMARY")
-    print("=" * 100)
-    for model in transcripts:
-        pct = 100 * totals[model] / max_total[model]
-        print(f"{model:10s}: {totals[model]}/{max_total[model]} = {pct:.1f}%")
+    print("=" * 110)
+    print("SUMMARY (literal grade, corrupted-input rows included)")
+    print("=" * 110)
+    for key in results:
+        pct = 100 * totals[key] / max_total[key]
+        print(f"{key[0]:10s} {key[1]:12s}: {totals[key]}/{max_total[key]} = {pct:.1f}%")
+
     print()
-    print(f"{'Field':22s} " + " ".join(f"{m:10s}" for m in transcripts))
+    print("SUMMARY excluding the 4 corrupted-SMILES rows (claude/augmented only affected)")
+    print("-" * 80)
+    for key in results:
+        if max_total_clean[key] != max_total[key]:
+            pct = 100 * totals_clean[key] / max_total_clean[key]
+            print(f"{key[0]:10s} {key[1]:12s}: {totals_clean[key]}/{max_total_clean[key]} = {pct:.1f}% "
+                  f"(literal, corrupted included: {100*totals[key]/max_total[key]:.1f}%)")
+
+    print()
+    print(f"{'Field':22s} " + " ".join(f"{k[0]}/{k[1][:4]:6s}" for k in results))
     for f in ALL_FIELDS:
-        row = " ".join(f"{field_totals[m][f]}/8={100*field_totals[m][f]/8:5.1f}%" for m in transcripts)
+        row = " ".join(f"{field_totals[k][f]}/8={100*field_totals[k][f]/8:5.1f}%" for k in results)
         print(f"{f:22s} {row}")
 
     out = {
         "rel_tolerance": REL_TOLERANCE,
-        "totals": {m: {"score": totals[m], "max": max_total[m], "pct": 100*totals[m]/max_total[m]} for m in transcripts},
-        "field_totals": {m: {f: field_totals[m][f] for f in ALL_FIELDS} for m in transcripts},
-        "per_question": {m: {qid: results[m][qid] for qid in questions} for m in transcripts},
-        "extracted_answers": extracted,
+        "corrupted_input_rows": sorted(f"{m}/{c}/{q}" for (m, c, q) in CORRUPTED_INPUT),
+        "totals": {f"{k[0]}/{k[1]}": {"score": totals[k], "max": max_total[k], "pct": 100*totals[k]/max_total[k]} for k in results},
+        "totals_excluding_corrupted": {
+            f"{k[0]}/{k[1]}": {"score": totals_clean[k], "max": max_total_clean[k],
+                                "pct": (100*totals_clean[k]/max_total_clean[k]) if max_total_clean[k] else None}
+            for k in results
+        },
+        "field_totals": {f"{k[0]}/{k[1]}": {f: field_totals[k][f] for f in ALL_FIELDS} for k in results},
+        "per_question": {f"{k[0]}/{k[1]}": {qid: results[k][qid] for qid in questions} for k in results},
+        "extracted_answers": {f"{k[0]}/{k[1]}": extracted[k] for k in results},
     }
     out_path = HERE / "round3_grading_results.json"
     out_path.write_text(json.dumps(out, indent=2, default=str))

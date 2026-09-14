@@ -1,0 +1,240 @@
+R3-01
+
+Tool-returned additional values:
+
+- Classification confidence: high
+- System type used: ionic_no_added_salt
+- CMC method: three-segment linear regression break-point (baseline + decline + plateau, BIC-selected)
+- Surface tension at CMC: 37.02779999999999 mN/m
+- Premicellar slope: -16.874915354270026 mN/m per lnC
+- Langmuir/Frumkin parameters and delta BIC: null
+- Counterion factor used: null
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 9.181551744003432,
+  "gamma_max_mol_per_m2": 3.4266179484081045e-6,
+  "a_min_nm2": 0.48460000273601533,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+    "only 2 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this.",
+    "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+  ]
+}
+
+================================================================================
+
+R3-02
+
+Tool-returned additional values:
+
+- Classification confidence: high
+- System type: ionic_no_added_salt
+- Surface tension at CMC: 41.2185 mN/m
+- Premicellar slope: -11.65740873889509 mN/m per lnC
+- CMC method: three-segment linear regression break-point (baseline + decline + plateau, BIC-selected)
+- Langmuir/Frumkin fit parameters and delta BIC: null
+- Counterion factor: null
+
+FINAL_JSON:
+{
+  "charge_type": "cationic",
+  "cmc_mM": 8.185,
+  "gamma_max_mol_per_m2": 2.365554247930501e-6,
+  "a_min_nm2": 0.7019661749996075,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+    "only 3 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this.",
+    "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+  ]
+}
+
+================================================================================
+
+R3-03
+
+Tool-returned additional values:
+
+- Classification confidence: high
+- System type: ionic_no_added_salt
+- Surface tension at CMC: 42.100791666666666 mN/m
+- Premicellar slope: -13.447721149886242 mN/m per lnC
+- CMC method: three-segment linear regression break-point (baseline + decline + plateau, BIC-selected)
+- Langmuir/Frumkin fit parameters and delta BIC: null
+- Counterion factor: null
+
+FINAL_JSON:
+{
+  "charge_type": "cationic",
+  "cmc_mM": 0.7459976541518075,
+  "gamma_max_mol_per_m2": 2.724253145838813e-6,
+  "a_min_nm2": 0.609539194149506,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+    "only 3 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this.",
+    "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+  ]
+}
+
+================================================================================
+
+R3-04
+
+Tool-returned additional values:
+
+- Classification confidence: high
+- System type: ionic_no_added_salt
+- Surface tension at CMC: 26.139971095844896 mN/m
+- Premicellar slope: -7.122490251465491 mN/m per lnC
+- CMC method: two-segment linear regression break-point (min total RSS)
+- Langmuir K: 52.68345028447053
+- Frumkin K: 1.4238914034157935
+- Isotherm delta BIC: -4.221903495647462
+- Counterion factor: null
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 2.5118612800073175,
+  "gamma_max_mol_per_m2": 1.436590099494216e-6,
+  "a_min_nm2": 1.1558892601017348,
+  "isotherm_model": "langmuir",
+  "frumkin_a": 3.7882920070770343,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+    "isotherm fit note: |a|=3.788 >= 2 -- this is the real Frumkin 2D-condensation regime (a genuine physical phase-transition-like effect, see frumkin_theta's docstring), not a fitting artifact, but theta(C) may be multi-valued near the transition; inspect the fitted curve's residuals near the steepest region before trusting downstream thermodynamic quantities derived from this a.",
+    "isotherm fit note: Frumkin's own best-fit a=3.788 is not close to zero, but Langmuir (a=0) still won on BIC (delta_bic=-4.22) -- likely means the data has too few/too-noisy points to resolve a genuine lateral-interaction term, not that the interaction is actually absent. Report the model selection as data-limited, not as proof a=0.",
+    "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+  ]
+}
+
+================================================================================
+
+R3-05
+
+Tool-returned additional values:
+
+- Classification confidence: moderate
+- System type: nonionic
+- Surface tension at CMC: 62.23951919523979 mN/m
+- Premicellar slope: -4.167072289472288 mN/m per lnC
+- CMC method: three-segment linear regression break-point (baseline + decline + plateau, BIC-selected)
+- Langmuir/Frumkin fit parameters and delta BIC: null
+- Counterion factor: 1.0
+
+FINAL_JSON:
+{
+  "charge_type": "nonionic",
+  "cmc_mM": 0.29664793948382656,
+  "gamma_max_mol_per_m2": 1.6809780241400414e-6,
+  "a_min_nm2": 0.9878410326175139,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": -30.092934148659232,
+  "undeterminable": [
+    "classification note (nonionic): No anionic or cationic functional group was matched by this function's known patterns. This is a claim by absence, not a positive structural confirmation of a nonionic headgroup (e.g. PEG/glycoside) -- correct for all real nonionic surfactants tested so far, but if this SMILES contains an unusual/unrecognized ionizable group this function's pattern list does not cover, it would be silently missed. Flagged as moderate, not high, confidence for exactly this reason.",
+    "only 3 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this."
+  ]
+}
+
+================================================================================
+
+R3-06
+
+Tool-returned additional values:
+
+- Classification confidence: high
+- System type: null
+- Surface tension at CMC: 57.716432520556694 mN/m
+- Premicellar slope: -4.268386401874902 mN/m per lnC
+- CMC method: two-segment linear regression break-point (min total RSS)
+- Langmuir/Frumkin fit parameters and delta BIC: null
+- Counterion factor: null
+
+FINAL_JSON:
+{
+  "charge_type": "zwitterionic",
+  "cmc_mM": 1.019803902718557,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "charge_type='zwitterionic' -- Zwitterionic surfactants are net-neutral overall; the Gibbs prefactor convention for zwitterionics is a separate real question this function does not resolve -- do not default to either the ionic or nonionic prefactor without checking the specific system's own literature precedent (e.g. this project's own sulfobetaine/betaine validation entries). Gamma_max, A_min, and the isotherm fit all require a known Gibbs prefactor, which cannot be assigned here without resolving this ambiguity (e.g. independently confirming solution pH, or the specific zwitterionic-system literature precedent for its prefactor convention).",
+    "Gamma_max, A_min, and isotherm model selection all skipped: system_type undetermined (see above)."
+  ]
+}
+
+================================================================================
+
+R3-07
+
+Tool-returned additional values:
+
+- Classification confidence: high
+- System type: ionic_excess_electrolyte
+- Surface tension at CMC: 34.53909117955187 mN/m
+- Premicellar slope: -8.905517158488314 mN/m per lnC
+- CMC method: three-segment linear regression break-point (baseline + decline + plateau, BIC-selected)
+- Langmuir K: 13.607598391949328
+- Frumkin K: 0.27367444983719413
+- Isotherm delta BIC: 11.196767368936367
+- Counterion factor: null
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 1.5874507866387544,
+  "gamma_max_mol_per_m2": 3.59244515024161e-6,
+  "a_min_nm2": 0.4622308755534283,
+  "isotherm_model": "frumkin",
+  "frumkin_a": 3.999999999271645,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "isotherm fit note: fitted a=4.000 landed within 0.160 of the search bound (-4.0, 4.0) -- the true optimum may lie further out; widen a_bounds and refit before trusting this value, do not report it as final.",
+    "isotherm fit note: |a|=4.000 >= 2 -- this is the real Frumkin 2D-condensation regime (a genuine physical phase-transition-like effect, see frumkin_theta's docstring), not a fitting artifact, but theta(C) may be multi-valued near the transition; inspect the fitted curve's residuals near the steepest region before trusting downstream thermodynamic quantities derived from this a.",
+    "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+  ]
+}
+
+================================================================================
+
+R3-08
+
+Tool-returned additional values:
+
+- Classification confidence: high
+- System type: ionic_no_added_salt
+- Surface tension at CMC: 53.55735 mN/m
+- Premicellar slope: -11.38733622724068 mN/m per lnC
+- CMC method: three-segment linear regression break-point (baseline + decline + plateau, BIC-selected)
+- Langmuir/Frumkin fit parameters and delta BIC: null
+- Counterion factor: null
+
+FINAL_JSON:
+{
+  "charge_type": "cationic",
+  "cmc_mM": 2.8938345020059457,
+  "gamma_max_mol_per_m2": 2.310750372429272e-6,
+  "a_min_nm2": 0.7186146487247501,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+    "only 2 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this.",
+    "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+  ]
+}

@@ -1,19 +1,57 @@
 {
   "rel_tolerance": 0.2,
+  "corrupted_input_rows": [
+    "claude/augmented/R3-02",
+    "claude/augmented/R3-03",
+    "claude/augmented/R3-06",
+    "claude/augmented/R3-08"
+  ],
   "totals": {
-    "chatgpt": {
+    "chatgpt/unaugmented": {
       "score": 39,
       "max": 56,
       "pct": 69.64285714285714
     },
-    "claude": {
+    "claude/unaugmented": {
       "score": 25,
       "max": 56,
       "pct": 44.642857142857146
+    },
+    "chatgpt/augmented": {
+      "score": 55,
+      "max": 56,
+      "pct": 98.21428571428571
+    },
+    "claude/augmented": {
+      "score": 46,
+      "max": 56,
+      "pct": 82.14285714285714
+    }
+  },
+  "totals_excluding_corrupted": {
+    "chatgpt/unaugmented": {
+      "score": 39,
+      "max": 56,
+      "pct": 69.64285714285714
+    },
+    "claude/unaugmented": {
+      "score": 25,
+      "max": 56,
+      "pct": 44.642857142857146
+    },
+    "chatgpt/augmented": {
+      "score": 55,
+      "max": 56,
+      "pct": 98.21428571428571
+    },
+    "claude/augmented": {
+      "score": 28,
+      "max": 28,
+      "pct": 100.0
     }
   },
   "field_totals": {
-    "chatgpt": {
+    "chatgpt/unaugmented": {
       "charge_type": 8,
       "isotherm_model": 6,
       "cmc_mM": 3,
@@ -22,7 +60,7 @@
       "frumkin_a": 7,
       "delta_g_mic_kJ_per_mol": 7
     },
-    "claude": {
+    "claude/unaugmented": {
       "charge_type": 5,
       "isotherm_model": 0,
       "cmc_mM": 3,
@@ -30,10 +68,28 @@
       "a_min_nm2": 7,
       "frumkin_a": 3,
       "delta_g_mic_kJ_per_mol": 2
+    },
+    "chatgpt/augmented": {
+      "charge_type": 8,
+      "isotherm_model": 8,
+      "cmc_mM": 8,
+      "gamma_max_mol_per_m2": 8,
+      "a_min_nm2": 8,
+      "frumkin_a": 7,
+      "delta_g_mic_kJ_per_mol": 8
+    },
+    "claude/augmented": {
+      "charge_type": 4,
+      "isotherm_model": 8,
+      "cmc_mM": 8,
+      "gamma_max_mol_per_m2": 5,
+      "a_min_nm2": 5,
+      "frumkin_a": 8,
+      "delta_g_mic_kJ_per_mol": 8
     }
   },
   "per_question": {
-    "chatgpt": {
+    "chatgpt/unaugmented": {
       "R3-01": {
         "charge_type": true,
         "isotherm_model": true,
@@ -107,7 +163,7 @@
         "delta_g_mic_kJ_per_mol": true
       }
     },
-    "claude": {
+    "claude/unaugmented": {
       "R3-01": {
         "charge_type": true,
         "isotherm_model": false,
@@ -180,10 +236,158 @@
         "frumkin_a": false,
         "delta_g_mic_kJ_per_mol": true
       }
+    },
+    "chatgpt/augmented": {
+      "R3-01": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-02": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-03": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-04": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": false,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-05": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-06": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-07": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-08": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      }
+    },
+    "claude/augmented": {
+      "R3-01": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-02": {
+        "charge_type": false,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": false,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-03": {
+        "charge_type": false,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": false,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-04": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-05": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-06": {
+        "charge_type": false,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-07": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-08": {
+        "charge_type": false,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": false,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      }
     }
   },
   "extracted_answers": {
-    "chatgpt": {
+    "chatgpt/unaugmented": {
       "R3-01": {
         "charge_type": "anionic",
         "cmc_mM": 8.52,
@@ -355,7 +559,7 @@
         ]
       }
     },
-    "claude": {
+    "claude/unaugmented": {
       "R3-01": {
         "charge_type": "anionic",
         "cmc_mM": 9.3,
@@ -493,6 +697,229 @@
           "aggregation number and micelle size/shape - need scattering/fluorescence",
           "Krafft temperature - needs temperature-dependent solubility",
           "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry"
+        ]
+      }
+    },
+    "chatgpt/augmented": {
+      "R3-01": {
+        "charge_type": "anionic",
+        "cmc_mM": 9.181551744003432,
+        "gamma_max_mol_per_m2": 3.4266179484081045e-06,
+        "a_min_nm2": 0.48460000273601533,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+          "only 2 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this.",
+          "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+        ]
+      },
+      "R3-02": {
+        "charge_type": "cationic",
+        "cmc_mM": 8.185,
+        "gamma_max_mol_per_m2": 2.365554247930501e-06,
+        "a_min_nm2": 0.7019661749996075,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+          "only 3 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this.",
+          "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+        ]
+      },
+      "R3-03": {
+        "charge_type": "cationic",
+        "cmc_mM": 0.7459976541518075,
+        "gamma_max_mol_per_m2": 2.724253145838813e-06,
+        "a_min_nm2": 0.609539194149506,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+          "only 3 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this.",
+          "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+        ]
+      },
+      "R3-04": {
+        "charge_type": "anionic",
+        "cmc_mM": 2.5118612800073175,
+        "gamma_max_mol_per_m2": 1.436590099494216e-06,
+        "a_min_nm2": 1.1558892601017348,
+        "isotherm_model": "langmuir",
+        "frumkin_a": 3.7882920070770343,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+          "isotherm fit note: |a|=3.788 >= 2 -- this is the real Frumkin 2D-condensation regime (a genuine physical phase-transition-like effect, see frumkin_theta's docstring), not a fitting artifact, but theta(C) may be multi-valued near the transition; inspect the fitted curve's residuals near the steepest region before trusting downstream thermodynamic quantities derived from this a.",
+          "isotherm fit note: Frumkin's own best-fit a=3.788 is not close to zero, but Langmuir (a=0) still won on BIC (delta_bic=-4.22) -- likely means the data has too few/too-noisy points to resolve a genuine lateral-interaction term, not that the interaction is actually absent. Report the model selection as data-limited, not as proof a=0.",
+          "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+        ]
+      },
+      "R3-05": {
+        "charge_type": "nonionic",
+        "cmc_mM": 0.29664793948382656,
+        "gamma_max_mol_per_m2": 1.6809780241400414e-06,
+        "a_min_nm2": 0.9878410326175139,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": -30.092934148659232,
+        "undeterminable": [
+          "classification note (nonionic): No anionic or cationic functional group was matched by this function's known patterns. This is a claim by absence, not a positive structural confirmation of a nonionic headgroup (e.g. PEG/glycoside) -- correct for all real nonionic surfactants tested so far, but if this SMILES contains an unusual/unrecognized ionizable group this function's pattern list does not cover, it would be silently missed. Flagged as moderate, not high, confidence for exactly this reason.",
+          "only 3 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this."
+        ]
+      },
+      "R3-06": {
+        "charge_type": "zwitterionic",
+        "cmc_mM": 1.019803902718557,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "charge_type='zwitterionic' -- Zwitterionic surfactants are net-neutral overall; the Gibbs prefactor convention for zwitterionics is a separate real question this function does not resolve -- do not default to either the ionic or nonionic prefactor without checking the specific system's own literature precedent (e.g. this project's own sulfobetaine/betaine validation entries). Gamma_max, A_min, and the isotherm fit all require a known Gibbs prefactor, which cannot be assigned here without resolving this ambiguity (e.g. independently confirming solution pH, or the specific zwitterionic-system literature precedent for its prefactor convention).",
+          "Gamma_max, A_min, and isotherm model selection all skipped: system_type undetermined (see above)."
+        ]
+      },
+      "R3-07": {
+        "charge_type": "anionic",
+        "cmc_mM": 1.5874507866387544,
+        "gamma_max_mol_per_m2": 3.59244515024161e-06,
+        "a_min_nm2": 0.4622308755534283,
+        "isotherm_model": "frumkin",
+        "frumkin_a": 3.999999999271645,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "isotherm fit note: fitted a=4.000 landed within 0.160 of the search bound (-4.0, 4.0) -- the true optimum may lie further out; widen a_bounds and refit before trusting this value, do not report it as final.",
+          "isotherm fit note: |a|=4.000 >= 2 -- this is the real Frumkin 2D-condensation regime (a genuine physical phase-transition-like effect, see frumkin_theta's docstring), not a fitting artifact, but theta(C) may be multi-valued near the transition; inspect the fitted curve's residuals near the steepest region before trusting downstream thermodynamic quantities derived from this a.",
+          "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+        ]
+      },
+      "R3-08": {
+        "charge_type": "cationic",
+        "cmc_mM": 2.8938345020059457,
+        "gamma_max_mol_per_m2": 2.310750372429272e-06,
+        "a_min_nm2": 0.7186146487247501,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "electrolyte_condition not supplied for an ionic surfactant -- defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2), the correct choice ONLY if the real solution truly has no significant excess inert electrolyte; if it does, re-run with electrolyte_condition='excess_electrolyte' (n=1) for a materially different Gamma_max.",
+          "only 2 pre-CMC data point(s) available (need >=4) -- Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min above come from the curve's own premicellar slope directly and do not depend on this.",
+          "deltaG_mic skipped for this ionic surfactant: no independent counterion-binding measurement supplied (counterion_dissociation_alpha). This is real information a surface-tension curve and SMILES alone cannot provide -- it requires an independent measurement (e.g. conductivity slope-ratio method, see counterion_binding_degree) or a literature value for this specific surfactant. Do not assume alpha; report the gap."
+        ]
+      }
+    },
+    "claude/augmented": {
+      "R3-01": {
+        "charge_type": "anionic",
+        "cmc_mM": 9.181551744003432,
+        "gamma_max_mol_per_m2": 3.4266179484081045e-06,
+        "a_min_nm2": 0.48460000273601533,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "Isotherm model (Langmuir vs Frumkin) and its K/a: only 2 pre-CMC points available, need >=4, so model selection was skipped (Gamma_max/A_min do not depend on this).",
+          "delta_g_mic: no independent counterion-binding measurement (counterion_dissociation_alpha) supplied for this ionic surfactant; a surface-tension curve + SMILES alone cannot provide it.",
+          "Electrolyte condition not supplied for an ionic surfactant: defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2); if excess inert electrolyte is actually present, Gamma_max/A_min would differ (n=1)."
+        ]
+      },
+      "R3-02": {
+        "charge_type": "unparseable",
+        "cmc_mM": 8.185,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "SMILES could not be parsed ('CCCCCCCCCCCCN+(C)C.[Br-]'): charge type, Gamma_max, A_min, isotherm model, and delta_g_mic all undetermined until a valid SMILES is supplied.",
+          "Gamma_max, A_min, and isotherm model selection all skipped because system_type is undetermined (SMILES parse failure)."
+        ]
+      },
+      "R3-03": {
+        "charge_type": "unparseable",
+        "cmc_mM": 0.7459976541518075,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "SMILES could not be parsed ('CCCCCCCCCCCCCCCCN+(C)C.[Br-]'): charge type, Gamma_max, A_min, isotherm model, and delta_g_mic all undetermined until a valid SMILES is supplied.",
+          "Gamma_max, A_min, and isotherm model selection all skipped because system_type is undetermined (SMILES parse failure)."
+        ]
+      },
+      "R3-04": {
+        "charge_type": "anionic",
+        "cmc_mM": 2.5118612800073175,
+        "gamma_max_mol_per_m2": 1.436590099494216e-06,
+        "a_min_nm2": 1.1558892601017348,
+        "isotherm_model": "langmuir",
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "Electrolyte condition not supplied for an ionic surfactant: defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2); if significant excess inert electrolyte is actually present, Gamma_max would differ materially (n=1).",
+          "Isotherm fit note: Frumkin best-fit |a|=3.788 >= 2 (real 2D-condensation regime, theta(C) may be multi-valued near the transition) - inspect residuals near the steepest region before trusting downstream thermodynamics derived from this a.",
+          "Isotherm fit note: Langmuir (a=0) still won on BIC (delta_bic=-4.22) despite Frumkin's a=3.788, likely because the data has too few/too-noisy points to resolve a lateral-interaction term - model selection is data-limited, not proof a=0.",
+          "delta_g_mic skipped for this ionic surfactant: no independent counterion-binding measurement (counterion_dissociation_alpha) supplied; a surface-tension curve + SMILES alone cannot provide it."
+        ]
+      },
+      "R3-05": {
+        "charge_type": "nonionic",
+        "cmc_mM": 0.29664793948382656,
+        "gamma_max_mol_per_m2": 1.6809780241400414e-06,
+        "a_min_nm2": 0.9878410326175139,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": -30.092934148659232,
+        "undeterminable": [
+          "Classification note (nonionic): no anionic or cationic group matched the tool's known patterns - a claim by absence, not positive confirmation of a nonionic headgroup; flagged moderate confidence because an unusual/unrecognized ionizable group could be silently missed.",
+          "Only 3 pre-CMC data points available (need >=4): Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min come from the premicellar slope directly and do not depend on this."
+        ]
+      },
+      "R3-06": {
+        "charge_type": "unparseable",
+        "cmc_mM": 1.019803902718557,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "SMILES could not be parsed ('CCCCCCCCCCCCC(=O)NCCCN+(C)CC(=O)[O-]'): charge type, Gamma_max, A_min, isotherm model, and delta_g_mic all undetermined until a valid SMILES is supplied.",
+          "Gamma_max, A_min, and isotherm model selection all skipped because system_type is undetermined (SMILES parse failure)."
+        ]
+      },
+      "R3-07": {
+        "charge_type": "anionic",
+        "cmc_mM": 1.5874507866387544,
+        "gamma_max_mol_per_m2": 3.59244515024161e-06,
+        "a_min_nm2": 0.4622308755534283,
+        "isotherm_model": "frumkin",
+        "frumkin_a": 3.999999999271645,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "Isotherm fit note: fitted a=4.000 landed within 0.160 of the search bound (-4.0, 4.0) - the true optimum may lie further out; widen a_bounds and refit before trusting this value, do not report it as final.",
+          "Isotherm fit note: |a|=4.000 >= 2 (real Frumkin 2D-condensation regime; theta(C) may be multi-valued near the transition) - inspect residuals near the steepest region before trusting downstream thermodynamics derived from this a.",
+          "delta_g_mic skipped for this ionic surfactant: no independent counterion-binding measurement (counterion_dissociation_alpha) supplied; a surface-tension curve + SMILES alone cannot provide it."
+        ]
+      },
+      "R3-08": {
+        "charge_type": "unparseable",
+        "cmc_mM": 2.8938345020059457,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "SMILES could not be parsed ('CCCCCCCCCCCCN+(C)C.[Br-]'): charge type, Gamma_max, A_min, isotherm model, and delta_g_mic all undetermined until a valid SMILES is supplied.",
+          "Gamma_max, A_min, and isotherm model selection all skipped because system_type is undetermined (SMILES parse failure)."
         ]
       }
     }

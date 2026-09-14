@@ -1,0 +1,296 @@
+========================================
+R3-01  (SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+], 296.15 K)
+Sodium dodecyl sulfate (SDS)
+========================================
+
+I called the tool with the SMILES, curve, and temperature exactly as given, and
+passed neither electrolyte_condition nor counterion_dissociation_alpha, since the
+question text states neither a real-world electrolyte condition nor an
+independently measured counterion-binding value for this solution.
+
+The compound (sodium dodecyl sulfate) was classified as anionic (high
+confidence). From the raw tensiometry curve, the tool located the CMC at 9.18 mM
+via a three-segment break-point fit (baseline + decline + plateau), with gamma at
+the CMC ~ 37.03 mN/m. From the premicellar slope it computed a maximum surface
+excess Gamma_max = 3.427e-6 mol/m^2 and a minimum area per molecule
+A_min = 0.4846 nm^2, using the ionic-no-added-salt Gibbs prefactor (n = 2).
+
+The tool left three outputs null and reported them in its gaps list: the isotherm
+model selection (and hence its parameters) was skipped, delta_G_mic was skipped,
+and it flagged the defaulted electrolyte condition. No null values were filled in.
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 9.181551744003432,
+  "gamma_max_mol_per_m2": 3.4266179484081045e-6,
+  "a_min_nm2": 0.48460000273601533,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "Isotherm model (Langmuir vs Frumkin) and its K/a: only 2 pre-CMC points available, need >=4, so model selection was skipped (Gamma_max/A_min do not depend on this).",
+    "delta_g_mic: no independent counterion-binding measurement (counterion_dissociation_alpha) supplied for this ionic surfactant; a surface-tension curve + SMILES alone cannot provide it.",
+    "Electrolyte condition not supplied for an ionic surfactant: defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2); if excess inert electrolyte is actually present, Gamma_max/A_min would differ (n=1)."
+  ]
+}
+
+
+========================================
+R3-02  (SMILES: CCCCCCCCCCCCN+(C)C.[Br-], 296.35 K)
+Dodecyltrimethylammonium bromide (DTAB) -- SMILES not bracketed
+========================================
+
+The tool returned its values, but note an important outcome: the SMILES as
+written (CCCCCCCCCCCCN+(C)C.[Br-] -- the quaternary nitrogen lacks the
+bracket/charge notation [N+]) could not be parsed by the tool, so it could not
+classify the charge type or derive the composition-dependent properties. I passed
+neither electrolyte_condition nor counterion_dissociation_alpha, since the
+question states neither.
+
+The tool still extracted a CMC of 8.185 mM directly from the raw curve
+(three-segment break-point fit, gamma at CMC ~ 41.22 mN/m). Everything downstream
+of the SMILES -- charge type, Gamma_max, A_min, isotherm model, and delta_G_mic --
+was left null because the SMILES did not parse.
+
+Reporting faithfully: the tool's charge_type field came back as "unparseable"
+with confidence "none". That is not one of the enum values in the FINAL_JSON
+template (anionic/cationic/nonionic/zwitterionic/ambiguous_pH_dependent), but per
+the instruction not to override or invent a value, the tool's actual output is
+reported rather than substituting "cationic".
+
+FINAL_JSON:
+{
+  "charge_type": "unparseable",
+  "cmc_mM": 8.185,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "SMILES could not be parsed ('CCCCCCCCCCCCN+(C)C.[Br-]'): charge type, Gamma_max, A_min, isotherm model, and delta_g_mic all undetermined until a valid SMILES is supplied.",
+    "Gamma_max, A_min, and isotherm model selection all skipped because system_type is undetermined (SMILES parse failure)."
+  ]
+}
+
+
+========================================
+R3-03  (SMILES: CCCCCCCCCCCCCCCCN+(C)C.[Br-], 296.85 K)
+Cetyltrimethylammonium bromide (CTAB) -- SMILES not bracketed
+========================================
+
+As with the previous case, the SMILES as written (...N+(C)C... -- the quaternary
+nitrogen lacks the required [N+] bracket notation) could not be parsed by the
+tool, so charge type and all composition-dependent properties were left
+undetermined. I passed neither optional parameter, since the question states
+neither an electrolyte condition nor a measured counterion-binding value.
+
+The tool still extracted the CMC directly from the raw curve: 0.746 mM
+(three-segment break-point fit, gamma at CMC ~ 42.10 mN/m). Gamma_max, A_min, the
+isotherm model, and delta_G_mic were all left null because the SMILES did not
+parse.
+
+Reporting faithfully, the tool's charge_type field returned "unparseable"
+(confidence "none"), which is not among the enum values in the template. Per the
+instruction not to override or fill in what the tool returned or left null, the
+tool's actual output is reported rather than substituting "cationic".
+
+FINAL_JSON:
+{
+  "charge_type": "unparseable",
+  "cmc_mM": 0.7459976541518075,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "SMILES could not be parsed ('CCCCCCCCCCCCCCCCN+(C)C.[Br-]'): charge type, Gamma_max, A_min, isotherm model, and delta_g_mic all undetermined until a valid SMILES is supplied.",
+    "Gamma_max, A_min, and isotherm model selection all skipped because system_type is undetermined (SMILES parse failure)."
+  ]
+}
+
+
+========================================
+R3-04  (SMILES: CCCCC(CC)COC(=O)CC(S(=O)(=O)[O-])C(=O)OCC(CC)CCCC.[Na+], 298.15 K)
+Sodium bis(2-ethylhexyl) sulfosuccinate (Aerosol OT / AOT)
+========================================
+
+I called the tool with the SMILES, curve, and temperature as given, and passed
+neither electrolyte_condition nor counterion_dissociation_alpha, since the
+question states neither condition.
+
+The compound (Aerosol OT) was classified anionic (high confidence). The tool
+located the CMC at 2.512 mM (two-segment break-point fit, gamma at CMC ~ 26.14
+mN/m), and from the premicellar slope computed Gamma_max = 1.437e-6 mol/m^2 and
+A_min = 1.156 nm^2, using the ionic-no-added-salt Gibbs prefactor (n = 2).
+
+For the isotherm, the tool selected Langmuir on BIC (delta_BIC = -4.22, K = 52.68).
+It reported the Frumkin alternative's fitted a = 3.788 for reference, but since the
+selected model is Langmuir, the Frumkin a is not the operative parameter -- it is
+reported as null per the template's "only meaningful if isotherm_model is
+frumkin." delta_G_mic was left null (no counterion-binding data).
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 2.5118612800073175,
+  "gamma_max_mol_per_m2": 1.436590099494216e-6,
+  "a_min_nm2": 1.1558892601017348,
+  "isotherm_model": "langmuir",
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "Electrolyte condition not supplied for an ionic surfactant: defaulted to 'ionic_no_added_salt' (Gibbs prefactor n=2); if significant excess inert electrolyte is actually present, Gamma_max would differ materially (n=1).",
+    "Isotherm fit note: Frumkin best-fit |a|=3.788 >= 2 (real 2D-condensation regime, theta(C) may be multi-valued near the transition) - inspect residuals near the steepest region before trusting downstream thermodynamics derived from this a.",
+    "Isotherm fit note: Langmuir (a=0) still won on BIC (delta_bic=-4.22) despite Frumkin's a=3.788, likely because the data has too few/too-noisy points to resolve a lateral-interaction term - model selection is data-limited, not proof a=0.",
+    "delta_g_mic skipped for this ionic surfactant: no independent counterion-binding measurement (counterion_dissociation_alpha) supplied; a surface-tension curve + SMILES alone cannot provide it."
+  ]
+}
+
+
+========================================
+R3-05  (SMILES: CCCCCCCCCCCCOCCOCCOCCOCCOCCOCCOCCO, 298.15 K)
+Dodecyl heptaethylene glycol ether (C12E7), nonionic
+========================================
+
+I called the tool with the SMILES, curve, and temperature as given. This is a
+nonionic surfactant (C12E7), so the ionic-only optional parameters do not apply,
+and neither was passed.
+
+The tool classified it as nonionic (moderate confidence -- a classification by
+absence of matched ionic groups). It located the CMC at 0.297 mM (three-segment
+break-point fit, gamma at the break ~ 62.24 mN/m), and from the premicellar slope
+computed Gamma_max = 1.681e-6 mol/m^2 and A_min = 0.988 nm^2, using the nonionic
+Gibbs prefactor. Because it's nonionic, delta_G_mic was computed directly:
+-30.09 kJ/mol (counterion factor 1.0). Isotherm model selection was skipped (only
+3 pre-CMC points).
+
+FINAL_JSON:
+{
+  "charge_type": "nonionic",
+  "cmc_mM": 0.29664793948382656,
+  "gamma_max_mol_per_m2": 1.6809780241400414e-6,
+  "a_min_nm2": 0.9878410326175139,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": -30.092934148659232,
+  "undeterminable": [
+    "Classification note (nonionic): no anionic or cationic group matched the tool's known patterns - a claim by absence, not positive confirmation of a nonionic headgroup; flagged moderate confidence because an unusual/unrecognized ionizable group could be silently missed.",
+    "Only 3 pre-CMC data points available (need >=4): Langmuir-vs-Frumkin isotherm model selection skipped; Gamma_max/A_min come from the premicellar slope directly and do not depend on this."
+  ]
+}
+
+
+========================================
+R3-06  (SMILES: CCCCCCCCCCCCC(=O)NCCCN+(C)CC(=O)[O-], 298.15 K)
+Lauramidopropyl betaine (zwitterionic) -- SMILES not bracketed
+========================================
+
+Again the SMILES as written (...N+(C)... -- the quaternary nitrogen lacks the
+required [N+] bracket notation) could not be parsed by the tool, so charge type
+and all composition-dependent properties were left undetermined. I passed neither
+optional parameter, since the question states neither an electrolyte condition nor
+a measured counterion-binding value (and neither would apply to this zwitterionic
+betaine anyway).
+
+The tool still extracted the CMC from the raw curve: 1.020 mM (two-segment
+break-point fit, gamma at CMC ~ 57.72 mN/m). Gamma_max, A_min, the isotherm model,
+and delta_G_mic were all left null because the SMILES did not parse.
+
+Reporting faithfully, the tool's charge_type returned "unparseable" (confidence
+"none"), which is not one of the enum values in the template. Per the instruction
+not to override or fill in what the tool returned or left null, the tool's actual
+output is reported rather than substituting "zwitterionic".
+
+FINAL_JSON:
+{
+  "charge_type": "unparseable",
+  "cmc_mM": 1.019803902718557,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "SMILES could not be parsed ('CCCCCCCCCCCCC(=O)NCCCN+(C)CC(=O)[O-]'): charge type, Gamma_max, A_min, isotherm model, and delta_g_mic all undetermined until a valid SMILES is supplied.",
+    "Gamma_max, A_min, and isotherm model selection all skipped because system_type is undetermined (SMILES parse failure)."
+  ]
+}
+
+
+========================================
+R3-07  (SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+], 298.15 K, 100 mM added NaCl)
+SDS in excess electrolyte
+========================================
+
+This time the question explicitly states the solution contains 100 mM added NaCl
+-- a real-world excess-electrolyte condition -- so electrolyte_condition=
+'excess_electrolyte' was passed. counterion_dissociation_alpha was still not
+passed, since no counterion-binding measurement is given.
+
+The compound (SDS) was classified anionic (high confidence). With the
+excess-electrolyte prefactor (n = 1), the tool found CMC = 1.587 mM (three-segment
+break-point fit, gamma at CMC ~ 34.54 mN/m), Gamma_max = 3.592e-6 mol/m^2, and
+A_min = 0.462 nm^2.
+
+For the isotherm, the tool selected Frumkin on BIC (delta_BIC = 11.20), with
+fitted a = 4.000 -- but it flags that this value landed essentially at the
+search-bound edge, so the fitted a is not reliable as a final number. The tool's
+returned Frumkin a value is reported faithfully in the JSON while its own warning
+is carried into the undeterminable list. delta_G_mic was left null (no
+counterion-binding data).
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 1.5874507866387544,
+  "gamma_max_mol_per_m2": 3.59244515024161e-6,
+  "a_min_nm2": 0.4622308755534283,
+  "isotherm_model": "frumkin",
+  "frumkin_a": 3.999999999271645,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "Isotherm fit note: fitted a=4.000 landed within 0.160 of the search bound (-4.0, 4.0) - the true optimum may lie further out; widen a_bounds and refit before trusting this value, do not report it as final.",
+    "Isotherm fit note: |a|=4.000 >= 2 (real Frumkin 2D-condensation regime; theta(C) may be multi-valued near the transition) - inspect residuals near the steepest region before trusting downstream thermodynamics derived from this a.",
+    "delta_g_mic skipped for this ionic surfactant: no independent counterion-binding measurement (counterion_dissociation_alpha) supplied; a surface-tension curve + SMILES alone cannot provide it."
+  ]
+}
+
+
+========================================
+R3-08  (SMILES: CCCCCCCCCCCCN+(C)C.[Br-], 296.35 K, truncated 6-point curve)
+DTAB -- SMILES not bracketed
+========================================
+
+As in R3-02, the SMILES as written (...N+(C)C... -- the quaternary nitrogen lacks
+the required [N+] bracket notation) could not be parsed by the tool, so charge
+type and all composition-dependent properties were left undetermined. I passed
+neither optional parameter, since the question states neither.
+
+Note that with this truncated 6-point curve the tool's three-segment fit placed
+the CMC at 2.894 mM (gamma at CMC ~ 53.56 mN/m) -- a different result from R3-02's
+8.185 mM, because the CMC break-point is data-dependent and this series omits the
+post-CMC plateau points. The tool's value for this input is reported faithfully.
+Gamma_max, A_min, isotherm model, and delta_G_mic were all left null because the
+SMILES did not parse.
+
+The tool's charge_type returned "unparseable" (confidence "none"), not an enum
+value in the template. Per the instruction, the tool's actual output is reported
+rather than substituting "cationic".
+
+FINAL_JSON:
+{
+  "charge_type": "unparseable",
+  "cmc_mM": 2.8938345020059457,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "SMILES could not be parsed ('CCCCCCCCCCCCN+(C)C.[Br-]'): charge type, Gamma_max, A_min, isotherm model, and delta_g_mic all undetermined until a valid SMILES is supplied.",
+    "Gamma_max, A_min, and isotherm model selection all skipped because system_type is undetermined (SMILES parse failure)."
+  ]
+}
