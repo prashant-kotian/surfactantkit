@@ -18,6 +18,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from surfactantkit import mixed_micelle as mm
+from surfactantkit import mixture_model_selection as mms
 from surfactantkit import adsorption as ads
 from surfactantkit import hlb as hlb_mod
 from surfactantkit import cpp as cpp_mod
@@ -184,6 +185,24 @@ def _fit_predict_cmc(a):
         "r_squared": r.r_squared, "in_applicability_domain": r.in_applicability_domain,
         "training_range": list(r.training_range), "loo_cv_mean_pct_error": r.loo_cv_mean_pct_error,
         "warning": r.warning,
+    }
+
+
+def _select_mixture_model(a):
+    r = mms.select_mixture_model(a["alpha1_series"], a["cmc_mix_series_mM"], a["cmc1_mM"], a["cmc2_mM"])
+    return {
+        "selected_model": r.selected_model,
+        "candidates": [
+            {"name": c.name, "n_params": c.n_params, "params": c.params,
+             "predicted_cmc_mix_mM": c.predicted_cmc_mix, "rss_ln_space": c.rss_ln_space, "bic": c.bic}
+            for c in r.candidates
+        ],
+        "rodenas_diagnostic": {
+            "alpha1_used": r.rodenas_diagnostic.alpha1_used,
+            "x1_rodenas": r.rodenas_diagnostic.x1_rodenas,
+            "method": r.rodenas_diagnostic.method,
+        },
+        "excluded_models": r.excluded_models,
     }
 
 
@@ -384,10 +403,28 @@ _TOOL_LIST = [
                             "description": "matching real CMC values (mM) for each n_carbons_list entry, same order"},
            "query_n_carbons": _num("chain length to predict the CMC for")},
           ["n_carbons_list", "cmc_mM_list", "query_n_carbons"], _fit_predict_cmc),
+    # Added 2026-09-14 for the Paper 3 ground-zero redesign's mixture
+    # model-selection track -- same real function surfactantkit-mcp exposes
+    # as select_mixture_model. Fits Clint/Rubingh/EOMMM to a raw composition
+    # series and reports which one wins by BIC, rather than requiring the
+    # caller to already know which mixture theory applies.
+    _spec("select_mixture_model",
+          "Given a raw binary-surfactant composition series (alpha1 + measured mixed CMC at each "
+          "point, plus both pure-component CMCs), fit Clint ideal mixing, Rubingh regular-solution "
+          "theory, and EOMMM asymmetric Margules, then report which one actually fits by BIC -- do "
+          "not assume or ask which model applies, that judgment is exactly what this tool provides. "
+          "Needs at least 3 composition points.",
+          {"alpha1_series": {"type": "array", "items": {"type": "number"},
+                              "description": "bulk mole fraction of component 1 at each composition"},
+           "cmc_mix_series_mM": {"type": "array", "items": {"type": "number"},
+                                  "description": "measured mixed CMC (mM) at each composition, same order"},
+           "cmc1_mM": _num("pure CMC of component 1 (mM)"),
+           "cmc2_mM": _num("pure CMC of component 2 (mM)")},
+          ["alpha1_series", "cmc_mix_series_mM", "cmc1_mM", "cmc2_mM"], _select_mixture_model),
 ]
 
 TOOLS = {t["name"]: t for t in _TOOL_LIST}
-assert len(TOOLS) == 26, f"expected 26 tools, got {len(TOOLS)}"
+assert len(TOOLS) == 27, f"expected 27 tools, got {len(TOOLS)}"
 
 
 def dispatch(name: str, args: dict) -> dict:

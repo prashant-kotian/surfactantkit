@@ -28,6 +28,7 @@ except ImportError:
     from mcp.server.fastmcp import FastMCP as MCPServer
 
 from . import mixed_micelle as mm
+from . import mixture_model_selection as mms
 from . import adsorption as ads
 from . import hlb as hlb_mod
 from . import hld as hld_mod
@@ -332,6 +333,52 @@ def eommm_find_minimal_feasible_margin(alpha1_series: list[float], cmc_mix_serie
         "r_squared": result.r_squared,
         "n_points": result.n_points,
         "method": result.method,
+    }
+
+
+@mcp.tool()
+def select_mixture_model(alpha1_series: list[float], cmc_mix_series_mM: list[float], cmc1_mM: float, cmc2_mM: float) -> dict:
+    """Given a raw binary-surfactant composition series -- alpha1 (bulk
+    mole fraction of component 1) and the measured mixed CMC at each
+    composition, plus the two pure-component CMCs -- decide WHICH mixture
+    theory actually fits this system, rather than requiring the caller to
+    already know which model to use. Fits Clint ideal mixing (0
+    parameters, the no-interaction null hypothesis), Rubingh regular-
+    solution theory (1 parameter, beta regressed across the series), and
+    EOMMM asymmetric Margules (2 parameters, W12/W21 globally fit), then
+    compares them by BIC (a real information criterion that penalizes
+    extra parameters, not just whichever model happens to fit numerically
+    closest) and reports which one wins.
+
+    Also reports Rodenas' model-independent composition (a real,
+    structurally different cross-check derived directly from the local
+    slope of the given curve, not a competing parametric fit -- see the
+    result's rodenas_diagnostic) and explicitly discloses why Rosen's
+    monolayer extension, Corrin-Harkins' counterion-effect model, and
+    Maeda's free energy are NOT entered into this comparison -- each needs
+    a genuinely different real input (surface-tension-derived
+    concentrations, a counterion-concentration series, and an already-
+    solved Rubingh x1/beta respectively) that a bare composition series
+    does not supply; see excluded_models in the result for the exact
+    reason for each.
+
+    Needs at least 3 composition points (EOMMM's own real minimum, the
+    strictest of the three competing models). alpha1_series and
+    cmc_mix_series_mM must be the same length."""
+    result = mms.select_mixture_model(alpha1_series, cmc_mix_series_mM, cmc1_mM, cmc2_mM)
+    return {
+        "selected_model": result.selected_model,
+        "candidates": [
+            {"name": c.name, "n_params": c.n_params, "params": c.params,
+             "predicted_cmc_mix_mM": c.predicted_cmc_mix, "rss_ln_space": c.rss_ln_space, "bic": c.bic}
+            for c in result.candidates
+        ],
+        "rodenas_diagnostic": {
+            "alpha1_used": result.rodenas_diagnostic.alpha1_used,
+            "x1_rodenas": result.rodenas_diagnostic.x1_rodenas,
+            "method": result.rodenas_diagnostic.method,
+        },
+        "excluded_models": result.excluded_models,
     }
 
 
