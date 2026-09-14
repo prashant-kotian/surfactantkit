@@ -1,0 +1,324 @@
+[
+  {
+    "id": "B-01",
+    "system": "DTAB (1) - SDS (2), DTAB-rich",
+    "source": "Rodriguez et al., PMC6554738",
+    "component1": {
+      "name": "dodecyltrimethylammonium bromide (DTAB)",
+      "pure_cmc_mM": 14.8
+    },
+    "component2": {
+      "name": "sodium dodecyl sulfate (SDS)",
+      "pure_cmc_mM": 8.0
+    },
+    "alpha1": 0.75,
+    "cmc_mix_mM": 13.0,
+    "ask": [
+      "clint_ideal_cmc_mM",
+      "synergy_classification"
+    ],
+    "gold": {
+      "clint_ideal_cmc_mM": 12.20618556701031,
+      "rubingh_x1": null,
+      "rubingh_beta": null,
+      "synergy_classification": "antagonistic (real mixed CMC is HIGHER than the Clint ideal prediction here)"
+    },
+    "literature_cross_check": {
+      "clint_ideal_cmc_mM": {
+        "paper": 12.21,
+        "tool": 12.20618556701031,
+        "pct_diff": 0.03124023742580287
+      }
+    },
+    "prompt_note": null,
+    "design_notes": "Real mixed CMC (13.00 mM) exceeds the Clint ideal (12.21 mM) -- classify synergy from that comparison directly, not from a Rubingh beta (not requested here). NOT shown to the model -- classifying synergy from its own computed Clint ideal vs. the given real mixed CMC is exactly the task; stating the comparison outcome in the prompt would hand over the answer."
+  },
+  {
+    "id": "B-02",
+    "system": "Triton X-100 (1) - SDS (2)",
+    "source": "Muherei & Junin 2009, Asian J. Appl. Sci. 2(2), 115-127",
+    "component1": {
+      "name": "Triton X-100",
+      "pure_cmc_mM": 0.387
+    },
+    "component2": {
+      "name": "sodium dodecyl sulfate (SDS)",
+      "pure_cmc_mM": 3.468
+    },
+    "alpha1": 0.47,
+    "cmc_mix_mM": 0.547,
+    "ask": [
+      "rubingh_x1",
+      "rubingh_beta",
+      "synergy_classification"
+    ],
+    "gold": {
+      "clint_ideal_cmc_mM": null,
+      "rubingh_x1": 0.7501308418070419,
+      "rubingh_beta": -1.9458897842586758,
+      "synergy_classification": "synergistic"
+    },
+    "literature_cross_check": {
+      "rubingh_x1": {
+        "paper": 0.7501,
+        "tool": 0.7501308418070419,
+        "pct_diff": 0.0041116927132298295
+      },
+      "rubingh_beta": {
+        "paper": -1.888,
+        "tool": -1.9458897842586758,
+        "pct_diff": 3.06619620014173
+      }
+    },
+    "prompt_note": "Note: a Clint ideal CMC is not requested for this question -- only x1, beta, and synergy classification.",
+    "design_notes": "Clint ideal CMC deliberately excluded from 'ask': this project's own literature validation found the paper's own stated 'ideal CMC' column does not reproduce from its own stated pure-component CMCs via the standard Clint formula (a real, disclosed dead end in the source paper itself, not a tool gap) -- asking for it here would only reward guessing against an already-known-unreliable number. The prompt_note only scopes the task (don't compute it), without explaining why, so as not to hint at a data-quality issue the model should not be assumed to know about."
+  },
+  {
+    "id": "B-03",
+    "system": "Gemini G6 (1) - Triton X-114 (2)",
+    "source": "Azum et al. 2022, Biointerface Res. Appl. Chem. 12(6), 7416-7428",
+    "component1": {
+      "name": "gemini surfactant G6 (16-6-16)",
+      "pure_cmc_mM": 0.041
+    },
+    "component2": {
+      "name": "Triton X-114",
+      "pure_cmc_mM": 0.263
+    },
+    "alpha1": 0.48,
+    "cmc_mix_mM": 0.061,
+    "ask": [
+      "clint_ideal_cmc_mM",
+      "rubingh_x1",
+      "rubingh_beta",
+      "synergy_classification"
+    ],
+    "gold": {
+      "clint_ideal_cmc_mM": 0.07307535917592843,
+      "rubingh_x1": 0.7625923834060881,
+      "rubingh_beta": -1.1645314216615559,
+      "synergy_classification": "synergistic"
+    },
+    "literature_cross_check": {
+      "clint_ideal_cmc_mM": {
+        "paper": 0.073,
+        "tool": 0.07307535917592843,
+        "pct_diff": 0.103231747847172
+      },
+      "rubingh_x1": {
+        "paper": 0.764,
+        "tool": 0.7625923834060881,
+        "pct_diff": 0.18424300967432783
+      },
+      "rubingh_beta": {
+        "paper": -1.211,
+        "tool": -1.1645314216615559,
+        "pct_diff": 3.837207129516449
+      }
+    },
+    "prompt_note": null,
+    "design_notes": "Strong agreement case: Clint ideal exact match, x1 close match, beta correct sign (~4% magnitude difference from the paper's own regression-fit value -- a real, expected pointwise-vs-regression gap, not an error)."
+  },
+  {
+    "id": "B-04",
+    "system": "TTAB (1) - Tween-20 (2)",
+    "source": "Lee & Lee 2012, J. Korean Chem. Soc. 56(5), 556-562",
+    "component1": {
+      "name": "tetradecyltrimethylammonium bromide (TTAB)",
+      "pure_cmc_mM": 2.25
+    },
+    "component2": {
+      "name": "Tween-20 (polysorbate 20)",
+      "pure_cmc_mM": 0.41
+    },
+    "alpha1": 0.6,
+    "cmc_mix_mM": 0.7,
+    "ask": [
+      "clint_ideal_cmc_mM",
+      "rubingh_x1",
+      "rubingh_beta",
+      "synergy_classification"
+    ],
+    "gold": {
+      "clint_ideal_cmc_mM": 0.8049738219895287,
+      "rubingh_x1": 0.27663288818812704,
+      "rubingh_beta": -0.751761714866676,
+      "synergy_classification": "synergistic"
+    },
+    "literature_cross_check": {
+      "rubingh_x1": {
+        "paper": 0.28,
+        "tool": 0.27663288818812704,
+        "pct_diff": 1.2025399328117825
+      }
+    },
+    "prompt_note": null,
+    "design_notes": "The source paper does not report a Clint ideal CMC at all -- clint_ideal_cmc_mM is real, computable, and included in gold as a tool-only value (no independent literature check exists for it in THIS system, unlike x1/beta which do). Originally also asked the model to self-report which fields were literature-checkable, but dropped that sub-ask 2026-09-14: it isn't fairly answerable from the given data alone (it's a question about what the SOURCE PAPER reports, not something derivable from the numbers given, and telling the model would itself be a leak)."
+  },
+  {
+    "id": "B-05",
+    "system": "gemini 12-4-12 (1) - zwitterionic ZW3-12 (2)",
+    "source": "McLachlan et al. 2020, RSC Adv. 10(6), 3221-3232",
+    "component1": {
+      "name": "gemini 12-4-12",
+      "pure_cmc_mM": 1.1
+    },
+    "component2": {
+      "name": "zwitterionic ZW3-12",
+      "pure_cmc_mM": 2.63
+    },
+    "alpha1": 0.5,
+    "cmc_mix_mM": 1.52,
+    "ask": [
+      "clint_ideal_cmc_mM",
+      "rubingh_x1_component1"
+    ],
+    "gold": {
+      "clint_ideal_cmc_mM": 1.5512064343163539,
+      "rubingh_x1": 0.6970841160228471,
+      "rubingh_beta": null,
+      "synergy_classification": null
+    },
+    "literature_cross_check": {
+      "clint_ideal_cmc_mM": {
+        "paper": 1.55,
+        "tool": 1.5512064343163539,
+        "pct_diff": 0.07783447202282648
+      },
+      "rubingh_x1_component1": {
+        "paper_reports_component2_x": 0.301,
+        "component1_x_derived": 0.6990000000000001,
+        "tool_component1_x1": 0.6970841160228471,
+        "pct_diff": 0.27408926711772835
+      }
+    },
+    "prompt_note": null,
+    "design_notes": "CONVENTION TRAP: the source paper reports the MICELLAR MOLE FRACTION OF COMPONENT 2 (ZW3-12), 0.301 -- not component 1's. The question explicitly asks for component 1's (gemini 12-4-12) micellar mole fraction. Correct gold is x1 (component 1) = 1 - 0.301 = 0.699, matching the tool's own x1 output directly (the tool always solves for component 1 as passed). A model that reports 0.301 as if it were x1 for component 1 has made a real, checkable convention error. No hint given in the prompt -- the question is fully self-contained (alpha1, cmc_mix, both pure CMCs given), so no literature lookup is needed to answer correctly regardless; this mainly tests whether a model that DOES recall or half-recall this real paper gets tripped up by its component-2 convention, and separately (augmented condition) whether the tool's own x1 output gets correctly attributed to component 1 in the model's final report."
+  },
+  {
+    "id": "B-06",
+    "system": "Triton X-100 (1) - rhamnolipid biosurfactant (2)",
+    "source": "Liu et al. 2020, Molecules 25(18), 4327, Table 9",
+    "component1": {
+      "name": "Triton X-100",
+      "pure_cmc_mM": 0.309
+    },
+    "component2": {
+      "name": "rhamnolipid biosurfactant",
+      "pure_cmc_mM": 0.134
+    },
+    "alpha1": 0.888,
+    "cmc_mix_mM": 0.253,
+    "ask": [
+      "clint_ideal_cmc_mM",
+      "rubingh_x1",
+      "rubingh_beta",
+      "synergy_classification"
+    ],
+    "gold": {
+      "clint_ideal_cmc_mM": 0.2695703125,
+      "rubingh_x1": 0.7438081748818017,
+      "rubingh_beta": -0.34681918162217784,
+      "synergy_classification": "synergistic"
+    },
+    "literature_cross_check": {
+      "clint_ideal_cmc_mM": {
+        "paper": 0.27,
+        "tool": 0.2695703125,
+        "pct_diff": 0.15914351851851768
+      },
+      "rubingh_x1": {
+        "paper": 0.744,
+        "tool": 0.7438081748818017,
+        "pct_diff": 0.02578294599439023
+      },
+      "rubingh_beta": {
+        "paper": -0.379,
+        "tool": -0.34681918162217784,
+        "pct_diff": 8.490981102327748
+      }
+    },
+    "prompt_note": null,
+    "design_notes": "Real synthetic/biosurfactant mixture -- same discipline applies to a less \"textbook\" real-world system."
+  },
+  {
+    "id": "B-07",
+    "system": "sodium cholate (1) - SDS (2), 1:1",
+    "source": "Kang, Bahadur et al., PMC4087020",
+    "component1": {
+      "name": "sodium cholate (NaCA)",
+      "pure_cmc_mM": 11.5
+    },
+    "component2": {
+      "name": "sodium dodecyl sulfate (SDS)",
+      "pure_cmc_mM": 11.98
+    },
+    "alpha1": 0.5,
+    "cmc_mix_mM": 4.07,
+    "ask": [
+      "clint_ideal_cmc_mM",
+      "rubingh_x1",
+      "rubingh_beta",
+      "synergy_classification"
+    ],
+    "gold": {
+      "clint_ideal_cmc_mM": 11.735093696763203,
+      "rubingh_x1": 0.5032784796461098,
+      "rubingh_beta": -4.23633113340202,
+      "synergy_classification": "synergistic"
+    },
+    "literature_cross_check": {
+      "clint_ideal_cmc_mM": {
+        "paper": 11.74,
+        "tool": 11.735093696763203,
+        "pct_diff": 0.04179133932536224
+      },
+      "rubingh_x1": {
+        "paper": 0.503,
+        "tool": 0.5032784796461098,
+        "pct_diff": 0.055363746741516985
+      },
+      "rubingh_beta": {
+        "paper": -4.23,
+        "tool": -4.23633113340202,
+        "pct_diff": 0.14967218444490585
+      }
+    },
+    "prompt_note": null,
+    "design_notes": "The strongest single validation case in this project's own survey: a FIXED 1:1 mixture study (no multi-point regression possible for the paper's own beta), so beta itself matches almost exactly here (not just its sign) -- use this as the case where a model's answer SHOULD land very close on every field, a real control. No hint given in the prompt -- this is deliberately presented as an ordinary question, not flagged as an 'easy' one."
+  },
+  {
+    "id": "B-08",
+    "system": "SDS (1) - DHPC (2)",
+    "source": "Vautier-Giongo, Bakshi, Singh, Ranganathan, Hajdu & Bales, J. Colloid Interface Sci. 282(1) (2005) 149-155",
+    "component1": {
+      "name": "sodium dodecyl sulfate (SDS)",
+      "pure_cmc_mM": 8.3
+    },
+    "component2": {
+      "name": "1,2-diheptanoyl-sn-glycero-3-phosphocholine (DHPC)",
+      "pure_cmc_mM": 1.8
+    },
+    "alpha1": 0.6,
+    "cmc_mix_mM": 1.4,
+    "ask": [
+      "rubingh_x1"
+    ],
+    "gold": {
+      "clint_ideal_cmc_mM": null,
+      "rubingh_x1": 0.40572309912277715,
+      "rubingh_beta": null,
+      "synergy_classification": null
+    },
+    "literature_cross_check": {
+      "rubingh_x1": {
+        "paper_table_value": 0.29,
+        "tool": 0.40572309912277715,
+        "pct_diff_vs_paper_table": 39.90451693888868,
+        "caveat": "This project's own literature validation work concluded the paper's own printed table value (0.29) is LIKELY A TRANSCRIPTION ERROR, not the true solved root -- it breaks an otherwise smooth, monotonically-decreasing x1 sequence across this paper's 5 neighboring bulk compositions (0.63, 0.56, 0.48, [0.29 printed / 0.41 solved], 0.24), while the tool's own solved value (~0.41) fits that trend. Gold here is the real, honestly-computed root, not the paper's own printed (probably erroneous) number."
+      }
+    },
+    "prompt_note": null,
+    "design_notes": "ROOT-FINDING TRAP: only raw (alpha1, cmc_mix, pure CMCs) are given -- no literature x1 value is supplied anywhere in the prompt for the model to copy. It must actually solve Rubingh's implicit equation. This also tests whether the model, if it happens to recall or look up this specific real paper's printed table value (0.29), correctly prefers its own genuine calculation over a recalled number that a real published table itself is likely to have gotten wrong. No hint about this given in the prompt -- coaching 'trust your own calculation over a recalled number' would itself bias the test."
+  }
+]
