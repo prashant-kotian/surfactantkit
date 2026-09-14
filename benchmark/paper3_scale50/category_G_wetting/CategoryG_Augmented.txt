@@ -1,0 +1,113 @@
+G-01
+[reference only, do not paste -- source: Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's wetting_work_of_adhesion and wetting_spreading_coefficient tools -- call them to analyze the real data below. Do not compute anything by hand.
+
+Compound: sodium dodecyl sulfate (SDS)
+Solvent system: water
+Real liquid surface tension (gamma_LV): 34.097 mN/m
+Real measured contact angle on glass (theta): 24.811 degrees
+
+Report the tools' own returned values faithfully -- do not override, "correct", or second-guess what they return.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "work_of_adhesion_mJ_per_m2": <number>,
+  "spreading_coefficient_mJ_per_m2": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+G-02
+[reference only, do not paste -- source: Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's wetting_work_of_adhesion and wetting_spreading_coefficient tools -- call them to analyze the real data below. Do not compute anything by hand.
+
+Compound: cetyltrimethylammonium bromide (CTAB)
+Solvent system: water
+Real liquid surface tension (gamma_LV): 37.895 mN/m
+Real measured contact angle on glass (theta): 44.561 degrees
+
+Report the tools' own returned values faithfully -- do not override, "correct", or second-guess what they return.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "work_of_adhesion_mJ_per_m2": <number>,
+  "spreading_coefficient_mJ_per_m2": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+G-03
+[reference only, do not paste -- source: Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's wetting_work_of_adhesion and wetting_spreading_coefficient tools -- call them to analyze the real data below. Do not compute anything by hand.
+
+Compound: cetylpyridinium chloride (CPC)
+Solvent system: water
+Real liquid surface tension (gamma_LV): 38.195 mN/m
+Real measured contact angle on glass (theta): 43.73 degrees
+
+Report the tools' own returned values faithfully -- do not override, "correct", or second-guess what they return.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "work_of_adhesion_mJ_per_m2": <number>,
+  "spreading_coefficient_mJ_per_m2": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+G-04
+[reference only, do not paste -- source: Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's wetting_work_of_adhesion and wetting_spreading_coefficient tools -- call them to analyze the real data below. Do not compute anything by hand.
+
+Compound: sodium dodecyl sulfate (SDS)
+Solvent system: 0.10 volume fraction 2-Propanol in water
+Real liquid surface tension (gamma_LV): 29.112 mN/m
+Real measured contact angle on glass (theta): 24.314 degrees
+
+Report the tools' own returned values faithfully -- do not override, "correct", or second-guess what they return.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "work_of_adhesion_mJ_per_m2": <number>,
+  "spreading_coefficient_mJ_per_m2": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+G-05
+[reference only, do not paste -- source: Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's wetting_work_of_adhesion and wetting_spreading_coefficient tools -- call them to analyze the real data below. Do not compute anything by hand.
+
+Compound: cetylpyridinium chloride (CPC)
+Solvent system: 0.10 volume fraction 2-Propanol in water
+Real liquid surface tension (gamma_LV): 32.947 mN/m
+Real measured contact angle on glass (theta): 43.548 degrees
+
+Report the tools' own returned values faithfully -- do not override, "correct", or second-guess what they return.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "work_of_adhesion_mJ_per_m2": <number>,
+  "spreading_coefficient_mJ_per_m2": <number>
+}
+<<< PASTE ABOVE <<<

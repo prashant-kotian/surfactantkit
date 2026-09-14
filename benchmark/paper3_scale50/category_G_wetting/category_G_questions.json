@@ -1,0 +1,62 @@
+[
+  {
+    "id": "G-01",
+    "compound_name": "sodium dodecyl sulfate (SDS)",
+    "solvent_system": "water",
+    "source": "Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)",
+    "gamma_LV_mN_per_m": 34.097,
+    "contact_angle_deg": 24.811,
+    "gold": {
+      "work_of_adhesion_mJ_per_m2": 65.04716866806214,
+      "spreading_coefficient_mJ_per_m2": -3.147168668062137
+    }
+  },
+  {
+    "id": "G-02",
+    "compound_name": "cetyltrimethylammonium bromide (CTAB)",
+    "solvent_system": "water",
+    "source": "Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)",
+    "gamma_LV_mN_per_m": 37.895,
+    "contact_angle_deg": 44.561,
+    "gold": {
+      "work_of_adhesion_mJ_per_m2": 64.89473684210526,
+      "spreading_coefficient_mJ_per_m2": -10.894736842105262
+    }
+  },
+  {
+    "id": "G-03",
+    "compound_name": "cetylpyridinium chloride (CPC)",
+    "solvent_system": "water",
+    "source": "Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)",
+    "gamma_LV_mN_per_m": 38.195,
+    "contact_angle_deg": 43.73,
+    "gold": {
+      "work_of_adhesion_mJ_per_m2": 65.79540548021035,
+      "spreading_coefficient_mJ_per_m2": -10.595405480210351
+    }
+  },
+  {
+    "id": "G-04",
+    "compound_name": "sodium dodecyl sulfate (SDS)",
+    "solvent_system": "0.10 volume fraction 2-Propanol in water",
+    "source": "Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)",
+    "gamma_LV_mN_per_m": 29.112,
+    "contact_angle_deg": 24.314,
+    "gold": {
+      "work_of_adhesion_mJ_per_m2": 55.642257214967636,
+      "spreading_coefficient_mJ_per_m2": -2.582257214967629
+    }
+  },
+  {
+    "id": "G-05",
+    "compound_name": "cetylpyridinium chloride (CPC)",
+    "solvent_system": "0.10 volume fraction 2-Propanol in water",
+    "source": "Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- gamma and theta back-derived from the paper's own reported cos(theta) and adhesion-tension columns (AT=gamma*cos(theta)), verified self-consistent (WA reproduces to 0.00-0.02%)",
+    "gamma_LV_mN_per_m": 32.947,
+    "contact_angle_deg": 43.548,
+    "gold": {
+      "work_of_adhesion_mJ_per_m2": 56.827019867549666,
+      "spreading_coefficient_mJ_per_m2": -9.067019867549673
+    }
+  }
+]
