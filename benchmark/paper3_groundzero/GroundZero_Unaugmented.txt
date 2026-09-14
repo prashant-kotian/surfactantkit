@@ -1,12 +1,12 @@
 GZ-01
-[reference only, do not paste -- source: Shah, Das & Bhattarai 2025, Heliyon, PMC11835642, real raw tensiometry curve for AOT in water. Gold computed by directly calling surfactantkit.orchestrate.derive_all_properties_from_smiles_and_curve. REVISED 2026-09-15 per user correction: removed "you are given only X, nothing else" framing, removed "from the structure alone"/"from the curve" signposting, removed naming Langmuir/Frumkin explicitly, removed "say so explicitly, do not assume a value" refusal-coaching -- the model must now find each of these on its own rather than being walked through the decomposition.]
+[reference only, do not paste -- source: Shah, Das & Bhattarai 2025, Heliyon, PMC11835642, real raw tensiometry curve for AOT in water, real stated temperature 298.15 K (confirmed by fetching the actual paper 2026-09-15, not assumed). Gold computed by directly calling surfactantkit.orchestrate.derive_all_properties_from_smiles_and_curve at this exact real T. REVISED 2026-09-15 (first pass, per user correction): removed "you are given only X, nothing else" framing, removed "from the structure alone"/"from the curve" signposting, removed naming Langmuir/Frumkin explicitly, removed "say so explicitly, do not assume a value" refusal-coaching. REVISED AGAIN, same day: added the real experimental temperature explicitly. Withholding it was never a deliberate, meaningful trap (unlike the missing counterion-binding degree, which genuinely isn't reported anywhere) -- it was an accidental omission of routine experimental metadata a real tensiometry table always carries, and it only added numeric noise (Gamma_max/A_min both genuinely depend on T) without testing any real chemistry judgment. A real manual run correctly flagged this gap and explicitly assumed 298.15 K -- which happened to be exactly right, confirmed against the real paper, but that was luck, not something this question should have required the model to guess.]
 
 >>> PASTE BELOW >>>
 Work entirely from first principles -- do not search the internet or recall a literature value for this compound.
 
 SMILES: CCCCC(CC)COC(=O)CC(C(=O)OCC(CC)CCCC)S(=O)(=O)[O-].[Na+]
 
-Real concentration-vs-surface-tension data (concentration in mM, surface tension in mN/m):
+Real concentration-vs-surface-tension data at 298.15 K (concentration in mM, surface tension in mN/m):
   0.01585, 62.22
   0.03981, 55.66
   0.10000, 49.10
@@ -186,14 +186,14 @@ FINAL_JSON:
 
 
 GZ-08
-[reference only, do not paste -- raw curve forward-constructed from real, published Szyszkowski/Langmuir parameters for C12E8 (Ho, Lips & Velikov, PCCP 2023, PMC10132450, Table 1: Gamma_inf=2.21e-6 mol/m^2, K=8.772e6 L/mol, sigma0=72.0 mN/m, nonionic). K/Gamma_max not given -- fitting them back is the point; verified recoverable to <1e-10% via szyszkowski_fit_K. REVISED: removed "no isotherm parameters are given" meta-commentary.]
+[reference only, do not paste -- raw curve forward-constructed from real, published Szyszkowski/Langmuir parameters for C12E8 (Ho, Lips & Velikov, PCCP 2023, PMC10132450, Table 1: Gamma_inf=2.21e-6 mol/m^2, K=8.772e6 L/mol, sigma0=72.0 mN/m, nonionic, real stated T=298 K). K/Gamma_max not given -- fitting them back is the point; verified recoverable to <1e-10% via szyszkowski_fit_K. REVISED: removed "no isotherm parameters are given" meta-commentary. REVISED AGAIN, same day as GZ-01's temperature fix, same real reasoning: temperature is a genuine required input to the Gibbs/Szyszkowski relation actually being used here, and the real source paper states it -- added explicitly rather than leaving it as an accidental, uninformative gap.]
 
 >>> PASTE BELOW >>>
 Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
 
 SMILES: CCCCCCCCCCCCOCCOCCOCCOCCOCCOCCOCCO
 
-Real concentration-vs-surface-tension data (concentration in mol/L, surface tension in mN/m):
+Real concentration-vs-surface-tension data at 298 K (concentration in mol/L, surface tension in mN/m):
   1.00e-08, 71.539
   3.00e-08, 70.720
   1.00e-07, 68.550

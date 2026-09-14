@@ -1,7 +1,8 @@
 {
   "_grading_note": "Schemas were revised 2026-09-15 to remove leading/scaffolding language (see GroundZero_Unaugmented.txt's own per-question revision notes). Several fields are now open free-text ('isotherm_model', 'method_used', 'selected_mixture_model', 'structural_family') since the questions no longer pre-name candidate options -- grade these by checking whether the reported string names the real correct method/family (allowing reasonable paraphrase), not by exact string match.",
+  "_temperature_note": "GZ-01 and GZ-08 now state their real, paper-confirmed experimental temperature (298.15 K and 298 K respectively) explicitly in the question -- added 2026-09-15 after a real manual run correctly flagged the omission and had to assume a value. Verified by directly fetching both source papers rather than assuming: withholding T wasn't a deliberate trap (unlike the missing counterion-binding degree, which genuinely isn't reported anywhere), it was an accidental gap that only added numeric noise to Gamma_max/A_min without testing any real judgment.",
   "GZ-01": {
-    "source": "Shah, Das & Bhattarai 2025, Heliyon, PMC11835642 -- real AOT tensiometry curve",
+    "source": "Shah, Das & Bhattarai 2025, Heliyon, PMC11835642 -- real AOT tensiometry curve, real stated T=298.15K (confirmed by fetching the paper directly)",
     "gold": {
       "charge_type": "anionic",
       "cmc_mM": 2.5118612800073175,
@@ -84,14 +85,14 @@
     "computed_via": "surfactantkit.dynamics.hydrodynamic_radius_stokes_einstein, verified 2026-09-15"
   },
   "GZ-08": {
-    "source": "Ho, Lips & Velikov 2023, Phys. Chem. Chem. Phys., PMC10132450, Table 1 -- real C12E8 Szyszkowski parameters, curve forward-constructed from them",
+    "source": "Ho, Lips & Velikov 2023, Phys. Chem. Chem. Phys., PMC10132450, Table 1 -- real C12E8 Szyszkowski parameters (real stated T=298K), curve forward-constructed from them at T=298.15K internally (a 0.21% K difference vs fitting at exactly 298K, verified negligible -- well within any reasonable grading tolerance)",
     "gold": {
       "charge_type": "nonionic",
       "isotherm_model": "langmuir/szyszkowski",
       "K": 8772000.0,
       "gamma_max_mol_per_m2": 2.21e-06
     },
-    "computed_via": "surfactantkit.adsorption.szyszkowski_fit_K, verified 2026-09-15 -- K recoverable to <1e-10% of the real literature value when fit correctly"
+    "computed_via": "surfactantkit.adsorption.szyszkowski_fit_K, verified 2026-09-15 -- K recoverable to <1e-10% of the real literature value when fit at the exact same T used to construct the curve"
   },
   "GZ-09": {
     "source": "Shah, Das & Bhattarai 2025, Heliyon, PMC11835642, Table 2 -- real AOT-water wetting on glass (SAME compound as GZ-01)",
