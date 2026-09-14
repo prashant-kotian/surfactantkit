@@ -1,0 +1,102 @@
+[
+  {
+    "id": "D-01",
+    "compound_name": "1-dodecyl-3-methylpyridinium bromide, [C12mpy][Br] (pyridinium ionic-liquid surfactant)",
+    "source": "Fu et al., RSC Advances 2019, 9, 28799-28807 (open access, PMC9071189), Tables 3-4",
+    "architecture_class": "monomeric ionic (single headgroup)",
+    "cmc_mM": 9.74,
+    "temperature_C": 25.0,
+    "beta": 0.268,
+    "formula_given": "deltaG_mic = R*T*(2 - beta)*ln(X_cmc)  [standard ionic 1:1 surfactant convention]",
+    "counterion_factor": 1.732,
+    "gold": {
+      "counterion_factor": 1.732,
+      "delta_g_mic_kJ_per_mol": -37.1309632972165
+    },
+    "literature_cross_check": {
+      "paper_deltaG_mic_kJ_per_mol": -37.12,
+      "tool": -37.1309632972165,
+      "pct_diff": 0.029534744656535314
+    }
+  },
+  {
+    "id": "D-02",
+    "compound_name": "4C12tetraQ (dendritic cationic tetrameric quaternary-ammonium surfactant, 4 headgroups)",
+    "source": "Xie, Li, Li, Sun, Wang & Qu, RSC Advances 2018, 8(63), 36015-36024 (open access), Table 2",
+    "architecture_class": "dendritic tetrameric (4 headgroups)",
+    "cmc_mM": 0.412,
+    "temperature_C": 25.0,
+    "beta": 0.66,
+    "formula_given": "deltaG_mic = R*T*(0.25 + beta)*ln(X_cmc)  [this paper's own stated equation for its dendritic tetrameric architecture, Eq. 5]",
+    "counterion_factor": 0.91,
+    "gold": {
+      "counterion_factor": 0.91,
+      "delta_g_mic_kJ_per_mol": -26.6435789461214
+    },
+    "literature_cross_check": {
+      "paper_deltaG_mic_kJ_per_mol": -26.64,
+      "tool": -26.6435789461214,
+      "pct_diff": 0.01343448243769092
+    }
+  },
+  {
+    "id": "D-03",
+    "compound_name": "4C14tetraQ (dendritic cationic tetrameric quaternary-ammonium surfactant, 4 headgroups)",
+    "source": "Xie, Li, Li, Sun, Wang & Qu, RSC Advances 2018, 8(63), 36015-36024 (open access), Table 2",
+    "architecture_class": "dendritic tetrameric (4 headgroups)",
+    "cmc_mM": 0.0484,
+    "temperature_C": 25.0,
+    "beta": 0.69,
+    "formula_given": "deltaG_mic = R*T*(0.25 + beta)*ln(X_cmc)  [this paper's own stated equation for its dendritic tetrameric architecture, Eq. 5]",
+    "counterion_factor": 0.94,
+    "gold": {
+      "counterion_factor": 0.94,
+      "delta_g_mic_kJ_per_mol": -32.51214355882118
+    },
+    "literature_cross_check": {
+      "paper_deltaG_mic_kJ_per_mol": -32.16,
+      "tool": -32.51214355882118,
+      "pct_diff": 1.0949737525534298
+    }
+  },
+  {
+    "id": "D-04",
+    "compound_name": "4C16tetraQ (dendritic cationic tetrameric quaternary-ammonium surfactant, 4 headgroups)",
+    "source": "Xie, Li, Li, Sun, Wang & Qu, RSC Advances 2018, 8(63), 36015-36024 (open access), Table 2",
+    "architecture_class": "dendritic tetrameric (4 headgroups)",
+    "cmc_mM": 0.0063,
+    "temperature_C": 25.0,
+    "beta": 0.71,
+    "formula_given": "deltaG_mic = R*T*(0.25 + beta)*ln(X_cmc)  [this paper's own stated equation for its dendritic tetrameric architecture, Eq. 5]",
+    "counterion_factor": 0.96,
+    "gold": {
+      "counterion_factor": 0.96,
+      "delta_g_mic_kJ_per_mol": -38.056180576034926
+    },
+    "literature_cross_check": {
+      "paper_deltaG_mic_kJ_per_mol": -38.05,
+      "tool": -38.056180576034926,
+      "pct_diff": 0.016243301011639212
+    }
+  },
+  {
+    "id": "D-05",
+    "compound_name": "4C16tetraQ (dendritic cationic tetrameric quaternary-ammonium surfactant, 4 headgroups)",
+    "source": "Xie, Li, Li, Sun, Wang & Qu, RSC Advances 2018, 8(63), 36015-36024 (open access), Table 2",
+    "architecture_class": "dendritic tetrameric (4 headgroups)",
+    "cmc_mM": 0.007,
+    "temperature_C": 45.0,
+    "beta": 0.67,
+    "formula_given": "deltaG_mic = R*T*(0.25 + beta)*ln(X_cmc)  [this paper's own stated equation for its dendritic tetrameric architecture, Eq. 5]",
+    "counterion_factor": 0.92,
+    "gold": {
+      "counterion_factor": 0.92,
+      "delta_g_mic_kJ_per_mol": -38.6605518206937
+    },
+    "literature_cross_check": {
+      "paper_deltaG_mic_kJ_per_mol": -38.65,
+      "tool": -38.6605518206937,
+      "pct_diff": 0.027300959104008277
+    }
+  }
+]

@@ -1,0 +1,123 @@
+D-01
+[reference only, do not paste -- source: Fu et al., RSC Advances 2019, 9, 28799-28807 (open access, PMC9071189), Tables 3-4]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's micellization free energy using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a deltaG_mic value for this compound from your own training; derive it from the numbers and formula given.
+
+Compound: 1-dodecyl-3-methylpyridinium bromide, [C12mpy][Br] (pyridinium ionic-liquid surfactant)
+Real critical micelle concentration (CMC): 9.74 mM
+Temperature: 25.0 C
+Real, independently-measured degree of counterion binding (beta), from conductivity: 0.268
+Formula to use for this compound's architecture (its own source paper's stated convention, not a generic default -- use this exact formula, not a different counterion_factor convention you may know for a different surfactant architecture): deltaG_mic = R*T*(2 - beta)*ln(X_cmc)  [standard ionic 1:1 surfactant convention]
+
+Compute the counterion_factor implied by this formula, then compute deltaG_mic (kJ/mol) using the real CMC and temperature given. X_cmc = CMC / (CMC + 55.5 mol/L), i.e. mole fraction relative to water's molarity.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "counterion_factor": <number>,
+  "delta_g_mic_kJ_per_mol": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+D-02
+[reference only, do not paste -- source: Xie, Li, Li, Sun, Wang & Qu, RSC Advances 2018, 8(63), 36015-36024 (open access), Table 2]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's micellization free energy using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a deltaG_mic value for this compound from your own training; derive it from the numbers and formula given.
+
+Compound: 4C12tetraQ (dendritic cationic tetrameric quaternary-ammonium surfactant, 4 headgroups)
+Real critical micelle concentration (CMC): 0.412 mM
+Temperature: 25.0 C
+Real, independently-measured degree of counterion binding (beta), from conductivity: 0.66
+Formula to use for this compound's architecture (its own source paper's stated convention, not a generic default -- use this exact formula, not a different counterion_factor convention you may know for a different surfactant architecture): deltaG_mic = R*T*(0.25 + beta)*ln(X_cmc)  [this paper's own stated equation for its dendritic tetrameric architecture, Eq. 5]
+
+Compute the counterion_factor implied by this formula, then compute deltaG_mic (kJ/mol) using the real CMC and temperature given. X_cmc = CMC / (CMC + 55.5 mol/L), i.e. mole fraction relative to water's molarity.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "counterion_factor": <number>,
+  "delta_g_mic_kJ_per_mol": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+D-03
+[reference only, do not paste -- source: Xie, Li, Li, Sun, Wang & Qu, RSC Advances 2018, 8(63), 36015-36024 (open access), Table 2]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's micellization free energy using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a deltaG_mic value for this compound from your own training; derive it from the numbers and formula given.
+
+Compound: 4C14tetraQ (dendritic cationic tetrameric quaternary-ammonium surfactant, 4 headgroups)
+Real critical micelle concentration (CMC): 0.0484 mM
+Temperature: 25.0 C
+Real, independently-measured degree of counterion binding (beta), from conductivity: 0.69
+Formula to use for this compound's architecture (its own source paper's stated convention, not a generic default -- use this exact formula, not a different counterion_factor convention you may know for a different surfactant architecture): deltaG_mic = R*T*(0.25 + beta)*ln(X_cmc)  [this paper's own stated equation for its dendritic tetrameric architecture, Eq. 5]
+
+Compute the counterion_factor implied by this formula, then compute deltaG_mic (kJ/mol) using the real CMC and temperature given. X_cmc = CMC / (CMC + 55.5 mol/L), i.e. mole fraction relative to water's molarity.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "counterion_factor": <number>,
+  "delta_g_mic_kJ_per_mol": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+D-04
+[reference only, do not paste -- source: Xie, Li, Li, Sun, Wang & Qu, RSC Advances 2018, 8(63), 36015-36024 (open access), Table 2]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's micellization free energy using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a deltaG_mic value for this compound from your own training; derive it from the numbers and formula given.
+
+Compound: 4C16tetraQ (dendritic cationic tetrameric quaternary-ammonium surfactant, 4 headgroups)
+Real critical micelle concentration (CMC): 0.0063 mM
+Temperature: 25.0 C
+Real, independently-measured degree of counterion binding (beta), from conductivity: 0.71
+Formula to use for this compound's architecture (its own source paper's stated convention, not a generic default -- use this exact formula, not a different counterion_factor convention you may know for a different surfactant architecture): deltaG_mic = R*T*(0.25 + beta)*ln(X_cmc)  [this paper's own stated equation for its dendritic tetrameric architecture, Eq. 5]
+
+Compute the counterion_factor implied by this formula, then compute deltaG_mic (kJ/mol) using the real CMC and temperature given. X_cmc = CMC / (CMC + 55.5 mol/L), i.e. mole fraction relative to water's molarity.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "counterion_factor": <number>,
+  "delta_g_mic_kJ_per_mol": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+D-05
+[reference only, do not paste -- source: Xie, Li, Li, Sun, Wang & Qu, RSC Advances 2018, 8(63), 36015-36024 (open access), Table 2]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's micellization free energy using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a deltaG_mic value for this compound from your own training; derive it from the numbers and formula given.
+
+Compound: 4C16tetraQ (dendritic cationic tetrameric quaternary-ammonium surfactant, 4 headgroups)
+Real critical micelle concentration (CMC): 0.007 mM
+Temperature: 45.0 C
+Real, independently-measured degree of counterion binding (beta), from conductivity: 0.67
+Formula to use for this compound's architecture (its own source paper's stated convention, not a generic default -- use this exact formula, not a different counterion_factor convention you may know for a different surfactant architecture): deltaG_mic = R*T*(0.25 + beta)*ln(X_cmc)  [this paper's own stated equation for its dendritic tetrameric architecture, Eq. 5]
+
+Compute the counterion_factor implied by this formula, then compute deltaG_mic (kJ/mol) using the real CMC and temperature given. X_cmc = CMC / (CMC + 55.5 mol/L), i.e. mole fraction relative to water's molarity.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "counterion_factor": <number>,
+  "delta_g_mic_kJ_per_mol": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
