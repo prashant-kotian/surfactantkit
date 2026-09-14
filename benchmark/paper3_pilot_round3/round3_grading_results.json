@@ -1,0 +1,500 @@
+{
+  "rel_tolerance": 0.2,
+  "totals": {
+    "chatgpt": {
+      "score": 39,
+      "max": 56,
+      "pct": 69.64285714285714
+    },
+    "claude": {
+      "score": 25,
+      "max": 56,
+      "pct": 44.642857142857146
+    }
+  },
+  "field_totals": {
+    "chatgpt": {
+      "charge_type": 8,
+      "isotherm_model": 6,
+      "cmc_mM": 3,
+      "gamma_max_mol_per_m2": 4,
+      "a_min_nm2": 4,
+      "frumkin_a": 7,
+      "delta_g_mic_kJ_per_mol": 7
+    },
+    "claude": {
+      "charge_type": 5,
+      "isotherm_model": 0,
+      "cmc_mM": 3,
+      "gamma_max_mol_per_m2": 5,
+      "a_min_nm2": 7,
+      "frumkin_a": 3,
+      "delta_g_mic_kJ_per_mol": 2
+    }
+  },
+  "per_question": {
+    "chatgpt": {
+      "R3-01": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-02": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": false,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-03": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": false,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-04": {
+        "charge_type": true,
+        "isotherm_model": false,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-05": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": false,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": false
+      },
+      "R3-06": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-07": {
+        "charge_type": true,
+        "isotherm_model": false,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": false,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-08": {
+        "charge_type": true,
+        "isotherm_model": true,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": false,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      }
+    },
+    "claude": {
+      "R3-01": {
+        "charge_type": true,
+        "isotherm_model": false,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": true,
+        "frumkin_a": false,
+        "delta_g_mic_kJ_per_mol": false
+      },
+      "R3-02": {
+        "charge_type": false,
+        "isotherm_model": false,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": false,
+        "delta_g_mic_kJ_per_mol": false
+      },
+      "R3-03": {
+        "charge_type": false,
+        "isotherm_model": false,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": false,
+        "delta_g_mic_kJ_per_mol": false
+      },
+      "R3-04": {
+        "charge_type": true,
+        "isotherm_model": false,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": false
+      },
+      "R3-05": {
+        "charge_type": true,
+        "isotherm_model": false,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": false,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": true
+      },
+      "R3-06": {
+        "charge_type": true,
+        "isotherm_model": false,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": true,
+        "delta_g_mic_kJ_per_mol": false
+      },
+      "R3-07": {
+        "charge_type": true,
+        "isotherm_model": false,
+        "cmc_mM": true,
+        "gamma_max_mol_per_m2": true,
+        "a_min_nm2": true,
+        "frumkin_a": false,
+        "delta_g_mic_kJ_per_mol": false
+      },
+      "R3-08": {
+        "charge_type": false,
+        "isotherm_model": false,
+        "cmc_mM": false,
+        "gamma_max_mol_per_m2": false,
+        "a_min_nm2": true,
+        "frumkin_a": false,
+        "delta_g_mic_kJ_per_mol": true
+      }
+    }
+  },
+  "extracted_answers": {
+    "chatgpt": {
+      "R3-01": {
+        "charge_type": "anionic",
+        "cmc_mM": 8.52,
+        "gamma_max_mol_per_m2": 3.43e-06,
+        "a_min_nm2": 0.485,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "exact CMC and statistical uncertainty: the transition is sampled only between 6.492 and 12.985 mM and no replicate errors are supplied",
+          "unique adsorption isotherm: sparse surface-tension data and unknown ionic activities cannot distinguish Frumkin from other nonideal cooperative models",
+          "Frumkin interaction parameter: it is meaningful only after independently establishing the Frumkin model and activity convention",
+          "activity-corrected surface excess and molecular area: ionic activity coefficients and a continuous derivative are unavailable; reported values are apparent ideal-dilute estimates",
+          "standard micellization free energy: the standard state, activity coefficients, and micellar counterion binding or ionization are unknown",
+          "aggregation number, micelle size, and micelle shape: tensiometry and molecular connectivity alone do not determine micellar structure",
+          "micellar counterion binding: no conductivity, electrochemical, or equivalent ionization measurement is supplied",
+          "Krafft temperature: measurements are provided at only one temperature",
+          "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+        ]
+      },
+      "R3-02": {
+        "charge_type": "cationic",
+        "cmc_mM": null,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "CMC: no reproducible post-transition plateau is present and the surface tension rises by 3.8763 mN/m between the final two points",
+          "maximum surface excess: the saturated pre-CMC slope cannot be identified without a defensible CMC; only interval-averaged apparent surface excesses can be calculated",
+          "minimum molecular area: it depends on the undetermined maximum surface excess",
+          "adsorption isotherm: sparse data, unknown ionic activities, no solvent blank, and anomalous high-concentration behavior cannot distinguish Langmuir, Frumkin, or other models",
+          "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+          "standard micellization free energy: CMC, activity coefficients, standard-state convention, and micellar counterion binding are unavailable",
+          "cause of the high-concentration surface-tension upturn: no replicates or independent phase, purity, or equilibration measurements are supplied",
+          "micellar counterion binding and degree of ionization: formal charge in the SMILES does not determine counterion association in micelles",
+          "aggregation number, micelle size, and micelle shape: tensiometry alone does not provide structural information",
+          "Krafft temperature: measurements are available at only one temperature",
+          "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+        ]
+      },
+      "R3-03": {
+        "charge_type": "cationic",
+        "cmc_mM": null,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "CMC: surface tension is still decreasing substantially at the highest concentration and no post-micellar plateau was measured",
+          "maximum surface excess: no saturated pre-CMC slope can be identified; the largest calculable value is only an interval-averaged apparent surface excess",
+          "minimum molecular area: it depends on the undetermined maximum surface excess",
+          "adsorption isotherm: curvature alone cannot uniquely distinguish Frumkin, other cooperative models, ionic nonideality, or experimental effects",
+          "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+          "standard micellization free energy: CMC, activity coefficients, micellar counterion binding, and the standard-state convention are unavailable",
+          "whether micellization occurs within the measured range: decreasing slope can arise from adsorption saturation without establishing micelle formation",
+          "micellar counterion binding and degree of ionization: formal molecular charge does not determine counterion association in an aggregate",
+          "aggregation number, micelle size, and micelle shape: no structural or scattering measurements are supplied",
+          "Krafft temperature: measurements are available at only one temperature",
+          "micellization enthalpy and entropy: temperature-dependent equilibrium measurements or calorimetry are absent"
+        ]
+      },
+      "R3-04": {
+        "charge_type": "anionic",
+        "cmc_mM": 2.17,
+        "gamma_max_mol_per_m2": 1.4366e-06,
+        "a_min_nm2": 1.156,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "exact CMC and statistical confidence interval: 2.17 mM is a regression-based estimate and no replicate uncertainties are supplied",
+          "unique adsorption isotherm: the measured logarithmic linearity does not uniquely distinguish Langmuir, Frumkin, or other adsorption models",
+          "Frumkin interaction parameter: it is model-dependent and the Frumkin model has not been uniquely established",
+          "activity-corrected maximum surface excess and molecular area: ionic activity coefficients and the effective thermodynamic Gibbs prefactor are unavailable",
+          "standard micellization free energy: micellar counterion binding, activity coefficients, solvent standard state, and micellar degree of ionization are unspecified",
+          "adsorption equilibrium constant and absolute surface pressure: the pure-solvent surface tension is not supplied",
+          "micellar counterion binding and degree of ionization: formal charge in the SMILES does not determine counterion association in aggregates",
+          "aggregation number, micelle size, and micelle shape: molecular connectivity and tensiometry do not uniquely determine aggregate structure",
+          "Krafft temperature and phase behavior: measurements are provided at only one temperature",
+          "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+        ]
+      },
+      "R3-05": {
+        "charge_type": "nonionic",
+        "cmc_mM": null,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "numerical CMC: a transition is only conditionally bracketed between 0.22 and 0.40 mM, with no measurements connecting the gradual low-concentration branch to the plateau",
+          "nature of the discontinuity: the data cannot distinguish micellization from concentration error, nonequilibrium, contamination, or another surface or bulk phase transition",
+          "maximum surface excess: the surface-tension derivative immediately below the plateau is unmeasured and the gap-crossing secant is not a credible equilibrium derivative",
+          "minimum molecular area: it depends on the undetermined maximum surface excess",
+          "adsorption isotherm: the unsampled abrupt transition cannot uniquely distinguish Frumkin cooperativity from other models or experimental artifacts",
+          "Frumkin interaction parameter: the Frumkin model has not been uniquely established and the transition region is unsampled",
+          "standard micellization free energy: no defensible numerical CMC, solvent activity, or standard-state convention is supplied",
+          "aggregation number, micelle size, and micelle shape: tensiometry and molecular connectivity alone do not determine aggregate structure",
+          "cloud point and other phase boundaries: only one temperature and no phase-observation data are supplied",
+          "micellization enthalpy and entropy: temperature-dependent equilibrium measurements or calorimetry are absent"
+        ]
+      },
+      "R3-06": {
+        "charge_type": "zwitterionic",
+        "cmc_mM": null,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "numerical CMC: the transition is only conditionally bracketed between 1.9 and 3.0 mM and its entire connecting region is unsampled",
+          "nature of the sharp transition: the data cannot distinguish micellization from cooperative adsorption, another phase transition, nonequilibrium, or experimental error",
+          "maximum surface excess: the derivative immediately below the plateau is unmeasured; only an interval-averaged low-branch surface excess can be calculated",
+          "minimum molecular area: it depends on the undetermined maximum surface excess",
+          "adsorption isotherm: the missing transition region prevents unique discrimination between Langmuir, Frumkin, other cooperative models, and artifacts",
+          "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+          "standard micellization free energy: no defensible numerical CMC, solvent activity, or standard-state convention is available",
+          "pH-dependent speciation outside the represented form: the SMILES specifies a zwitterion but no pH or acid dissociation information is supplied",
+          "aggregation number, micelle size, and micelle shape: tensiometry and molecular connectivity alone do not determine aggregate structure",
+          "phase-transition temperatures: measurements are provided at only one temperature",
+          "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+        ]
+      },
+      "R3-07": {
+        "charge_type": "anionic",
+        "cmc_mM": 1.8,
+        "gamma_max_mol_per_m2": 3.76e-06,
+        "a_min_nm2": 0.442,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "statistical CMC uncertainty: no replicate measurements or surface-tension errors are supplied",
+          "unique adsorption isotherm: the surface-tension curve and unknown ionic activities cannot uniquely distinguish Langmuir, Frumkin, or other models",
+          "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+          "exact activity-corrected maximum surface excess and molecular area: surfactant and ion activity coefficients at 100 mM NaCl are unavailable",
+          "standard micellization free energy: ionic activities, standard-state convention, and micellar counterion binding or degree of ionization are unknown",
+          "micellar counterion binding: the formal sodium counterion in the SMILES does not determine sodium association with micelles",
+          "aggregation number, micelle size, and micelle shape: tensiometry alone supplies no structural information",
+          "Krafft temperature and broader phase behavior: measurements are available at only one temperature",
+          "micellization enthalpy and entropy: temperature-dependent CMC measurements or calorimetry are absent"
+        ]
+      },
+      "R3-08": {
+        "charge_type": "cationic",
+        "cmc_mM": null,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "CMC: surface tension is still decreasing substantially at the highest concentration and no post-micellar plateau or defensible breakpoint is measured",
+          "whether the CMC exceeds 16.37 mM: that inference would require assuming an immediately horizontal post-CMC surface-tension curve",
+          "maximum surface excess: no limiting pre-CMC slope is established and the final slope spans a fourfold concentration interval that may contain an unresolved transition",
+          "minimum molecular area: it depends on the undetermined maximum surface excess",
+          "adsorption isotherm: the observed curvature cannot uniquely distinguish Langmuir, Frumkin, other cooperative models, or ionic nonideality",
+          "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+          "standard micellization free energy: no CMC is available and ionic activities, counterion binding, and the standard-state convention are unspecified",
+          "micellar counterion binding and degree of ionization: formal charge in the SMILES does not determine bromide association with micelles",
+          "aggregation number, micelle size, and micelle shape: tensiometry alone provides no structural information",
+          "Krafft temperature and phase behavior: measurements are provided at only one temperature",
+          "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+        ]
+      }
+    },
+    "claude": {
+      "R3-01": {
+        "charge_type": "anionic",
+        "cmc_mM": 9.3,
+        "gamma_max_mol_per_m2": 4.27e-06,
+        "a_min_nm2": 0.39,
+        "isotherm_model": "frumkin",
+        "frumkin_a": 0.81,
+        "delta_g_mic_kJ_per_mol": -42.8,
+        "undeterminable": [
+          "degree of counterion binding beta - needs conductivity; makes delta_g_mic convention-dependent (true value between -21.4 and -42.8 kJ/mol)",
+          "aggregation number and micelle size/shape - need scattering/fluorescence, not tensiometry",
+          "Krafft temperature - needs temperature-dependent solubility data",
+          "delta_H_mic and delta_S_mic - need temperature dependence of CMC or calorimetry",
+          "absolute pure-water surface tension gamma0 - not measured, only inferred (~72 mN/m) from the fit"
+        ]
+      },
+      "R3-02": {
+        "charge_type": "ambiguous_pH_dependent",
+        "cmc_mM": 15,
+        "gamma_max_mol_per_m2": 2.8e-06,
+        "a_min_nm2": 0.59,
+        "isotherm_model": "frumkin",
+        "frumkin_a": 1.35,
+        "delta_g_mic_kJ_per_mol": -40.0,
+        "undeterminable": [
+          "degree of counterion binding beta - needs conductivity; makes delta_g_mic prefactor/magnitude convention-dependent (-20 to -40 kJ/mol)",
+          "solution pH / protonation fraction - species is a protonated weak-base amine (not a permanent quaternary), so its charge and the validity of the n=2 Gibbs prefactor cannot be confirmed",
+          "precise CMC - no post-CMC plateau, a 4-16 mM data gap, and a surface-tension minimum (possible trace impurity) leave CMC only bracketed ~13-17 mM",
+          "aggregation number and micelle size/shape - need scattering/fluorescence",
+          "Krafft temperature - needs temperature-dependent solubility",
+          "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry",
+          "absolute pure-water gamma0 - not measured, only inferred (~71 mN/m) from the fit"
+        ]
+      },
+      "R3-03": {
+        "charge_type": "ambiguous_pH_dependent",
+        "cmc_mM": 1.5,
+        "gamma_max_mol_per_m2": 3.1e-06,
+        "a_min_nm2": 0.53,
+        "isotherm_model": "frumkin",
+        "frumkin_a": 1.5,
+        "delta_g_mic_kJ_per_mol": -52.0,
+        "undeterminable": [
+          "precise CMC - data stops at the micellization onset with no post-CMC plateau established; only bracketed ~1.3-2.1 mM",
+          "degree of counterion binding beta - needs conductivity; makes delta_g_mic prefactor convention-dependent (nonionic limit ~-26 kJ/mol)",
+          "solution pH / protonation fraction - protonated weak-base amine (not permanent quaternary), so charge state and the n=2 Gibbs prefactor cannot be confirmed",
+          "aggregation number and micelle size/shape - need scattering/fluorescence",
+          "Krafft temperature - needs temperature-dependent solubility",
+          "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry",
+          "absolute pure-water gamma0 - not measured, only inferred (~72.5 mN/m) from the fit"
+        ]
+      },
+      "R3-04": {
+        "charge_type": "anionic",
+        "cmc_mM": 2.0,
+        "gamma_max_mol_per_m2": 1.44e-06,
+        "a_min_nm2": 1.16,
+        "isotherm_model": null,
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": -50.7,
+        "undeterminable": [
+          "isotherm model (Langmuir vs Frumkin) - the entire sub-CMC range is a perfectly linear (saturated) gamma-lnC region; the dilute-region curvature that discriminates the models is not sampled, so both fit identically",
+          "frumkin_a - not meaningful since the isotherm model itself is indeterminate",
+          "absolute pure-water gamma0 - not sampled and unconstrained by the fit (lowest point already ~10 mN/m below water)",
+          "degree of counterion binding beta - needs conductivity; makes delta_g_mic prefactor convention-dependent (nonionic limit ~-25 kJ/mol)",
+          "aggregation number and micelle size/shape - need scattering/fluorescence",
+          "Krafft temperature - needs temperature-dependent solubility",
+          "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry"
+        ]
+      },
+      "R3-05": {
+        "charge_type": "nonionic",
+        "cmc_mM": 0.3,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": "langmuir",
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": -30.0,
+        "undeterminable": [
+          "saturated Gamma_max and A_min - the steep near-CMC region is unsampled (33 mN/m drop hidden in the 0.22->0.4 mM gap); the low-coverage Langmuir fit gives an apparent 3.2e-6 mol/m2 (A_min~0.52 nm2) but it is physically contradicted by the 30.5 mN/m plateau, so no trustworthy value",
+          "precise CMC - only bracketed to 0.22-0.4 mM; the steep pre-CMC tangent needed to locate the break is not sampled",
+          "self-consistent near-CMC isotherm - data cannot come from one equilibrium adsorption curve (implied transition slope requires A_min < 0.1 nm2, impossible)",
+          "aggregation number and micelle size/shape - need scattering/fluorescence",
+          "cloud point - the key phase parameter for nonionic PEO surfactants; needs temperature-dependent turbidity",
+          "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry"
+        ]
+      },
+      "R3-06": {
+        "charge_type": "zwitterionic",
+        "cmc_mM": 2.4,
+        "gamma_max_mol_per_m2": null,
+        "a_min_nm2": null,
+        "isotherm_model": "langmuir",
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": -25.0,
+        "undeterminable": [
+          "saturated Gamma_max and A_min - the steep near-CMC region is unsampled (19 mN/m drop hidden in the 1.9->3.0 mM gap); the low-coverage Langmuir fit gives an apparent 3.0e-6 mol/m2 (A_min~0.55 nm2) but it is physically contradicted by the 33.0 mN/m plateau, so no trustworthy value",
+          "precise CMC - only bracketed to 1.9-3.0 mM; the steep pre-CMC tangent needed to locate the break is not sampled",
+          "actual net charge state / strict Gibbs & delta_G prefactor - molecule is amphoteric (zwitterionic near neutral pH, cationic below the carboxylate pKa); solution pH not given, so n=1 assumes the net-neutral zwitterion",
+          "self-consistent near-CMC isotherm - data cannot come from one equilibrium adsorption curve (implied transition slope requires A_min ~0.1 nm2, impossible)",
+          "aggregation number and micelle size/shape - need scattering/fluorescence",
+          "isoelectric pH - needs pH-dependent measurements",
+          "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry"
+        ]
+      },
+      "R3-07": {
+        "charge_type": "anionic",
+        "cmc_mM": 1.8,
+        "gamma_max_mol_per_m2": 3.8e-06,
+        "a_min_nm2": 0.43,
+        "isotherm_model": "langmuir",
+        "frumkin_a": null,
+        "delta_g_mic_kJ_per_mol": -25.6,
+        "undeterminable": [
+          "degree of counterion binding beta - needs conductivity (but not required for delta_g_mic here, since excess salt buffers the counterion)",
+          "aggregation number and micelle size/shape - need scattering/fluorescence",
+          "Krafft temperature - needs temperature-dependent solubility",
+          "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry",
+          "activity-coefficient corrections at 100 mM ionic strength - mole-fraction delta_g_mic assumes ideality, a small systematic error"
+        ]
+      },
+      "R3-08": {
+        "charge_type": "ambiguous_pH_dependent",
+        "cmc_mM": null,
+        "gamma_max_mol_per_m2": 2.8e-06,
+        "a_min_nm2": 0.59,
+        "isotherm_model": "frumkin",
+        "frumkin_a": 1.35,
+        "delta_g_mic_kJ_per_mol": null,
+        "undeterminable": [
+          "CMC - no post-CMC plateau or break is captured; the highest point still lies on the steep descending line (R2=0.9998), so the micellization onset is unsampled (only CMC > ~4 mM can be said)",
+          "delta_g_mic - requires X_cmc, and the CMC is undeterminable",
+          "solution pH / protonation fraction - protonated weak-base amine (not a permanent quaternary), so charge state and the n=2 Gibbs prefactor cannot be confirmed",
+          "degree of counterion binding beta - needs conductivity",
+          "aggregation number and micelle size/shape - need scattering/fluorescence",
+          "Krafft temperature - needs temperature-dependent solubility",
+          "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry"
+        ]
+      }
+    }
+  }
+}

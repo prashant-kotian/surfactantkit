@@ -1,0 +1,568 @@
+R3-01
+======
+
+The SMILES contains a singly charged sulfate headgroup, [OS(=O)(=O)[O-]], with one sodium counterion. The surfactant is therefore a 1:1 anionic surfactant.
+
+CMC from the observed break
+---------------------------
+
+Because concentrations double at every step, define
+
+    x = log2(c / 0.40577109375 mM),
+
+so the eight measurements have x = 0,...,7.
+
+The local pre-break segment immediately below the transition, using 3.24617 and 6.49234 mM, is
+
+    gamma = 89.6634 - 11.6968 x.
+
+A least-squares fit to the three post-break points, 12.9847-51.9387 mM, gives
+
+    gamma = 40.75167 - 0.56150 x.
+
+Their intersection is
+
+    x_CMC = 4.39249,
+    c_CMC = 0.40577109375(2^4.39249) = 8.52 mM.
+
+This is an operational tensiometric CMC, not an exact thermodynamic singularity. The raw observations only bracket the transition between 6.492 and 12.985 mM. Including the preceding point in the pre-CMC regression moves the intersection to approximately 9.32 mM, so a reasonable method-sensitivity range is about 8.5-9.3 mM. No statistical confidence interval can be obtained without replicate measurements or measurement uncertainties.
+
+The fitted intersection surface tension is approximately 38.29 mN/m. The final three measurements average 37.383 mN/m, although their small residual downward slope shows that the measured post-CMC region is not perfectly flat.
+
+Apparent maximum surface excess
+-------------------------------
+
+The steepest measured interval wholly below the estimated CMC is 3.24617-6.49234 mM:
+
+    Delta gamma / Delta ln(c)
+      = (42.8762 - 54.5730) / ln(2)
+      = -16.8749 mN/m.
+
+For a fully dissociated 1:1 ionic surfactant without added supporting electrolyte, the ideal-dilute Gibbs equation has the factor 2:
+
+    Gamma = -(1 / 2RT)(d gamma / d ln(c)).
+
+Therefore,
+
+    Gamma_max,app
+      = 0.0168749 / [2(8.3144626)(296.15)]
+      = 3.43e-6 mol/m2.
+
+The corresponding apparent molecular area is
+
+    A_min,app = [1 / (N_A Gamma_max)](1e18) = 0.485 nm2.
+
+These are finite-difference, concentration-based estimates. A strictly thermodynamic, activity-corrected Gamma_max would require ionic activity coefficients and a sufficiently dense curve to evaluate the derivative near saturation.
+
+What cannot be identified
+-------------------------
+
+A unique adsorption isotherm cannot be assigned. The increasingly steep sub-CMC curve is inconsistent with a simple ideal Langmuir/Szyszkowski description over the entire measured range—for example, the first two surface-tension drops on successive concentration doublings are 1.9223 and 5.0444 mN/m, a ratio of 2.62, whereas an ideal Langmuir curve cannot accelerate by more than a factor of two under a doubling. This suggests cooperative or other nonideal adsorption, but it does not specifically prove a Frumkin isotherm. Other equations of state, ionic nonideality, impurities, or experimental effects can produce similar curvature. Consequently, a Frumkin interaction parameter is not uniquely recoverable.
+
+The standard free energy of micellization is also not determined by CMC alone for an ionic surfactant. Its calculation requires a defined standard state, activity coefficients, and especially the micellar counterion-binding or degree-of-ionization parameter, none of which are supplied by the SMILES or tensiometry data.
+
+Aggregation number, micelle size and shape, counterion binding, Krafft temperature, micellization enthalpy, and micellization entropy likewise require additional measurements.
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 8.52,
+  "gamma_max_mol_per_m2": 3.43e-6,
+  "a_min_nm2": 0.485,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "exact CMC and statistical uncertainty: the transition is sampled only between 6.492 and 12.985 mM and no replicate errors are supplied",
+    "unique adsorption isotherm: sparse surface-tension data and unknown ionic activities cannot distinguish Frumkin from other nonideal cooperative models",
+    "Frumkin interaction parameter: it is meaningful only after independently establishing the Frumkin model and activity convention",
+    "activity-corrected surface excess and molecular area: ionic activity coefficients and a continuous derivative are unavailable; reported values are apparent ideal-dilute estimates",
+    "standard micellization free energy: the standard state, activity coefficients, and micellar counterion binding or ionization are unknown",
+    "aggregation number, micelle size, and micelle shape: tensiometry and molecular connectivity alone do not determine micellar structure",
+    "micellar counterion binding: no conductivity, electrochemical, or equivalent ionization measurement is supplied",
+    "Krafft temperature: measurements are provided at only one temperature",
+    "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+  ]
+}
+
+
+R3-02
+======
+
+The SMILES contains a permanently charged quaternary ammonium headgroup and one bromide counterion. It is therefore a 1:1 cationic surfactant, not pH-dependent under ordinary conditions.
+
+The surface tension falls strongly from 70.2691 to 32.3475 mN/m as concentration increases to 16.37 mM, so adsorption at the interface is clearly demonstrated. However, the final measurement rises to 36.2238 mN/m at 32.74 mM. Thus, the data do not establish the approximately constant post-CMC regime required for a defensible tensiometric CMC.
+
+The high-concentration behavior admits several incompatible interpretations: the 16.37 mM point could be anomalously low, the 32.74 mM point could be anomalously high, or the upturn could reflect nonequilibrium behavior, impurities, or a phase transition. The supplied data provide no way to choose among them. Depending on which point is treated as representative of a plateau, simple line-intersection estimates can vary roughly from 12 to 17 mM. Selecting one would therefore amount to guessing.
+
+For reference, the steepest unambiguously local low-concentration interval is 2.04625-4.0925 mM:
+
+    Delta gamma / Delta ln(c)
+      = (49.2364 - 57.5039) / ln(2)
+      = -11.9275 mN/m.
+
+For a fully dissociated 1:1 ionic surfactant without added electrolyte, the ideal-dilute Gibbs relation would be
+
+    Gamma = -(1 / 2RT)(d gamma / d ln(c)).
+
+This interval therefore corresponds to an apparent average surface excess
+
+    Gamma_bar
+      = 0.0119275 / [2(8.3144626)(296.35)]
+      = 2.42e-6 mol/m2,
+
+and an associated interval-based area of approximately 0.686 nm2 per molecule. These cannot be labeled Gamma_max and A_min, because the CMC and the saturated pre-CMC slope have not been established. The broader 4.0925-16.37 mM interval gives a slightly larger apparent value, 2.47e-6 mol/m2, but that interval may cross the unknown transition.
+
+The increase from 16.37 to 32.74 mM would produce d gamma/d ln(c) > 0, and hence a negative Gibbs surface excess if interpreted as a single-component equilibrium adsorption branch. That is physically inconsistent with the ordinary clean-interface interpretation and confirms that the final two points cannot simply be treated as a reliable equilibrium plateau.
+
+Neither a Langmuir nor a Frumkin isotherm can be uniquely selected. The low-concentration curvature may indicate cooperative or nonideal adsorption, but sparse data, unknown ionic activities, the missing zero-concentration solvent tension, and the anomalous high-concentration behavior preclude model identification. Consequently, a Frumkin interaction parameter is also indeterminate.
+
+A standard micellization free energy is not calculable: there is no defensible CMC, and an ionic-surfactant calculation would additionally require the micellar degree of ionization or counterion binding, activity coefficients, and a specified standard-state convention.
+
+FINAL_JSON:
+{
+  "charge_type": "cationic",
+  "cmc_mM": null,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "CMC: no reproducible post-transition plateau is present and the surface tension rises by 3.8763 mN/m between the final two points",
+    "maximum surface excess: the saturated pre-CMC slope cannot be identified without a defensible CMC; only interval-averaged apparent surface excesses can be calculated",
+    "minimum molecular area: it depends on the undetermined maximum surface excess",
+    "adsorption isotherm: sparse data, unknown ionic activities, no solvent blank, and anomalous high-concentration behavior cannot distinguish Langmuir, Frumkin, or other models",
+    "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+    "standard micellization free energy: CMC, activity coefficients, standard-state convention, and micellar counterion binding are unavailable",
+    "cause of the high-concentration surface-tension upturn: no replicates or independent phase, purity, or equilibration measurements are supplied",
+    "micellar counterion binding and degree of ionization: formal charge in the SMILES does not determine counterion association in micelles",
+    "aggregation number, micelle size, and micelle shape: tensiometry alone does not provide structural information",
+    "Krafft temperature: measurements are available at only one temperature",
+    "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+  ]
+}
+
+
+R3-03
+======
+
+The SMILES contains a permanently charged quaternary ammonium headgroup and one bromide counterion. It is therefore a 1:1 cationic surfactant.
+
+The surface tension decreases from 71.6037 to 32.3749 mN/m, demonstrating strong interfacial adsorption. However, it is still decreasing substantially at the highest concentration:
+
+    (32.3749 - 36.4107) / ln(2.11/1.055)
+      = -5.8227 mN/m.
+
+Thus, no approximately concentration-independent post-micellar plateau was measured. The curvature and declining slope at the final concentrations could represent approaching interfacial saturation, micellization, or simply a smooth adsorption isotherm; these possibilities cannot be separated from these data. Consequently, a CMC cannot be assigned without extrapolation or an assumed model.
+
+For a 1:1 ionic surfactant without added electrolyte, the ideal-dilute Gibbs relation is
+
+    Gamma = -(1 / 2RT)(d gamma / d ln(c)).
+
+The steepest observed concentration interval is 0.26375-0.5275 mM:
+
+    Delta gamma / Delta ln(c)
+      = (46.1343 - 57.3369) / ln(2)
+      = -16.1619 mN/m.
+
+At 296.85 K, this gives the interval-averaged apparent surface excess
+
+    Gamma_bar,app
+      = 0.0161619 / [2(8.3144626)(296.85)]
+      = 3.27e-6 mol/m2.
+
+The corresponding interval-based molecular area would be
+
+    A_bar,app = 1e18 / (N_A Gamma_bar,app) = 0.507 nm2.
+
+These are useful empirical diagnostics, but they cannot legitimately be reported as Gamma_max and A_min. No saturated pre-CMC linear region or CMC has been established, and a finite-difference slope is only an average over its interval.
+
+No unique adsorption isotherm can be selected. The strongly accelerating early surface-tension drops are not described by a simple ideal Langmuir curve, but that does not prove a Frumkin model: cooperative adsorption, ionic nonideality, impurities, or other equations of state could produce similar curvature. A Frumkin parameter would therefore be model-dependent.
+
+The micellization free energy is also indeterminate because there is no measured CMC. Even with a CMC, an ionic-surfactant calculation would require activity coefficients, a standard-state convention, and micellar counterion binding or degree of ionization.
+
+FINAL_JSON:
+{
+  "charge_type": "cationic",
+  "cmc_mM": null,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "CMC: surface tension is still decreasing substantially at the highest concentration and no post-micellar plateau was measured",
+    "maximum surface excess: no saturated pre-CMC slope can be identified; the largest calculable value is only an interval-averaged apparent surface excess",
+    "minimum molecular area: it depends on the undetermined maximum surface excess",
+    "adsorption isotherm: curvature alone cannot uniquely distinguish Frumkin, other cooperative models, ionic nonideality, or experimental effects",
+    "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+    "standard micellization free energy: CMC, activity coefficients, micellar counterion binding, and the standard-state convention are unavailable",
+    "whether micellization occurs within the measured range: decreasing slope can arise from adsorption saturation without establishing micelle formation",
+    "micellar counterion binding and degree of ionization: formal molecular charge does not determine counterion association in an aggregate",
+    "aggregation number, micelle size, and micelle shape: no structural or scattering measurements are supplied",
+    "Krafft temperature: measurements are available at only one temperature",
+    "micellization enthalpy and entropy: temperature-dependent equilibrium measurements or calorimetry are absent"
+  ]
+}
+
+
+R3-04
+======
+
+The SMILES contains a negatively charged sulfonate group, [S(=O)(=O)[O-]], and one sodium counterion. It is therefore a 1:1 anionic surfactant. The structure also contains two substantial branched hydrocarbon groups, but molecular connectivity alone does not specify the resulting micelle geometry.
+
+Tensiometric CMC
+----------------
+
+For the first six concentrations, from 0.01585 through 1.58489 mM, the concentrations are separated by 0.4 log-decade and the surface tension decreases by exactly 6.56 mN/m at every step. Their fitted line is therefore
+
+    gamma = 32.700 - 16.400 log10(c_mM).
+
+The final three points give a shallow post-transition regression:
+
+    gamma = 26.7667 + 1.250 log10(c_mM).
+
+Intersecting these regressions gives
+
+    log10(c_CMC / mM)
+      = (32.700 - 26.7667) / (16.400 + 1.250)
+      = 0.33617,
+
+and hence
+
+    c_CMC = 2.17 mM.
+
+The fitted surface tension at the intersection is approximately 27.19 mN/m.
+
+This is an operational tensiometric CMC. Treating the final three measurements as a horizontal plateau instead gives approximately 2.00 mM, so the reasonable regression-method sensitivity is about 2.0-2.2 mM. The transition itself is directly bracketed by the measurements at 1.58489 and 3.981 mM. A statistical confidence interval cannot be calculated without replicate uncertainties.
+
+Maximum surface excess and molecular area
+-----------------------------------------
+
+The pre-CMC slope is
+
+    d gamma / d ln(c)
+      = -16.400 / ln(10)
+      = -7.12243 mN/m.
+
+For a 1:1 ionic surfactant without added supporting electrolyte, the ideal-dilute Gibbs equation uses the factor 2:
+
+    Gamma_max = -(1 / 2RT)(d gamma / d ln(c)).
+
+At 298.15 K,
+
+    Gamma_max,app
+      = 0.00712243 / [2(8.3144626)(298.15)]
+      = 1.4366e-6 mol/m2.
+
+The corresponding apparent minimum area is
+
+    A_min,app = 1e18 / (N_A Gamma_max) = 1.156 nm2.
+
+These are concentration-based, ideal-dilute estimates. Exact activity-corrected quantities would require ionic activity coefficients and confirmation of the effective Gibbs prefactor.
+
+Limits of the data
+------------------
+
+The nearly exact linear dependence on log(c) establishes an approximately constant apparent surface excess over the measured pre-CMC range, but it does not identify a microscopic adsorption isotherm. Langmuir, Frumkin, and other models may approximate the same limited concentration window using different parameters. Therefore neither a unique isotherm nor a Frumkin interaction parameter is justified.
+
+The standard micellization free energy cannot be calculated uniquely. For an ionic surfactant it depends on the micellar degree of ionization or counterion binding, activities, solvent and standard-state convention—not solely on the measured CMC.
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 2.17,
+  "gamma_max_mol_per_m2": 1.4366e-6,
+  "a_min_nm2": 1.156,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "exact CMC and statistical confidence interval: 2.17 mM is a regression-based estimate and no replicate uncertainties are supplied",
+    "unique adsorption isotherm: the measured logarithmic linearity does not uniquely distinguish Langmuir, Frumkin, or other adsorption models",
+    "Frumkin interaction parameter: it is model-dependent and the Frumkin model has not been uniquely established",
+    "activity-corrected maximum surface excess and molecular area: ionic activity coefficients and the effective thermodynamic Gibbs prefactor are unavailable",
+    "standard micellization free energy: micellar counterion binding, activity coefficients, solvent standard state, and micellar degree of ionization are unspecified",
+    "adsorption equilibrium constant and absolute surface pressure: the pure-solvent surface tension is not supplied",
+    "micellar counterion binding and degree of ionization: formal charge in the SMILES does not determine counterion association in aggregates",
+    "aggregation number, micelle size, and micelle shape: molecular connectivity and tensiometry do not uniquely determine aggregate structure",
+    "Krafft temperature and phase behavior: measurements are provided at only one temperature",
+    "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+  ]
+}
+
+
+R3-05
+======
+
+The SMILES contains a hydrocarbon chain connected to a poly(ethylene oxide) chain ending in a neutral alcohol. It contains no formal charge or counterion, so the represented surfactant is nonionic.
+
+The measurements contain two distinct regimes:
+
+- From 0.005 to 0.22 mM, surface tension decreases gradually from 71.6508 to 63.3381 mN/m.
+- From 0.40 to 1.60 mM, it is exactly constant at 30.5 mN/m.
+
+However, the unsampled interval between 0.22 and 0.40 mM contains an abrupt 32.8381 mN/m decrease. The local slope immediately before the gap is only
+
+    (63.3381 - 64.9241) / ln(0.22/0.16)
+      = -4.9803 mN/m,
+
+whereas the secant across the gap is
+
+    (30.5 - 63.3381) / ln(0.40/0.22)
+      = -54.93 mN/m.
+
+These branches cannot be joined by an ordinary two-line CMC construction: extrapolating the observed low-concentration slope does not approach the 30.5 mN/m plateau anywhere near the measured gap.
+
+Thus, the data establish a transition or experimental discontinuity between 0.22 and 0.40 mM, followed by a plateau, but they do not establish that this discontinuity is ordinary micellization. It could instead reflect a concentration error, incomplete equilibration, contamination, a surface phase transition, or another bulk phase transition. If one assumes that both branches are valid equilibrium measurements and that the plateau is micellar, the CMC would only be bracketed as 0.22 < c_CMC <= 0.40 mM. Choosing 0.40 mM or the geometric midpoint would be arbitrary, so no numerical CMC is reported.
+
+For a nonionic surfactant, the ideal-dilute Gibbs equation has no ionic factor of two:
+
+    Gamma = -(1 / RT)(d gamma / d ln(c)).
+
+Applying it only to the last well-sampled low-concentration interval gives
+
+    Gamma_bar(0.16-0.22)
+      = 0.0049803 / [(8.3144626)(298.15)]
+      = 2.01e-6 mol/m2,
+
+corresponding to an interval-based area of 0.827 nm2. This is not demonstrably Gamma_max, because the surface-tension curve immediately below the plateau is missing.
+
+Using the gap-crossing secant would instead give 2.22e-5 mol/m2 and an area near 0.075 nm2. Besides spanning an unsampled discontinuity, that area is incompatible with the size of the polyether surfactant molecule, so it cannot reasonably represent an equilibrium saturated monolayer.
+
+The sharp change might be reproducible with a strongly cooperative model, including some Frumkin parameterizations, but one gap does not uniquely establish that model. Therefore the isotherm and Frumkin interaction parameter remain indeterminate.
+
+FINAL_JSON:
+{
+  "charge_type": "nonionic",
+  "cmc_mM": null,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "numerical CMC: a transition is only conditionally bracketed between 0.22 and 0.40 mM, with no measurements connecting the gradual low-concentration branch to the plateau",
+    "nature of the discontinuity: the data cannot distinguish micellization from concentration error, nonequilibrium, contamination, or another surface or bulk phase transition",
+    "maximum surface excess: the surface-tension derivative immediately below the plateau is unmeasured and the gap-crossing secant is not a credible equilibrium derivative",
+    "minimum molecular area: it depends on the undetermined maximum surface excess",
+    "adsorption isotherm: the unsampled abrupt transition cannot uniquely distinguish Frumkin cooperativity from other models or experimental artifacts",
+    "Frumkin interaction parameter: the Frumkin model has not been uniquely established and the transition region is unsampled",
+    "standard micellization free energy: no defensible numerical CMC, solvent activity, or standard-state convention is supplied",
+    "aggregation number, micelle size, and micelle shape: tensiometry and molecular connectivity alone do not determine aggregate structure",
+    "cloud point and other phase boundaries: only one temperature and no phase-observation data are supplied",
+    "micellization enthalpy and entropy: temperature-dependent equilibrium measurements or calorimetry are absent"
+  ]
+}
+
+
+R3-06
+======
+
+The SMILES contains both a permanent quaternary ammonium group, [N+], and a carboxylate, [O-], in the same molecule, with no separate counterion. The represented species is therefore zwitterionic and has zero net formal charge.
+
+For Gibbs adsorption, this zwitterion is one electrically neutral chemical component. Its ideal-dilute prefactor is consequently 1/RT, not the factor 1/(2RT) used for a dissociated 1:1 surfactant salt.
+
+What the tensiometry establishes
+--------------------------------
+
+The measurements contain:
+
+- A gradual low-concentration branch from 0.05 to 1.9 mM, where surface tension falls from 69.7682 to 52.216 mN/m.
+- A constant measured plateau of 33.0 mN/m at 3.0 and 5.0 mM.
+- An unsampled 19.216 mN/m drop between 1.9 and 3.0 mM.
+
+The last resolved slope on the low-concentration branch is
+
+    (52.216 - 54.802) / ln(1.9/1.3)
+      = -6.8144 mN/m.
+
+In contrast, the secant spanning the gap is
+
+    (33.0 - 52.216) / ln(3.0/1.9)
+      = -42.070 mN/m.
+
+Extrapolating the measured low-concentration slope cannot connect continuously to the plateau within the 1.9-3.0 mM gap. Therefore, an ordinary two-line CMC construction is not supported.
+
+If both branches are valid equilibrium data and the 33.0 mN/m plateau is micellar, the transition is only conditionally bracketed as
+
+    1.9 < c_CMC <= 3.0 mM.
+
+A numerical choice inside that interval would require assuming how the missing transition region behaves. The sharp change might be cooperative adsorption, a bulk or surface phase transition, incomplete equilibration, a concentration error, or another experimental issue. The present data cannot distinguish these explanations.
+
+Surface-excess diagnostic
+-------------------------
+
+Using the final resolved low-concentration interval and the one-component Gibbs equation,
+
+    Gamma_bar,app
+      = -(1 / RT)(Delta gamma / Delta ln(c))
+      = 0.0068144 / [(8.3144626)(298.15)]
+      = 2.75e-6 mol/m2.
+
+Its interval-based molecular area is
+
+    A_bar,app = 1e18 / (N_A Gamma_bar,app) = 0.604 nm2.
+
+These are not demonstrably Gamma_max and A_min, because the slope immediately before the plateau is missing.
+
+Applying the Gibbs equation to the gap-crossing secant would give approximately 1.70e-5 mol/m2, corresponding to only 0.098 nm2 per molecule. Besides spanning an unsampled transition, that area is implausibly small for the molecular structure and should not be interpreted as a saturated monolayer.
+
+A Frumkin-type model could potentially reproduce a sharp cooperative transition, but so could other models or experimental artifacts. The data therefore do not uniquely identify either Langmuir or Frumkin adsorption, and no Frumkin interaction parameter is justified.
+
+FINAL_JSON:
+{
+  "charge_type": "zwitterionic",
+  "cmc_mM": null,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "numerical CMC: the transition is only conditionally bracketed between 1.9 and 3.0 mM and its entire connecting region is unsampled",
+    "nature of the sharp transition: the data cannot distinguish micellization from cooperative adsorption, another phase transition, nonequilibrium, or experimental error",
+    "maximum surface excess: the derivative immediately below the plateau is unmeasured; only an interval-averaged low-branch surface excess can be calculated",
+    "minimum molecular area: it depends on the undetermined maximum surface excess",
+    "adsorption isotherm: the missing transition region prevents unique discrimination between Langmuir, Frumkin, other cooperative models, and artifacts",
+    "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+    "standard micellization free energy: no defensible numerical CMC, solvent activity, or standard-state convention is available",
+    "pH-dependent speciation outside the represented form: the SMILES specifies a zwitterion but no pH or acid dissociation information is supplied",
+    "aggregation number, micelle size, and micelle shape: tensiometry and molecular connectivity alone do not determine aggregate structure",
+    "phase-transition temperatures: measurements are provided at only one temperature",
+    "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+  ]
+}
+
+
+R3-07
+======
+
+The SMILES contains a singly charged sulfate headgroup, [OS(=O)(=O)[O-]], with one sodium counterion. The surfactant is therefore a 1:1 anionic surfactant.
+
+CMC
+---
+
+The surface tension decreases smoothly through 1.8 mM and is then constant at 33.21 mN/m from 2.5 to 5.0 mM. The 1.8 mM value, 33.2061 mN/m, is already indistinguishable from that plateau.
+
+Using the final pre-CMC segment, 1.4-1.8 mM,
+
+    d gamma / d ln(c)
+      approximately = (33.2061 - 35.5467) / ln(1.8/1.4)
+      = -9.3134 mN/m.
+
+Its intersection with the 33.21 mN/m plateau occurs at approximately
+
+    c_CMC = 1.80 mM.
+
+Thus the data support an operational tensiometric CMC of 1.80 mM. Its statistical uncertainty cannot be calculated because no replicate errors are supplied.
+
+Surface excess in excess electrolyte
+-------------------------------------
+
+Without added electrolyte, a fully dissociated 1:1 ionic surfactant would use the factor 1/(2RT). That factor does not apply here: 100 mM NaCl is much greater than the approximately 1.8 mM surfactant concentration, so the sodium-ion activity is approximately buffered by the supporting electrolyte. The fixed-counterion Gibbs form is
+
+    Gamma_max,app = -(1 / RT)(d gamma / d ln(c)).
+
+At 298.15 K,
+
+    Gamma_max,app
+      = 0.0093134 / [(8.3144626)(298.15)]
+      = 3.76e-6 mol/m2.
+
+Therefore,
+
+    A_min,app = 1e18 / (N_A Gamma_max) = 0.442 nm2.
+
+These are supporting-electrolyte, concentration-based estimates. They are not exact thermodynamic values because sodium and surfactant activity coefficients at 100 mM ionic strength are unknown. Even under ideal concentration behavior, adding 1.8 mM sodium surfactant changes total sodium concentration slightly, so the counterion activity is not perfectly constant; the resulting correction is small relative to the unsupported activity-coefficient uncertainty.
+
+Model and thermodynamics
+------------------------
+
+The smoothly increasing magnitude of the adsorption slope is compatible with progressive surface saturation, but it does not uniquely select Langmuir or Frumkin adsorption. Several isotherms can reproduce a limited surface-tension curve, particularly when ionic activities are unknown. Accordingly, neither an isotherm model nor a Frumkin interaction parameter is determined.
+
+The standard micellization free energy is also not uniquely obtainable. In an ionic system containing supporting electrolyte, it depends on the chosen standard state, surfactant and ion activities, and micellar counterion binding or degree of ionization. The formal charge in the SMILES does not provide those quantities.
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 1.80,
+  "gamma_max_mol_per_m2": 3.76e-6,
+  "a_min_nm2": 0.442,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "statistical CMC uncertainty: no replicate measurements or surface-tension errors are supplied",
+    "unique adsorption isotherm: the surface-tension curve and unknown ionic activities cannot uniquely distinguish Langmuir, Frumkin, or other models",
+    "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+    "exact activity-corrected maximum surface excess and molecular area: surfactant and ion activity coefficients at 100 mM NaCl are unavailable",
+    "standard micellization free energy: ionic activities, standard-state convention, and micellar counterion binding or degree of ionization are unknown",
+    "micellar counterion binding: the formal sodium counterion in the SMILES does not determine sodium association with micelles",
+    "aggregation number, micelle size, and micelle shape: tensiometry alone supplies no structural information",
+    "Krafft temperature and broader phase behavior: measurements are available at only one temperature",
+    "micellization enthalpy and entropy: temperature-dependent CMC measurements or calorimetry are absent"
+  ]
+}
+
+
+R3-08
+======
+
+The SMILES contains a permanent quaternary ammonium cation and one bromide counterion. It therefore represents a 1:1 cationic surfactant.
+
+The surface tension decreases monotonically from 70.2691 to 32.3475 mN/m over the entire measured range. There is no post-micellar plateau and no reversal or statistically established break. Therefore these measurements demonstrate strong interfacial adsorption, but they do not establish a tensiometric CMC.
+
+In particular, the final interval still has a substantial slope:
+
+    Delta gamma / Delta ln(c)
+      = (32.3475 - 49.2364) / ln(16.37/4.0925)
+      = -16.8889 / ln(4)
+      = -12.1828 mN/m.
+
+It would be possible to claim that the CMC exceeds 16.37 mM only by assuming that surface tension must become perfectly constant immediately upon micellization. That is not guaranteed, so even this lower bound is not model-independent.
+
+For a fully dissociated 1:1 ionic surfactant without added electrolyte, the ideal-dilute Gibbs relation is
+
+    Gamma = -(1 / 2RT)(d gamma / d ln(c)).
+
+Applying it to the final, factor-of-four concentration interval gives an apparent interval average
+
+    Gamma_bar,app
+      = 0.0121828 / [2(8.3144626)(296.35)]
+      = 2.47e-6 mol/m2,
+
+with an associated interval-based molecular area
+
+    A_bar,app = 1e18 / (N_A Gamma_bar,app) = 0.672 nm2.
+
+These values cannot be labeled Gamma_max and A_min. The interval spans a fourfold concentration change and could contain an unresolved micellization transition. Moreover, the slope has not reached a demonstrable limiting pre-CMC value.
+
+The successive slopes increase in magnitude with concentration, indicating increasingly strong adsorption or surface coverage, but that curvature does not uniquely identify a Langmuir, Frumkin, or other isotherm. No model-specific interaction parameter is therefore justified.
+
+The standard micellization free energy is also indeterminate because no CMC has been measured. For this ionic surfactant it would additionally require activity coefficients, a standard-state convention, and micellar counterion binding or degree of ionization.
+
+FINAL_JSON:
+{
+  "charge_type": "cationic",
+  "cmc_mM": null,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "CMC: surface tension is still decreasing substantially at the highest concentration and no post-micellar plateau or defensible breakpoint is measured",
+    "whether the CMC exceeds 16.37 mM: that inference would require assuming an immediately horizontal post-CMC surface-tension curve",
+    "maximum surface excess: no limiting pre-CMC slope is established and the final slope spans a fourfold concentration interval that may contain an unresolved transition",
+    "minimum molecular area: it depends on the undetermined maximum surface excess",
+    "adsorption isotherm: the observed curvature cannot uniquely distinguish Langmuir, Frumkin, other cooperative models, or ionic nonideality",
+    "Frumkin interaction parameter: the Frumkin model has not been uniquely established",
+    "standard micellization free energy: no CMC is available and ionic activities, counterion binding, and the standard-state convention are unspecified",
+    "micellar counterion binding and degree of ionization: formal charge in the SMILES does not determine bromide association with micelles",
+    "aggregation number, micelle size, and micelle shape: tensiometry alone provides no structural information",
+    "Krafft temperature and phase behavior: measurements are provided at only one temperature",
+    "micellization enthalpy and entropy: temperature-dependent equilibrium data or calorimetry are absent"
+  ]
+}

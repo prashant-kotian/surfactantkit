@@ -1,0 +1,293 @@
+### P-001
+The Klevens relation would have the form
+
+log10(CMC) = A - B n,
+
+with a specified concentration standard and fitted coefficients A and B. The prompt gives only the training-chain range, not the training CMC data or the fitted coefficients. Therefore, no unique C22 prediction can be calculated. In addition, C22 is outside the stated C6-C18 training range, so any result would be an extrapolation even if the fit were supplied.
+
+FINAL_JSON: {"answer": "No valid numerical solution: the fitted Klevens coefficients or training CMC data are not provided, and C22 is outside the C6-C18 training range."}
+
+### P-002
+For a Klevens fit,
+
+log10(CMC) = A - B n.
+
+The chain length and the training range do not determine A and B. Since neither the fitted coefficients nor the underlying CMC data are supplied, infinitely many fits are compatible with the stated information and no unique C20 CMC follows. C20 is also outside the C6-C18 fit range.
+
+FINAL_JSON: {"answer": "No valid numerical solution: the fitted Klevens coefficients or training CMC data are not provided, and C20 is outside the C6-C18 training range."}
+
+### P-003
+The relevant Klevens form is
+
+log10(CMC) = A - B n.
+
+The prompt does not provide A and B or the literature CMC values from which to reproduce them. A training range alone is insufficient to define a regression, so a unique C18 CMC cannot be calculated. C18 also lies outside the stated C8-C16 range, making it an extrapolation.
+
+FINAL_JSON: {"answer": "No valid numerical solution: the fitted Klevens coefficients or training CMC data are not provided, and C18 is outside the C8-C16 training range."}
+
+### P-004
+The Klevens equation requires numerical intercept and slope parameters:
+
+log10(CMC) = A - B n.
+
+Neither those parameters nor the underlying literature CMC values are given. Consequently, the stated chain length and training interval do not determine a numerical CMC. Moreover, C6 is below the C8-C16 training range and would require extrapolation.
+
+FINAL_JSON: {"answer": "No valid numerical solution: the fitted Klevens coefficients or training CMC data are not provided, and C6 is outside the C8-C16 training range."}
+
+### P-005
+A Klevens calculation needs the fitted intercept and slope in
+
+log10(CMC) = A - B n.
+
+Although C10 lies within the stated C6-C18 training range, the range itself supplies neither A nor B. The literature dataset and fit coefficients are absent, so no unique CMC can be computed without inventing a fit.
+
+FINAL_JSON: {"answer": "No valid numerical solution: the fitted Klevens coefficients or training CMC data are not provided; the training range alone does not define the fit."}
+
+### P-006
+For the relation
+
+log10(CMC) = A - B n,
+
+the numerical coefficients A and B are essential. C14 is within the stated fitting range, but the prompt supplies only that range, not the coefficients or the CMC observations. Hence a numerical prediction is underdetermined.
+
+FINAL_JSON: {"answer": "No valid numerical solution: the fitted Klevens coefficients or training CMC data are not provided; the training range alone does not define the fit."}
+
+### P-007
+The anionic-sulfate Klevens model would require its fitted A and B values in
+
+log10(CMC) = A - B n.
+
+C14 is inside the stated C8-C16 range, but that fact does not determine either coefficient. Because neither the fitted model nor its training CMC values are supplied, there is no unique numerical prediction.
+
+FINAL_JSON: {"answer": "No valid numerical solution: the fitted Klevens coefficients or training CMC data are not provided; the training range alone does not define the fit."}
+
+### Q-001
+Using the simple apparent van't Hoff convention requested,
+
+ln(CMC2/CMC1) = -(Delta H/R)(1/T2 - 1/T1),
+
+so
+
+Delta H = -R ln(CMC2/CMC1)/(1/T2 - 1/T1).
+
+The temperatures are 303.15, 323.15, and 343.15 K. Because only CMC ratios occur, using mM rather than M does not change the result.
+
+For 30.0-50.0 C,
+
+Delta H = -8.3144626 ln(10.2/7.8)/(1/323.15 - 1/303.15)
+        = 10.925 kJ mol^-1.
+
+For 50.0-70.0 C,
+
+Delta H = -8.3144626 ln(13.0/10.2)/(1/343.15 - 1/323.15)
+        = 11.182 kJ mol^-1.
+
+The estimates differ by only about 0.26 kJ mol^-1 (about 2.3%), so they are reasonably CONSISTENT with a roughly linear apparent van't Hoff relation.
+
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": 10.925, "dH_high_pair_kJ_per_mol": 11.182, "consistency": "CONSISTENT"}
+
+### Q-002
+Use
+
+Delta H = -R ln(CMC2/CMC1)/(1/T2 - 1/T1),
+
+with temperatures in kelvin. The concentration-unit conversion cancels in each ratio.
+
+For 30.0-50.0 C,
+
+Delta H = -8.3144626 ln(2.8/2.38)/(1/323.15 - 1/303.15)
+        = 6.619 kJ mol^-1.
+
+For 50.0-70.0 C,
+
+Delta H = -8.3144626 ln(4.05/2.8)/(1/343.15 - 1/323.15)
+        = 17.015 kJ mol^-1.
+
+The estimates differ by about 10.40 kJ mol^-1 and by far more than ordinary rounding sensitivity. They are INCONSISTENT, indicating pronounced curvature or temperature-dependent apparent micellization enthalpy over this interval.
+
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": 6.619, "dH_high_pair_kJ_per_mol": 17.015, "consistency": "INCONSISTENT"}
+
+### Q-003
+Applying
+
+Delta H = -R ln(CMC2/CMC1)/(1/T2 - 1/T1)
+
+to the CMC ratios, with T in kelvin, gives the following apparent enthalpies.
+
+For 30.0-50.0 C,
+
+Delta H = -8.3144626 ln(0.805/0.592)/(1/323.15 - 1/303.15)
+        = 12.516 kJ mol^-1.
+
+For 50.0-70.0 C,
+
+Delta H = -8.3144626 ln(1.11/0.805)/(1/343.15 - 1/323.15)
+        = 14.810 kJ mol^-1.
+
+The two values differ by about 2.29 kJ mol^-1, or about 17% relative to their mean. This suggests at most mild curvature, but the estimates are still reasonably close for two-point derivatives from rounded CMC data; they are classified as CONSISTENT rather than showing the strong inconsistency seen when the slopes differ by a factor of several.
+
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": 12.516, "dH_high_pair_kJ_per_mol": 14.810, "consistency": "CONSISTENT"}
+
+### R-001
+Using the standard Tanford expressions for a saturated hydrocarbon tail with n carbons,
+
+v = 27.4 + 26.9n Angstrom^3,
+l_c = 1.5 + 1.265n Angstrom.
+
+For n = 12,
+
+v = 27.4 + 26.9(12) = 350.2 Angstrom^3,
+l_c = 1.5 + 1.265(12) = 16.68 Angstrom.
+
+The critical packing parameter is
+
+CPP = v/(a0 l_c)
+    = 350.2/[50.0(16.68)]
+    = 0.419904.
+
+All length units cancel, so CPP is dimensionless.
+
+FINAL_JSON: {"value": 0.4199}
+
+### R-002
+For a C12 saturated tail, the Tanford volume and maximum extended length are
+
+v = 27.4 + 26.9(12) = 350.2 Angstrom^3,
+l_c = 1.5 + 1.265(12) = 16.68 Angstrom.
+
+Thus,
+
+CPP = v/(a0 l_c)
+    = 350.2/[50.0(16.68)]
+    = 0.419904.
+
+The standard packing classification assigns 1/3 < CPP < 1/2 to cylindrical or rodlike micelles. Since 0.4199 lies in that interval, the expected morphology is cylindrical/rodlike micelles.
+
+FINAL_JSON: {"cpp": 0.4199, "morphology": "cylindrical/rodlike micelles"}
+
+### R-003
+The Tanford tail parameters for n = 12 are
+
+v = 27.4 + 26.9(12) = 350.2 Angstrom^3,
+l_c = 1.5 + 1.265(12) = 16.68 Angstrom.
+
+Therefore,
+
+CPP = v/(a0 l_c)
+    = 350.2/[50.0(16.68)]
+    = 0.419904.
+
+Because 1/3 < CPP < 1/2, the packing prediction is cylindrical/rodlike micelles.
+
+For the separately requested spherical-core estimate, take r = l_c and divide the sphere's hydrocarbon-core volume by the volume per tail:
+
+N_agg = [(4 pi/3)r^3]/v
+      = [(4 pi/3)(16.68)^3]/350.2
+      = 55.509.
+
+Thus the idealized spherical estimate is about 55.5, corresponding to approximately 56 molecules. It is a hypothetical geometric estimate: the CPP itself favors nonspherical cylindrical aggregates.
+
+FINAL_JSON: {"cpp": 0.4199, "morphology": "cylindrical/rodlike micelles", "n_agg": 55.51}
+
+### R-004
+For a saturated C16 tail, the Tanford relations give
+
+v = 27.4 + 26.9(16) = 457.8 Angstrom^3,
+l_c = 1.5 + 1.265(16) = 21.74 Angstrom.
+
+Hence,
+
+CPP = v/(a0 l_c)
+    = 457.8/[45.0(21.74)]
+    = 0.467955.
+
+CPP is dimensionless.
+
+FINAL_JSON: {"value": 0.4680}
+
+### R-005
+The C16 Tanford tail volume and length are
+
+v = 27.4 + 26.9(16) = 457.8 Angstrom^3,
+l_c = 1.5 + 1.265(16) = 21.74 Angstrom.
+
+Thus,
+
+CPP = 457.8/[45.0(21.74)] = 0.467955.
+
+This lies between 1/3 and 1/2, close to the upper boundary, so the packing model predicts cylindrical/rodlike (potentially elongated or wormlike) micelles.
+
+FINAL_JSON: {"cpp": 0.4680, "morphology": "cylindrical/rodlike micelles"}
+
+### R-006
+For n = 16, the standard Tanford parameters are
+
+v = 27.4 + 26.9(16) = 457.8 Angstrom^3,
+l_c = 1.5 + 1.265(16) = 21.74 Angstrom.
+
+The packing parameter is
+
+CPP = 457.8/[45.0(21.74)] = 0.467955.
+
+Since 1/3 < CPP < 1/2, the expected morphology is cylindrical/rodlike micelles, with the value near 1/2 suggesting elongated or wormlike structures.
+
+For the requested spherical-core geometric estimate, set r = l_c:
+
+N_agg = [(4 pi/3)r^3]/v
+      = [(4 pi/3)(21.74)^3]/457.8
+      = 94.014.
+
+This corresponds to about 94 molecules in the hypothetical sphere. As in R-003, that spherical calculation is an idealized comparison even though the CPP favors a cylindrical aggregate.
+
+FINAL_JSON: {"cpp": 0.4680, "morphology": "cylindrical/rodlike micelles", "n_agg": 94.01}
+
+### S-001
+Clint's equation uses bulk mole fractions, not weight fractions:
+
+1/CMC_mix = x1/CMC1 + x2/CMC2.
+
+Convert the 47.0/53.0 mass split to mole fraction:
+
+x_SDS = (0.47/288.38)/[(0.47/288.38) + (0.53/646.85)]
+      = 0.665453,
+
+x_TX-100 = 0.334547.
+
+Then
+
+CMC_mix = [0.665453/8.2 + 0.334547/0.24]^-1
+        = 0.677921 mM.
+
+FINAL_JSON: {"value": 0.677921}
+
+### S-002
+First convert the weight composition to the mole fractions required by Clint's equation:
+
+x_CTAB = (0.30/364.45)/[(0.30/364.45) + (0.70/646.85)]
+       = 0.432030,
+
+x_TX-100 = 0.567970.
+
+Using
+
+CMC_mix = [x_CTAB/CMC_CTAB + x_TX-100/CMC_TX-100]^-1,
+
+CMC_mix = [0.432030/0.92 + 0.567970/0.24]^-1
+        = 0.352592 mM.
+
+FINAL_JSON: {"value": 0.352592}
+
+### S-003
+Clint's ideal-mixture relation requires surfactant mole fractions. From the 60.0/40.0 mass split,
+
+x_SDS = (0.60/288.38)/[(0.60/288.38) + (0.40/308.34)]
+      = 0.615949,
+
+x_DTAB = 0.384051.
+
+Therefore,
+
+CMC_mix = [0.615949/8.2 + 0.384051/15.0]^-1
+        = 9.92860 mM.
+
+FINAL_JSON: {"value": 9.92860}

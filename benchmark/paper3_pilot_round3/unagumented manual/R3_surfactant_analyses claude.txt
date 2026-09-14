@@ -1,0 +1,413 @@
+================================================================================
+SURFACTANT MICELLIZATION ANALYSES — R3-01 through R3-08
+Worked from first principles (SMILES + raw tensiometry only).
+Conventions used: ionic 1:1 no salt -> Gibbs prefactor n=2; nonionic /
+net-neutral zwitterion / ionic-in-excess-salt -> n=1. Fits/regressions
+performed directly on the raw data (Langmuir/Szyszkowski vs Frumkin, AIC).
+================================================================================
+
+
+################################################################################
+# R3-01
+################################################################################
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]   (sodium dodecyl sulfate, SDS)
+Temperature: 296.15 K
+
+STRUCTURE & CHARGE
+  Dodecyl sulfate ester + Na+. -OSO3- is a strong-acid conjugate base, fully
+  ionized at all pH -> anionic, pH-independent. 1:1 ionic, no added salt -> n=2.
+
+CMC
+  gamma vs ln C: steep descent breaking to a flat plateau (~36.8-37.9).
+  Intersection of steepest linear window with plateau -> CMC ~= 9.3 mM
+  (method-sensitive range 8.5-11 mM).
+
+ISOTHERM MODEL — FRUMKIN
+  Sub-CMC fit (n=2): Langmuir SSR=0.34, AIC=-7.5, unphysical g0=73.0 / A_min=0.23.
+  Frumkin SSR=0.083, AIC=-12.5, physical g0=72.1, A_min=0.39, a=+0.81 (attractive).
+  Frumkin supported (dAIC~5, stable across seeds).
+
+Gamma_max / A_min
+  Frumkin fit: Gamma_max ~= 4.3e-6 mol/m2, A_min ~= 0.39 nm2.
+  Model-independent Gibbs tangent (n=2): ~2.9-3.4e-6 mol/m2 (A_min ~0.49-0.57), same order.
+
+delta_G_mic
+  X_cmc = (9.3 mM)/(55.4 M) = 1.68e-4. Ionic pseudo-phase, complete-binding
+  convention (beta=1): 2RT ln X_cmc ~= -42.8 kJ/mol. True value bracketed by the
+  nonionic limit (-21.4, beta=0) and this (-42.8, beta=1); typical beta~0.6-0.7
+  gives ~ -35 kJ/mol. beta undeterminable from tensiometry.
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 9.3,
+  "gamma_max_mol_per_m2": 4.27e-6,
+  "a_min_nm2": 0.39,
+  "isotherm_model": "frumkin",
+  "frumkin_a": 0.81,
+  "delta_g_mic_kJ_per_mol": -42.8,
+  "undeterminable": [
+    "degree of counterion binding beta - needs conductivity; makes delta_g_mic convention-dependent (true value between -21.4 and -42.8 kJ/mol)",
+    "aggregation number and micelle size/shape - need scattering/fluorescence, not tensiometry",
+    "Krafft temperature - needs temperature-dependent solubility data",
+    "delta_H_mic and delta_S_mic - need temperature dependence of CMC or calorimetry",
+    "absolute pure-water surface tension gamma0 - not measured, only inferred (~72 mN/m) from the fit"
+  ]
+}
+
+
+################################################################################
+# R3-02
+################################################################################
+SMILES: CCCCCCCCCCCCN+(C)C.[Br-]
+Temperature: 296.35 K
+
+STRUCTURE & CHARGE
+  N+ shows only TWO methyls + the dodecyl chain (three heavy substituents),
+  requiring one implicit H -> protonated N,N-dimethyldodecylamine
+  (dodecyldimethylammonium bromide, C14H32BrN), NOT the quaternary DTAB.
+  It is the conjugate acid of a weak-base amine (pKa ~10): cationic as drawn,
+  but charge is pH-governed and pH is not given -> ambiguous_pH_dependent.
+
+CMC
+  Steep descent; a surface-tension MINIMUM at 16.37 mM (32.35) then a rise to
+  36.22 at 32.74 mM (possible trace impurity), plus a 4-16 mM data gap and no
+  clean plateau. CMC only bracketed ~13-17 mM, best estimate ~15 mM.
+
+ISOTHERM MODEL — FRUMKIN
+  Sub-CMC fit (n=2): Frumkin SSR=0.50, AIC=-3.5, g0=71.1, A_min=0.53, a=+1.35
+  vs Langmuir SSR=1.44, AIC=-0.2 (unphysical). Frumkin supported.
+
+Gamma_max / A_min
+  Frumkin: Gamma_max ~= 2.8e-6 mol/m2, A_min ~= 0.59 nm2 (tangent cross-check ~0.70).
+  Caveat: n=2 assumes full ionization; unknown pH prevents confirming.
+
+delta_G_mic
+  X_cmc(15 mM) ~= 2.7e-4. 2RT ln X (beta=1) ~= -40 kJ/mol; bracketed -20..-40.
+
+FINAL_JSON:
+{
+  "charge_type": "ambiguous_pH_dependent",
+  "cmc_mM": 15,
+  "gamma_max_mol_per_m2": 2.8e-6,
+  "a_min_nm2": 0.59,
+  "isotherm_model": "frumkin",
+  "frumkin_a": 1.35,
+  "delta_g_mic_kJ_per_mol": -40.0,
+  "undeterminable": [
+    "degree of counterion binding beta - needs conductivity; makes delta_g_mic prefactor/magnitude convention-dependent (-20 to -40 kJ/mol)",
+    "solution pH / protonation fraction - species is a protonated weak-base amine (not a permanent quaternary), so its charge and the validity of the n=2 Gibbs prefactor cannot be confirmed",
+    "precise CMC - no post-CMC plateau, a 4-16 mM data gap, and a surface-tension minimum (possible trace impurity) leave CMC only bracketed ~13-17 mM",
+    "aggregation number and micelle size/shape - need scattering/fluorescence",
+    "Krafft temperature - needs temperature-dependent solubility",
+    "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry",
+    "absolute pure-water gamma0 - not measured, only inferred (~71 mN/m) from the fit"
+  ]
+}
+
+
+################################################################################
+# R3-03
+################################################################################
+SMILES: CCCCCCCCCCCCCCCCN+(C)C.[Br-]
+Temperature: 296.85 K
+
+STRUCTURE & CHARGE
+  Hexadecyl (C16) chain + N+ with only two methyls + implicit H -> protonated
+  N,N-dimethylhexadecylamine (hexadecyldimethylammonium bromide, C18H40BrN),
+  NOT quaternary CTAB. Conjugate acid of a weak base -> ambiguous_pH_dependent.
+
+CMC
+  Slope steepens to a max (~-16) then DROPS to -5.8 in the final interval, but
+  NO post-CMC plateau is established (tension still falling at the top point).
+  Break lies inside 1.05-2.11 mM. Best estimate ~1.5 mM (range ~1.3-2.1 mM);
+  precise value not reliably determinable.
+
+ISOTHERM MODEL — FRUMKIN
+  Sub-CMC fit (n=2): Frumkin SSR=1.6, AIC=-2.5, g0=72.5, A_min=0.53, a=+1.5
+  vs Langmuir SSR=7.2, AIC=6.2 (unphysical). Frumkin supported.
+
+Gamma_max / A_min
+  Frumkin: Gamma_max ~= 3.1e-6 mol/m2, A_min ~= 0.53 nm2 (Gibbs tangent 3.06e-6/0.54).
+  Caveat: n=2 assumes full ionization; unknown pH.
+
+delta_G_mic
+  X_cmc(1.5 mM) ~= 2.7e-5. 2RT ln X (beta=1) ~= -52 kJ/mol; bracket -26..-52,
+  plus CMC uncertainty (~-50 to -53).
+
+FINAL_JSON:
+{
+  "charge_type": "ambiguous_pH_dependent",
+  "cmc_mM": 1.5,
+  "gamma_max_mol_per_m2": 3.1e-6,
+  "a_min_nm2": 0.53,
+  "isotherm_model": "frumkin",
+  "frumkin_a": 1.5,
+  "delta_g_mic_kJ_per_mol": -52.0,
+  "undeterminable": [
+    "precise CMC - data stops at the micellization onset with no post-CMC plateau established; only bracketed ~1.3-2.1 mM",
+    "degree of counterion binding beta - needs conductivity; makes delta_g_mic prefactor convention-dependent (nonionic limit ~-26 kJ/mol)",
+    "solution pH / protonation fraction - protonated weak-base amine (not permanent quaternary), so charge state and the n=2 Gibbs prefactor cannot be confirmed",
+    "aggregation number and micelle size/shape - need scattering/fluorescence",
+    "Krafft temperature - needs temperature-dependent solubility",
+    "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry",
+    "absolute pure-water gamma0 - not measured, only inferred (~72.5 mN/m) from the fit"
+  ]
+}
+
+
+################################################################################
+# R3-04
+################################################################################
+SMILES: CCCCC(CC)COC(=O)CC(S(=O)(=O)[O-])C(=O)OCC(CC)CCCC.[Na+]
+        (sodium bis(2-ethylhexyl) sulfosuccinate, AOT / docusate)
+Temperature: 298.15 K
+
+STRUCTURE & CHARGE
+  C20H37NaO7S: succinate diester with two 2-ethylhexyl tails + a C-bound
+  sulfonate (-SO3-, strong-acid conjugate base, pH-independent) + Na+.
+  Twin-tailed -> anionic, 1:1, no added salt -> n=2.
+
+CMC
+  Plateau well established (~27.77 mN/m). Pre-CMC gamma vs log C is perfectly
+  linear (R2 = 1.000000, slope -16.40 per decade). Intersection -> CMC ~= 2.0 mM
+  (1.9-2.1).
+
+ISOTHERM MODEL — NOT DETERMINABLE (null)
+  Entire sub-CMC range is a single straight (saturated) gamma-lnC line; the
+  dilute-region curvature that distinguishes Langmuir from Frumkin is NOT sampled
+  (lowest point already ~10 mN/m below water). Both models collapse to the same
+  linear asymptote. Langmuir fit is degenerate (g0=165+/-885). -> model=null.
+
+Gamma_max / A_min
+  From the linear slope (n=2): Gamma_max ~= 1.44e-6 mol/m2, A_min ~= 1.16 nm2
+  (large area from the bulky branched twin tails). Robustly determined.
+
+delta_G_mic
+  X_cmc(2.0 mM) ~= 3.6e-5. 2RT ln X (beta=1) ~= -51 kJ/mol; bracket -25..-51.
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 2.0,
+  "gamma_max_mol_per_m2": 1.44e-6,
+  "a_min_nm2": 1.16,
+  "isotherm_model": null,
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": -50.7,
+  "undeterminable": [
+    "isotherm model (Langmuir vs Frumkin) - the entire sub-CMC range is a perfectly linear (saturated) gamma-lnC region; the dilute-region curvature that discriminates the models is not sampled, so both fit identically",
+    "frumkin_a - not meaningful since the isotherm model itself is indeterminate",
+    "absolute pure-water gamma0 - not sampled and unconstrained by the fit (lowest point already ~10 mN/m below water)",
+    "degree of counterion binding beta - needs conductivity; makes delta_g_mic prefactor convention-dependent (nonionic limit ~-25 kJ/mol)",
+    "aggregation number and micelle size/shape - need scattering/fluorescence",
+    "Krafft temperature - needs temperature-dependent solubility",
+    "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry"
+  ]
+}
+
+
+################################################################################
+# R3-05
+################################################################################
+SMILES: CCCCCCCCCCCCOCCOCCOCCOCCOCCOCCOCCOCCO   (C12E8)
+Temperature: 298.15 K
+
+STRUCTURE & CHARGE
+  Dodecyl chain + 8 ethylene-oxide units ending in -OH (C28H58O9). No ionizable
+  group -> nonionic. Conventions: Gibbs n=1; delta_G_mic = RT ln X_cmc (no beta).
+
+DATA IS INTERNALLY INCONSISTENT
+  8 low-C points descend gently (max slope only -5) then gamma collapses to a
+  flat 30.5 plateau across the 0.22->0.40 mM gap. The 8 points fit Langmuir
+  perfectly (g0=72.0, Gamma=3.2e-6, K=9.0; Frumkin a->0) BUT that fit predicts
+  gamma~62 at CMC and only reaches 30.5 near ~20 mM. Bridging the gap needs
+  A_min<0.1 nm2 (impossible). So no single equilibrium isotherm fits the curve.
+
+CMC
+  Break bracketed to (0.22, 0.40] mM, best estimate ~0.3 mM; steep pre-CMC
+  tangent not sampled, so not precisely determinable.
+
+ISOTHERM MODEL — langmuir (sampled branch; Frumkin a=0)
+
+Gamma_max / A_min — NOT reliably determinable (null)
+  Apparent Langmuir value (3.2e-6 / 0.52 nm2) is contradicted by the plateau;
+  true saturated region unsampled.
+
+delta_G_mic
+  Nonionic: RT ln X_cmc. CMC~0.3 mM -> ~ -30 kJ/mol (range -29..-31). No beta.
+
+FINAL_JSON:
+{
+  "charge_type": "nonionic",
+  "cmc_mM": 0.3,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": "langmuir",
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": -30.0,
+  "undeterminable": [
+    "saturated Gamma_max and A_min - the steep near-CMC region is unsampled (33 mN/m drop hidden in the 0.22->0.4 mM gap); the low-coverage Langmuir fit gives an apparent 3.2e-6 mol/m2 (A_min~0.52 nm2) but it is physically contradicted by the 30.5 mN/m plateau, so no trustworthy value",
+    "precise CMC - only bracketed to 0.22-0.4 mM; the steep pre-CMC tangent needed to locate the break is not sampled",
+    "self-consistent near-CMC isotherm - data cannot come from one equilibrium adsorption curve (implied transition slope requires A_min < 0.1 nm2, impossible)",
+    "aggregation number and micelle size/shape - need scattering/fluorescence",
+    "cloud point - the key phase parameter for nonionic PEO surfactants; needs temperature-dependent turbidity",
+    "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry"
+  ]
+}
+
+
+################################################################################
+# R3-06
+################################################################################
+SMILES: CCCCCCCCCCCCC(=O)NCCCN+(C)CC(=O)[O-]   (amidopropyl betaine)
+Temperature: 298.15 K
+
+STRUCTURE & CHARGE
+  C19H37N2O3, net charge ZERO: C12 alkyl -> amide -> propyl spacer ->
+  methylated ammonium (N+) + CH2COO- (carboxylate), internally balanced, no
+  separate counterion -> a betaine = ZWITTERIONIC (amphoteric: cationic below
+  the carboxylate pKa). Net-neutral zwitterion adsorbs as one species ->
+  Gibbs n=1; delta_G_mic = RT ln X_cmc (no beta).
+
+DATA IS INTERNALLY INCONSISTENT (same defect as R3-05)
+  7 pre-plateau points fit Langmuir perfectly (n=1; g0=72.0, Gamma=3.0e-6,
+  K=7.0; Frumkin a->0), but the flat 33.0 plateau (reached by 3.0 mM across the
+  1.9->3.0 gap) is unreachable by that isotherm until ~27 mM; bridging the gap
+  needs A_min~0.1 nm2 (impossible).
+
+CMC
+  Break bracketed to (1.9, 3.0] mM, best estimate ~2.4 mM; not precisely
+  determinable.
+
+ISOTHERM MODEL — langmuir (sampled branch; Frumkin a=0)
+
+Gamma_max / A_min — NOT reliably determinable (null)
+  Apparent Langmuir value (3.0e-6 / 0.55 nm2) contradicted by the plateau.
+
+delta_G_mic
+  Zwitterion (net neutral): RT ln X_cmc. CMC~2.4 mM -> ~ -25 kJ/mol
+  (range -24..-25.5). Caveat: if pH makes it cationic (with counterion), the
+  prefactor changes.
+
+FINAL_JSON:
+{
+  "charge_type": "zwitterionic",
+  "cmc_mM": 2.4,
+  "gamma_max_mol_per_m2": null,
+  "a_min_nm2": null,
+  "isotherm_model": "langmuir",
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": -25.0,
+  "undeterminable": [
+    "saturated Gamma_max and A_min - the steep near-CMC region is unsampled (19 mN/m drop hidden in the 1.9->3.0 mM gap); the low-coverage Langmuir fit gives an apparent 3.0e-6 mol/m2 (A_min~0.55 nm2) but it is physically contradicted by the 33.0 mN/m plateau, so no trustworthy value",
+    "precise CMC - only bracketed to 1.9-3.0 mM; the steep pre-CMC tangent needed to locate the break is not sampled",
+    "actual net charge state / strict Gibbs & delta_G prefactor - molecule is amphoteric (zwitterionic near neutral pH, cationic below the carboxylate pKa); solution pH not given, so n=1 assumes the net-neutral zwitterion",
+    "self-consistent near-CMC isotherm - data cannot come from one equilibrium adsorption curve (implied transition slope requires A_min ~0.1 nm2, impossible)",
+    "aggregation number and micelle size/shape - need scattering/fluorescence",
+    "isoelectric pH - needs pH-dependent measurements",
+    "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry"
+  ]
+}
+
+
+################################################################################
+# R3-07
+################################################################################
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]   (SDS) in 100 mM added NaCl
+Temperature: 298.15 K
+
+STRUCTURE & CHARGE
+  Sodium dodecyl sulfate -> anionic, pH-independent.
+  KEY: 100 mM NaCl is ~55x the CMC = swamping electrolyte. The Na+ counterion
+  activity is fixed by the salt, so the Gibbs equation reverts to n=1 (NOT n=2),
+  and delta_G_mic = RT ln X_cmc (no beta term). Contrast R3-01 (same SDS, no
+  salt, n=2).
+
+CMC
+  Smooth descent to a dead-flat plateau at 33.21 (four points). Near-CMC slope
+  saturates at ~-9.3. Intersection -> CMC ~= 1.8 mM (R2=1.000). Salt has sharply
+  lowered the CMC via electrostatic screening.
+
+ISOTHERM MODEL — LANGMUIR
+  Sub-CMC fit (n=1) is EXACT: g0=72.0, Gamma_max=3.83e-6, K=32.5, SSR~0;
+  Frumkin a=0. Internally consistent: predicts gamma=33.21 at 1.8 mM = plateau.
+
+Gamma_max / A_min
+  Gamma_max ~= 3.8e-6 mol/m2, A_min ~= 0.43 nm2 (Gibbs tangent 3.7e-6/0.45).
+
+delta_G_mic
+  Excess salt -> RT ln X_cmc (n=1). X_cmc(1.8 mM)=3.2e-5 -> ~ -25.6 kJ/mol.
+  No beta ambiguity (salt buffers the counterion). (2RT ln X here would be wrong.)
+
+FINAL_JSON:
+{
+  "charge_type": "anionic",
+  "cmc_mM": 1.8,
+  "gamma_max_mol_per_m2": 3.8e-6,
+  "a_min_nm2": 0.43,
+  "isotherm_model": "langmuir",
+  "frumkin_a": null,
+  "delta_g_mic_kJ_per_mol": -25.6,
+  "undeterminable": [
+    "degree of counterion binding beta - needs conductivity (but not required for delta_g_mic here, since excess salt buffers the counterion)",
+    "aggregation number and micelle size/shape - need scattering/fluorescence",
+    "Krafft temperature - needs temperature-dependent solubility",
+    "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry",
+    "activity-coefficient corrections at 100 mM ionic strength - mole-fraction delta_g_mic assumes ideality, a small systematic error"
+  ]
+}
+
+
+################################################################################
+# R3-08
+################################################################################
+SMILES: CCCCCCCCCCCCN+(C)C.[Br-]   (same as R3-02, truncated data)
+Temperature: 296.35 K
+
+STRUCTURE & CHARGE
+  Protonated N,N-dimethyldodecylamine (dodecyldimethylammonium bromide), a
+  weak-base conjugate acid, not a permanent quaternary -> ambiguous_pH_dependent.
+
+TRUNCATION REMOVES THE CMC
+  This is R3-02 minus its highest point, leaving one point (16.37 mM, 32.35)
+  after the descent. A line through 1.02-16.37 mM has R2=0.9998 and the steep
+  tangent extrapolates to 33.1 at 16.37 (obs 32.35): the last point lies on the
+  still-descending line. NO plateau / NO break -> CMC not captured.
+
+CMC — NOT determinable (null)
+  No plateau to intersect; consistent with continued adsorption through 16.37 mM.
+  Only CMC > ~4 mM can be stated.
+
+delta_G_mic — NOT determinable (null)
+  Requires X_cmc, which is undeterminable.
+
+ISOTHERM MODEL / Gamma_max still determinable
+  Five lowest points (0.26-4.09 mM) are safely pre-CMC. Frumkin beats Langmuir
+  (SSR 0.50 vs 1.44; AIC -3.5 vs -0.2; physical g0=71.1/A_min=0.59 vs 72.8/0.32).
+  isotherm=frumkin, a~1.35, Gamma_max~2.8e-6 mol/m2, A_min~0.59 nm2
+  (tangent cross-check ~2.4e-6/0.70). Caveat: n=2 assumes full ionization.
+
+FINAL_JSON:
+{
+  "charge_type": "ambiguous_pH_dependent",
+  "cmc_mM": null,
+  "gamma_max_mol_per_m2": 2.8e-6,
+  "a_min_nm2": 0.59,
+  "isotherm_model": "frumkin",
+  "frumkin_a": 1.35,
+  "delta_g_mic_kJ_per_mol": null,
+  "undeterminable": [
+    "CMC - no post-CMC plateau or break is captured; the highest point still lies on the steep descending line (R2=0.9998), so the micellization onset is unsampled (only CMC > ~4 mM can be said)",
+    "delta_g_mic - requires X_cmc, and the CMC is undeterminable",
+    "solution pH / protonation fraction - protonated weak-base amine (not a permanent quaternary), so charge state and the n=2 Gibbs prefactor cannot be confirmed",
+    "degree of counterion binding beta - needs conductivity",
+    "aggregation number and micelle size/shape - need scattering/fluorescence",
+    "Krafft temperature - needs temperature-dependent solubility",
+    "delta_H_mic and delta_S_mic - need temperature dependence or calorimetry"
+  ]
+}
+
+================================================================================
+END OF FILE
+================================================================================

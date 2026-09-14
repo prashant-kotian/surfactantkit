@@ -1,0 +1,95 @@
+
+### P-001
+Klevens form: log₁₀(CMC) = A − B·n, fit in the given mM units (unit choice only shifts A; predictions stay in mM). Least-squares fit to the 7 cationic-TAB points gives A = 4.8634, B = 0.30666 per carbon (0.613 per CH₂ increment), R² = 0.99987 — an excellent line. Predicting n = 22: log₁₀(CMC) = 4.8634 − 0.30666·22 = −1.8832, CMC = 0.0131 mM. Note this is a substantial extrapolation four carbons beyond the longest training point (C18); real C22 surfactants also suffer Krafft-point/solubility limits, so treat the number as the ideal-Klevens value.
+
+FINAL_JSON: {"value": 0.01309}
+
+### P-002
+Same TAB fit (A = 4.8634, B = 0.30666). For n = 20: log₁₀(CMC) = 4.8634 − 0.30666·20 = −1.2698, CMC = 0.0537 mM. A modest 2-carbon extrapolation beyond C18; acceptable for Klevens.
+
+FINAL_JSON: {"value": 0.05372}
+
+### P-003
+Anionic-sulfate fit to the 8 points: A = 4.5657, B = 0.30511 per carbon (0.610 per CH₂), R² = 0.99929. For n = 18: log₁₀(CMC) = 4.5657 − 0.30511·18 = −0.9262, CMC = 0.1185 mM. Two-carbon extrapolation beyond C16; reasonable.
+
+FINAL_JSON: {"value": 0.1185}
+
+### P-004
+Same sulfate fit. For n = 6: log₁₀(CMC) = 4.5657 − 0.30511·6 = 2.7351, CMC = 543 mM. This extrapolates two carbons below the shortest training point (C8). At ~0.5 M the "CMC" is barely a micellization phenomenon (very short-chain sulfates barely aggregate), so the number is the formal Klevens extrapolation rather than a well-defined micellar CMC.
+
+FINAL_JSON: {"value": 543.4}
+
+### P-005
+TAB fit, interpolation at n = 10 (within training range): log₁₀(CMC) = 4.8634 − 0.30666·10 = 1.7968, CMC = 62.6 mM. (Measured 65.0 mM — the fit reproduces it well.)
+
+FINAL_JSON: {"value": 62.63}
+
+### P-006
+TAB fit, interpolation at n = 14: log₁₀(CMC) = 4.8634 − 0.30666·14 = 0.5702, CMC = 3.72 mM. (Measured 3.827 mM.)
+
+FINAL_JSON: {"value": 3.717}
+
+### P-007
+Sulfate fit, interpolation at n = 14: log₁₀(CMC) = 4.5657 − 0.30511·14 = 0.2943, CMC = 1.97 mM. (Measured 2.1 mM.)
+
+FINAL_JSON: {"value": 1.969}
+
+### Q-001
+Two-point van't Hoff, ΔH_mic = −R·ln(CMC₂/CMC₁)/(1/T₂ − 1/T₁). No degree of counterion binding is supplied, so I use the simple (nonionic-style) form; the 1/55.5 mole-fraction conversion is T-independent and cancels in the log ratio. T in K = 303.15/323.15/343.15. Low pair (30–50 °C): ΔH = −8.314·ln(10.2/7.8)/(1/323.15−1/303.15) = +10.93 kJ/mol. High pair (50–70 °C): +11.18 kJ/mol. The two agree to ~2%, so the van't Hoff plot is essentially linear here → CONSISTENT (negligible heat-capacity curvature). Both endothermic, consistent with CMC rising with T.
+
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": 10.93, "dH_high_pair_kJ_per_mol": 11.18, "consistency": "consistent"}
+
+### Q-002
+Same method. Low pair: −8.314·ln(2.8/2.38)/(1/323.15−1/303.15) = +6.62 kJ/mol. High pair: −8.314·ln(4.05/2.8)/(1/343.15−1/323.15) = +17.01 kJ/mol. The high-T estimate is ~2.6× the low-T one — far outside experimental scatter. This signals strong curvature in ln(CMC) vs 1/T (large positive ΔC_p), which a two-point van't Hoff cannot capture → INCONSISTENT.
+
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": 6.62, "dH_high_pair_kJ_per_mol": 17.01, "consistency": "inconsistent"}
+
+### Q-003
+Same method. Low pair: −8.314·ln(0.805/0.592)/(1/323.15−1/303.15) = +12.52 kJ/mol. High pair: −8.314·ln(1.11/0.805)/(1/343.15−1/323.15) = +14.81 kJ/mol. The two differ by ~18% (2.3 kJ/mol), a mild upward drift attributable to a small positive ΔC_p but within typical experimental reasonableness for a roughly linear van't Hoff. I judge this reasonably CONSISTENT (clearly unlike the Q-002 case), though the slight trend hints at modest curvature.
+
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": 12.52, "dH_high_pair_kJ_per_mol": 14.81, "consistency": "consistent"}
+
+### R-001
+Tanford: tail volume v = 27.4 + 26.9·n = 27.4 + 26.9·12 = 350.2 Å³; extended length l_c = 1.5 + 1.265·n = 16.68 Å. CPP = v/(a₀·l_c) = 350.2/(50.0·16.68) = 0.420.
+
+FINAL_JSON: {"value": 0.4199}
+
+### R-002
+CPP = 0.420 (as above). Classification: 1/3 < 0.42 < 1/2 → cylindrical / rod-like micelles.
+
+FINAL_JSON: {"cpp": 0.4199, "morphology": "cylindrical (rod-like) micelles"}
+
+### R-003
+CPP = 0.420 → cylindrical/rod-like. Aggregation number by the Tanford spherical approximation (core radius R = l_c = 16.68 Å, core packed with tail volume v): N = (4/3)π·l_c³/v = (4/3)π·(16.68)³/350.2 = 55.5 ≈ 56. (Note the caveat: since CPP > 1/3 a true sphere is not favored, so this is the idealized upper spherical estimate; the area-based count 4πl_c²/a₀ ≈ 70 differs, itself a signature of non-spherical packing.)
+
+FINAL_JSON: {"cpp": 0.4199, "morphology": "cylindrical (rod-like) micelles", "n_agg": 56}
+
+### R-004
+v = 27.4 + 26.9·16 = 457.8 Å³; l_c = 1.5 + 1.265·16 = 21.74 Å. CPP = 457.8/(45.0·21.74) = 0.468.
+
+FINAL_JSON: {"value": 0.4680}
+
+### R-005
+CPP = 0.468. Classification: 1/3 < 0.468 < 1/2 → cylindrical / rod-like micelles (close to the 0.5 bilayer/vesicle boundary).
+
+FINAL_JSON: {"cpp": 0.4680, "morphology": "cylindrical (rod-like) micelles"}
+
+### R-006
+CPP = 0.468 → cylindrical/rod-like. Spherical Tanford aggregation number with R = l_c = 21.74 Å: N = (4/3)π·(21.74)³/457.8 = 94.0 ≈ 94. (Same caveat as R-003: idealized sphere; area-based estimate ≈ 132 diverges, reflecting that spheres are not the equilibrium shape here.)
+
+FINAL_JSON: {"cpp": 0.4680, "morphology": "cylindrical (rod-like) micelles", "n_agg": 94}
+
+### S-001
+Clint (ideal): 1/CMC_mix = Σ αᵢ/CMCᵢ, with αᵢ the surfactant mole fractions. Basis 100 g: SDS 47/288.38 = 0.16299 mol; TX-100 53/646.85 = 0.08194 mol; α_SDS = 0.6655, α_TX = 0.3345. 1/CMC = 0.6655/8.2 + 0.3345/0.24 = 0.08115 + 1.3940 = 1.4751 → CMC_mix = 0.678 mM. Nonionic + anionic mix approximates ideal reasonably, so Clint is defensible here.
+
+FINAL_JSON: {"value": 0.6779}
+
+### S-002
+Basis 100 g: CTAB 30/364.45 = 0.08232 mol; TX-100 70/646.85 = 0.10823 mol; α_CTAB = 0.4320, α_TX = 0.5680. 1/CMC = 0.4320/0.92 + 0.5680/0.24 = 0.4696 + 2.3666 = 2.8362 → CMC_mix = 0.353 mM.
+
+FINAL_JSON: {"value": 0.3526}
+
+### S-003
+Mechanically: basis 100 g, SDS 60/288.38 = 0.20806 mol, DTAB 40/308.34 = 0.12973 mol; α_SDS = 0.6159, α_DTAB = 0.3841. 1/CMC = 0.6159/8.2 + 0.3841/15.0 = 0.07512 + 0.02560 = 0.10072 → CMC_mix = 9.93 mM. **Important physical caveat:** SDS (anionic) + DTAB (cationic) is a catanionic pair. Such oppositely-charged mixtures show strong electrostatic synergism (large negative β, β-values around −10 to −20 are typical), and the real mixed CMC is far below the ideal value — often by more than an order of magnitude — frequently accompanied by precipitation of the 1:1 catanionic salt. Clint's ideal equation assumes β = 0 and therefore does **not** validly describe this blend; the 9.93 mM figure is only the formal ideal-model output, not a realistic CMC.
+
+FINAL_JSON: {"value": 9.93}

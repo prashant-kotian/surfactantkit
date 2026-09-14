@@ -1,0 +1,156 @@
+# Surfactant & Interfacial Chemistry Problem Set
+
+I'll use standard literature conventions throughout. Klevens constants (log₁₀CMC[M] = A − B·n): cationic CₙTAB (alkyltrimethylammonium bromides) A = 1.72, B = 0.30; sodium alkyl sulfates A = 1.51, B = 0.30. Tanford: v = (27.4 + 26.9n) Å³, lₘₐₓ = (1.5 + 1.265n) Å.
+
+---
+
+### P-001
+A Klevens fit for the cationic TAB class is calibrated on C6–C18. Predicting C22 is a **4-carbon extrapolation beyond the calibration window**. Two problems make this unreliable, not merely approximate: (1) empirical Klevens fits carry no validated predictive power outside their training range; (2) the specific physics breaks down for very long chains — the log-linear relation curves downward (per-CH₂ increment diminishes), and C22 alkyltrimethylammonium bromide has a Krafft temperature well above ambient, so a conventional room-temperature CMC may not even exist. Blind extrapolation would give 10^(1.72−6.6) = 10^−4.88 ≈ 0.013 mM, but this number is not physically defensible. I therefore report no valid solution.
+
+FINAL_JSON: {"answer": "C22 lies 4 carbons beyond the C6–C18 calibration range; the Klevens fit cannot be validly extrapolated (log-linear curvature at long chains, plus Krafft temperature above ambient means no conventional CMC). No physically reliable value."}
+
+---
+
+### P-002
+Predicting C20 from a C6–C18 TAB fit is a 2-carbon extrapolation past the calibration window. For CₙTAB with n ≥ ~C18–C20, the Klevens plot deviates from linearity and Krafft points rise to/above room temperature, so the extrapolated micellization behavior is not validated by the training data. Blind extrapolation gives 10^(1.72−6.0) = 10^−4.28 ≈ 0.053 mM, but this is outside the fit's demonstrated domain and not physically reliable.
+
+FINAL_JSON: {"answer": "C20 is outside the C6–C18 calibration range; extrapolating the empirical Klevens fit is not validated (curvature and Krafft-point effects at long chains). No physically reliable value."}
+
+---
+
+### P-003
+The anionic-sulfate fit is calibrated on C8–C16; C18 is a 2-carbon extrapolation. More decisively, sodium octadecyl sulfate (C18) has a Krafft temperature of roughly 50–56 °C — above ordinary measurement conditions — so it does not form micelles / has no conventional CMC at ambient temperature. Extrapolating the C8–C16 line (which would give 10^(1.51−5.4) = 10^−3.89 ≈ 0.13 mM) ignores this and is not physically valid.
+
+FINAL_JSON: {"answer": "C18 sulfate lies beyond the C8–C16 calibration range and its Krafft temperature (~50–56 °C) exceeds ambient, so no conventional room-temperature CMC exists. The Klevens extrapolation is not physically valid."}
+
+---
+
+### P-004
+C6 lies below the C8–C16 sulfate calibration range. At six carbons the hydrophobic driving force is weak, aggregation is gradual, and the CMC becomes very broad and poorly defined — the sharp-CMC picture underlying the Klevens fit no longer applies. Extrapolating below the trained range would give 10^(1.51−1.8) = 10^−0.29 ≈ 510 mM, but this "CMC" is not a well-defined quantity for so short a chain, so I report no valid solution.
+
+FINAL_JSON: {"answer": "C6 is below the C8–C16 calibration range; at this chain length micellization is weak and gradual with an ill-defined CMC, so the Klevens fit cannot be validly extrapolated. No physically reliable value."}
+
+---
+
+### P-005
+C10 is inside the C6–C18 calibration range, so this is legitimate interpolation. log₁₀CMC = 1.72 − 0.30(10) = −1.28 → CMC = 10^−1.28 = 0.0525 M ≈ 52.5 mM. (Consistent with decyltrimethylammonium bromide, ~50–65 mM.)
+
+FINAL_JSON: {"value": 52.5}
+
+---
+
+### P-006
+C14 is inside the C6–C18 range (interpolation). log₁₀CMC = 1.72 − 0.30(14) = −2.48 → CMC = 10^−2.48 = 0.00331 M ≈ 3.31 mM. (Consistent with tetradecyltrimethylammonium bromide, ~3.5 mM.)
+
+FINAL_JSON: {"value": 3.31}
+
+---
+
+### P-007
+C14 is inside the C8–C16 sulfate range (interpolation). log₁₀CMC = 1.51 − 0.30(14) = −2.69 → CMC = 10^−2.69 = 0.00204 M ≈ 2.04 mM. (Consistent with sodium tetradecyl sulfate, ~2.1 mM.)
+
+FINAL_JSON: {"value": 2.04}
+
+---
+
+### Q-001
+Pseudo-phase van't Hoff (treating each surfactant on a per-mole, no-counterion-factor basis): ΔH°_mic = R·ln(CMC₂/CMC₁)/(1/T₂ − 1/T₁). Because the ratio of CMCs is used, the mM→mole-fraction conversion cancels. R = 8.314 J/mol·K; T = 303.15, 323.15, 343.15 K.
+
+Low pair (30→50 °C): ln(10.2/7.8) = 0.2683; (1/323.15 − 1/303.15) = −2.0416×10⁻⁴ → ΔH = 8.314·0.2683/(−2.0416×10⁻⁴) = **−10.9 kJ/mol**.
+
+High pair (50→70 °C): ln(13.0/10.2) = 0.2426; (1/343.15 − 1/323.15) = −1.8036×10⁻⁴ → ΔH = 8.314·0.2426/(−1.8036×10⁻⁴) = **−11.2 kJ/mol**.
+
+The two agree to ~2–3%. This is a well-behaved, essentially linear van't Hoff relation. CONSISTENT.
+
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": -10.9, "dH_high_pair_kJ_per_mol": -11.2, "consistency": "consistent"}
+
+---
+
+### Q-002
+Same method.
+
+Low pair: ln(2.8/2.38) = 0.16252 → ΔH = 8.314·0.16252/(−2.0416×10⁻⁴) = **−6.62 kJ/mol**.
+
+High pair: ln(4.05/2.8) = 0.36909 → ΔH = 8.314·0.36909/(−1.8036×10⁻⁴) = **−17.0 kJ/mol**.
+
+The high-T estimate is ~2.6× the low-T estimate — a difference of >10 kJ/mol. This implies a large negative heat capacity of micellization (~ −520 J/mol·K), i.e. strong curvature that a two-point van't Hoff cannot represent. INCONSISTENT.
+
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": -6.62, "dH_high_pair_kJ_per_mol": -17.0, "consistency": "inconsistent"}
+
+---
+
+### Q-003
+Same method.
+
+Low pair: ln(0.805/0.592) = 0.30734 → ΔH = 8.314·0.30734/(−2.0416×10⁻⁴) = **−12.5 kJ/mol**.
+
+High pair: ln(1.11/0.805) = 0.32127 → ΔH = 8.314·0.32127/(−1.8036×10⁻⁴) = **−14.8 kJ/mol**.
+
+The two differ by ~2.3 kJ/mol (~18%). This is a modest spread — well within the scatter typical of two-point van't Hoff estimates and far smaller than the clearly-anomalous Q-002 case. The slight systematic increase in exothermicity with temperature reflects only a small negative ΔCp (~ −115 J/mol·K). I judge these reasonably CONSISTENT (borderline; at most mild curvature).
+
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": -12.5, "dH_high_pair_kJ_per_mol": -14.8, "consistency": "consistent"}
+
+---
+
+### R-001
+Tanford: v = 27.4 + 26.9(12) = 350.2 Å³; lₘₐₓ = 1.5 + 1.265(12) = 16.68 Å. CPP = v/(a₀·lₘₐₓ) = 350.2/(50.0·16.68) = 350.2/834.0 = 0.420.
+
+FINAL_JSON: {"value": 0.420}
+
+---
+
+### R-002
+CPP = 0.420 (as above). Morphology cutoffs: ≤1/3 spheres; 1/3–1/2 cylinders/rods; 1/2–1 vesicles/flexible bilayers; ≈1 planar bilayers; >1 inverted. Since 1/3 (0.333) < 0.420 < 1/2, the expected morphology is cylindrical (rod-like) micelles.
+
+FINAL_JSON: {"cpp": 0.420, "morphology": "cylindrical (rod-like) micelles"}
+
+---
+
+### R-003
+CPP = 0.420 → cylindrical (rod-like) micelles. For the nominal spherical aggregation number with core radius R = lₘₐₓ = 16.68 Å (Tanford core-filling): N = (4/3·π·R³)/v = (4.18879·4640.7)/350.2 = 19439/350.2 ≈ 55.5 → ~56 monomers. (Note: CPP > 1/3 means a true sphere is geometrically strained; this N is a nominal estimate.)
+
+FINAL_JSON: {"cpp": 0.420, "morphology": "cylindrical (rod-like) micelles", "n_agg": 56}
+
+---
+
+### R-004
+Tanford: v = 27.4 + 26.9(16) = 457.8 Å³; lₘₐₓ = 1.5 + 1.265(16) = 21.74 Å. CPP = 457.8/(45.0·21.74) = 457.8/978.3 = 0.468.
+
+FINAL_JSON: {"value": 0.468}
+
+---
+
+### R-005
+CPP = 0.468. Since 1/3 < 0.468 < 1/2 (though approaching the bilayer/vesicle boundary at 0.5), the expected morphology is cylindrical (rod-like, tending toward long/wormlike) micelles.
+
+FINAL_JSON: {"cpp": 0.468, "morphology": "cylindrical (rod-like) micelles"}
+
+---
+
+### R-006
+CPP = 0.468 → cylindrical (rod-like) micelles. Spherical aggregation number with R = lₘₐₓ = 21.74 Å: N = (4/3·π·R³)/v = (4.18879·10274.9)/457.8 = 43040/457.8 ≈ 94 monomers. (CPP near 1/2 means the sphere is geometrically strained; this is a nominal estimate.)
+
+FINAL_JSON: {"cpp": 0.468, "morphology": "cylindrical (rod-like) micelles", "n_agg": 94}
+
+---
+
+### S-001
+Clint (ideal): 1/CMC* = Σ αᵢ/CMCᵢ, where αᵢ are surfactant-only **mole** fractions — so convert wt% via MW. Basis 100 g: SDS 47.0/288.38 = 0.16298 mol; TX-100 53.0/646.85 = 0.08194 mol; total 0.24491. α_SDS = 0.6655, α_TX = 0.3345.
+1/CMC* = 0.6655/8.2 + 0.3345/0.24 = 0.08115 + 1.39394 = 1.47509 mM⁻¹ → CMC* = 0.678 mM. (SDS/TX-100 is anionic/nonionic; ideal Clint is a reasonable first approximation.)
+
+FINAL_JSON: {"value": 0.678}
+
+---
+
+### S-002
+Basis 100 g: CTAB 30.0/364.45 = 0.08232 mol; TX-100 70.0/646.85 = 0.10822 mol; total 0.19054. α_CTAB = 0.4320, α_TX = 0.5680.
+1/CMC* = 0.4320/0.92 + 0.5680/0.24 = 0.46958 + 2.36662 = 2.83620 mM⁻¹ → CMC* = 0.353 mM. (Cationic/nonionic; ideal Clint is an acceptable approximation.)
+
+FINAL_JSON: {"value": 0.353}
+
+---
+
+### S-003
+This blend is SDS (anionic) + DTAB (cationic) — a **catanionic** mixture, the textbook case of extreme non-ideality. Oppositely charged headgroups attract strongly (regular-solution β_M typically ≈ −10 to −20), producing enormous synergism and often precipitation/vesicle formation. Clint's equation assumes **ideal** mixing (β = 0) and is fundamentally invalid here: it would predict CMC* = 1/(0.6159/8.2 + 0.3841/15.0) ≈ 9.9 mM, whereas the real mixed CMC is lower by orders of magnitude. Applying the ideal model to this system does not yield a physically meaningful CMC.
+
+FINAL_JSON: {"answer": "SDS/DTAB is an anionic/cationic (catanionic) mixture with extreme negative deviation from ideality (strong synergism, β ~ −10 to −20, often precipitation). Clint's ideal-mixing equation is invalid here; the ideal result (~9.9 mM) is not physically meaningful and the true mixed CMC is far lower."}

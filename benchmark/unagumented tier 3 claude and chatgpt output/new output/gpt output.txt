@@ -1,0 +1,364 @@
+### P-001
+Use the Klevens form
+
+log10(CMC/mM) = A + Bn,
+
+where n is the hydrocarbon chain carbon count. Ordinary least-squares regression of the seven supplied TAB points gives
+
+A = 4.86343968,    B = -0.306663575.
+
+Thus, for n = 22,
+
+log10(CMC/mM) = 4.86343968 - 0.306663575(22) = -1.88315896,
+
+so
+
+CMC = 10^(-1.88315896) mM = 0.0130870 mM.
+
+This is an extrapolation four carbons beyond the fitted data, so it is a Klevens-model prediction; actual observability can also be limited by the Krafft temperature and solubility of such a long-chain surfactant.
+FINAL_JSON: {"value": 0.0130870}
+
+### P-002
+Fit the supplied TAB data to
+
+log10(CMC/mM) = A + Bn.
+
+The least-squares coefficients are
+
+A = 4.86343968,    B = -0.306663575.
+
+For n = 20,
+
+log10(CMC/mM) = 4.86343968 - 0.306663575(20) = -1.26983181,
+
+and therefore
+
+CMC = 10^(-1.26983181) mM = 0.0537240 mM.
+
+This is a two-carbon extrapolation beyond the fitted range.
+FINAL_JSON: {"value": 0.0537240}
+
+### P-003
+Using the Klevens form
+
+log10(CMC/mM) = A + Bn,
+
+ordinary least-squares regression of the eight sulfate data points gives
+
+A = 4.56574308,    B = -0.305105729.
+
+For n = 18,
+
+log10(CMC/mM) = 4.56574308 - 0.305105729(18) = -0.92616005,
+
+so
+
+CMC = 10^(-0.92616005) mM = 0.118533 mM.
+
+This is a two-carbon extrapolation beyond the largest supplied chain length.
+FINAL_JSON: {"value": 0.118533}
+
+### P-004
+Fit the supplied sulfate data to
+
+log10(CMC/mM) = A + Bn.
+
+The least-squares coefficients are
+
+A = 4.56574308,    B = -0.305105729.
+
+For n = 6,
+
+log10(CMC/mM) = 4.56574308 - 0.305105729(6) = 2.73510870,
+
+and hence
+
+CMC = 10^(2.73510870) mM = 543.386 mM.
+
+This is a two-carbon extrapolation below the fitted range, so the value is a model prediction rather than an interpolation.
+FINAL_JSON: {"value": 543.386}
+
+### P-005
+For the Klevens regression
+
+log10(CMC/mM) = A + Bn,
+
+the seven TAB points give
+
+A = 4.86343968,    B = -0.306663575.
+
+At n = 10,
+
+log10(CMC/mM) = 1.79680394,
+
+so the fitted-line prediction is
+
+CMC = 10^(1.79680394) mM = 62.6331 mM.
+
+The fitted value is not forced to equal the measured C10 value of 65.0 mM because one least-squares line is fitted to all seven points.
+FINAL_JSON: {"value": 62.6331}
+
+### P-006
+For the fitted Klevens relation
+
+log10(CMC/mM) = 4.86343968 - 0.306663575n.
+
+At n = 14,
+
+log10(CMC/mM) = 0.57014964,
+
+giving
+
+CMC = 10^(0.57014964) mM = 3.71663 mM.
+
+This is the regression prediction; it differs slightly from the measured 3.827 mM because the line is fitted to the complete series.
+FINAL_JSON: {"value": 3.71663}
+
+### P-007
+The least-squares Klevens relation for the sulfate series is
+
+log10(CMC/mM) = 4.56574308 - 0.305105729n.
+
+At n = 14,
+
+log10(CMC/mM) = 0.29426286,
+
+so
+
+CMC = 10^(0.29426286) mM = 1.96908 mM.
+
+This fitted value differs slightly from the measured 2.1 mM because all eight points contribute to the regression.
+FINAL_JSON: {"value": 1.96908}
+
+### Q-001
+For micellization, taking the micellization equilibrium constant as inversely proportional to the CMC gives
+
+ln(CMC) = (Delta H_mic/R)(1/T) + constant.
+
+Thus, for a temperature pair (T1, T2),
+
+Delta H_mic = R ln(CMC2/CMC1)/(1/T2 - 1/T1).
+
+The use of mM rather than another concentration unit does not affect this two-point result because only a concentration ratio appears. Convert the temperatures to kelvin: 303.15, 323.15, and 343.15 K.
+
+For 30.0-50.0 C,
+
+Delta H_mic = (8.3144626 J mol^-1 K^-1)ln(10.2/7.8)/(1/323.15 - 1/303.15)
+            = -10.9252 kJ/mol.
+
+For 50.0-70.0 C,
+
+Delta H_mic = (8.3144626 J mol^-1 K^-1)ln(13.0/10.2)/(1/343.15 - 1/323.15)
+            = -11.1819 kJ/mol.
+
+The estimates differ by only 0.257 kJ/mol (about 2.3% of their magnitude), so they are reasonably CONSISTENT. The negative sign follows from the CMC increasing with temperature over this interval under the stated convention.
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": -10.9252, "dH_high_pair_kJ_per_mol": -11.1819, "consistency": "CONSISTENT"}
+
+### Q-002
+Using the micellization convention K_mic proportional to 1/CMC,
+
+Delta H_mic = R ln(CMC2/CMC1)/(1/T2 - 1/T1).
+
+The temperatures are 303.15, 323.15, and 343.15 K.
+
+For 30.0-50.0 C,
+
+Delta H_mic = (8.3144626 J mol^-1 K^-1)ln(2.8/2.38)/(1/323.15 - 1/303.15)
+            = -6.61866 kJ/mol.
+
+For 50.0-70.0 C,
+
+Delta H_mic = (8.3144626 J mol^-1 K^-1)ln(4.05/2.8)/(1/343.15 - 1/323.15)
+            = -17.0151 kJ/mol.
+
+These estimates differ by 10.40 kJ/mol and by a factor of about 2.6 in magnitude. They are INCONSISTENT with one constant van't Hoff enthalpy, indicating strong curvature and/or temperature-dependent micellization enthalpy over the range.
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": -6.61866, "dH_high_pair_kJ_per_mol": -17.0151, "consistency": "INCONSISTENT"}
+
+### Q-003
+With K_mic proportional to 1/CMC, the applicable two-point relation is
+
+Delta H_mic = R ln(CMC2/CMC1)/(1/T2 - 1/T1).
+
+Using 303.15, 323.15, and 343.15 K:
+
+For 30.0-50.0 C,
+
+Delta H_mic = (8.3144626 J mol^-1 K^-1)ln(0.805/0.592)/(1/323.15 - 1/303.15)
+            = -12.5164 kJ/mol.
+
+For 50.0-70.0 C,
+
+Delta H_mic = (8.3144626 J mol^-1 K^-1)ln(1.11/0.805)/(1/343.15 - 1/323.15)
+            = -14.8104 kJ/mol.
+
+The estimates differ by 2.29 kJ/mol, about 17% relative to their mean magnitude. For two-point estimates based on three-decimal CMC data, this is reasonably CONSISTENT with a roughly linear van't Hoff relation, although it suggests modest curvature may be present.
+FINAL_JSON: {"dH_low_pair_kJ_per_mol": -12.5164, "dH_high_pair_kJ_per_mol": -14.8104, "consistency": "CONSISTENT"}
+
+### R-001
+Use the standard Tanford estimates for a saturated single hydrocarbon tail containing n carbons:
+
+v = 27.4 + 26.9n  Angstrom^3,
+l_c = 1.5 + 1.265n  Angstrom.
+
+For n = 12,
+
+v = 350.2 Angstrom^3,    l_c = 16.68 Angstrom.
+
+The critical packing parameter is
+
+CPP = v/(a0 l_c)
+    = 350.2/[50.0(16.68)]
+    = 0.419904.
+
+The Angstrom units cancel: Angstrom^3/(Angstrom^2 times Angstrom) is dimensionless.
+FINAL_JSON: {"value": 0.419904}
+
+### R-002
+For a C12 saturated tail, the Tanford tail dimensions are
+
+v = 27.4 + 26.9(12) = 350.2 Angstrom^3,
+l_c = 1.5 + 1.265(12) = 16.68 Angstrom.
+
+Therefore,
+
+CPP = v/(a0 l_c)
+    = 350.2/[50.0(16.68)]
+    = 0.419904.
+
+The conventional packing ranges are CPP < 1/3 for spherical micelles and 1/3 < CPP < 1/2 for cylindrical or rodlike micelles. Since 0.4199 lies between 1/3 and 1/2, the expected morphology is cylindrical (rodlike/wormlike) micelles.
+FINAL_JSON: {"cpp": 0.419904, "morphology": "cylindrical (rodlike/wormlike) micelles"}
+
+### R-003
+For n = 12, the standard Tanford relations give
+
+v = 27.4 + 26.9n = 350.2 Angstrom^3,
+l_c = 1.5 + 1.265n = 16.68 Angstrom.
+
+The critical packing parameter is
+
+CPP = v/(a0 l_c) = 350.2/[50.0(16.68)] = 0.419904.
+
+Because 1/3 < CPP < 1/2, the packing classification predicts cylindrical (rodlike/wormlike) micelles.
+
+For the separately requested spherical-core estimate, take the core radius r = l_c and equate the spherical core volume to N_agg tail volumes:
+
+N_agg v = (4/3)pi r^3,
+
+so
+
+N_agg = 4pi(16.68)^3/[3(350.2)] = 55.5086,
+
+or approximately 56 surfactant molecules per idealized spherical micelle. This spherical aggregation-number calculation is a conditional geometric estimate even though the CPP classification favors cylindrical aggregates.
+FINAL_JSON: {"cpp": 0.419904, "morphology": "cylindrical (rodlike/wormlike) micelles", "n_agg": 55.5086}
+
+### R-004
+For a saturated C16 tail, the Tanford relations give
+
+v = 27.4 + 26.9(16) = 457.8 Angstrom^3,
+l_c = 1.5 + 1.265(16) = 21.74 Angstrom.
+
+Thus,
+
+CPP = v/(a0 l_c)
+    = 457.8/[45.0(21.74)]
+    = 0.467955.
+
+CPP is dimensionless because the volume units cancel the product of headgroup area and tail length.
+FINAL_JSON: {"value": 0.467955}
+
+### R-005
+For n = 16,
+
+v = 27.4 + 26.9n = 457.8 Angstrom^3,
+l_c = 1.5 + 1.265n = 21.74 Angstrom.
+
+The packing parameter is
+
+CPP = 457.8/[45.0(21.74)] = 0.467955.
+
+Since 1/3 < CPP < 1/2, the conventional packing classification predicts cylindrical (rodlike/wormlike) micelles; the value lies fairly close to the 1/2 boundary.
+FINAL_JSON: {"cpp": 0.467955, "morphology": "cylindrical (rodlike/wormlike) micelles"}
+
+### R-006
+The Tanford volume and maximum extended length of a C16 saturated tail are
+
+v = 27.4 + 26.9(16) = 457.8 Angstrom^3,
+l_c = 1.5 + 1.265(16) = 21.74 Angstrom.
+
+Hence,
+
+CPP = v/(a0 l_c) = 457.8/[45.0(21.74)] = 0.467955.
+
+This is between 1/3 and 1/2, so it predicts cylindrical (rodlike/wormlike) micelles.
+
+For the separately requested idealized spherical-core estimate, set r = l_c and fill the core with hydrocarbon tails:
+
+N_agg = [(4/3)pi r^3]/v
+      = 4pi(21.74)^3/[3(457.8)]
+      = 94.0138,
+
+or approximately 94 molecules per spherical micelle. As in R-003, this is a conditional spherical calculation, while the CPP itself favors a cylindrical aggregate.
+FINAL_JSON: {"cpp": 0.467955, "morphology": "cylindrical (rodlike/wormlike) micelles", "n_agg": 94.0138}
+
+### S-001
+Clint's ideal mixed-CMC equation uses surfactant mole fractions:
+
+1/CMC_mix = x1/CMC1 + x2/CMC2.
+
+The stated composition is by mass, so first convert it. On a 1 g blend basis,
+
+n_SDS = 0.47/288.38 mol,
+n_TX-100 = 0.53/646.85 mol.
+
+Therefore,
+
+x_SDS = (0.47/288.38)/[(0.47/288.38) + (0.53/646.85)] = 0.665453,
+x_TX-100 = 0.334547.
+
+Then
+
+CMC_mix = 1/[0.665453/8.2 + 0.334547/0.24] mM
+        = 0.677921 mM.
+FINAL_JSON: {"value": 0.677921}
+
+### S-002
+Convert the weight composition to mole fractions on a 1 g blend basis:
+
+n_CTAB = 0.30/364.45 mol,
+n_TX-100 = 0.70/646.85 mol.
+
+This gives
+
+x_CTAB = (0.30/364.45)/[(0.30/364.45) + (0.70/646.85)] = 0.432030,
+x_TX-100 = 0.567970.
+
+Using Clint's equation,
+
+1/CMC_mix = x_CTAB/CMC_CTAB + x_TX-100/CMC_TX-100,
+
+so
+
+CMC_mix = 1/[0.432030/0.92 + 0.567970/0.24] mM
+        = 0.352592 mM.
+FINAL_JSON: {"value": 0.352592}
+
+### S-003
+Clint's ideal equation requires mole fractions. On a 1 g blend basis,
+
+n_SDS = 0.60/288.38 mol,
+n_DTAB = 0.40/308.34 mol.
+
+Thus,
+
+x_SDS = (0.60/288.38)/[(0.60/288.38) + (0.40/308.34)] = 0.615949,
+x_DTAB = 0.384051.
+
+Apply
+
+1/CMC_mix = x_SDS/CMC_SDS + x_DTAB/CMC_DTAB:
+
+CMC_mix = 1/[0.615949/8.2 + 0.384051/15.0] mM
+        = 9.92860 mM.
+
+This is the requested ideal Clint prediction. In a real anionic-cationic SDS/DTAB blend, strong nonideality, ion pairing, or precipitation can make the ideal result inaccurate.
+FINAL_JSON: {"value": 9.92860}
