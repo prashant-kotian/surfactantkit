@@ -27,6 +27,13 @@ from surfactantkit import thermodynamics as thermo
 from surfactantkit import wetting
 from surfactantkit import solubilization as solub
 
+# Added 2026-09-14 for the Paper 3 50-question scale-up's Category A
+# (chain-length series): a real, separate PhD-project package, not part of
+# SurfactantKit itself -- imported the same way the MCP-server side already
+# does (sys.path insert against its real src/ location), not vendored/copied.
+sys.path.insert(0, str(Path(r"H:\CodeProjects\SurfQSPR\src")))
+from surfqspr import predict as qspr_predict
+
 
 # --- dispatch functions (mirror the MCP wrappers' compute logic) ------------
 # Each takes a kwargs dict and returns a JSON-serialisable dict with the value
@@ -162,6 +169,22 @@ def _msr(a):
         a["total_solubilized_M"], a["intrinsic_water_solubility_M"],
         a["surfactant_concentration_M"], a["cmc_M"])
     return {"molar_solubilization_ratio": v, "unit": "dimensionless"}
+
+
+def _fit_predict_cmc(a):
+    ns = a["n_carbons_list"]
+    cmcs = a["cmc_mM_list"]
+    if len(ns) != len(cmcs):
+        return {"error": f"n_carbons_list (len {len(ns)}) and cmc_mM_list (len {len(cmcs)}) must be the same length"}
+    points = list(zip((int(n) for n in ns), (float(c) for c in cmcs)))
+    r = qspr_predict.fit_and_predict_cmc_from_points(points, int(a["query_n_carbons"]))
+    return {
+        "predicted_cmc_mM": r.predicted_cmc_mM, "query_n_carbons": r.query_n_carbons,
+        "n_points_used": r.n_points_used, "slope": r.slope, "intercept": r.intercept,
+        "r_squared": r.r_squared, "in_applicability_domain": r.in_applicability_domain,
+        "training_range": list(r.training_range), "loo_cv_mean_pct_error": r.loo_cv_mean_pct_error,
+        "warning": r.warning,
+    }
 
 
 def _num(desc):
@@ -346,10 +369,25 @@ _TOOL_LIST = [
            "surfactant_concentration_M": _num("surfactant concentration (mol/L), must exceed CMC"),
            "cmc_M": _num("CMC (mol/L)")},
           ["total_solubilized_M", "intrinsic_water_solubility_M", "surfactant_concentration_M", "cmc_M"], _msr),
+    # Added 2026-09-14 for Category A of the 50-question scale-up -- see
+    # module docstring's new surfqspr import note. Fits ONLY on the given
+    # points (no internal SurfQSPR dataset access), same real function
+    # SurfQSPR-MCP exposes as fit_and_predict_cmc_from_points.
+    _spec("fit_and_predict_cmc_from_points",
+          "Real chain-length (Klevens/Stauff-Klevens) CMC regression, fit ONLY on the given "
+          "(n_carbons, cmc_mM) points -- no internal dataset. Predicts CMC at query_n_carbons, "
+          "with a leave-one-out cross-validation error (only when 4+ points given) and an "
+          "applicability-domain flag (query inside vs. outside the given points' own range).",
+          {"n_carbons_list": {"type": "array", "items": {"type": "number"},
+                               "description": "chain lengths of the given real literature points, e.g. [8,9,10,12,13,14,16]"},
+           "cmc_mM_list": {"type": "array", "items": {"type": "number"},
+                            "description": "matching real CMC values (mM) for each n_carbons_list entry, same order"},
+           "query_n_carbons": _num("chain length to predict the CMC for")},
+          ["n_carbons_list", "cmc_mM_list", "query_n_carbons"], _fit_predict_cmc),
 ]
 
 TOOLS = {t["name"]: t for t in _TOOL_LIST}
-assert len(TOOLS) == 25, f"expected 25 tools, got {len(TOOLS)}"
+assert len(TOOLS) == 26, f"expected 26 tools, got {len(TOOLS)}"
 
 
 def dispatch(name: str, args: dict) -> dict:
