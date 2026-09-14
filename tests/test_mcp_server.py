@@ -14,14 +14,22 @@ from surfactantkit.mcp_server import mcp
 def call(tool_name: str, args: dict) -> dict:
     """Call an MCP tool synchronously and parse its JSON text content.
 
-    Real API-shape change found 2026-09-04, alongside the MCPServer ->
-    FastMCP rename (see mcp_server.py): call_tool() in the currently
-    installed mcp SDK (1.27.2) returns the content list directly, not
-    wrapped in a `.content` attribute -- confirmed by actually calling it
-    and inspecting the real return value, not guessed from a changelog.
+    Real API-shape change found 2026-09-13, alongside the FastMCP ->
+    MCPServer rename (see mcp_server.py, migrated the same day): the mcp
+    SDK installed in that session's environment returned a CallToolResult
+    object with a `.content` list attribute, not a bare list.
+
+    CORRECTED 2026-09-14: the 09-13 fix assumed every real environment had
+    upgraded to that shape and dropped the old bare-list handling entirely
+    -- but this Windows install's `mcp` package is still 1.27.2 (confirmed
+    directly: `type(result)` here is `list`, not `CallToolResult`), which
+    still returns the bare list. Both shapes are real, currently in use on
+    different real machines in this project (Ubuntu vs. Windows) -- not a
+    hypothetical, so both are handled rather than picking one and hoping.
     """
     result = asyncio.run(mcp.call_tool(tool_name, args))
-    return json.loads(result[0].text)
+    content = result.content[0] if hasattr(result, "content") else result[0]
+    return json.loads(content.text)
 
 
 def test_all_expected_tools_are_registered():
@@ -71,6 +79,8 @@ def test_all_expected_tools_are_registered():
         "derive_davies_group_number",
         "critical_micellization_degree",
         "eommm_find_minimal_feasible_margin",
+        "classify_surfactant_charge_type",
+        "derive_all_properties_from_smiles_and_curve",
     }
     assert expected <= names
 
@@ -666,3 +676,34 @@ def test_micelle_water_partition_coefficient_tool():
         "surfactant_concentration_M": surf, "cmc_M": cmc,
     })
     assert out["km"] == pytest.approx(expected)
+
+
+def test_classify_surfactant_charge_type_tool_matches_library():
+    out = call("classify_surfactant_charge_type", {"smiles": "CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]"})
+    assert out["charge_type"] == "anionic"
+    assert out["system_type_for_gibbs"] == "ionic_no_added_salt"
+    assert out["confidence"] == "high"
+
+
+def test_classify_surfactant_charge_type_tool_zwitterion_gives_null_system_type():
+    out = call("classify_surfactant_charge_type", {"smiles": "CCCCCCCCCCCCC(=O)NCCC[N+](C)(C)CC(=O)[O-]"})
+    assert out["charge_type"] == "zwitterionic"
+    assert out["system_type_for_gibbs"] is None
+
+
+def test_derive_all_properties_tool_matches_independently_verified_gold_values():
+    """Real regression guard: matches the gold CMC/Gamma_max values in
+    benchmark/paper3_pilot/pilot50_v2_questions.json (A01, SDS), computed
+    independently by directly calling the underlying library functions."""
+    concs = [0.40577109375, 0.8115421875, 1.623084375, 3.24616875, 6.4923375, 12.984675, 25.96935, 51.9387]
+    gammas = [69.85933451975876, 67.9370105943862, 62.892649575815454, 54.57301518905874,
+              42.87619733622359, 37.91402789831731, 37.44295519808575, 36.79102755846683]
+    out = call("derive_all_properties_from_smiles_and_curve", {
+        "smiles": "CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]",
+        "concentrations_mM": concs, "surface_tensions_mN_per_m": gammas, "temperature_K": 296.15,
+    })
+    assert out["charge_type"] == "anionic"
+    assert out["cmc_mM"] == pytest.approx(9.181551744003432, rel=1e-6)
+    assert out["gamma_max_mol_per_m2"] == pytest.approx(3.4266231784578047e-06, rel=1e-6)
+    assert out["delta_g_mic_kJ_per_mol"] is None  # no counterion_dissociation_alpha supplied
+    assert len(out["gaps"]) > 0

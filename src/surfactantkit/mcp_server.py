@@ -12,7 +12,20 @@ Run locally (stdio transport, for Claude Desktop / Cursor):
 
 from __future__ import annotations
 
-from mcp.server.fastmcp import FastMCP
+try:
+    from mcp.server.mcpserver import MCPServer  # mcp 2.x name -- migrated 2026-09-13
+except ImportError:
+    # Real environment mismatch found 2026-09-14: the 2026-09-13 migration
+    # was made and tested against a newer `mcp` SDK (Ubuntu conda env) where
+    # FastMCP had already been renamed to MCPServer -- but this Windows
+    # install's `mcp` package is still 1.27.2, which only has FastMCP under
+    # its original name (confirmed directly: `mcp.server.mcpserver` module
+    # doesn't exist there at all). The 09-13 fix silently broke this
+    # environment without anyone noticing since it was never re-tested here.
+    # Fixed properly this time: try the new name first, fall back to the old
+    # one, so this file works against EITHER real installed SDK version
+    # rather than assuming one.
+    from mcp.server.fastmcp import FastMCP as MCPServer
 
 from . import mixed_micelle as mm
 from . import adsorption as ads
@@ -25,8 +38,10 @@ from . import thermodynamics as thermo
 from . import wetting
 from . import solubilization as solub
 from . import curve_analysis as curve
+from . import classify as classify_mod
+from . import orchestrate as orch
 
-mcp = FastMCP(
+mcp = MCPServer(
     "SurfactantKit",
     instructions=(
         "Surfactant and interfacial-science calculations: Clint ideal mixing, "
@@ -1296,6 +1311,112 @@ def micelle_water_partition_coefficient(total_solubilized_M: float, intrinsic_wa
     inputs as molar_solubilization_ratio, same units, same meaning."""
     value = solub.micelle_water_partition_coefficient(total_solubilized_M, intrinsic_water_solubility_M, surfactant_concentration_M, cmc_M)
     return {"km": value, "unit": "dimensionless (mole-fraction-basis convention)"}
+
+
+@mcp.tool()
+def classify_surfactant_charge_type(smiles: str) -> dict:
+    """Determine a surfactant's charge type (anionic/cationic/zwitterionic/
+    nonionic) from its real SMILES structure via RDKit SMARTS functional-
+    group matching -- anionic (sulfate ester, sulfonate, carboxylate,
+    phosphate ester), cationic (quaternary ammonium, permanently charged),
+    zwitterionic (both an anionic and a quaternary-ammonium group present),
+    nonionic (no ionizable group matched).
+
+    Does NOT guess when the structure is genuinely ambiguous: a free
+    (non-quaternary) amine's charge state depends on a solution pH this
+    function is never given, so that case returns
+    charge_type='ambiguous_pH_dependent' rather than silently assuming
+    cationic -- report the real ambiguity to the caller instead of
+    resolving it with a hidden default.
+
+    system_type_for_gibbs is a convenience mapping onto the exact string
+    this server's own Gibbs-prefactor-dependent tools expect (gibbs_
+    surface_excess, szyszkowski_fit_K, ...) -- defaults any ionic result to
+    'ionic_no_added_salt' (Gibbs prefactor n=2), since a bare SMILES
+    carries no information about excess electrolyte in the real solution;
+    override to 'ionic_excess_electrolyte' if that's independently known.
+    Null for zwitterionic/ambiguous/unparseable results -- do not guess a
+    system_type in those cases either."""
+    r = classify_mod.classify_surfactant_charge_type(smiles)
+    return {
+        "smiles": r.smiles,
+        "charge_type": r.charge_type,
+        "system_type_for_gibbs": r.system_type_for_gibbs,
+        "anionic_groups_found": r.anionic_groups_found,
+        "cationic_strong_groups_found": r.cationic_strong_groups_found,
+        "cationic_conditional_groups_found": r.cationic_conditional_groups_found,
+        "confidence": r.confidence,
+        "caveats": r.caveats,
+    }
+
+
+@mcp.tool()
+def derive_all_properties_from_smiles_and_curve(
+    smiles: str,
+    concentrations_mM: list[float],
+    surface_tensions_mN_per_m: list[float],
+    temperature_K: float = 298.15,
+    electrolyte_condition: str | None = None,
+    counterion_dissociation_alpha: float | None = None,
+) -> dict:
+    """THE autonomous pipeline: given ONLY a surfactant's real SMILES and a
+    raw pre-and-post-CMC surface-tension-vs-concentration curve -- nothing
+    else pre-decided, no stated ionic character, no named isotherm model,
+    no pre-fit parameters -- derive every property this server can
+    legitimately derive: charge type, CMC, Gamma_max, A_min, the
+    Langmuir-vs-Frumkin isotherm choice (BIC-selected, with fitted K and,
+    if Frumkin, the lateral-interaction parameter a), and deltaG_mic where
+    the inputs actually support it. This is the single-call alternative to
+    manually chaining classify_surfactant_charge_type ->
+    cmc_from_surface_tension_curve -> gibbs_surface_excess ->
+    select_isotherm_model -> gibbs_free_energy_micellization yourself --
+    use it when you want the whole pipeline's judgment calls made
+    consistently rather than assembling them by hand.
+
+    Every real ambiguity is reported explicitly in the returned 'gaps'
+    list rather than silently resolved: a zwitterionic or pH-ambiguous
+    charge type (Gamma_max/A_min/isotherm/deltaG_mic all become null, not
+    guessed), an ionic surfactant's electrolyte condition when not
+    supplied (defaults to no-added-salt, flagged), an ionic surfactant's
+    missing independent counterion-binding data (deltaG_mic skipped, not
+    computed with an assumed alpha), too few pre-CMC points for isotherm
+    model selection, or a Frumkin fit landing at its own search bound.
+    ALWAYS read the 'gaps' list -- a short one means the pipeline was able
+    to determine everything from the inputs given; a long one means real
+    information is missing and several outputs are null because of it,
+    not because of a computation failure.
+
+    electrolyte_condition: optional, one of 'excess_electrolyte' or
+    'no_added_salt' -- pass ONLY if independently known about the real
+    solution (not derivable from SMILES alone).
+    counterion_dissociation_alpha: optional, ONLY pass if independently
+    measured (e.g. conductivity slope-ratio method, or a literature EPR
+    value) -- needed for deltaG_mic on an ionic surfactant; a surface-
+    tension curve and SMILES alone cannot supply this."""
+    r = orch.derive_all_properties_from_smiles_and_curve(
+        smiles, concentrations_mM, surface_tensions_mN_per_m, temperature_K,
+        electrolyte_condition, counterion_dissociation_alpha,
+    )
+    return {
+        "smiles": r.smiles,
+        "charge_type": r.classification.charge_type,
+        "charge_classification_confidence": r.classification.confidence,
+        "system_type_used": r.system_type_used,
+        "cmc_mM": r.cmc.cmc_mM,
+        "gamma_at_cmc_mN_per_m": r.cmc.gamma_at_cmc_mN_per_m,
+        "premicellar_slope_mN_per_m_per_lnC": r.cmc.premicellar_slope_mN_per_m_per_lnC,
+        "cmc_method": r.cmc.method,
+        "gamma_max_mol_per_m2": r.gamma_max_mol_per_m2,
+        "a_min_nm2": r.a_min_nm2,
+        "isotherm_selected_model": r.isotherm.selected_model if r.isotherm else None,
+        "isotherm_langmuir_K": r.isotherm.langmuir_K if r.isotherm else None,
+        "isotherm_frumkin_K": r.isotherm.frumkin_K if r.isotherm else None,
+        "isotherm_frumkin_a": r.isotherm.frumkin_a if r.isotherm else None,
+        "isotherm_delta_bic": r.isotherm.delta_bic if r.isotherm else None,
+        "delta_g_mic_kJ_per_mol": r.delta_g_mic_kJ_per_mol,
+        "counterion_factor_used": r.counterion_factor_used,
+        "gaps": r.gaps,
+    }
 
 
 def main() -> None:
