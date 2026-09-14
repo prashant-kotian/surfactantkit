@@ -3,7 +3,93 @@
 Resumable task list, written so a fresh session (no memory of this conversation) can pick
 up exactly where this one left off. Read this file FIRST before starting new work.
 
-Last updated: 2026-09-10.
+Last updated: 2026-09-13.
+
+---
+
+## Autonomous SMILES+raw-data orchestrator built -- 2026-09-13
+
+**Why this exists**: after two full benchmark-pilot iterations (see `benchmark/paper3_pilot/`),
+the user identified that even the "raw data" v2 design was unfair -- every question told the
+model the surfactant's identity, ionic character, and often the theory name, none of which a
+real researcher determines from a bare compound. Final correction: giving the real SMILES is
+fair (a researcher always knows their compound); naming the model/parameters is not. The real
+test is whether this library ITSELF -- as an orchestrated pipeline, not a bag of atomic
+functions each requiring a human to pre-decide `system_type`/isotherm/etc. -- can autonomously
+derive everything from (SMILES, raw curve) alone. This section is that capability.
+
+**New modules**:
+- `src/surfactantkit/classify.py` -- `classify_surfactant_charge_type(smiles)`, RDKit SMARTS
+  functional-group matching (sulfate/sulfonate/carboxylate/phosphate -> anionic; quaternary
+  ammonium -> cationic; both present -> zwitterionic; neither -> nonionic). Deliberately refuses
+  to guess: a free (non-quaternary) amine returns `ambiguous_pH_dependent`, not a silently
+  assumed cationic. RDKit is now a real declared dependency (`pyproject.toml`) -- the one
+  exception to this project's zero-dependency design, since correct SMARTS matching on arbitrary
+  real SMILES genuinely needs a real cheminformatics engine.
+- `adsorption.frumkin_fit_K_and_a` -- joint nonlinear fit of BOTH K and the lateral-interaction
+  parameter `a` from raw pre-CMC data (previously only forward-prediction and K-alone fitting,
+  assuming a=0, existed). Coarse-grid-then-golden-section search over `a`, golden-section over
+  `ln(K)` at each candidate -- tune the iteration counts here carefully: an early naive version
+  nested two 200-iteration golden sections and took 2+ minutes per fit; fixed to ~2.8s by
+  reducing nested iteration counts and adding a reduced-precision search-only surface-tension
+  path (verified this doesn't change the converged answer). Flags `a_pinned_at_bound` and the
+  real |a|>=2 condensation-regime warning explicitly rather than silently trusting an untrustworthy fit.
+- `adsorption.select_isotherm_model` -- Langmuir-vs-Frumkin choice via BIC, the direct
+  isotherm-fitting analogue of `curve_analysis.py`'s existing 2-vs-3-segment CMC selector (same
+  `_bic` formula). Necessary because Frumkin, having an extra free parameter, always achieves an
+  equal-or-lower raw RSS than Langmuir on any curve -- that alone proves nothing about which
+  model is actually correct.
+- `src/surfactantkit/orchestrate.py` -- `derive_all_properties_from_smiles_and_curve(smiles,
+  concentrations_mM, surface_tensions_mN_per_m, ...)`, chaining all of the above plus the
+  existing `cmc_from_surface_tension_curve`/`gibbs_gamma_max`/`gibbs_a_min`/
+  `gibbs_free_energy_micellization`. Every real ambiguity (electrolyte condition not stated,
+  missing independent counterion-binding data for ΔG_mic, zwitterionic/pH-ambiguous charge type,
+  too few pre-CMC points for isotherm selection) surfaces as a named item in the result's `gaps`
+  list rather than being silently resolved with a default.
+
+**A real, consequential bug found via this orchestrator, not hypothesized in the abstract.**
+Running it on the real 8-point SDS robotic dataset (already gold-verified elsewhere in this
+project at CMC=9.18 mM) returned CMC=4.59 mM instead -- traced to `cmc_from_surface_tension_curve`'s
+`min_points_per_segment=3` default, which made `_best_three_segment_split` require `n >= 9`,
+silently blocking its own better 3-segment model on any dataset under 9 points. Most real
+tensiometry curves are 6-10 points, and `mcp_server.py`'s tool wrapper never exposed this
+parameter at all -- meaning every MCP-tool-augmented run against a modest-sized dataset was
+silently stuck on the inferior 2-segment model. **A naive fix (lower the default to 2) was
+tried and REJECTED**: it regressed the AOT literature-validation test (a 9-point dataset with no
+real baseline lag), because `min_points_per_segment=2` lets the 3-segment search exploit a
+trivial 2-point segment (always RSS=0) to spuriously beat 2-segment's BIC even with no real third
+regime. Fixed properly instead: the default stays 3 (preserving the AOT protection), but the
+3-segment attempt specifically relaxes its OWN minimum, only as far as `n` actually requires
+(`max(2, n // 3)`), only when 3-segment is otherwise entirely unreachable at the caller's value.
+Verified this recovers the correct SDS result AND leaves the AOT case unchanged -- both cases now
+covered by regression tests. Full reasoning in `curve_analysis.py`'s own docstring.
+
+**A second, unrelated bug found and fixed along the way**: the installed `mcp` SDK had moved to
+a 2.x-shaped API (`FastMCP` renamed to `MCPServer`, `call_tool()`'s return shape changed from a
+bare list to a `CallToolResult` object) -- `mcp_server.py` could not even be imported, meaning
+every MCP tool (old and new) was broken going into this session, not just the new ones. Two-line
+fix plus a test-helper fix (`tests/test_mcp_server.py`'s `call()` helper).
+
+**Validated against real, independently-verified gold data**, not just synthetic round trips:
+the SDS/DTAB/CTAB CMC/Gamma_max/A_min values this orchestrator now produces match the values
+already established in `benchmark/paper3_pilot/pilot50_v2_questions.json` (computed independently
+by directly calling the underlying functions) to full floating-point precision. Both new MCP
+tools (`classify_surfactant_charge_type`, `derive_all_properties_from_smiles_and_curve`) verified
+callable through the actual MCP protocol layer, not just as plain Python functions.
+
+New tests: `test_classify.py`, `test_frumkin_fit.py`, `test_isotherm_model_selection.py`,
+`test_orchestrate.py`, plus additions to `test_mcp_server.py`. Full suite: 377/377 passing
+(up from 347 at the start of this session).
+
+**Next step, not yet done**: `benchmark/paper3_pilot_round3/` (8 questions, built to the
+corrected free-form design, MCP-augmented condition scoped to ONLY the new orchestrator tool per
+explicit user sign-off) has not yet been run through Claude/ChatGPT -- that's the next concrete
+action, then grading, then scaling to a full 50 if the format holds up. See that folder's
+`build_round3.py` module docstring for full per-question data-provenance disclosure (4 of 8
+questions are real literature/robotic raw data; 2 are honestly-disclosed illustrative curves for
+compound classes with no real raw isotherm data mined yet in this project; 1 reconstructs a real
+paper's fitted parameters to re-test the exact systematic Gibbs-prefactor error found in the v1
+pilot; 1 is a real dataset deliberately truncated to test correct refusal on insufficient data).
 
 ---
 
@@ -993,7 +1079,7 @@ Full detail: `literature_validation_notes.md`'s "Notes on individual systems" se
 example found.** The 2026-09-10 entry above closed Category D with a course-problem formula-
 transcription check only, explicitly disclosed as "not a worked example from a real surfactant
 system -- that harder bar remains unmet." Re-attempted rather than left as a permanent gap:
-found Kamboj, Kaur, Bhalla et al., *R. Soc. Open Sci.* 6, 181979 (2019), PMC6458362 (SDS-DTAB
+found Sachin, Karpe, Singh & Bhattarai, *R. Soc. Open Sci.* 6, 181979 (2019), PMC6458362 (SDS-DTAB
 mixed micelles with dyes), Table 2. Both surfactants are 12-carbon chains (shared Tanford
 V0/lc), and the paper reports Amin from its own real Gibbs-isotherm surface-tension-slope
 measurement (not assumed) at 3 temperatures for each of the SDS-rich and DTAB-rich systems --

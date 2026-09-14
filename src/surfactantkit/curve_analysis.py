@@ -180,6 +180,40 @@ def cmc_from_surface_tension_curve(
     when the premicellar decline never reaches a 20 mN/m drop before the
     CMC -- a real "not defined for this system" case, not extrapolated
     past where the fit is valid.
+
+    Real bug fixed 2026-09-13, found via the new autonomous orchestrator on
+    a real 8-point SDS dataset: _best_three_segment_split requires
+    n >= 3*min_points_per_segment, so with the default min_points_per_segment=3
+    the 3-segment model was silently UNREACHABLE for any dataset under 9
+    points -- which includes most real tensiometry curves (typically
+    6-10 points) and every MCP-exposed call (mcp_server.py's tool wrapper
+    does not expose this parameter at all, so every tool-augmented run was
+    silently stuck on 2-segment-only for such datasets). This produced a
+    spurious early breakpoint on the SDS case (CMC=4.59 mM, A_min=111 A^2
+    -- physically implausible) purely because the correct 3-segment fit
+    was never attempted.
+
+    Simply lowering the default to 2 outright was tried and REJECTED: it
+    regressed the AOT literature validation case (a 9-point dataset with
+    no real baseline lag), because min_points_per_segment=2 lets the
+    3-segment search exploit a trivial 2-point segment (a line through 2
+    points always has RSS=0) to spuriously beat the 2-segment model's BIC
+    even when no real third regime exists -- verified directly (AOT case
+    went from correctly selecting 2-segment to spuriously selecting a
+    5-point "baseline" that doesn't exist in that data).
+
+    Fixed properly instead: min_points_per_segment stays 3 by default
+    (preserving the AOT case's protection against the 2-point-segment
+    exploit whenever 3-segment is already reachable at that value), but
+    the 3-segment attempt specifically relaxes its OWN minimum -- down to
+    a floor of 2, and only as far as n actually requires
+    (max(2, n // 3)) -- when n is too small to reach 3-segment at the
+    caller's min_points_per_segment at all. The 2-segment search always
+    keeps the caller's original min_points_per_segment, untouched, since
+    that search was never the unreachable one. Verified this recovers the
+    correct SDS result (CMC=9.18 mM, matching the value obtained by
+    manually passing min_points_per_segment=2, the pre-fix workaround)
+    while leaving the AOT case's result exactly as it was before this fix.
     """
     if len(concentrations_mM) != len(surface_tensions_mN_per_m):
         raise ValueError("concentrations and surface tensions must be the same length")
@@ -195,7 +229,15 @@ def cmc_from_surface_tension_curve(
     n = len(pairs)
 
     two_seg = _best_two_segment_split(log_c, gamma, n, min_points_per_segment)
-    three_seg = _best_three_segment_split(log_c, gamma, n, min_points_per_segment)
+    # 3-segment gets its own, possibly-relaxed minimum -- see this
+    # function's own docstring for why: only relax when the caller's
+    # min_points_per_segment makes 3-segment entirely unreachable for
+    # this n, and only down to the smallest floor (2) that still makes
+    # it reachable, never below what n actually requires.
+    three_seg_min_pts = min_points_per_segment
+    if n < 3 * three_seg_min_pts:
+        three_seg_min_pts = max(2, n // 3)
+    three_seg = _best_three_segment_split(log_c, gamma, n, three_seg_min_pts)
 
     use_three_seg = False
     if three_seg is not None:

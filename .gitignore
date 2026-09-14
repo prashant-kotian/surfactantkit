@@ -22,3 +22,8 @@ benchmark/results/
 benchmark/harness/.env
 benchmark/paper3_scale50/api_runs/
 benchmark/paper3_scale50/grade_all_results.json
+benchmark/paper3_scale50/unaggumented output manual/
+# superseded pre-orchestrator pilot attempts (v1/v2), kept locally for history, not pushed
+benchmark/paper3_pilot/
+# large, has its own nested .git -- handle as its own repo, never as plain files here
+manuscript_support/

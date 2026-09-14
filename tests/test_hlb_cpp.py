@@ -426,10 +426,15 @@ def test_critical_packing_parameter_matches_real_sds_dtab_paper():
     2026-09-10 entry for the 7 earlier attempts that found nothing
     usable).
 
-    Source: Kamboj, Kaur, Bhalla et al., "Self-assembly of sodium
-    dodecylsulfate and dodecyltrimethylammonium bromide mixed
-    surfactants with dyes in aqueous mixtures," R. Soc. Open Sci. 6,
-    181979 (2019), PMC6458362, Table 2. Both surfactants are 12-carbon
+    Source: Sachin, K. M., Karpe, S. A., Singh, M., and Bhattarai, A.,
+    "Self-assembly of sodium dodecylsulfate and dodecyltrimethylammonium
+    bromide mixed surfactants with dyes in aqueous mixtures," R. Soc.
+    Open Sci. 6, 181979 (2019), PMC6458362, Table 2. (Corrected
+    2026-09-12: the real primary-source PDF was obtained and shows
+    these are the paper's real authors -- an earlier citation of this
+    same real title/journal/volume/page/PMC-ID had the wrong author
+    names attached; the title, DOI, and every numeric value below were
+    already correct and unaffected.) Both surfactants are 12-carbon
     (dodecyl) chains, so Tanford's V0/lc are identical for both --
     only Amin (from the paper's own Gibbs-isotherm surface-tension
     slope, a real measurement, not assumed) differs between rows. This
