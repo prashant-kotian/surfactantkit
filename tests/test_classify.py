@@ -54,6 +54,20 @@ def test_capb_zwitterionic():
     assert r.system_type_for_gibbs is None  # deliberately not defaulted -- real open question
 
 
+def test_dhpc_phospholipid_zwitterionic_via_phosphodiester():
+    """Real bug found and fixed 2026-09-15 while building Paper 3 ground-
+    zero benchmark questions: DHPC (1,2-diheptanoyl-sn-glycero-3-
+    phosphocholine, real zwitterionic phospholipid, PubChem CID 181610)
+    has a phosphoDIester (C-O-P(=O)(O-)-O-C), which the original
+    phosphate_ester pattern (monoester only) silently missed entirely --
+    this molecule was misclassified as plain 'cationic' (only its
+    quaternary ammonium was detected) instead of 'zwitterionic'."""
+    r = classify_surfactant_charge_type(
+        "CCCCCCC(=O)OC[C@H](COP(=O)([O-])OCC[N+](C)(C)C)OC(=O)CCCCCC")
+    assert r.charge_type == "zwitterionic"
+    assert "phosphate_diester" in r.anionic_groups_found
+
+
 def test_c12e8_nonionic():
     r = classify_surfactant_charge_type("CCCCCCCCCCCCOCCOCCOCCOCCOCCOCCOCCO")
     assert r.charge_type == "nonionic"

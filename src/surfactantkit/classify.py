@@ -12,7 +12,15 @@ a structure would.
 
 Method: RDKit SMARTS substructure matching for the functional groups that
 actually determine surfactant charge behavior in water -- sulfate esters,
-sulfonates, carboxylates/carboxylic acids, phosphate esters (anionic,
+sulfonates, carboxylates/carboxylic acids, phosphate MONOesters AND
+phosphate DIesters (real, genuine gap found and fixed 2026-09-15: the
+original pattern only matched a monoester, C-O-P(=O)(O-)(O-) -- a real
+phospholipid/phosphatidylcholine-type zwitterionic surfactant like DHPC has
+a phosphoDIester instead, C-O-P(=O)(O-)-O-C, which the monoester-only
+pattern silently missed entirely, misclassifying an otherwise-correctly-
+detected quaternary-ammonium-bearing phospholipid as plain "cationic"
+instead of "zwitterionic" -- caught while building real Paper 3 ground-
+zero benchmark questions against DHPC, not hypothesized) (anionic,
 strong-to-moderate acids, treated as ionized at normal surfactant testing
 pH regardless of how the SMILES happens to write the protonation state,
 since that's how these groups actually behave in real aqueous
@@ -58,6 +66,7 @@ _ANIONIC_PATTERNS = [
     ("sulfate_ester", "[#6]-[OX2]-[SX4](=[OX1])(=[OX1])-[OX1,OX2H0-1,OX2H1]", "strong"),
     ("sulfonate", "[#6]-[SX4](=[OX1])(=[OX1])-[OX1,OX2H0-1,OX2H1]", "strong"),
     ("phosphate_ester", "[#6]-[OX2]-[PX4](=[OX1])([OX1,OX2H,OX2H0-1])[OX1,OX2H,OX2H0-1]", "strong"),
+    ("phosphate_diester", "[#6]-[OX2]-[PX4](=[OX1])([OX1,OX2H,OX2H0-1])[OX2]-[#6]", "strong"),
     ("carboxylate", "[CX3](=[OX1])[OX1H0-1,OX2H1]", "moderate"),
 ]
 _CATIONIC_STRONG_PATTERNS = [
