@@ -16,14 +16,18 @@
   },
   "GZ-02": {
     "source": "Vautier-Giongo, Bakshi, Singh, Ranganathan, Hajdu & Bales, JCIS 282(1) (2005) 149-155 -- real DHPC-SDS system",
+    "CORRECTED_2026-09-15": "The original gold below was computed with alpha1/cmc1/cmc2 mismatched -- the real alpha values are SDS's (component 2's) own bulk fraction, but the first gold computation passed them to select_mixture_model as if they were DHPC's (component 1's) fraction. Found because two independent real manual runs (Claude and GPT, search-enabled) both computed per-point Rubingh betas of -3.2 to -3.95 (std~0.33) that didn't match this file's original beta_std=1.384 -- verified by recomputing directly against the real tool with the corrected pairing (not by assuming either the models or the gold were right). The tool itself has no bug; this was a mislabeled function call when building this gold file.",
     "gold": {
       "component1_charge_type": "zwitterionic",
       "selected_mixture_model": "eommm_asymmetric_margules",
-      "model_parameters": {"W12": -13.3, "W21": 7.2},
-      "rubingh_alternative_beta": -3.524,
+      "model_parameters": {"W12": -4.6, "W21": -2.6},
+      "eommm_bic": -26.0406,
+      "rubingh_alternative_beta": -3.6321250007792387,
+      "rubingh_alternative_beta_std": 0.32705995437610896,
+      "rubingh_bic": -23.8836,
       "synergy_classification": "synergistic",
-      "rodenas_x1_values": [0.285, 0.384, 0.262, 0.466, 0.702],
-      "note": "unaugmented models are expected to struggle to reproduce EOMMM's exact 2D-grid-fit parameters by hand -- credit a model that at least recognizes Rubingh's single-beta assumption is a poor fit here (beta_std=1.384, very large spread) and reaches for a more flexible model, not just exact parameter recovery"
+      "rodenas_x1_as_component1_DHPC_fraction": [0.715, 0.616, 0.738, 0.534, 0.298],
+      "note": "EOMMM still wins by BIC, but now by a MODEST margin (~2.16, Kass-Raftery 'positive but not strong' evidence) rather than the wildly wrong ~18-point gap the buggy gold showed -- a well-reasoned Rubingh answer with a correctly-computed beta~-3.6 (std~0.33) and an honest acknowledgment of residual composition-dependence (not claiming a perfect fit) should be credited as a defensible, scientifically reasonable answer, not marked wrong just for not landing on EOMMM. Both real manual runs (Claude, GPT) independently reached exactly this Rubingh answer with correct per-point betas."
     },
     "computed_via": "surfactantkit.mixture_model_selection.select_mixture_model + mixed_micelle.rodenas_x1_series, verified 2026-09-15"
   },

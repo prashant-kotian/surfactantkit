@@ -34,7 +34,7 @@ FINAL_JSON:
 
 
 GZ-02
-[reference only, do not paste -- source: Vautier-Giongo, Bakshi, Singh, Ranganathan, Hajdu & Bales, J. Colloid Interface Sci. 282(1) (2005) 149-155, DOI 10.1016/j.jcis.2004.08.071, Table 1 -- real DHPC(zwitterionic phospholipid)-SDS(anionic) binary system. Gold via select_mixture_model (EOMMM wins by BIC) + rodenas_x1_series. REVISED: removed "there is more than one real candidate" and "state why you chose it over alternatives" framing; the model-independent cross-check is now asked for without naming Rodenas or explaining what "model-independent" means procedurally.]
+[reference only, do not paste -- source: Vautier-Giongo, Bakshi, Singh, Ranganathan, Hajdu & Bales, J. Colloid Interface Sci. 282(1) (2005) 149-155, DOI 10.1016/j.jcis.2004.08.071, Table 1 -- real DHPC(zwitterionic phospholipid)-SDS(anionic) binary system. Gold via select_mixture_model (EOMMM wins by BIC) + rodenas_x1_series. REVISED: removed "there is more than one real candidate" and "state why you chose it over alternatives" framing; the model-independent cross-check is now asked for without naming Rodenas or explaining what "model-independent" means procedurally. GOLD CORRECTED 2026-09-15: the original gold computation mislabeled which alpha values belonged to which component when calling select_mixture_model, giving badly wrong Rubingh beta_std and EOMMM parameters. Found because two independent real manual runs (Claude and GPT) both computed per-point Rubingh betas matching each other almost exactly (beta~-3.6, std~0.33) that disagreed with the original (buggy) gold's beta_std=1.384 -- verified by recomputing directly against the real tool with corrected arguments rather than assuming either side was right. See groundzero_gold.json's own CORRECTED note for the real numbers. EOMMM still wins by BIC but now by a modest margin, not an overwhelming one -- a well-reasoned Rubingh answer should be credited as defensible, not marked wrong.]
 
 >>> PASTE BELOW >>>
 Work entirely from first principles -- do not search the internet or recall a literature value for this system.
@@ -186,12 +186,12 @@ FINAL_JSON:
 
 
 GZ-08
-[reference only, do not paste -- raw curve forward-constructed from real, published Szyszkowski/Langmuir parameters for C12E8 (Ho, Lips & Velikov, PCCP 2023, PMC10132450, Table 1: Gamma_inf=2.21e-6 mol/m^2, K=8.772e6 L/mol, sigma0=72.0 mN/m, nonionic, real stated T=298 K). K/Gamma_max not given -- fitting them back is the point; verified recoverable to <1e-10% via szyszkowski_fit_K. REVISED: removed "no isotherm parameters are given" meta-commentary. REVISED AGAIN, same day as GZ-01's temperature fix, same real reasoning: temperature is a genuine required input to the Gibbs/Szyszkowski relation actually being used here, and the real source paper states it -- added explicitly rather than leaving it as an accidental, uninformative gap.]
+[reference only, do not paste -- raw curve forward-constructed from real, published Szyszkowski/Langmuir parameters for C12E8 (Ho, Lips & Velikov, PCCP 2023, PMC10132450, Table 1: Gamma_inf=2.21e-6 mol/m^2, K=8.772e6 L/mol, sigma0=72.0 mN/m, nonionic, real stated T=298 K). K/Gamma_max not given -- fitting them back is the point; verified recoverable to <1e-10% via szyszkowski_fit_K. REVISED: removed "no isotherm parameters are given" meta-commentary. REVISED AGAIN, same day as GZ-01's temperature fix: added real T. REVISED A THIRD TIME, 2026-09-15: the SMILES was a real bug -- it encoded C12E7 (formula C26H54O8, RDKit-verified), not the real C12E8 the attached curve data actually describes (Ho/Lips/Velikov's own Table 1 is specifically for C12E8). Found because BOTH a real manual Claude run and a real manual GPT run independently counted 7 ethylene-oxide units and named it C12E7/"approximately seven" -- two independent models catching the same real error is a strong signal, verified against RDKit's own atom count (not just recounted by eye) before trusting it. Fixed by adding the missing 8th "CCO" unit (now C28H58O9, RDKit-verified as 8 EO units); still nonionic per classify_surfactant_charge_type. The curve data itself (raw concentration/surface-tension pairs) is unaffected -- only the SMILES needed fixing to match the real compound the data was sourced from.]
 
 >>> PASTE BELOW >>>
 Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
 
-SMILES: CCCCCCCCCCCCOCCOCCOCCOCCOCCOCCOCCO
+SMILES: CCCCCCCCCCCCOCCOCCOCCOCCOCCOCCOCCOCCO
 
 Real concentration-vs-surface-tension data at 298 K (concentration in mol/L, surface tension in mN/m):
   1.00e-08, 71.539
