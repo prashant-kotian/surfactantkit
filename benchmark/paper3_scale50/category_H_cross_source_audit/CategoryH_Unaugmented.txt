@@ -1,0 +1,44 @@
+H-01
+[reference only, do not paste -- source: Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- the SAME real paper whose raw tensiometry curve for this compound was already used in Round 3's R3-04 (a fully independent measurement: contact angle on glass, not tensiometry). gamma and theta back-derived from the paper's own cos(theta) and adhesion-tension columns, verified self-consistent (WA reproduces to 0.03%).]
+
+>>> PASTE BELOW >>>
+Compute the real work of adhesion and spreading coefficient for the liquid-solid (glass) system below, using the Young-Dupre equation. Work entirely from first principles -- do not search the internet or recall a value from training; derive it from the numbers given.
+
+Compound: sodium bis(2-ethylhexyl) sulfosuccinate (AOT / Aerosol OT)
+Solvent system: water
+Real liquid surface tension (gamma_LV): 25.777 mN/m
+Real measured contact angle on glass (theta): 24.37 degrees
+
+Use: work of adhesion W_A (mJ/m^2) = gamma_LV * (1 + cos(theta)); spreading coefficient S (mJ/m^2) = gamma_LV * (cos(theta) - 1).
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "work_of_adhesion_mJ_per_m2": <number>,
+  "spreading_coefficient_mJ_per_m2": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+H-02
+[reference only, do not paste -- source: Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- the SAME real paper whose raw tensiometry curve for this compound was already used in Round 3's R3-04 (a fully independent measurement: contact angle on glass, not tensiometry). gamma and theta back-derived from the paper's own cos(theta) and adhesion-tension columns, verified self-consistent (WA reproduces to 0.03%).]
+
+>>> PASTE BELOW >>>
+Compute the real work of adhesion and spreading coefficient for the liquid-solid (glass) system below, using the Young-Dupre equation. Work entirely from first principles -- do not search the internet or recall a value from training; derive it from the numbers given.
+
+Compound: sodium bis(2-ethylhexyl) sulfosuccinate (AOT / Aerosol OT)
+Solvent system: 0.20 volume fraction 2-Propanol in water
+Real liquid surface tension (gamma_LV): 19.881 mN/m
+Real measured contact angle on glass (theta): 20.348 degrees
+
+Use: work of adhesion W_A (mJ/m^2) = gamma_LV * (1 + cos(theta)); spreading coefficient S (mJ/m^2) = gamma_LV * (cos(theta) - 1).
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "work_of_adhesion_mJ_per_m2": <number>,
+  "spreading_coefficient_mJ_per_m2": <number>
+}
+<<< PASTE ABOVE <<<

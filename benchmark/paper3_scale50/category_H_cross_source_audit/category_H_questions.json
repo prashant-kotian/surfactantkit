@@ -1,0 +1,28 @@
+[
+  {
+    "id": "H-01",
+    "compound_name": "sodium bis(2-ethylhexyl) sulfosuccinate (AOT / Aerosol OT)",
+    "solvent_system": "water",
+    "source": "Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- the SAME real paper whose raw tensiometry curve for this compound was already used in Round 3's R3-04 (a fully independent measurement: contact angle on glass, not tensiometry). gamma and theta back-derived from the paper's own cos(theta) and adhesion-tension columns, verified self-consistent (WA reproduces to 0.03%).",
+    "gamma_LV_mN_per_m": 25.777,
+    "contact_angle_deg": 24.37,
+    "cross_reference_note_INTERNAL_ONLY": "Same real compound as Round 3's R3-04 -- independent dataset (wetting, not tensiometry) from the same source paper. Not shown to the model.",
+    "gold": {
+      "work_of_adhesion_mJ_per_m2": 49.25670435832693,
+      "spreading_coefficient_mJ_per_m2": -2.296704358326928
+    }
+  },
+  {
+    "id": "H-02",
+    "compound_name": "sodium bis(2-ethylhexyl) sulfosuccinate (AOT / Aerosol OT)",
+    "solvent_system": "0.20 volume fraction 2-Propanol in water",
+    "source": "Shah, Das & Bhattarai, Heliyon 2025, 11, e42XXX (open access, PMC11835642), Table 2 -- the SAME real paper whose raw tensiometry curve for this compound was already used in Round 3's R3-04 (a fully independent measurement: contact angle on glass, not tensiometry). gamma and theta back-derived from the paper's own cos(theta) and adhesion-tension columns, verified self-consistent (WA reproduces to 0.03%).",
+    "gamma_LV_mN_per_m": 19.881,
+    "contact_angle_deg": 20.348,
+    "cross_reference_note_INTERNAL_ONLY": "Same real compound as Round 3's R3-04 -- independent dataset (wetting, not tensiometry) from the same source paper. Not shown to the model.",
+    "gold": {
+      "work_of_adhesion_mJ_per_m2": 38.52054607508532,
+      "spreading_coefficient_mJ_per_m2": -1.2405460750853243
+    }
+  }
+]
