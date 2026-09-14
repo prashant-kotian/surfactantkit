@@ -72,10 +72,10 @@ QUESTIONS.append({
     "alpha1": alpha1, "cmc_mix_mM": cmc_mix,
     "ask": ["clint_ideal_cmc_mM", "synergy_classification"],
     "gold": {"clint_ideal_cmc_mM": clint, "rubingh_x1": None, "rubingh_beta": None,
-             "synergy_classification": "antagonistic (real mixed CMC is HIGHER than the Clint ideal prediction here)"},
+             "synergy_classification": "antagonistic"},
     "literature_cross_check": {"clint_ideal_cmc_mM": {"paper": 12.21, "tool": clint, "pct_diff": 100*abs(clint-12.21)/12.21}},
     "prompt_note": None,
-    "design_notes": "Real mixed CMC (13.00 mM) exceeds the Clint ideal (12.21 mM) -- classify synergy from that comparison directly, not from a Rubingh beta (not requested here). NOT shown to the model -- classifying synergy from its own computed Clint ideal vs. the given real mixed CMC is exactly the task; stating the comparison outcome in the prompt would hand over the answer.",
+    "design_notes": "Real mixed CMC (13.00 mM) exceeds the Clint ideal (12.21 mM), so it classifies as antagonistic (real mixed CMC is HIGHER than the Clint ideal prediction here) -- classify synergy from that comparison directly, not from a Rubingh beta (not requested here). NOT shown to the model -- classifying synergy from its own computed Clint ideal vs. the given real mixed CMC is exactly the task; stating the comparison outcome in the prompt would hand over the answer. Gold field itself must stay the bare classification word ('antagonistic'), not this parenthetical explanation -- a grader doing exact-match categorical comparison (as grade_all.py does) would otherwise fail every model that correctly answers just 'antagonistic', which is exactly what happened until this was caught (2026-09-14, all 4 models' real transcripts independently converged on the same fix-revealing symptom).",
 })
 
 # --- B-02: Muherei TX-100(1)-SDS(2) ---
