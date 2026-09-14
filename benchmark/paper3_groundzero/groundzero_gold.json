@@ -1,0 +1,119 @@
+{
+  "GZ-01": {
+    "source": "Shah, Das & Bhattarai 2025, Heliyon, PMC11835642 -- real AOT tensiometry curve",
+    "gold": {
+      "charge_type": "anionic",
+      "cmc_mM": 2.5118612800073175,
+      "isotherm_model": "langmuir",
+      "gamma_max_mol_per_m2": 1.436590099494216e-06,
+      "a_min_nm2": 1.1558892601017348,
+      "delta_g_mic_kJ_per_mol": null,
+      "undeterminable_reason": "no independent counterion-binding measurement (counterion_dissociation_alpha) supplied for this ionic surfactant"
+    },
+    "computed_via": "surfactantkit.orchestrate.derive_all_properties_from_smiles_and_curve, verified 2026-09-15"
+  },
+  "GZ-02": {
+    "source": "Vautier-Giongo, Bakshi, Singh, Ranganathan, Hajdu & Bales, JCIS 282(1) (2005) 149-155 -- real DHPC-SDS system",
+    "gold": {
+      "component1_charge_type": "zwitterionic",
+      "selected_mixture_model": "eommm_asymmetric_margules",
+      "model_parameters": {"W12": -13.3, "W21": 7.2},
+      "rubingh_alternative_beta": -3.524,
+      "synergy_classification": "synergistic",
+      "rodenas_x1_values": [0.285, 0.384, 0.262, 0.466, 0.702],
+      "note": "unaugmented models are expected to struggle to reproduce EOMMM's exact 2D-grid-fit parameters by hand -- the real test is whether the model recognizes Rubingh's single-beta assumption is a poor fit here (beta_std=1.384, very large spread) and reaches for a more flexible model, not exact parameter recovery"
+    },
+    "computed_via": "surfactantkit.mixture_model_selection.select_mixture_model + mixed_micelle.rodenas_x1_series, verified 2026-09-15"
+  },
+  "GZ-03": {
+    "source": "Azum, Rub, Alotaibi, Khan & Asiri 2022, Biointerface Res. Appl. Chem. 12(6) 7416-7428 -- real gemini G6 structure",
+    "gold": {
+      "charge_type": "cationic",
+      "structural_family": "dimeric_or_multi_headgroup",
+      "hlb_davies_determinable": false,
+      "reason_if_not": "no Davies group-contribution number exists for a doubled/gemini quaternary-ammonium headgroup in the standard table"
+    },
+    "computed_via": "surfactantkit.classify.classify_surfactant_charge_type + classify_surfactant_structural_family, verified 2026-09-15"
+  },
+  "GZ-04": {
+    "source": "PubChem CID 162246, real monorhamnolipid structure",
+    "gold": {
+      "charge_type": "anionic",
+      "charge_confidence": "moderate",
+      "structural_family": "glycolipid_or_sugar_based",
+      "hlb_davies_determinable": false,
+      "reason_if_not": "no Davies group-contribution number exists for a glycoside/sugar-ring headgroup"
+    },
+    "computed_via": "surfactantkit.classify.classify_surfactant_charge_type + classify_surfactant_structural_family, verified 2026-09-15"
+  },
+  "GZ-05": {
+    "source": "Saito, Moroi, Matuura 1980, JCIS 76(1) 256-258, Table I -- real 1-hexadecanesulfonic acid CMC-vs-T",
+    "gold": {
+      "delta_h_endpoint_kJ_per_mol": -13.592197635471393,
+      "sub_intervals": [
+        {"t_lo_C": 30.0, "t_hi_C": 50.0, "delta_h_kJ_per_mol": -12.51622692462097},
+        {"t_lo_C": 50.0, "t_hi_C": 70.0, "delta_h_kJ_per_mol": -14.810140401192402}
+      ],
+      "self_consistent": true,
+      "delta_g_mic_kJ_per_mol": null,
+      "delta_s_mic_J_per_mol_K": null,
+      "undeterminable_reason": "no independently-measured counterion-binding degree found in the literature for this compound"
+    },
+    "computed_via": "surfactantkit.thermodynamics.vant_hoff_enthalpy, verified 2026-09-15 (same real historical sign-bug trap fixed 2026-09-04)"
+  },
+  "GZ-06": {
+    "source": "Sutherland et al. 2009 Taylor-dispersion SDS micelle radius (real, already validated in this project)",
+    "gold": {
+      "debye_length_nm": 0.9613700798317342,
+      "kappa_a": 2.7429603389170865,
+      "regime_choice": "neither_needs_full_range_form",
+      "henry_function_selected_ohshima": 1.0846771555941046,
+      "henry_function_selected_swan_furst": 1.093555616040726,
+      "henry_function_selected_qin": 1.0573215444846982,
+      "henry_function_huckel": 1.0,
+      "henry_function_smoluchowski": 1.5
+    },
+    "computed_via": "surfactantkit.electrostatics.debye_length + henry_function, verified 2026-09-15"
+  },
+  "GZ-07": {
+    "source": "Milone et al., Int. J. Mol. Sci., PMC12786710 -- real DOSY-NMR CTAB/pillararene case",
+    "gold": {
+      "rh_from_stokes_einstein_nm": 1.57290454836187,
+      "matches_dls_value": false,
+      "explanation": "DOSY-NMR reports a fast-exchange, population-averaged D dominated by free monomer diffusion, not the pure large-aggregate D that DLS measures -- both instruments are correct, they measure different diffusing populations"
+    },
+    "computed_via": "surfactantkit.dynamics.hydrodynamic_radius_stokes_einstein, verified 2026-09-15"
+  },
+  "GZ-08": {
+    "source": "Ho, Lips & Velikov 2023, Phys. Chem. Chem. Phys., PMC10132450, Table 1 -- real C12E8 Szyszkowski parameters, curve forward-constructed from them",
+    "gold": {
+      "charge_type": "nonionic",
+      "K_L_per_mol": 8772000.0,
+      "gamma_max_mol_per_m2": 2.21e-06,
+      "fit_quality_note": "exact fit by construction (curve was forward-built from these exact real literature parameters); K recoverable to <1e-10% via surfactantkit.adsorption.szyszkowski_fit_K"
+    },
+    "computed_via": "surfactantkit.adsorption.szyszkowski_fit_K, verified 2026-09-15"
+  },
+  "GZ-09": {
+    "source": "Shah, Das & Bhattarai 2025, Heliyon, PMC11835642, Table 2 -- real AOT-water wetting on glass (SAME compound as GZ-01)",
+    "gold": {
+      "work_of_adhesion_mJ_per_m2": 49.25670435832693,
+      "spreading_coefficient_mJ_per_m2": -2.296704358326928,
+      "spontaneous_wetting": false,
+      "cross_source_note": "same real compound as GZ-01 -- consistency check, no forced single answer expected, credit for noticing and reasoning about the connection"
+    },
+    "computed_via": "surfactantkit.wetting.work_of_adhesion + spreading_coefficient, verified 2026-09-15"
+  },
+  "GZ-10": {
+    "source": "Sachin, Karpe, Singh & Bhattarai 2019, PMC6458362, Table 2 -- real measured SDS headgroup area",
+    "gold": {
+      "tail_volume_A3": 350.2,
+      "critical_length_A": 16.68,
+      "cpp": 0.46969136100515557,
+      "predicted_morphology": "cylindrical/rodlike micelle",
+      "fixed_area_appropriate": "no_but_not_computable_here",
+      "reasoning_note": "a fixed head area is a real simplification for an ionic surfactant -- electrolyte-dependent equilibrium-area models (e.g. Nagarajan) exist and would give a different answer, but no electrolyte condition was given in this question, so no specific corrected number should be fabricated"
+    },
+    "computed_via": "surfactantkit.cpp.tanford_tail_volume/tanford_critical_length/critical_packing_parameter/classify_aggregate_morphology, verified 2026-09-15"
+  }
+}
