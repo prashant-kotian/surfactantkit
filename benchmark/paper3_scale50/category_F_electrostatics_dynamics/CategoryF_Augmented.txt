@@ -1,0 +1,91 @@
+F-01
+[reference only, do not paste -- source: "Revisiting Colloid Theory for Biomedicine," ACS Nano Medicine (2026), PMC13455036; cross-checked against an independent textbook reference point]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's debye_screening_length tool -- call it to analyze the real data below. Do not compute anything by hand.
+
+Ionic strength: 0.1 mol/L
+Temperature: 298.15 K
+
+Report the tool's own returned value faithfully.
+
+FINAL_JSON:
+{
+  "debye_length_nm": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+F-02
+[reference only, do not paste -- source: "Revisiting Colloid Theory for Biomedicine," ACS Nano Medicine (2026), PMC13455036 (their own explicitly stated formula and worked value for physiological saline)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's debye_screening_length tool -- call it to analyze the real data below. Do not compute anything by hand.
+
+Ionic strength: 0.15 mol/L
+Temperature: 298.15 K
+
+Report the tool's own returned value faithfully.
+
+FINAL_JSON:
+{
+  "debye_length_nm": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+F-03
+[reference only, do not paste -- source: Serafini, Fernandez-Leyes, Sanchez, Pereyra, Schulz, Durand, Schulz & Ritacco, Colloids Surf. A (2019), Supporting Information Table SI-III, mixed Triton X-100/DTAB micelles]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's zeta_potential tool -- call it to analyze the real data below. Do not compute anything by hand.
+
+Electrophoretic mobility: 0.585 (um*cm)/(V*s)
+Solvent viscosity: 0.89 mPa.s
+Regime: smoluchowski
+
+Report the tool's own returned value faithfully.
+
+FINAL_JSON:
+{
+  "zeta_potential_mV": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+F-04
+[reference only, do not paste -- source: Milone et al., Int. J. Mol. Sci., PMC12786710, CTAB/pillararene host-guest nanoparticle system (DOSY-NMR)]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's hydrodynamic_radius tool -- call it to analyze the real data below. Do not compute anything by hand.
+
+Diffusion coefficient: 1.56e-06 cm^2/s
+Solvent viscosity: 0.89 mPa.s
+Temperature: 298.15 K
+
+Report the tool's own returned value faithfully -- do not adjust it to match any other hydrodynamic-size measurement you may know of for a similar system.
+
+FINAL_JSON:
+{
+  "hydrodynamic_radius_nm": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+F-05
+[reference only, do not paste -- source: Sutherland, Mercer, Everist & Leaist, J. Chem. Eng. Data 54(2) (2009) 272-278, Table 2, aqueous SDS (NaDS), Taylor dispersion of a trace solubilized decanol tracer -- mean of 4 real measured micelle diffusion coefficients across their tested concentration range]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's hydrodynamic_radius tool -- call it to analyze the real data below. Do not compute anything by hand.
+
+Diffusion coefficient: 9.3e-07 cm^2/s
+Solvent viscosity: 0.8903 mPa.s
+Temperature: 298.15 K
+
+Report the tool's own returned value faithfully -- do not adjust it to match any other hydrodynamic-size measurement you may know of for a similar system.
+
+FINAL_JSON:
+{
+  "hydrodynamic_radius_nm": <number>
+}
+<<< PASTE ABOVE <<<

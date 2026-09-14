@@ -1,0 +1,58 @@
+[
+  {
+    "id": "F-01",
+    "kind": "debye",
+    "source": "\"Revisiting Colloid Theory for Biomedicine,\" ACS Nano Medicine (2026), PMC13455036; cross-checked against an independent textbook reference point",
+    "ionic_strength_M": 0.1,
+    "temperature_K": 298.15,
+    "gold": {
+      "debye_length_nm": 0.9613700798317342
+    }
+  },
+  {
+    "id": "F-02",
+    "kind": "debye",
+    "source": "\"Revisiting Colloid Theory for Biomedicine,\" ACS Nano Medicine (2026), PMC13455036 (their own explicitly stated formula and worked value for physiological saline)",
+    "ionic_strength_M": 0.15,
+    "temperature_K": 298.15,
+    "gold": {
+      "debye_length_nm": 0.784955383188826
+    }
+  },
+  {
+    "id": "F-03",
+    "kind": "zeta",
+    "source": "Serafini, Fernandez-Leyes, Sanchez, Pereyra, Schulz, Durand, Schulz & Ritacco, Colloids Surf. A (2019), Supporting Information Table SI-III, mixed Triton X-100/DTAB micelles",
+    "electrophoretic_mobility_um_cm_per_Vs": 0.585,
+    "viscosity_mPas": 0.89,
+    "regime": "smoluchowski",
+    "gold": {
+      "zeta_potential_mV": 7.500342231221459
+    },
+    "literature_cross_check": {
+      "paper_zeta_mV": 7.47
+    }
+  },
+  {
+    "id": "F-04",
+    "kind": "hydrodynamic_radius",
+    "source": "Milone et al., Int. J. Mol. Sci., PMC12786710, CTAB/pillararene host-guest nanoparticle system (DOSY-NMR)",
+    "diffusion_coefficient_cm2_per_s": 1.56e-06,
+    "viscosity_mPas": 0.89,
+    "temperature_K": 298.15,
+    "gold": {
+      "hydrodynamic_radius_nm": 1.57290454836187
+    }
+  },
+  {
+    "id": "F-05",
+    "kind": "hydrodynamic_radius",
+    "source": "Sutherland, Mercer, Everist & Leaist, J. Chem. Eng. Data 54(2) (2009) 272-278, Table 2, aqueous SDS (NaDS), Taylor dispersion of a trace solubilized decanol tracer -- mean of 4 real measured micelle diffusion coefficients across their tested concentration range",
+    "diffusion_coefficient_cm2_per_s": 9.3e-07,
+    "viscosity_mPas": 0.8903,
+    "temperature_K": 298.15,
+    "gold": {
+      "hydrodynamic_radius_nm": 2.6375314771819345
+    }
+  }
+]
