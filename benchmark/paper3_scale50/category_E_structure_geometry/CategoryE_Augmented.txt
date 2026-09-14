@@ -1,0 +1,177 @@
+E-01
+[reference only, do not paste -- source: Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's tanford_chain_geometry and critical_packing_parameter tools -- call them to analyze the real data below. Do not compute anything by hand; use the tools, and report exactly what they return.
+
+Compound: sodium dodecyl sulfate (SDS), SDS-rich mixed system
+Alkyl chain length: 12 carbons
+Real, independently-measured optimal headgroup area (from Gibbs adsorption isotherm surface-tension data): A_min = 44.7 A^2
+Temperature: 293.15 K
+
+Call tanford_chain_geometry(n_carbons) first to get the real tail volume and critical length, then pass those (with A_min above) to critical_packing_parameter to get the CPP and predicted morphology. Report the tools' own returned values faithfully -- do not override, "correct", or second-guess what they return.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "predicted_morphology": "<short string>",
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-02
+[reference only, do not paste -- source: Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's tanford_chain_geometry and critical_packing_parameter tools -- call them to analyze the real data below. Do not compute anything by hand; use the tools, and report exactly what they return.
+
+Compound: sodium dodecyl sulfate (SDS), SDS-rich mixed system
+Alkyl chain length: 12 carbons
+Real, independently-measured optimal headgroup area (from Gibbs adsorption isotherm surface-tension data): A_min = 49.37 A^2
+Temperature: 298.15 K
+
+Call tanford_chain_geometry(n_carbons) first to get the real tail volume and critical length, then pass those (with A_min above) to critical_packing_parameter to get the CPP and predicted morphology. Report the tools' own returned values faithfully -- do not override, "correct", or second-guess what they return.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "predicted_morphology": "<short string>",
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-03
+[reference only, do not paste -- source: Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's tanford_chain_geometry and critical_packing_parameter tools -- call them to analyze the real data below. Do not compute anything by hand; use the tools, and report exactly what they return.
+
+Compound: dodecyltrimethylammonium bromide (DTAB), DTAB-rich mixed system
+Alkyl chain length: 12 carbons
+Real, independently-measured optimal headgroup area (from Gibbs adsorption isotherm surface-tension data): A_min = 59.62 A^2
+Temperature: 298.15 K
+
+Call tanford_chain_geometry(n_carbons) first to get the real tail volume and critical length, then pass those (with A_min above) to critical_packing_parameter to get the CPP and predicted morphology. Report the tools' own returned values faithfully -- do not override, "correct", or second-guess what they return.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "predicted_morphology": "<short string>",
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-04
+[reference only, do not paste -- source: Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's tanford_chain_geometry and critical_packing_parameter tools -- call them to analyze the real data below. Do not compute anything by hand; use the tools, and report exactly what they return.
+
+Compound: dodecyltrimethylammonium bromide (DTAB), DTAB-rich mixed system
+Alkyl chain length: 12 carbons
+Real, independently-measured optimal headgroup area (from Gibbs adsorption isotherm surface-tension data): A_min = 61.59 A^2
+Temperature: 303.15 K
+
+Call tanford_chain_geometry(n_carbons) first to get the real tail volume and critical length, then pass those (with A_min above) to critical_packing_parameter to get the CPP and predicted morphology. Report the tools' own returned values faithfully -- do not override, "correct", or second-guess what they return.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "predicted_morphology": "<short string>",
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-05
+[reference only, do not paste -- source: Kosswig, K., "Surfactants," Ullmann's Encyclopedia of Industrial Chemistry Vol. 35 (Wiley-VCH, 2000), Table 13]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's hlb_from_mw tool -- call it to analyze the real data below. Do not compute anything by hand; use the tool, and report exactly what it returns.
+
+Compound: octadecanol + 12 ethylene oxide (EO) units (polyethoxylated nonionic surfactant)
+Hydrophobe (non-ethoxylated portion) molecular weight: 270.49 g/mol
+Number of ethylene oxide (EO) units: 12
+Real molar mass of one EO addition unit: 44.053 g/mol
+
+Compute M_hydrophilic = n_EO * 44.053 and M_total = hydrophobe MW + M_hydrophilic yourself, then call hlb_from_mw with those two values. Report the tool's own returned HLB faithfully -- do not override, "correct", or second-guess what it returns.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "mw_hydrophilic_g_per_mol": <number>,
+  "mw_total_g_per_mol": <number>,
+  "hlb": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-06
+[reference only, do not paste -- source: Kosswig, K., "Surfactants," Ullmann's Encyclopedia of Industrial Chemistry Vol. 35 (Wiley-VCH, 2000), Table 13]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's hlb_from_mw tool -- call it to analyze the real data below. Do not compute anything by hand; use the tool, and report exactly what it returns.
+
+Compound: isononylphenol + 6 ethylene oxide (EO) units (polyethoxylated nonionic surfactant)
+Hydrophobe (non-ethoxylated portion) molecular weight: 220.35 g/mol
+Number of ethylene oxide (EO) units: 6
+Real molar mass of one EO addition unit: 44.053 g/mol
+
+Compute M_hydrophilic = n_EO * 44.053 and M_total = hydrophobe MW + M_hydrophilic yourself, then call hlb_from_mw with those two values. Report the tool's own returned HLB faithfully -- do not override, "correct", or second-guess what it returns.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "mw_hydrophilic_g_per_mol": <number>,
+  "mw_total_g_per_mol": <number>,
+  "hlb": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-07
+[reference only, do not paste -- source: Kosswig, K., "Surfactants," Ullmann's Encyclopedia of Industrial Chemistry Vol. 35 (Wiley-VCH, 2000), Table 13]
+
+>>> PASTE BELOW >>>
+You have access to the surfactantkit-mcp server's hlb_from_mw tool -- call it to analyze the real data below. Do not compute anything by hand; use the tool, and report exactly what it returns.
+
+Compound: isononylphenol + 5 ethylene oxide (EO) units (polyethoxylated nonionic surfactant)
+Hydrophobe (non-ethoxylated portion) molecular weight: 220.35 g/mol
+Number of ethylene oxide (EO) units: 5
+Real molar mass of one EO addition unit: 44.053 g/mol
+
+Compute M_hydrophilic = n_EO * 44.053 and M_total = hydrophobe MW + M_hydrophilic yourself, then call hlb_from_mw with those two values. Report the tool's own returned HLB faithfully -- do not override, "correct", or second-guess what it returns.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "mw_hydrophilic_g_per_mol": <number>,
+  "mw_total_g_per_mol": <number>,
+  "hlb": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<

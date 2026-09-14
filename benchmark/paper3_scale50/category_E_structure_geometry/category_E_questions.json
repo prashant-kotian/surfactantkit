@@ -1,0 +1,140 @@
+[
+  {
+    "id": "E-01",
+    "kind": "cpp_chain",
+    "compound_name": "sodium dodecyl sulfate (SDS), SDS-rich mixed system",
+    "source": "Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2",
+    "n_carbons": 12,
+    "a_min_A2": 44.7,
+    "temperature_K": 293.15,
+    "gold": {
+      "tail_volume_A3": 350.2,
+      "critical_length_A": 16.68,
+      "cpp": 0.46969136100515557,
+      "predicted_morphology": "cylindrical/rodlike micelle"
+    },
+    "literature_cross_check": {
+      "paper_P": 0.47,
+      "tool_P": 0.46969136100515557,
+      "pct_diff": 0.06566787124348963,
+      "paper_morphology": "cylindrical or rod-shaped micelles"
+    }
+  },
+  {
+    "id": "E-02",
+    "kind": "cpp_chain",
+    "compound_name": "sodium dodecyl sulfate (SDS), SDS-rich mixed system",
+    "source": "Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2",
+    "n_carbons": 12,
+    "a_min_A2": 49.37,
+    "temperature_K": 298.15,
+    "gold": {
+      "tail_volume_A3": 350.2,
+      "critical_length_A": 16.68,
+      "cpp": 0.4252623827614028,
+      "predicted_morphology": "cylindrical/rodlike micelle"
+    },
+    "literature_cross_check": {
+      "paper_P": 0.43,
+      "tool_P": 0.4252623827614028,
+      "pct_diff": 1.101771450836551,
+      "paper_morphology": "cylindrical or rod-shaped micelles"
+    }
+  },
+  {
+    "id": "E-03",
+    "kind": "cpp_chain",
+    "compound_name": "dodecyltrimethylammonium bromide (DTAB), DTAB-rich mixed system",
+    "source": "Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2",
+    "n_carbons": 12,
+    "a_min_A2": 59.62,
+    "temperature_K": 298.15,
+    "gold": {
+      "tail_volume_A3": 350.2,
+      "critical_length_A": 16.68,
+      "cpp": 0.35215034949564666,
+      "predicted_morphology": "cylindrical/rodlike micelle"
+    },
+    "literature_cross_check": {
+      "paper_P": 0.35,
+      "tool_P": 0.35215034949564666,
+      "pct_diff": 0.6143855701847675,
+      "paper_morphology": "cylindrical or rod-shaped micelles"
+    }
+  },
+  {
+    "id": "E-04",
+    "kind": "cpp_chain",
+    "compound_name": "dodecyltrimethylammonium bromide (DTAB), DTAB-rich mixed system",
+    "source": "Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2",
+    "n_carbons": 12,
+    "a_min_A2": 61.59,
+    "temperature_K": 303.15,
+    "gold": {
+      "tail_volume_A3": 350.2,
+      "critical_length_A": 16.68,
+      "cpp": 0.34088656984787225,
+      "predicted_morphology": "cylindrical/rodlike micelle"
+    },
+    "literature_cross_check": {
+      "paper_P": 0.34,
+      "tool_P": 0.34088656984787225,
+      "pct_diff": 0.2607558376094766,
+      "paper_morphology": "cylindrical or rod-shaped micelles"
+    }
+  },
+  {
+    "id": "E-05",
+    "kind": "hlb_griffin",
+    "compound_name": "octadecanol + 12 ethylene oxide (EO) units (polyethoxylated nonionic surfactant)",
+    "source": "Kosswig, K., \"Surfactants,\" Ullmann's Encyclopedia of Industrial Chemistry Vol. 35 (Wiley-VCH, 2000), Table 13",
+    "hydrophobe_mw_g_per_mol": 270.49,
+    "n_eo_units": 12,
+    "gold": {
+      "mw_hydrophilic_g_per_mol": 528.636,
+      "mw_total_g_per_mol": 799.126,
+      "hlb": 13.2303541619219
+    },
+    "literature_cross_check": {
+      "table_hlb": 14.0,
+      "tool_hlb": 13.2303541619219,
+      "pct_diff": 5.497470271986428
+    }
+  },
+  {
+    "id": "E-06",
+    "kind": "hlb_griffin",
+    "compound_name": "isononylphenol + 6 ethylene oxide (EO) units (polyethoxylated nonionic surfactant)",
+    "source": "Kosswig, K., \"Surfactants,\" Ullmann's Encyclopedia of Industrial Chemistry Vol. 35 (Wiley-VCH, 2000), Table 13",
+    "hydrophobe_mw_g_per_mol": 220.35,
+    "n_eo_units": 6,
+    "gold": {
+      "mw_hydrophilic_g_per_mol": 264.318,
+      "mw_total_g_per_mol": 484.668,
+      "hlb": 10.90717769689767
+    },
+    "literature_cross_check": {
+      "table_hlb": 11.5,
+      "tool_hlb": 10.90717769689767,
+      "pct_diff": 5.154976548715919
+    }
+  },
+  {
+    "id": "E-07",
+    "kind": "hlb_griffin",
+    "compound_name": "isononylphenol + 5 ethylene oxide (EO) units (polyethoxylated nonionic surfactant)",
+    "source": "Kosswig, K., \"Surfactants,\" Ullmann's Encyclopedia of Industrial Chemistry Vol. 35 (Wiley-VCH, 2000), Table 13",
+    "hydrophobe_mw_g_per_mol": 220.35,
+    "n_eo_units": 5,
+    "gold": {
+      "mw_hydrophilic_g_per_mol": 220.265,
+      "mw_total_g_per_mol": 440.615,
+      "hlb": 9.998070878204327
+    },
+    "literature_cross_check": {
+      "table_hlb": 10.7,
+      "tool_hlb": 9.998070878204327,
+      "pct_diff": 6.560085250426842
+    }
+  }
+]

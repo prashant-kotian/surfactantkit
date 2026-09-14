@@ -1,0 +1,197 @@
+E-01
+[reference only, do not paste -- source: Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's packing geometry using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a critical packing parameter (CPP) or morphology for this compound from your own training; derive it from the numbers and formulas given.
+
+Compound: sodium dodecyl sulfate (SDS), SDS-rich mixed system
+Alkyl chain length: 12 carbons
+Real, independently-measured optimal headgroup area (from Gibbs adsorption isotherm surface-tension data): A_min = 44.7 A^2
+Temperature: 293.15 K
+
+Use Tanford's standard empirical formulas:
+  tail volume V (A^3) = 27.4 + 26.9 * n_carbons
+  critical chain length l_c (A) = 1.5 + 1.265 * n_carbons
+  critical packing parameter P = V / (A_min * l_c)
+
+Classify the predicted aggregate morphology from P using the standard thresholds: P <= 1/3 -> spherical micelle; 1/3 < P <= 1/2 -> cylindrical/rodlike micelle; 1/2 < P <= 1 -> vesicle/bilayer; P > 1 -> inverted structures.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "predicted_morphology": "<short string>",
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-02
+[reference only, do not paste -- source: Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's packing geometry using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a critical packing parameter (CPP) or morphology for this compound from your own training; derive it from the numbers and formulas given.
+
+Compound: sodium dodecyl sulfate (SDS), SDS-rich mixed system
+Alkyl chain length: 12 carbons
+Real, independently-measured optimal headgroup area (from Gibbs adsorption isotherm surface-tension data): A_min = 49.37 A^2
+Temperature: 298.15 K
+
+Use Tanford's standard empirical formulas:
+  tail volume V (A^3) = 27.4 + 26.9 * n_carbons
+  critical chain length l_c (A) = 1.5 + 1.265 * n_carbons
+  critical packing parameter P = V / (A_min * l_c)
+
+Classify the predicted aggregate morphology from P using the standard thresholds: P <= 1/3 -> spherical micelle; 1/3 < P <= 1/2 -> cylindrical/rodlike micelle; 1/2 < P <= 1 -> vesicle/bilayer; P > 1 -> inverted structures.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "predicted_morphology": "<short string>",
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-03
+[reference only, do not paste -- source: Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's packing geometry using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a critical packing parameter (CPP) or morphology for this compound from your own training; derive it from the numbers and formulas given.
+
+Compound: dodecyltrimethylammonium bromide (DTAB), DTAB-rich mixed system
+Alkyl chain length: 12 carbons
+Real, independently-measured optimal headgroup area (from Gibbs adsorption isotherm surface-tension data): A_min = 59.62 A^2
+Temperature: 298.15 K
+
+Use Tanford's standard empirical formulas:
+  tail volume V (A^3) = 27.4 + 26.9 * n_carbons
+  critical chain length l_c (A) = 1.5 + 1.265 * n_carbons
+  critical packing parameter P = V / (A_min * l_c)
+
+Classify the predicted aggregate morphology from P using the standard thresholds: P <= 1/3 -> spherical micelle; 1/3 < P <= 1/2 -> cylindrical/rodlike micelle; 1/2 < P <= 1 -> vesicle/bilayer; P > 1 -> inverted structures.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "predicted_morphology": "<short string>",
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-04
+[reference only, do not paste -- source: Sachin, Karpe, Singh & Bhattarai, R. Soc. Open Sci. 6, 181979 (2019), open access, PMC6458362, Table 2]
+
+>>> PASTE BELOW >>>
+You are analyzing a real surfactant's packing geometry using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume a critical packing parameter (CPP) or morphology for this compound from your own training; derive it from the numbers and formulas given.
+
+Compound: dodecyltrimethylammonium bromide (DTAB), DTAB-rich mixed system
+Alkyl chain length: 12 carbons
+Real, independently-measured optimal headgroup area (from Gibbs adsorption isotherm surface-tension data): A_min = 61.59 A^2
+Temperature: 303.15 K
+
+Use Tanford's standard empirical formulas:
+  tail volume V (A^3) = 27.4 + 26.9 * n_carbons
+  critical chain length l_c (A) = 1.5 + 1.265 * n_carbons
+  critical packing parameter P = V / (A_min * l_c)
+
+Classify the predicted aggregate morphology from P using the standard thresholds: P <= 1/3 -> spherical micelle; 1/3 < P <= 1/2 -> cylindrical/rodlike micelle; 1/2 < P <= 1 -> vesicle/bilayer; P > 1 -> inverted structures.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "predicted_morphology": "<short string>",
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-05
+[reference only, do not paste -- source: Kosswig, K., "Surfactants," Ullmann's Encyclopedia of Industrial Chemistry Vol. 35 (Wiley-VCH, 2000), Table 13]
+
+>>> PASTE BELOW >>>
+You are analyzing a real nonionic surfactant's HLB (hydrophilic-lipophilic balance) using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume an HLB value for this compound from your own training; derive it from the numbers and formula given.
+
+Compound: octadecanol + 12 ethylene oxide (EO) units (polyethoxylated nonionic surfactant)
+Hydrophobe (non-ethoxylated portion) molecular weight: 270.49 g/mol
+Number of ethylene oxide (EO) units: 12
+Real molar mass of one EO addition unit: 44.053 g/mol
+
+Use Griffin's method: HLB = 20 * (M_hydrophilic / M_total), where M_hydrophilic = n_EO * 44.053, and M_total = hydrophobe MW + M_hydrophilic.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "mw_hydrophilic_g_per_mol": <number>,
+  "mw_total_g_per_mol": <number>,
+  "hlb": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-06
+[reference only, do not paste -- source: Kosswig, K., "Surfactants," Ullmann's Encyclopedia of Industrial Chemistry Vol. 35 (Wiley-VCH, 2000), Table 13]
+
+>>> PASTE BELOW >>>
+You are analyzing a real nonionic surfactant's HLB (hydrophilic-lipophilic balance) using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume an HLB value for this compound from your own training; derive it from the numbers and formula given.
+
+Compound: isononylphenol + 6 ethylene oxide (EO) units (polyethoxylated nonionic surfactant)
+Hydrophobe (non-ethoxylated portion) molecular weight: 220.35 g/mol
+Number of ethylene oxide (EO) units: 6
+Real molar mass of one EO addition unit: 44.053 g/mol
+
+Use Griffin's method: HLB = 20 * (M_hydrophilic / M_total), where M_hydrophilic = n_EO * 44.053, and M_total = hydrophobe MW + M_hydrophilic.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "mw_hydrophilic_g_per_mol": <number>,
+  "mw_total_g_per_mol": <number>,
+  "hlb": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
+
+
+E-07
+[reference only, do not paste -- source: Kosswig, K., "Surfactants," Ullmann's Encyclopedia of Industrial Chemistry Vol. 35 (Wiley-VCH, 2000), Table 13]
+
+>>> PASTE BELOW >>>
+You are analyzing a real nonionic surfactant's HLB (hydrophilic-lipophilic balance) using the data below. Work entirely from first principles -- do not search the internet, and do not recall or assume an HLB value for this compound from your own training; derive it from the numbers and formula given.
+
+Compound: isononylphenol + 5 ethylene oxide (EO) units (polyethoxylated nonionic surfactant)
+Hydrophobe (non-ethoxylated portion) molecular weight: 220.35 g/mol
+Number of ethylene oxide (EO) units: 5
+Real molar mass of one EO addition unit: 44.053 g/mol
+
+Use Griffin's method: HLB = 20 * (M_hydrophilic / M_total), where M_hydrophilic = n_EO * 44.053, and M_total = hydrophobe MW + M_hydrophilic.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "mw_hydrophilic_g_per_mol": <number>,
+  "mw_total_g_per_mol": <number>,
+  "hlb": <number>,
+  "undeterminable": ["short phrase + reason", ...]
+}
+<<< PASTE ABOVE <<<
