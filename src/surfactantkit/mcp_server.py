@@ -711,6 +711,35 @@ def critical_packing_parameter(volume_A3: float, head_area_A2: float, length_A: 
 
 
 @mcp.tool()
+def estimate_axial_ratio_from_cpp_geometry(cpp: float, aggregation_number: float, n_carbons: int) -> dict:
+    """Real, geometry-based estimate of the prolate-ellipsoid axial ratio
+    (a/b) for a cylindrical/rodlike micelle -- closes the [COMPUTE] path
+    for hydrodynamic_radius_perrin_corrected's axial_ratio input (that
+    tool's own docstring names CPP-predicted morphology as one legitimate
+    source; this makes it concrete). Models the micelle core as a
+    prolate ellipsoid whose minor semi-axis is pinned at the extended
+    tail length (the same packing constraint already used for a
+    spherical micelle's core radius), and solves for the major semi-axis
+    via real volume conservation given aggregation_number (a REAL,
+    independently-measured value -- fluorescence quenching, SLS, etc.,
+    never derived from the spherical-micelle formula, which would assume
+    the very geometry this function exists to correct for).
+
+    Only valid for cpp in (1/3, 1/2] (the classical sphere-to-cylinder
+    growth regime): cpp<=1/3 returns axial_ratio=1.0 directly (a sphere
+    needs no shape correction); cpp>0.5 raises (a solid ellipsoid is the
+    wrong shape model for a vesicle/bilayer or inverted structure). Also
+    raises if aggregation_number is too small to be geometrically
+    consistent with a cylindrical/rodlike cpp -- a real disagreement
+    between the two inputs, reported rather than silently resolved.
+
+    Chain the returned axial_ratio directly into
+    hydrodynamic_radius_perrin_corrected's own axial_ratio parameter."""
+    axial_ratio = cpp_mod.estimate_axial_ratio_from_cpp_geometry(cpp, aggregation_number, n_carbons)
+    return {"axial_ratio": axial_ratio, "unit": "dimensionless (a/b, prolate ellipsoid of revolution)"}
+
+
+@mcp.tool()
 def nagarajan_equilibrium_area_ionic(cmc_M: float, tail_length_A: float, headgroup_prefactor_A: float, temperature_K: float = 298.15, dielectric_constant: float = 80.0) -> dict:
     """Equilibrium area per molecule a_e (square Angstrom) for an IONIC
     surfactant micelle, accounting for chain-length-dependent

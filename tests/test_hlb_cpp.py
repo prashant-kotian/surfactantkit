@@ -9,6 +9,8 @@ purely from the verified group numbers, and (3) the CPP classification
 thresholds at and around each boundary.
 """
 
+import math
+
 import pytest
 
 from surfactantkit.hlb import (
@@ -29,6 +31,7 @@ from surfactantkit.cpp import (
     classify_aggregate_morphology,
     nagarajan_debye_huckel_kappa_inverse,
     nagarajan_equilibrium_area_ionic,
+    estimate_axial_ratio_from_cpp_geometry,
 )
 
 
@@ -560,6 +563,57 @@ def test_classify_aggregate_morphology_rejects_nonpositive():
         classify_aggregate_morphology(0)
     with pytest.raises(ValueError):
         classify_aggregate_morphology(-0.5)
+
+
+# Tests for estimate_axial_ratio_from_cpp_geometry, added 2026-09-15 as
+# part of the Tier 1 bottleneck-resolution work (real [COMPUTE] path for
+# dynamics.py's Perrin axial_ratio -- see BOTTLENECK_RESOLUTION_PLAN.md
+# item 8). Validated by round-trip (construct a known axial_ratio's
+# consistent aggregation number via the SAME real ellipsoid-of-revolution
+# geometry, recover the same axial_ratio back out) since no single real
+# paper reports CPP + a real independently-measured N_agg + n_carbons
+# together for a rodlike micelle to cross-check against directly.
+
+
+def test_estimate_axial_ratio_returns_one_for_spherical_cpp():
+    assert estimate_axial_ratio_from_cpp_geometry(0.25, aggregation_number=60, n_carbons=12) == pytest.approx(1.0)
+    assert estimate_axial_ratio_from_cpp_geometry(1.0 / 3.0, aggregation_number=60, n_carbons=12) == pytest.approx(1.0)
+
+
+def test_estimate_axial_ratio_round_trip_recovers_known_ratio():
+    n_carbons = 12
+    b = tanford_critical_length(n_carbons)
+    v_tail = tanford_tail_volume(n_carbons)
+    for true_axial_ratio in (1.2, 1.8, 3.0, 5.0):
+        a = true_axial_ratio * b
+        v_core = (4.0 / 3.0) * math.pi * a * b ** 2
+        n_agg = v_core / v_tail
+        recovered = estimate_axial_ratio_from_cpp_geometry(0.45, aggregation_number=n_agg, n_carbons=n_carbons)
+        assert recovered == pytest.approx(true_axial_ratio, rel=1e-6)
+
+
+def test_estimate_axial_ratio_rejects_cpp_outside_rodlike_regime():
+    with pytest.raises(ValueError):
+        estimate_axial_ratio_from_cpp_geometry(0.6, aggregation_number=200, n_carbons=12)  # vesicle/bilayer regime
+    with pytest.raises(ValueError):
+        estimate_axial_ratio_from_cpp_geometry(1.2, aggregation_number=200, n_carbons=12)  # inverted regime
+
+
+def test_estimate_axial_ratio_rejects_aggregation_number_too_small_for_rodlike_cpp():
+    # an N_agg only barely above the spherical-micelle scale is inconsistent
+    # with a cpp value that claims the rodlike regime -- must raise, not
+    # silently clamp to 1.0
+    with pytest.raises(ValueError):
+        estimate_axial_ratio_from_cpp_geometry(0.45, aggregation_number=10, n_carbons=12)
+
+
+def test_estimate_axial_ratio_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        estimate_axial_ratio_from_cpp_geometry(0.0, aggregation_number=60, n_carbons=12)
+    with pytest.raises(ValueError):
+        estimate_axial_ratio_from_cpp_geometry(0.4, aggregation_number=0, n_carbons=12)
+    with pytest.raises(ValueError):
+        estimate_axial_ratio_from_cpp_geometry(0.4, aggregation_number=60, n_carbons=0)
 
 
 # --- Guo/Rong/Ying 2006 nonionic HLB refinement (alternative-methods

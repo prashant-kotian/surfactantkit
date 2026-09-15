@@ -172,6 +172,81 @@ def nagarajan_equilibrium_area_ionic(cmc_M: float, tail_length_A: float, headgro
     return headgroup_prefactor_A / math.sqrt(1.0 + tail_length_A / kappa_inverse_A)
 
 
+def estimate_axial_ratio_from_cpp_geometry(cpp: float, aggregation_number: float, n_carbons: int) -> float:
+    """Real, buildable estimate of the prolate-ellipsoid axial ratio
+    (a/b) for a cylindrical/rodlike micelle, closing the [COMPUTE] path
+    identified for dynamics.py's Perrin axial_ratio bottleneck (see
+    benchmark/paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md item 8) --
+    dynamics.hydrodynamic_radius_perrin_corrected's own docstring already
+    names "the critical packing parameter's predicted morphology" as one
+    legitimate source of axial_ratio; this function makes that concrete
+    and quantitative instead of leaving it as an unstated intention.
+
+    Geometric model: the hydrophobic core of a growing rodlike micelle is
+    treated as a prolate ellipsoid of revolution whose MINOR semi-axis b
+    is pinned at the extended tail length lc (tanford_critical_length) --
+    the same packing constraint that already caps a spherical micelle's
+    core radius at lc, since the hydrophobic core can never exceed the
+    fully-extended chain length in its shortest cross-sectional
+    dimension. The MAJOR semi-axis a then follows from real volume
+    conservation given a REAL (independently measured -- fluorescence
+    quenching, SLS, etc., never estimated from the spherical-micelle
+    formula, which would assume the very geometry this function exists
+    to correct for) aggregation number:
+
+        V_core = aggregation_number * tanford_tail_volume(n_carbons)
+        V_core = (4/3) * pi * a * b^2   (prolate ellipsoid of revolution)
+        axial_ratio = a / b
+
+    Deliberately scoped to CPP in (1/3, 1/2] -- the classical sphere-to-
+    cylinder growth regime this ellipsoid-of-revolution model actually
+    describes (classify_aggregate_morphology's "cylindrical/rodlike
+    micelle" bucket). CPP <= 1/3 returns axial_ratio=1.0 directly (a
+    sphere needs no shape correction -- Perrin's own factor is exactly 1
+    there). CPP > 1/2 (vesicle/bilayer or inverted) raises rather than
+    guessing: a solid ellipsoid of revolution is the wrong shape model
+    entirely for a hollow bilayer/vesicle shell, and extending this
+    formula there would silently apply a model outside its own domain.
+
+    Also raises if the resulting axial_ratio < 1.0 -- a real, honest
+    inconsistency signal, not silently rounded to 1: it means the
+    supplied aggregation_number is smaller than what the pinned-b
+    geometry needs for even a marginal sphere-to-rod transition,
+    contradicting the cylindrical/rodlike classification the caller's
+    own cpp value implies. Report the disagreement rather than picking
+    one input over the other.
+    """
+    if cpp <= 0:
+        raise ValueError("cpp must be positive")
+    if aggregation_number <= 0:
+        raise ValueError("aggregation_number must be positive")
+    if n_carbons < 1:
+        raise ValueError("n_carbons must be at least 1")
+    if cpp <= 1.0 / 3.0:
+        return 1.0
+    if cpp > 0.5:
+        raise ValueError(
+            f"cpp={cpp:.4f} is above the cylindrical/rodlike regime (0.333, 0.5] this "
+            "prolate-ellipsoid-of-revolution model describes -- a solid ellipsoid is not "
+            "the right shape for a vesicle/bilayer or inverted-structure core; do not use "
+            "this function outside that CPP range"
+        )
+    b = tanford_critical_length(n_carbons)
+    v_tail = tanford_tail_volume(n_carbons)
+    v_core = aggregation_number * v_tail
+    a = (3.0 * v_core) / (4.0 * math.pi * b ** 2)
+    axial_ratio = a / b
+    if axial_ratio < 1.0:
+        raise ValueError(
+            f"aggregation_number={aggregation_number:.1f} implies a core major semi-axis "
+            f"({a:.1f} A) smaller than the pinned minor axis (b={b:.1f} A) -- this "
+            f"aggregation number is more consistent with a spherical micelle than the "
+            f"cylindrical/rodlike morphology implied by cpp={cpp:.4f}; the two inputs "
+            "disagree, do not trust either without checking both"
+        )
+    return axial_ratio
+
+
 def classify_aggregate_morphology(cpp: float) -> str:
     """Expected aggregate morphology from the critical packing parameter.
 

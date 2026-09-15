@@ -73,6 +73,7 @@ def test_all_expected_tools_are_registered():
         "owens_wendt_solid_surface_energy",
         "van_oss_chaudhury_good_solid_surface_energy",
         "get_standard_probe_liquid_properties",
+        "estimate_axial_ratio_from_cpp_geometry",
         "micelle_water_partition_coefficient",
         "grahame_equation_surface_potential",
         "aggregation_number_from_dls",
@@ -603,6 +604,26 @@ def test_wetting_work_of_adhesion_tool_complete_wetting():
 def test_wetting_spreading_coefficient_tool_never_positive():
     out = call("wetting_spreading_coefficient", {"gamma_LV_mN_m": 72.0, "contact_angle_deg": 90.0})
     assert out["spreading_coefficient_mN_m"] <= 0
+
+
+def test_estimate_axial_ratio_from_cpp_geometry_tool_matches_library():
+    import math
+
+    n_carbons = 12
+    from surfactantkit.cpp import tanford_critical_length, tanford_tail_volume
+
+    b = tanford_critical_length(n_carbons)
+    v_tail = tanford_tail_volume(n_carbons)
+    true_axial_ratio = 2.5
+    a = true_axial_ratio * b
+    v_core = (4.0 / 3.0) * math.pi * a * b ** 2
+    n_agg = v_core / v_tail
+
+    out = call("estimate_axial_ratio_from_cpp_geometry", {"cpp": 0.45, "aggregation_number": n_agg, "n_carbons": n_carbons})
+    assert out["axial_ratio"] == pytest.approx(true_axial_ratio, rel=1e-6)
+
+    out_sphere = call("estimate_axial_ratio_from_cpp_geometry", {"cpp": 0.25, "aggregation_number": 60, "n_carbons": n_carbons})
+    assert out_sphere["axial_ratio"] == pytest.approx(1.0)
 
 
 def test_get_standard_probe_liquid_properties_tool_matches_library():
