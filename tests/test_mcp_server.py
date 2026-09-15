@@ -45,6 +45,11 @@ def test_all_expected_tools_are_registered():
         "gibbs_area_per_molecule",
         "hlb_from_mw",
         "hlb_from_groups",
+        "hlb_method_recommendation",
+        "gemini_hlb_griffin_reference",
+        "blankschtein_entropy_of_binding",
+        "blankschtein_steric_free_energy",
+        "blankschtein_counterion_self_energy",
         "hld_optimal_salinity",
         "hld_cationic_quat_reference",
         "hld_class_reference",
@@ -397,6 +402,67 @@ def test_hlb_from_groups_tool_raises_on_unverified_group():
 def test_hlb_from_groups_tool_sulfonate_requires_opt_in():
     with pytest.raises(Exception):
         call("hlb_from_groups", {"group_counts": {"sulfonate": 1, "CH2": 11, "CH3": 1}})
+
+
+def test_hlb_method_recommendation_tool_matches_library():
+    out_gemini = call("hlb_method_recommendation", {"structural_family": "dimeric_gemini_type"})
+    assert out_gemini["recommended_method"] == "griffin"
+    assert out_gemini["davies_valid"] is False
+
+    out_glyco = call("hlb_method_recommendation", {"structural_family": "glycolipid_biosurfactant"})
+    assert out_glyco["recommended_method"] == "griffin"
+
+    out_mono = call("hlb_method_recommendation", {"structural_family": "monomeric"})
+    assert out_mono["recommended_method"] == "either"
+    assert out_mono["davies_valid"] is True
+
+
+def test_hlb_method_recommendation_tool_rejects_unparseable():
+    with pytest.raises(Exception):
+        call("hlb_method_recommendation", {"structural_family": "unparseable"})
+
+
+def test_gemini_hlb_griffin_reference_tool_matches_library():
+    out = call("gemini_hlb_griffin_reference", {"gemini_name": "12-3-12"})
+    assert out["hlb"] == pytest.approx(6.37)
+    assert out["method"] == "Griffin"
+
+    out2 = call("gemini_hlb_griffin_reference", {"gemini_name": "8-4-8"})
+    assert out2["hlb"] == pytest.approx(7.73)
+
+
+def test_gemini_hlb_griffin_reference_tool_rejects_unknown_name():
+    with pytest.raises(Exception):
+        call("gemini_hlb_griffin_reference", {"gemini_name": "16-3-16"})
+
+
+def test_blankschtein_entropy_of_binding_tool_matches_library():
+    from surfactantkit.cpp import blankschtein_entropy_of_binding_free_energy
+
+    out = call("blankschtein_entropy_of_binding", {"beta": 0.5})
+    assert out["gent_kT"] == pytest.approx(blankschtein_entropy_of_binding_free_energy(0.5))
+
+
+def test_blankschtein_steric_free_energy_tool_matches_library():
+    from surfactantkit.cpp import blankschtein_steric_free_energy_with_counterion
+
+    out = call("blankschtein_steric_free_energy", {
+        "beta": 0.5, "area_per_molecule_A2": 60.0, "ah_surfactant_A2": 25.0, "ah_counterion_A2": 4.537,
+    })
+    expected = blankschtein_steric_free_energy_with_counterion(0.5, 60.0, 25.0, 4.537)
+    assert out["gst_kT"] == pytest.approx(expected)
+
+
+def test_blankschtein_counterion_self_energy_tool_matches_library():
+    from surfactantkit.cpp import blankschtein_counterion_self_energy_release
+
+    out = call("blankschtein_counterion_self_energy", {
+        "valence": 1, "hydrated_radius_A": 2.13, "kappa_inverse_A": 10.0,
+    })
+    expected = blankschtein_counterion_self_energy_release(1, 2.13, 10.0)
+    assert out["gdis_kT"] == pytest.approx(expected)
+
+
     out = call("hlb_from_groups", {"group_counts": {"sulfonate": 1, "CH2": 11, "CH3": 1}, "allow_derived_groups": True})
     assert out["hlb"] == pytest.approx(7.566, abs=0.01)
 

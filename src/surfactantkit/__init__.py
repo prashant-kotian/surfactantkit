@@ -46,6 +46,7 @@ from .hlb import (
     guo_effective_po_chain_length,
     hlb_davies_guo_ecl,
     derive_davies_group_number_from_griffin,
+    recommend_hlb_method_for_structural_family,
 )
 from .hld import (
     hld_ionic,
@@ -67,6 +68,9 @@ from .cpp import (
     nagarajan_ruckenstein_steric_headgroup_free_energy,
     nagarajan_ruckenstein_dipole_headgroup_free_energy,
     nagarajan_ruckenstein_ionic_headgroup_free_energy,
+    blankschtein_entropy_of_binding_free_energy,
+    blankschtein_steric_free_energy_with_counterion,
+    blankschtein_counterion_self_energy_release,
 )
 from .electrostatics import (
     ionic_strength,
@@ -153,6 +157,7 @@ __all__ = [
     "select_isotherm_model",
     "hlb_griffin",
     "hlb_davies",
+    "recommend_hlb_method_for_structural_family",
     "guo_effective_eo_chain_length",
     "guo_effective_alkyl_chain_length",
     "guo_effective_po_chain_length",
@@ -175,6 +180,9 @@ __all__ = [
     "nagarajan_ruckenstein_steric_headgroup_free_energy",
     "nagarajan_ruckenstein_dipole_headgroup_free_energy",
     "nagarajan_ruckenstein_ionic_headgroup_free_energy",
+    "blankschtein_entropy_of_binding_free_energy",
+    "blankschtein_steric_free_energy_with_counterion",
+    "blankschtein_counterion_self_energy_release",
     "ionic_strength",
     "debye_length",
     "henry_function",

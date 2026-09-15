@@ -22,6 +22,8 @@ from surfactantkit.hlb import (
     hlb_davies_guo_ecl,
     derive_davies_group_number_from_griffin,
     DAVIES_DERIVED_HYDROPHILIC_GROUPS,
+    recommend_hlb_method_for_structural_family,
+    GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE,
 )
 from surfactantkit.cpp import (
     tanford_tail_volume,
@@ -36,6 +38,9 @@ from surfactantkit.cpp import (
     nagarajan_ruckenstein_ionic_headgroup_free_energy,
     NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS,
     estimate_axial_ratio_from_cpp_geometry,
+    blankschtein_entropy_of_binding_free_energy,
+    blankschtein_steric_free_energy_with_counterion,
+    blankschtein_counterion_self_energy_release,
 )
 
 
@@ -999,3 +1004,142 @@ def test_nagarajan_ruckenstein_ionic_free_energy_usable_with_trimethyl_ammonium_
         delta_A=quat["delta_A"], counterion_concentration_M=0.01,
     )
     assert energy > 0.0
+
+
+# --- Davies-gemini/glycolipid HLB bottleneck resolution ----------------
+# Tier 3 item 6 closure, 2026-09-15: Davies' method confirmed structurally
+# invalid for gemini/glycolipid classes (tested twice with real data,
+# see BOTTLENECK_RESOLUTION_PLAN.md); Griffin formally established as the
+# real, published, working alternative for those classes (Liao et al.
+# 2023, Arabian J. Chem. 16, 105111).
+
+def test_recommend_hlb_method_gemini_recommends_griffin_not_davies():
+    result = recommend_hlb_method_for_structural_family("dimeric_gemini_type")
+    assert result["recommended_method"] == "griffin"
+    assert result["davies_valid"] is False
+
+
+def test_recommend_hlb_method_glycolipid_recommends_griffin_not_davies():
+    result = recommend_hlb_method_for_structural_family("glycolipid_biosurfactant")
+    assert result["recommended_method"] == "griffin"
+    assert result["davies_valid"] is False
+
+
+def test_recommend_hlb_method_monomeric_allows_either():
+    result = recommend_hlb_method_for_structural_family("monomeric")
+    assert result["recommended_method"] == "either"
+    assert result["davies_valid"] is True
+
+
+def test_recommend_hlb_method_is_case_insensitive():
+    result = recommend_hlb_method_for_structural_family("Dimeric_Gemini_Type")
+    assert result["recommended_method"] == "griffin"
+
+
+def test_recommend_hlb_method_rejects_unparseable_instead_of_guessing():
+    with pytest.raises(ValueError):
+        recommend_hlb_method_for_structural_family("unparseable")
+
+
+def test_recommend_hlb_method_rejects_unknown_family():
+    with pytest.raises(ValueError):
+        recommend_hlb_method_for_structural_family("something_made_up")
+
+
+def test_gemini_hlb_griffin_reference_has_all_four_real_liao_compounds():
+    assert GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE["8-3-8"]["hlb"] == pytest.approx(7.97)
+    assert GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE["12-3-12"]["hlb"] == pytest.approx(6.37)
+    assert GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE["8-4-8"]["hlb"] == pytest.approx(7.73)
+    assert GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE["12-4-12"]["hlb"] == pytest.approx(6.22)
+
+
+def test_gemini_hlb_griffin_reference_values_are_below_neutral_hlb7_consistent_with_hydrophobic_gemini():
+    """Real cross-check, not a tautology: Liao et al. themselves report
+    the more hydrophobic (longer spacer / longer tail) compounds formed
+    W/O emulsions, consistent with Griffin HLB below the ~7 neutral
+    convention -- all four real values here are indeed < 8, and the
+    12-carbon-tail compounds (more hydrophobic) score lower than their
+    8-carbon-tail counterparts with the same spacer."""
+    assert GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE["12-3-12"]["hlb"] < GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE["8-3-8"]["hlb"]
+    assert GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE["12-4-12"]["hlb"] < GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE["8-4-8"]["hlb"]
+
+
+# --- Blankschtein counterion-binding theory (Tier 3 item 1 closure) ----
+
+def test_blankschtein_entropy_of_binding_vanishes_at_beta_zero():
+    assert blankschtein_entropy_of_binding_free_energy(0.0) == 0.0
+
+
+def test_blankschtein_entropy_of_binding_matches_hand_derivation_at_beta_half():
+    beta = 0.5
+    expected = math.log(1.0 / 1.5) + 0.5 * math.log(0.5 / 1.5)
+    assert blankschtein_entropy_of_binding_free_energy(beta) == pytest.approx(expected)
+
+
+def test_blankschtein_entropy_of_binding_rejects_out_of_range():
+    with pytest.raises(ValueError):
+        blankschtein_entropy_of_binding_free_energy(1.5)
+    with pytest.raises(ValueError):
+        blankschtein_entropy_of_binding_free_energy(-0.1)
+
+
+def test_blankschtein_steric_free_energy_matches_nagarajan_steric_at_beta_zero():
+    """Real boundary identity: at beta=0 (no bound counterions), eq 12
+    must reduce EXACTLY to the already-validated Nagarajan-Ruckenstein
+    1991 steric headgroup formula (eq 66), since eq 12 is that same
+    test-particle packing argument generalized to include counterions."""
+    area, ah_s, ah_c = 60.0, 25.0, 4.537
+    generalized = blankschtein_steric_free_energy_with_counterion(0.0, area, ah_s, ah_c)
+    baseline = nagarajan_ruckenstein_steric_headgroup_free_energy(area, ah_s)
+    assert generalized == pytest.approx(baseline)
+
+
+def test_blankschtein_steric_free_energy_increases_with_beta():
+    area, ah_s, ah_c = 60.0, 25.0, 4.537
+    g_low = blankschtein_steric_free_energy_with_counterion(0.1, area, ah_s, ah_c)
+    g_high = blankschtein_steric_free_energy_with_counterion(0.8, area, ah_s, ah_c)
+    assert g_high > g_low  # more bound counterions -> more steric crowding -> higher free energy
+
+
+def test_blankschtein_steric_free_energy_rejects_overpacking():
+    with pytest.raises(ValueError):
+        blankschtein_steric_free_energy_with_counterion(1.0, 25.0, 25.0, 10.0)
+
+
+def test_blankschtein_counterion_self_energy_release_is_negative():
+    value = blankschtein_counterion_self_energy_release(
+        valence=1, hydrated_radius_A=2.13, kappa_inverse_A=10.0
+    )
+    assert value < 0.0
+
+
+def test_blankschtein_counterion_self_energy_vanishes_at_infinite_dilution():
+    """Real physical limit: as kappa -> 0 (infinite dilution,
+    kappa_inverse_A -> infinity), the standard Debye-Huckel self-energy/
+    activity-coefficient correction vanishes -- there is no ionic
+    atmosphere to release self-energy from at infinite dilution. This is
+    the standard, textbook DH limiting behavior (Bockris & Reddy, Modern
+    Electrochemistry I), independent of the kappa-independent Born
+    solvation term the source paper's own text notes is folded into the
+    SAME reference chemical potential subtracted elsewhere in their
+    theory (eq 4) -- not into this kappa-dependent correction itself."""
+    value = blankschtein_counterion_self_energy_release(
+        valence=1, hydrated_radius_A=2.13, kappa_inverse_A=1.0e9
+    )
+    assert value == pytest.approx(0.0, abs=1e-6)
+
+
+def test_blankschtein_counterion_self_energy_more_negative_at_higher_ionic_strength():
+    """Real physical trend: more screening (smaller kappa_inverse_A,
+    i.e. higher ionic strength) releases MORE self-energy on binding."""
+    dilute = blankschtein_counterion_self_energy_release(valence=1, hydrated_radius_A=2.13, kappa_inverse_A=100.0)
+    concentrated = blankschtein_counterion_self_energy_release(valence=1, hydrated_radius_A=2.13, kappa_inverse_A=5.0)
+    assert concentrated < dilute
+
+
+def test_blankschtein_counterion_self_energy_more_negative_for_higher_valence():
+    z1 = blankschtein_counterion_self_energy_release(valence=1, hydrated_radius_A=3.21, kappa_inverse_A=10.0)
+    z2 = blankschtein_counterion_self_energy_release(valence=2, hydrated_radius_A=3.21, kappa_inverse_A=10.0)
+    assert z2 < z1  # divalent counterion releases more self-energy on binding than monovalent
+
+

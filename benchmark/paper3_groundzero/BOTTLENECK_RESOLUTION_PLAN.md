@@ -451,6 +451,85 @@ scoped as real future work, not blocked on sourcing) and the Davies-
 gemini-HLB resolution's own code decision (Tier 3 item 6, now with even
 more real supporting data in hand). Full suite: 494/494 passing.
 
+---
+
+**2026-09-15, same day -- "ye complete remaining part": both remaining
+Tier 3 items actually taken on.**
+
+- **Tier 3 item 6 (Davies-gemini/glycolipid HLB) -- CLOSED.** Added
+  `recommend_hlb_method_for_structural_family` and
+  `GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE` to hlb.py: a real,
+  citation-backed function that formally establishes Griffin's method
+  as the correct default for `dimeric_gemini_type`/
+  `glycolipid_biosurfactant` structures (Davies confirmed structurally
+  invalid, per this project's own two-round negative test earlier this
+  session) and returns "either" for `monomeric`. The reference table
+  holds Liao et al. 2023's own real, reported Griffin-method HLB values
+  for four real gemini surfactants (8-3-8=7.97, 12-3-12=6.37, 8-4-8=
+  7.73, 12-4-12=6.22) as directly-sourced data -- NOT independently
+  re-derived: an attempted independent recomputation from the paper's
+  own real HRMS molecular formulas did not reproduce these exact
+  values (most likely a mismatched hydrophilic/hydrophobic partition
+  convention on this project's part), so the paper's own numbers are
+  used as-is rather than asserting a possibly-wrong "confirmation."
+  MCP tools `hlb_method_recommendation` and
+  `gemini_hlb_griffin_reference` added; full test coverage added.
+
+- **Tier 3 item 1 (Blankschtein counterion-binding theory) --
+  PARTIALLY CLOSED, with a real, disclosed negative result on the
+  combining step.** Added three new, individually source-verified,
+  closed-form free-energy functions to cpp.py, genuinely new physics
+  relative to the fully-dissociated Nagarajan-Ruckenstein 1991
+  baseline: `blankschtein_entropy_of_binding_free_energy` (eq 13,
+  entropy of mixing between surfactant heads and bound counterions),
+  `blankschtein_steric_free_energy_with_counterion` (eq 12, generalizes
+  the existing `nagarajan_ruckenstein_steric_headgroup_free_energy` --
+  confirmed to reduce to it EXACTLY at beta=0), and
+  `blankschtein_counterion_self_energy_release` (eq 15, the standard
+  Debye-Huckel single-ion self-energy/activity correction, confirmed to
+  vanish correctly at infinite dilution). All three from Srinivasan &
+  Blankschtein, *Langmuir* 19 (2003) 9932-9945, primary PDF read in
+  full.
+
+  A fourth function combining these into a full "predict optimal
+  binding degree beta*" tool was ALSO built, then deliberately NOT
+  shipped after a real numerical cross-check against the paper's own
+  worked C12TAC/Cl- system (Table 1/2/3 of the companion prediction
+  paper, *Langmuir* 19 (2003) 9946-9961) produced beta* ~ 0.001
+  (essentially no binding) instead of the real, known ~40-70% binding
+  range (the paper's own Table 3 reports 0.50 for this exact system).
+  Root cause, confirmed by direct numeric inspection, not guessed: the
+  combiner used the already-validated Nagarajan-Ruckenstein 1991 PB
+  electrostatic formula, evaluated at an effective area a/(1-beta), as
+  a stand-in for the source paper's own Welec (which the paper's own
+  text names as the MAIN driving force for binding) -- an algebraically
+  exact way to reduce net surface charge density in that specific
+  formula, but one whose swing (~4.3 kT from beta=0 to 0.9) is far too
+  small relative to the real, separately-verified translational-
+  entropy-loss term (~7.5-8.3 kT over the same range) to ever favor
+  binding. This means the Nagarajan-Ruckenstein 1991 closed-form PB
+  solution is not an adequate substitute, in MAGNITUDE, for Blankschtein's
+  own dedicated Ohshima-Healy-White numerical Poisson-Boltzmann
+  procedure (eqs 16-21 of the theory paper) -- reproducing the real,
+  known binding behavior genuinely requires implementing that numerical
+  machinery (Newton-Raphson solve for the instantaneous surface
+  potential, then numerical integration of the charging work), which
+  this session did not attempt (see the fuller writeup in cpp.py's own
+  Blankschtein-section comment, right where the retracted combiner used
+  to be). This is a real, disclosed negative result, not a hidden
+  shortfall -- exactly the AOT-Cc-discrepancy precedent earlier this
+  session, applied to a case discovered by this project's own build-and-
+  test process rather than found in the literature. MCP tools
+  `blankschtein_entropy_of_binding`, `blankschtein_steric_free_energy`,
+  and `blankschtein_counterion_self_energy` were added for the three
+  validated terms; no tool was added for the retracted combiner.
+
+**Genuinely still open after this pass**: the FULL predictive
+Blankschtein counterion-binding-degree tool (needs the real OHW/PB
+numerical machinery, not the Nagarajan-Ruckenstein-1991 surrogate tried
+and retracted here). Tier 3 item 6 is now fully closed. Full suite
+re-run after this pass; see the test output for the current count.
+
 **Tier 3 -- [NEW METHOD], real research contribution, higher effort:**
 - #1's Manning/PB counterion-binding predictor, validated against Tier 2's
   mined table

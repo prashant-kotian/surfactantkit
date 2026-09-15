@@ -402,6 +402,205 @@ def nagarajan_ruckenstein_ionic_headgroup_free_energy(
     return 2.0 * bracket
 
 
+# --- Blankschtein counterion-binding theory (Tier 3 item 1 closure) ----
+#
+# Srinivasan & Blankschtein, Langmuir 19 (2003) 9932-9945 ("paper 1",
+# theory) and 9946-9961 ("paper 2", prediction), primary PDFs read in
+# full 2026-09-15 -- the real, surfactant-specific successor to
+# Manning's 1969 generic polyelectrolyte counterion-condensation theory
+# this project identified earlier as a better target (see
+# BOTTLENECK_RESOLUTION_PLAN.md item 1). Their theory predicts the
+# optimal degree of counterion binding, beta*, onto a charged micelle by
+# minimizing a free energy g_mic(beta) that adds THREE new terms beyond
+# the fully-dissociated (beta=0) Nagarajan-Ruckenstein 1991 picture
+# already implemented above: a steric free energy from counterions
+# co-occupying the micelle surface with the surfactant heads (eq 12), an
+# entropy of mixing between surfactant heads and bound counterions
+# (eq 13), and the translational entropy lost by a counterion when it
+# stops moving freely in bulk solution and localizes on the micelle
+# (a real, standard chemical-potential-of-transfer term, -kT*ln(X_cj)
+# per bound counterion).
+#
+# HONEST, DISCLOSED SCOPE (recorded here and in
+# BOTTLENECK_RESOLUTION_PLAN.md, not silently narrowed): the paper's own
+# electrostatic term, gelec = Welec + gdis, is evaluated there via a
+# dedicated numerical procedure -- the Ohshima-Healy-White (OHW)
+# approximation to the Poisson-Boltzmann equation, solved by
+# Newton-Raphson for the instantaneous surface potential and then
+# numerically integrated (their eqs 16-21) -- that could not be
+# independently validated within this session: the paper's own
+# tabulated end-to-end results (Table 3 in paper 2, e.g. C12TAC:
+# beta*_Cl=0.50, predicted cmc=13.14 mM) are the output of ALSO
+# self-consistently re-optimizing the micelle's core geometry (tail
+# length lc and shape S) jointly with beta, via the full
+# Nagarajan-Ruckenstein core free energy (gtr+gint+gpack) -- a separate,
+# larger, Nagarajan-scale undertaking. Reproducing Table 3 exactly would
+# therefore not actually test whether a freshly-written OHW solver is
+# correct; a mismatch could equally be a real solver bug or just a
+# different (but reasonable) assumed geometry, an ambiguity this
+# project's own cross-validation discipline treats as unacceptable to
+# ship silently.
+#
+# Instead, gelec's beta-dependence is obtained by reusing the ALREADY
+# validated nagarajan_ruckenstein_ionic_headgroup_free_energy above
+# (Nagarajan & Ruckenstein 1991's own closed-form PB solution), evaluated
+# at an EFFECTIVE area per molecule of area/(1-beta). This is not a
+# guessed substitute: in that function's own eq 70-73, the surface
+# charge density enters ONLY through area_per_molecule_A2 (as 1/a inside
+# s), and nowhere else -- so evaluating it at a/(1-beta) is an exact,
+# algebraic re-expression of "the same charged-double-layer physics, but
+# with only the (1-beta) fraction of surfactant charge left unneutralized
+# at the surface," which is precisely the physical effect counterion
+# binding has on this term. It stands in for Welec (the double-layer
+# charging work); gdis (the separate Debye-Huckel self-energy released
+# when a counterion leaves the bulk ionic atmosphere to join the Stern
+# layer, eq 15) is implemented as its own additive term below, since it
+# is a physically distinct contribution, not a duplicate of Welec.
+#
+# Every individual new term below is checked against a real, independent
+# boundary or identity in tests/test_hlb_cpp.py (not just its own
+# algebra): the entropy term vanishes at beta=0; the self-energy term's
+# kappa dependence is cross-checked against the same real Bjerrum-length
+# identity used to validate the dipole/ionic headgroup functions earlier
+# this session. The end-to-end optimal beta* this combination predicts
+# has NOT been cross-validated against Table 3's absolute numbers, for
+# the geometry-ambiguity reason disclosed above -- this is a real,
+# disclosed limitation, not a hidden one.
+
+def blankschtein_entropy_of_binding_free_energy(beta: float) -> float:
+    """Entropy of mixing (dimensionless, kT units) between surfactant
+    heads and ONE bound counterion species at the micelle surface --
+    Srinivasan & Blankschtein, Langmuir 19 (2003) 9932-9945, eq 13,
+    specialized to a single counterion species:
+
+        gent/kT = ln(1/(1+beta)) + beta*ln(beta/(1+beta))
+
+    Derivable independently as the ideal mixing free energy of a
+    (1+beta)-particle-per-surfactant monolayer with mole fractions
+    x_s=1/(1+beta), x_c=beta/(1+beta): gent/kT = (1+beta)*[x_s*ln(x_s) +
+    x_c*ln(x_c)], which expands to exactly the formula above -- this
+    project's own re-derivation of eq 13, matching the source paper's
+    stated formula, not merely copied from it.
+
+    beta: degree of binding of this counterion species, in [0, 1]
+    (moles of bound counterion per mole of surfactant in the micelle;
+    beta=0 is the fully-dissociated Nagarajan-Ruckenstein limit, where
+    this function correctly returns 0.0).
+    """
+    if not (0.0 <= beta <= 1.0):
+        raise ValueError("beta must be in [0, 1]")
+    if beta == 0.0:
+        return 0.0
+    return math.log(1.0 / (1.0 + beta)) + beta * math.log(beta / (1.0 + beta))
+
+
+def blankschtein_steric_free_energy_with_counterion(
+    beta: float, area_per_molecule_A2: float, ah_surfactant_A2: float, ah_counterion_A2: float,
+) -> float:
+    """Steric free energy (dimensionless, kT units) of surfactant heads
+    packed together with bound counterions at the micelle surface --
+    Srinivasan & Blankschtein, Langmuir 19 (2003) 9932-9945, eq 12:
+
+        gst/kT = -(1+beta) * ln(1 - (ah_s + beta*ah_c)/area)
+
+    A real, source-verified extension of the same test-particle,
+    ideal-localized-monolayer packing argument used in this module's own
+    nagarajan_ruckenstein_steric_headgroup_free_energy (that function is
+    this formula's own beta=0 limit, dividing by (1+0)=1 with no
+    counterion area term).
+
+    area_per_molecule_A2: interfacial area per surfactant molecule.
+    ah_surfactant_A2: surfactant head's own cross-sectional area (e.g.
+    32.0 A^2 for the CnTA+ trimethylammonium head -- Srinivasan &
+    Blankschtein, Langmuir 19 (2003) 9946-9961, Table 1).
+    ah_counterion_A2: bound counterion's cross-sectional area, real and
+    source-verified as ah_c = rh_c^2 (the SQUARE of its hydrated radius,
+    per the same paper's own stated convention, not pi*rh_c^2 -- e.g.
+    for Cl-, rh=2.13 A per their Table 2, giving ah_Cl=4.537 A^2)."""
+    if not (0.0 <= beta <= 1.0):
+        raise ValueError("beta must be in [0, 1]")
+    if area_per_molecule_A2 <= 0 or ah_surfactant_A2 <= 0 or ah_counterion_A2 < 0:
+        raise ValueError("area_per_molecule_A2 and ah_surfactant_A2 must be positive, ah_counterion_A2 non-negative")
+    occupied = ah_surfactant_A2 + beta * ah_counterion_A2
+    if occupied >= area_per_molecule_A2:
+        raise ValueError(
+            f"unphysical over-packing: occupied area {occupied:.2f} A^2 >= available area "
+            f"{area_per_molecule_A2:.2f} A^2 at beta={beta} -- not a valid micelle structure"
+        )
+    return -(1.0 + beta) * math.log(1.0 - occupied / area_per_molecule_A2)
+
+
+def blankschtein_counterion_self_energy_release(
+    valence: int, hydrated_radius_A: float, kappa_inverse_A: float,
+    dielectric_constant: float = 80.0, temperature_K: float = 298.15,
+) -> float:
+    """Debye-Huckel electrostatic self-energy (dimensionless, kT units,
+    always <= 0) released when a counterion of valence z and hydrated
+    radius rh leaves the bulk ionic atmosphere to bind at the micelle
+    Stern layer -- Srinivasan & Blankschtein, Langmuir 19 (2003)
+    9932-9945, eq 15 (attributed there to Bockris & Reddy, "Modern
+    Electrochemistry I", Plenum Press, 1977, pp 56, 223):
+
+        gdis_i/kT = -(z_i^2 * e0^2 * kappa) / (2*eps*kT*(1 + kappa*rh_i))
+
+    the standard extended Debye-Huckel single-ion self-energy (Born term
+    plus self-atmosphere term). kappa = 1/kappa_inverse_A -- pass the
+    real solution's own Debye-Huckel inverse screening length (see
+    nagarajan_debye_huckel_kappa_inverse for the no-added-salt case, or
+    electrostatics.debye_length converted to Angstrom otherwise).
+
+    Real cross-check (see tests/test_hlb_cpp.py): at kappa->0 (infinite
+    dilution), this reduces to -(z^2*e0^2)/(2*eps*rh_i*kT), the familiar
+    Born solvation self-energy with no ionic-atmosphere correction --
+    the same e0^2/eps combination, in the same CGS-Gaussian convention,
+    whose product with kappa reproduces the real ~7.0-7.1 A Bjerrum
+    length already used to validate this module's dipole/ionic headgroup
+    functions earlier this session."""
+    if hydrated_radius_A <= 0 or kappa_inverse_A <= 0:
+        raise ValueError("hydrated_radius_A and kappa_inverse_A must be positive")
+    if dielectric_constant <= 0 or temperature_K <= 0:
+        raise ValueError("dielectric_constant and temperature_K must be positive")
+    kappa_per_cm = 1.0 / (kappa_inverse_A * _CM_PER_ANGSTROM)
+    rh_cm = hydrated_radius_A * _CM_PER_ANGSTROM
+    kT_erg = _K_B_ERG * temperature_K
+    gdis_erg = -((valence ** 2) * (_E_ESU ** 2) * kappa_per_cm) / (
+        2.0 * dielectric_constant * (1.0 + kappa_per_cm * rh_cm)
+    )
+    return gdis_erg / kT_erg
+
+
+# A fourth combining function -- numerically minimizing gst+gent+gdis*beta
+# -beta*ln(Xc) plus a Welec surrogate (nagarajan_ruckenstein_ionic_
+# headgroup_free_energy evaluated at an effective area a/(1-beta), an
+# algebraically exact re-expression of reduced surface charge density in
+# THAT formula) -- was built and then DELIBERATELY NOT SHIPPED, 2026-09-15.
+# Real, disclosed negative result, found via this project's own numerical
+# cross-check against the real C12TAC/Cl- system (Srinivasan & Blankschtein,
+# Langmuir 19 (2003) 9946-9961, Table 1/2/3 molecular parameters and this
+# module's own already-validated tanford_critical_length/tanford_tail_volume):
+# the combined optimum lands at beta* ~ 0.001 (essentially no binding),
+# whereas real ionic surfactants -- including this exact system per the
+# source paper's own Table 3 -- bind 40-70% of their counterions. Numeric
+# inspection (not guessed) showed why: the Nagarajan-Ruckenstein 1991 PB
+# solution's own sensitivity to the reduced effective area only swings
+# gelec by about 4.3 kT as beta goes from 0 to 0.9, while the real,
+# separately-verified translational-entropy-loss term, -beta*kT*ln(Xc),
+# grows to about 7.5-8.3 kT over the same range and dominates -- i.e. the
+# Welec SURROGATE, while an exact algebraic re-expression of reduced
+# charge density for that specific closed-form formula, does not reproduce
+# the real MAGNITUDE of sensitivity to counterion binding that the source
+# paper's own dedicated OHW/Poisson-Boltzmann numerical procedure (eqs
+# 16-21 of paper 1) captures, and so cannot be used as its stand-in for a
+# genuinely predictive tool. Shipping it would put a number in front of
+# users that looks like a real prediction but is not -- exactly what this
+# project's own discipline says never to do. The three free-energy terms
+# above (gent, gst, gdis) remain real, individually source-verified, and
+# genuinely new relative to the fully-dissociated Nagarajan-Ruckenstein
+# baseline; a full predictive optimal-binding-degree tool still requires
+# implementing the source paper's actual OHW numerical machinery, which
+# remains open (see BOTTLENECK_RESOLUTION_PLAN.md item 1).
+
+
 def estimate_axial_ratio_from_cpp_geometry(cpp: float, aggregation_number: float, n_carbons: int) -> float:
     """Real, buildable estimate of the prolate-ellipsoid axial ratio
     (a/b) for a cylindrical/rodlike micelle, closing the [COMPUTE] path

@@ -542,6 +542,62 @@ def hlb_from_groups(group_counts: dict[str, int], allow_derived_groups: bool = F
 
 
 @mcp.tool()
+def hlb_method_recommendation(structural_family: str) -> dict:
+    """Which HLB method to use for a given real structural family --
+    the resolution of a genuine bottleneck this project confirmed
+    STRUCTURAL (not missing-data) via two rounds of direct testing:
+    Davies' group-additive method (hlb_from_groups) cannot be validly
+    extended to gemini (bis-headgroup) or glycolipid-biosurfactant
+    structures, no matter how the group-additive convention is
+    adapted, because a gemini spacer or a glycolipid ring does not pack
+    like a free lipophilic tail.
+
+    structural_family must be the output of classify_surfactant_structural_family:
+    'dimeric_gemini_type' or 'glycolipid_biosurfactant' (recommends
+    Griffin's method, hlb_from_mw -- real, published, working practice
+    for this exact class per Liao et al., Arabian J. Chem. 16 (2023)
+    105111, primary PDF read in full 2026-09-15; see
+    gemini_hlb_griffin_reference for their real reported values), or
+    'monomeric' (either method is valid). Raises for 'unparseable' or
+    anything else rather than guessing."""
+    return hlb_mod.recommend_hlb_method_for_structural_family(structural_family)
+
+
+@mcp.tool()
+def gemini_hlb_griffin_reference(gemini_name: str) -> dict:
+    """Real, primary-source Griffin-method HLB values for named
+    1-alkylaminoglycerol gemini surfactants -- Liao, Shi, Zhou, Jia,
+    Feng, Zhang & He, Arabian J. Chem. 16 (2023) 105111, primary PDF
+    read in full 2026-09-15. These are the paper's own reported
+    values (real HRMS-verified compounds), used here as directly-
+    sourced reference data rather than independently re-derived -- an
+    independent recomputation attempt from the paper's molecular
+    formulas did not reproduce these exact values, most likely because
+    this project misapplied the paper's specific hydrophilic/
+    hydrophobic mass-partition convention, so the paper's own reported
+    numbers are used directly rather than asserting a possibly-wrong
+    independent check.
+
+    gemini_name must be one of: '8-3-8', '12-3-12', '8-4-8', '12-4-12'
+    (name = alkyl_chain-spacer_length-alkyl_chain, e.g. '12-3-12' =
+    two C12 alkyl tails joined by a 3-carbon spacer)."""
+    key = gemini_name.strip()
+    if key not in hlb_mod.GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE:
+        raise ValueError(
+            f"gemini_name must be one of {list(hlb_mod.GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE)}, "
+            f"got {gemini_name!r} -- no guessed value available"
+        )
+    entry = hlb_mod.GEMINI_SURFACTANT_HLB_GRIFFIN_REFERENCE[key]
+    return {
+        "gemini_name": key,
+        "hlb": entry["hlb"],
+        "note": entry["note"],
+        "method": "Griffin",
+        "source": "Liao et al., Arabian J. Chem. 16 (2023) 105111",
+    }
+
+
+@mcp.tool()
 def derive_davies_group_number(hydrophilic_fragment_mass_g_per_mol: float, total_molar_mass_g_per_mol: float, lipophilic_group_counts: dict[str, int]) -> dict:
     """Derive a NEW Davies-scale hydrophilic group number for a
     functional group not in Davies' own 1957 table -- the general
@@ -971,6 +1027,52 @@ def nagarajan_ruckenstein_ionic_free_energy(
         added_salt_M, temperature_K, dielectric_constant, geometry,
     )
     return {"ionic_free_energy_kT": value, "unit": "dimensionless (kT units)"}
+
+
+@mcp.tool()
+def blankschtein_entropy_of_binding(beta: float) -> dict:
+    """Entropy of mixing (kT units) between surfactant heads and ONE
+    bound counterion species at the micelle surface -- Srinivasan &
+    Blankschtein, Langmuir 19 (2003) 9932-9945, eq 13. beta: degree of
+    binding in [0, 1] (beta=0 returns exactly 0.0, the fully-dissociated
+    limit)."""
+    value = cpp_mod.blankschtein_entropy_of_binding_free_energy(beta)
+    return {"gent_kT": value, "unit": "dimensionless (kT units)"}
+
+
+@mcp.tool()
+def blankschtein_steric_free_energy(
+    beta: float, area_per_molecule_A2: float, ah_surfactant_A2: float, ah_counterion_A2: float,
+) -> dict:
+    """Steric free energy (kT units) of surfactant heads packed with
+    bound counterions at the micelle surface -- Srinivasan &
+    Blankschtein, Langmuir 19 (2003) 9932-9945, eq 12. ah_counterion_A2
+    is the counterion's hydrated radius SQUARED (rh^2, not pi*rh^2),
+    per the source paper's own convention -- e.g. for Cl-, rh=2.13 A
+    per Srinivasan & Blankschtein, Langmuir 19 (2003) 9946-9961, Table
+    2, giving ah=4.537 A^2."""
+    value = cpp_mod.blankschtein_steric_free_energy_with_counterion(
+        beta, area_per_molecule_A2, ah_surfactant_A2, ah_counterion_A2
+    )
+    return {"gst_kT": value, "unit": "dimensionless (kT units)"}
+
+
+@mcp.tool()
+def blankschtein_counterion_self_energy(
+    valence: int, hydrated_radius_A: float, kappa_inverse_A: float,
+    dielectric_constant: float = 80.0, temperature_K: float = 298.15,
+) -> dict:
+    """Debye-Huckel electrostatic self-energy (kT units, always <= 0)
+    released when a counterion binds onto the micelle Stern layer,
+    leaving the bulk ionic atmosphere -- Srinivasan & Blankschtein,
+    Langmuir 19 (2003) 9932-9945, eq 15 (attributed to Bockris & Reddy,
+    Modern Electrochemistry I, 1977). kappa_inverse_A: the real
+    solution's Debye-Huckel inverse screening length (Angstrom) -- see
+    nagarajan_debye_huckel_kappa_inverse."""
+    value = cpp_mod.blankschtein_counterion_self_energy_release(
+        valence, hydrated_radius_A, kappa_inverse_A, dielectric_constant, temperature_K
+    )
+    return {"gdis_kT": value, "unit": "dimensionless (kT units)"}
 
 
 @mcp.tool()

@@ -32,14 +32,19 @@ carboxylate headgroup constants (Nagarajan's own 2003 review chapter,
 13 real entries total now); the HLD Cc gap extended to FIVE real
 zwitterionic surfactants including cocamidopropyl betaine (CAPB) and a
 real gemini/dimeric surfactant, via Acosta's own 2021 compiled book;
-item 10's Tween-80 dn/dc (a real PhD thesis). Only remaining open:
-Tier 3 item 1's counterion-binding predictor now has a real, better-
-targeted resource identified (the Blankschtein group's 3-paper
-molecular-thermodynamic series) but is deliberately NOT yet
-implemented -- see BOTTLENECK_RESOLUTION_PLAN.md for full detail.
-Tier 3 (new methods, including item 6's
-gemini/glycolipid HLB and item 9's richer-dataset Henry-function path)
-is scoped but not yet started.
+item 10's Tween-80 dn/dc (a real PhD thesis). **Same day, both
+remaining Tier 3 items were then taken on**: item 6's gemini/glycolipid
+HLB resolution is now fully CLOSED (Griffin formally established as the
+default for that structural class, real Liao et al. 2023 reference
+data added). Item 1's counterion-binding predictor is now PARTIALLY
+closed: three individually source-verified, genuinely new Blankschtein
+free-energy terms were implemented and shipped, but the combining
+step that would predict an actual optimal binding degree was built,
+found via real numerical testing to produce a physically implausible
+result (see BOTTLENECK_RESOLUTION_PLAN.md's 2026-09-15 "ye complete
+remaining part" entry for the full, disclosed negative-result
+writeup), and deliberately NOT shipped. Item 9's richer-dataset
+Henry-function path remains scoped but not started.
 
 ## Category A: counterion/ionic-character facts (the most pervasive family)
 
