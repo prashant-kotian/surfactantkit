@@ -91,32 +91,61 @@ actual answer — the refusal is currently premature, not correct.**
    tendency (section 1 above) substitute a plausible-looking beta.
 
 2. **Missing Davies HLB group numbers for gemini/glycolipid headgroups** —
-   **RE-TESTED 2026-09-15, item retracted: this is (a), pure, not (b).**
+   **RE-TESTED TWICE, 2026-09-15, item retracted: this is (a), pure, not (b).**
    This entry originally proposed applying `derive_davies_group_number_from_
    griffin`'s existing cross-calibration method to these two structural
    classes as a cheap, high-value fix. Directly tested against real numbers
    before building anything (per this project's own "verify before trusting"
    discipline) rather than assumed to work because it worked for other
-   groups: for the real G6 gemini (C42H90Br2N2, MW=783.00), naively doubling
-   the already-resolved single-quaternary-ammonium group number (2 x 22.0,
-   base constant 7 unchanged) gives HLB=32.95 -- not just wrong, but outside
-   the physically valid 0-20 HLB scale entirely, versus Griffin's
-   independent mass-ratio HLB of 8.48 for the same real compound. The
-   cross-calibration method's own precondition (Davies' additive model and
-   Griffin's mass-ratio model should agree closely for a SINGLE-headgroup
-   molecule) does not hold for a bis-headgroup gemini architecture at all --
-   this isn't a missing NUMBER, it's Davies' whole single-head model failing
-   to generalize structurally, which no new group number can fix. The
-   glycolipid case has a different, also-blocking problem: partitioning a
-   real rhamnolipid's ring methyl (chemically part of the deoxysugar's own
-   defining structure, not a plain alkyl tail) between "lipophilic" and
-   "hydrophilic" has no unambiguous convention, unlike the clean splits that
-   worked for sulfonate/amide groups. **Conclusion, corrected**: both cases
+   groups, in two rounds:
+
+   **Round 1 (naive doubling)**: for the real G6 gemini (C42H90Br2N2,
+   MW=783.00), doubling the already-resolved single-quaternary-ammonium
+   group number (2 x 22.0, base constant 7 unchanged) gives HLB=32.95 --
+   outside the physically valid 0-20 HLB scale entirely, versus Griffin's
+   independent mass-ratio HLB of 8.48 for the same real compound.
+
+   **Round 2 (one combined group number, the methodologically correct real
+   fix attempt)**: rather than naively double an existing atomic group,
+   defined ONE new combined "both-heads-plus-spacer" group number and
+   cross-calibrated it via Griffin's method -- the same real approach
+   already proven for sulfonate/amide/sultaine -- across FIVE real
+   reference compounds already available in this project's own SurfQSPR
+   dataset (12-2-12, 12-3-12, 12-4-12, 12-6-12, and G6/16-6-16, spanning
+   two tail lengths and four spacer lengths): the combined number ranges
+   from 14.33 to 19.53 (a 36% spread) and, critically, is NOT noise -- at
+   fixed C12 tail length it climbs monotonically with spacer length
+   (14.33 -> 15.05 -> 15.76 -> 17.15 as spacer goes 2 -> 3 -> 4 -> 6
+   carbons). Compare to sulfonate's real convergence band (6.20-6.80,
+   ~10% spread) that justified shipping it. This is a real, quantified,
+   mechanistically-understood failure, not just "didn't happen to work":
+   an alkanediyl spacer geometrically bridges two charged headgroups near
+   the interface, constrained differently from how a free terminal alkyl
+   tail packs into the hydrophobic core -- treating it as ordinary
+   lipophilic CH2 mass (the only available convention in Davies' existing
+   framework) systematically miscounts its real contribution, and by an
+   amount that grows with spacer length itself. No group-number choice,
+   combined or atomic, can fix a convention that's wrong about WHERE a
+   whole structural region's contribution belongs.
+
+   The glycolipid case has a separate, also-blocking problem, not
+   re-tested with the same rigor (only one real reference compound
+   available so far): partitioning a real rhamnolipid's ring methyl
+   (chemically part of the deoxysugar's own defining structure, not a
+   plain alkyl tail) between "lipophilic" and "hydrophilic" has no
+   unambiguous convention, unlike the clean splits that worked for
+   sulfonate/amide groups -- and given the gemini result above, a
+   single-compound test would not be trustworthy evidence either way.
+
+   **Conclusion, corrected and now strongly confirmed**: both cases
    belong in the "reinforce, don't fix" category alongside items 1 and 3
    below, not the "real investment opportunity" category originally
-   proposed here. GZ-03/GZ-04's refusals are confirmed correct, not
-   premature -- this is itself a disclosed negative result, not a silent
-   walk-back.
+   proposed here. This is itself a real, citable, quantified negative
+   result -- gemini HLB is not just "currently unresolved," it's
+   demonstrably NOT capturable by Davies-style linear group-additivity in
+   either tested form, for a real, disclosed physical reason (the
+   spacer's real role vs. its treatment as ordinary lipophilic mass).
+   GZ-03/GZ-04's refusals are confirmed correct, not premature.
 
 3. **HLD's cationic-quaternary-only HLB branch, misapplied to a non-quat
    cationic surfactant** — **(a), pure.** The empirical k/Cc bridge was
