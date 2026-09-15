@@ -189,17 +189,41 @@ tool can't use pH even when a caller DOES supply it.
 
 ## Proposed work order (cheapest/highest-confidence first)
 
-**Tier 0 -- trivial, do first, same session:**
-- #12 van Oss-Chaudhury-Good standard-liquid table (closes a false gap)
+**Tier 0 -- DONE 2026-09-15 (commit `283d407`):**
+- #12 van Oss-Chaudhury-Good standard-liquid table -- `VOCG_STANDARD_LIQUIDS`/
+  `OWENS_WENDT_STANDARD_LIQUIDS` in wetting.py, live-verified against van
+  Oss/Good/Busscher 1990 before hardcoding. New MCP tool
+  `get_standard_probe_liquid_properties`.
 
-**Tier 1 -- real [COMPUTE] using modules we already have, no new deps:**
-- #8 Perrin axial_ratio from CPP-predicted morphology
-- #11 Svedberg v_bar from Tanford/Traube group-additive volume (extends
-  existing `tanford_tail_volume`)
-- #14 pH-conditional charge classification (Henderson-Hasselbalch, extends
-  `classify.py`)
-- #13 Delaney/ESOL QSPR solubility estimator (RDKit descriptors we already
-  compute elsewhere)
+**Tier 1 -- DONE 2026-09-15, all 4 items (commits `4bff41e`, `034d383`,
+`eea9e7a`, `bd068c0`):**
+- #8 Perrin axial_ratio from CPP-predicted morphology -- DONE. New
+  `estimate_axial_ratio_from_cpp_geometry` in cpp.py: models the rodlike-
+  micelle core as a prolate ellipsoid with minor semi-axis pinned at the
+  extended tail length, solves for axial_ratio via volume conservation
+  given a REAL measured aggregation number. Scoped to cpp in (1/3, 1/2];
+  raises outside that range or when N_agg is geometrically inconsistent.
+- #11 Svedberg v_bar from Tanford tail-volume conversion -- DONE, but
+  PARTIAL by design. New `estimate_partial_specific_volume_from_tail_
+  and_headgroup` in curve_analysis.py converts Tanford's already-verified
+  tail volume to cm^3/mol exactly (unit conversion, no new empirical fit)
+  -- reduces the external requirement to only the headgroup's own real
+  molar volume, deliberately NOT hardcoded (no headgroup value was
+  verified with enough confidence this session to assert as fact).
+- #14 pH-conditional charge classification -- DONE. New
+  `classify_surfactant_charge_type_at_ph` in classify.py: Henderson-
+  Hasselbalch against literature pKaH ranges for primary/secondary/
+  tertiary amines (live-verified: methylamine 10.64, dimethylamine 10.73,
+  trimethylamine 9.79), or an exact caller-supplied real pKa. The
+  pH-truly-unstated WALL is untouched and correctly still refuses.
+- #13 Delaney/ESOL QSPR solubility estimator -- DONE. New
+  `estimate_intrinsic_water_solubility_qspr` in solubilization.py, Pat
+  Walters' real RDKit-refit ESOL coefficients (live-verified), prominently
+  disclosed as a coarse estimate (~0.6-1 log unit real published error),
+  never silently substituted for a real measured value.
+
+All 5 new functions wired into the MCP server, full suite 429/429 passing
+throughout, each item committed and pushed separately.
 
 **Tier 2 -- [MINE], real literature search, no new theory:**
 - #3/#4/#5 HLD-NAC k/Cc/b for non-quat classes (one search effort, same
