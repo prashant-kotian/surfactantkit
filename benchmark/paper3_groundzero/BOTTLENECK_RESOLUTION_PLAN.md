@@ -286,6 +286,84 @@ explicitly recorded here rather than silently dropped, per this
 project's standing "close a workflow to its entirety, record what can't
 be closed" rule.
 
+**2026-09-15, same day -- most of the above genuine gaps CLOSED with real
+primary-source PDFs the user provided directly** (per the user's own
+instruction after the Tier 2 report: "when you dont find appropriate
+paper, dont flag the tool as not fixed, instaed hold it and give me list
+papers you need... ill do both and give you"). 17 real papers provided,
+identified and renamed to `Author_Year_Topic.pdf` (see
+`~/.claude/projects/.../memory/feedback_papers_folder_rename_convention.md`),
+13 directly relevant:
+
+- **#7 Nagarajan headgroup prefactor -- SUBSTANTIALLY CLOSED**, not via
+  a lookup, but via the ACTUAL primary source: Nagarajan & Ruckenstein,
+  *Langmuir* 7 (1991) 2934-2969 ("Theory of Surfactant Self-Assembly: A
+  Predictive Molecular Thermodynamic Approach") -- the real, earlier,
+  more general founding theory the 2002 paper's `headgroup_prefactor_A`
+  shortcut was itself built from. Its own Table I gives real molecular
+  constants (a_p, a_o, delta, d) for sodium sulfate, sodium sulfonate
+  (a genuinely NEW headgroup class), and N-betaine (ZWITTERIONIC,
+  another genuinely new class), plus the paper's own complete ionic
+  (eqs. 70-73), dipole (eqs. 67-68), and steric (eq. 66) headgroup free-
+  energy formulas -- all implemented as 3 new real functions in cpp.py
+  (`nagarajan_ruckenstein_ionic_headgroup_free_energy`,
+  `_dipole_headgroup_free_energy`, `_steric_headgroup_free_energy`) plus
+  the real constants table (`NAGARAJAN_RUCKENSTEIN_HEADGROUP_
+  CONSTANTS`). Validated three ways: a real independent physical
+  constant (the Bjerrum length in water, ~7.0-7.1 A, that both new
+  functions' CGS unit handling must reduce to exactly -- caught a real,
+  confusing unit-conversion mistake in the first draft, rewritten
+  cleanly before shipping); a direct cross-check against this module's
+  own already-paper-verified `nagarajan_debye_huckel_kappa_inverse`;
+  and real physical-limit/sign checks. Cationic quaternary ammonium and
+  carboxylate headgroups are STILL not in this paper's own table either
+  -- a real, disclosed, narrower remaining gap than before, not fully
+  closed.
+- **HLD Cc gap -- SUBSTANTIALLY EXTENDED**: the real primary PDF (Leng &
+  Acosta, *J. Surfactants Deterg.* 26(3) (2023) 287-301, both its
+  published and ChemRxiv-preprint form) gives real, literature-cross-
+  checked Cc values for SDS, SDHS, SLES, C10PO4S, C16DPODS, **AOT**
+  (this project's single most-used compound), BCl, and DPCl -- 8 real
+  compounds, replacing the earlier single unverified SDS_CC=-3.0
+  placeholder with a real, dual-sourced (this-work + independent
+  literature) value for SDS (-2.63 vs. literature -2.5) and 7 more. New
+  `CC_REFERENCE_ANIONIC_CATIONIC` dict + MCP tool
+  `hld_characteristic_curvature_reference` in hld.py. Also closed: a
+  real BIOSURFACTANT Cc (-1.41, rhamnolipid, via Nguyen & Sabatini 2008
+  as cited in Hellweg, Oberdisse & Sottmann, *Front. Soft Matter*
+  3:1260211 (2023), both read in full) -- `RHAMNOLIPID_CC`. A real,
+  disclosed DISCREPANCY was found and documented, not silently resolved:
+  the Hellweg review states Cc(AOT)=-0.92, contradicting Leng & Acosta's
+  own directly-read value (~2.4-3.5, matching independent literature
+  2.5) -- -0.92 is suspiciously exactly SDHS's own value from the SAME
+  paper, almost certainly a citation error in the review, not a second
+  real AOT measurement; the directly-read primary value is what's
+  shipped, with the discrepancy documented in both the code and here.
+  ZWITTERIONIC and GEMINI Cc specifically remain genuinely open -- none
+  of the 17 papers studied either class's own Cc directly (though the
+  zwitterionic case now has a real, arguably better, mechanistic
+  alternative: the dipole free-energy function above, using real
+  N-betaine constants, rather than a bare Cc number).
+- **#1 AOT counterion binding degree -- CLOSED**: Thapa, Ray, Dey,
+  Sultana, Aswal & Ismail, *RSC Adv.* 5 (2015) 45956-45964, Table 1
+  (Corrin-Harkins plot, NaCl medium, below the real critical salt
+  concentration c*) gives a real beta=0.39 (alpha=0.61), HIGH
+  confidence, added to `COUNTERION_BINDING_DEGREE_REFERENCE`.
+- **#10 Triton X-100 dn/dc -- CLOSED**: Stubicar, Matejas, Zipper &
+  Wilfing, in Mittal (ed.), *Surfactants in Solution*, Plenum Press
+  (1989) 181-193, states it directly in their own instrument-
+  calibration section: dn/dc=0.140+/-0.005 mL/g (546 nm, 20 C), stable
+  across water and KCl/KBr/KI electrolyte solutions alike -- added to
+  `DN_DC_REFERENCE_ML_PER_G`. Tween-80 remains genuinely open -- not in
+  this batch either.
+
+Remaining genuinely open after this batch: zwitterionic/gemini HLD Cc
+(a real Cc number specifically); Nagarajan cationic-quat/carboxylate
+prefactor; Tween-80 dn/dc. All explicitly recorded, not silently
+dropped. Full suite: 486/486 passing after this round (one real bug
+found and fixed along the way: a stale test assertion still expecting
+the old SDS_CC=-3.0 placeholder after the real value was substituted).
+
 **Tier 3 -- [NEW METHOD], real research contribution, higher effort:**
 - #1's Manning/PB counterion-binding predictor, validated against Tier 2's
   mined table

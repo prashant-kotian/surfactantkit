@@ -306,6 +306,16 @@ def test_dn_dc_reference_values_are_real_and_usable_directly():
     assert ctab["dn_dc"] == pytest.approx(0.15)
 
 
+def test_dn_dc_reference_triton_x100_real_primary_source():
+    """Real Tier 2 gap closed 2026-09-15: Triton X-100 was searched for
+    via web search alone and not found, then closed with a real
+    primary-source PDF the user provided (Stubicar et al. 1989)."""
+    triton = DN_DC_REFERENCE_ML_PER_G["TRITONX100"]
+    assert triton["dn_dc"] == pytest.approx(0.140)
+    assert triton["dn_dc_uncertainty"] == pytest.approx(0.005)
+    assert triton["wavelength_nm"] == pytest.approx(546.0)  # different wavelength than SDS/CTAB, disclosed
+
+
 def test_dn_dc_reference_sds_usable_end_to_end_in_sls_function():
     """Real, usable end-to-end check: the reference table's own SDS
     dn/dc plugged directly into aggregation_number_from_sls_debye_plot

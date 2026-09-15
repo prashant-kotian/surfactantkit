@@ -5,6 +5,7 @@ directly (i.e. the wrapping doesn't silently change any numbers)."""
 
 import asyncio
 import json
+import math
 
 import pytest
 
@@ -47,9 +48,14 @@ def test_all_expected_tools_are_registered():
         "hld_optimal_salinity",
         "hld_cationic_quat_reference",
         "hld_class_reference",
+        "hld_characteristic_curvature_reference",
         "counterion_binding_degree_reference",
         "dn_dc_reference",
         "intrinsic_water_solubility_reference",
+        "nagarajan_ruckenstein_headgroup_reference",
+        "nagarajan_ruckenstein_steric_free_energy",
+        "nagarajan_ruckenstein_dipole_free_energy",
+        "nagarajan_ruckenstein_ionic_free_energy",
         "hld_fit_k_and_cc_from_salinity_scan",
         "tanford_chain_geometry",
         "critical_packing_parameter",
@@ -217,6 +223,41 @@ def test_hld_cationic_quat_reference_tool_rejects_unknown_surfactant():
         call("hld_cationic_quat_reference", {"surfactant": "SDS"})
 
 
+def test_nagarajan_ruckenstein_headgroup_reference_tool_matches_library():
+    out = call("nagarajan_ruckenstein_headgroup_reference", {"headgroup": "sodium_sulfonate"})
+    assert out["delta_A"] == pytest.approx(3.85)
+    assert out["class"] == "anionic"
+
+    out_betaine = call("nagarajan_ruckenstein_headgroup_reference", {"headgroup": "N_Betaine"})
+    assert out_betaine["d_A"] == pytest.approx(5.0)
+    assert out_betaine["class"] == "zwitterionic"
+
+
+def test_nagarajan_ruckenstein_headgroup_reference_tool_rejects_unknown():
+    with pytest.raises(Exception):
+        call("nagarajan_ruckenstein_headgroup_reference", {"headgroup": "quaternary_ammonium"})
+
+
+def test_nagarajan_ruckenstein_steric_free_energy_tool_matches_library():
+    out = call("nagarajan_ruckenstein_steric_free_energy", {"area_per_molecule_A2": 34.0, "a_p_A2": 17.0})
+    assert out["steric_free_energy_kT"] == pytest.approx(-math.log(1.0 - 17.0 / 34.0))
+
+
+def test_nagarajan_ruckenstein_dipole_free_energy_tool_matches_library():
+    out = call("nagarajan_ruckenstein_dipole_free_energy", {
+        "area_per_molecule_A2": 21.0, "radius_A": 20.0, "d_A": 5.0, "geometry": "sphere",
+    })
+    assert out["dipole_free_energy_kT"] > 0.0
+
+
+def test_nagarajan_ruckenstein_ionic_free_energy_tool_matches_library():
+    out = call("nagarajan_ruckenstein_ionic_free_energy", {
+        "area_per_molecule_A2": 60.0, "core_radius_A": 16.5, "delta_A": 5.45,
+        "counterion_concentration_M": 0.008,
+    })
+    assert out["ionic_free_energy_kT"] > 0.0
+
+
 def test_intrinsic_water_solubility_reference_tool_matches_library():
     out = call("intrinsic_water_solubility_reference", {"solubilizate": "Naphthalene"})
     assert out["solubility_M"] == pytest.approx(2.17e-4)
@@ -233,10 +274,14 @@ def test_dn_dc_reference_tool_matches_library():
     assert out["dn_dc"] == pytest.approx(0.11)
     assert out["solvent"] == "water"
 
+    out_triton = call("dn_dc_reference", {"surfactant": "TritonX100"})
+    assert out_triton["dn_dc"] == pytest.approx(0.140)
+    assert out_triton["dn_dc_uncertainty"] == pytest.approx(0.005)
+
 
 def test_dn_dc_reference_tool_rejects_unknown_surfactant():
     with pytest.raises(Exception):
-        call("dn_dc_reference", {"surfactant": "Triton X-100"})
+        call("dn_dc_reference", {"surfactant": "Tween-80"})
 
 
 def test_counterion_binding_degree_reference_tool_matches_library():
@@ -248,16 +293,38 @@ def test_counterion_binding_degree_reference_tool_matches_library():
     out_dtab = call("counterion_binding_degree_reference", {"surfactant": "DTAB"})
     assert out_dtab["alpha_confidence"] == "moderate"
 
+    out_aot = call("counterion_binding_degree_reference", {"surfactant": "aot"})
+    assert out_aot["alpha"] == pytest.approx(0.61)
+    assert out_aot["alpha_confidence"] == "high"
+
 
 def test_counterion_binding_degree_reference_tool_rejects_unknown_surfactant():
     with pytest.raises(Exception):
-        call("counterion_binding_degree_reference", {"surfactant": "AOT"})
+        call("counterion_binding_degree_reference", {"surfactant": "CAPB"})
+
+
+def test_hld_characteristic_curvature_reference_tool_matches_library():
+    out_sds = call("hld_characteristic_curvature_reference", {"surfactant": "sds"})
+    assert out_sds["cc_this_work"] == pytest.approx(-2.63)
+    assert out_sds["cc_literature"] == pytest.approx(-2.5)
+
+    out_aot = call("hld_characteristic_curvature_reference", {"surfactant": "AOT"})
+    assert out_aot["cc_this_work"] > 0
+
+    out_rham = call("hld_characteristic_curvature_reference", {"surfactant": "rhamnolipid"})
+    assert out_rham["cc"] == pytest.approx(-1.41)
+    assert out_rham["class"] == "biosurfactant (glycolipid)"
+
+
+def test_hld_characteristic_curvature_reference_tool_rejects_unknown():
+    with pytest.raises(Exception):
+        call("hld_characteristic_curvature_reference", {"surfactant": "cocamidopropyl_betaine"})
 
 
 def test_hld_class_reference_tool_matches_library():
     out_anionic = call("hld_class_reference", {"surfactant_class": "anionic_sulfate_sulfonate"})
     assert out_anionic["k_default"] == pytest.approx(0.16)
-    assert out_anionic["sds_cc_reference"] == pytest.approx(-3.0)
+    assert out_anionic["sds_cc_reference"] == pytest.approx(-2.63)
 
     out_extended = call("hld_class_reference", {"surfactant_class": "Extended_Surfactant"})  # case-insensitive
     assert out_extended["k_default"] == pytest.approx(0.06)

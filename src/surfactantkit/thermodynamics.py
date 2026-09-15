@@ -87,6 +87,13 @@ COUNTERION_BINDING_DEGREE_REFERENCE = {
     "CTAB": {"alpha": 0.26, "alpha_uncertainty": None, "beta": 0.74,
              "source": "web search 2026-09-15, cross-corroborated against a second cited literature value (0.27); primary paper not independently fetched",
              "alpha_confidence": "moderate"},
+    "AOT": {"alpha": 0.61, "alpha_uncertainty": None, "beta": 0.39,
+            "source": "Thapa, Ray, Dey, Sultana, Aswal & Ismail, RSC Adv. 5 (2015) 45956-45964, Table 1 "
+                      "(primary PDF read in full 2026-09-15) -- Corrin-Harkins plot, NaCl medium, below the "
+                      "critical salt concentration c* where AOT's own real counterion-binding transition occurs; "
+                      "HIGH confidence, real primary-source measurement, same underlying method (ionic-slope-based "
+                      "binding constant) as SDS's own entry above",
+            "alpha_confidence": "high"},
 }
 
 

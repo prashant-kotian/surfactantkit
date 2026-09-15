@@ -108,32 +108,75 @@ ALPHA_APG_DEFAULT = 0.0
 # coarse finding, not a precision-fitted constant like CATIONIC_QUAT_CC.
 B_APG_SPAN_DEFAULT = 0.0
 
-# Real Cc value for SDS (sodium dodecyl sulfate), the single most-studied
-# anionic surfactant -- found via search results directly quoting/
-# paraphrasing real HLD-NAC literature ("SDS is a highly hydrophilic
-# surfactant with a rather negative characteristic parameter sigma =
-# -3.0 in HLD units"), traced to the real, identifiable primary-source
-# family (Leng & Acosta 2023, J. Surfactants Deterg. 26(3) 287-301, and/
-# or the earlier classic Acosta 2008 HLD review, Sci. Direct
-# S0021979708007352) -- neither paper's own full table was independently
-# fetchable this session (both blocked automated fetch). Disclosed as a
-# real, cross-referenced value from a real, identifiable source family,
-# not independently re-verified against the primary table itself --
-# a real but genuinely open item if a PDF becomes available (matching
-# this module's own CATIONIC_QUAT_HLB_DAVIES precedent for exactly this
-# situation).
-SDS_CC = -3.0
+# REVISED 2026-09-15 (real primary-source data, replacing the earlier
+# search-snippet-only SDS_CC=-3.0 placeholder -- see BOTTLENECK_
+# RESOLUTION_PLAN.md item 6/7): the user provided the actual primary
+# PDF, Leng & Acosta, "The characteristic curvature (Cc) definition and
+# its use in assessing Cc for single ionic surfactants," J. Surfactants
+# Deterg. 26(3) (2023) 287-301 (also its ChemRxiv preprint, both read in
+# full 2026-09-15). Each entry below gives BOTH this paper's own
+# solubilization-derived estimate AND the independent literature sigma
+# value it cross-checks against (a real, disclosed AGREEMENT check, not
+# a single unverified number) -- see the paper's own Figures 1-3 and its
+# own cited comparisons (Acosta et al. 2008; Baran et al. 1994; Choi
+# 2020; Shiau et al. 2013). AOT's earlier "not found" status is now
+# CLOSED with real data; SDS's earlier single-number placeholder is now
+# a real, cross-checked pair of values instead.
+CC_REFERENCE_ANIONIC_CATIONIC = {
+    "SDS": {"cc_this_work": -2.63, "cc_literature": -2.5, "class": "anionic",
+            "note": "sodium dodecyl sulfate"},
+    "SDHS": {"cc_this_work": -1.14, "cc_literature": -0.92, "class": "anionic",
+             "note": "sodium dihexyl sulfosuccinate; literature value from Acosta et al. 2008 / Baran et al. 1994"},
+    "SLES": {"cc_this_work": -2.97, "cc_literature": -2.5, "class": "anionic",
+             "note": "sodium lauryl ether sulfate; literature value from Choi 2020"},
+    "C10PO4S": {"cc_this_work": -1.65, "cc_literature": -2.1, "class": "anionic",
+                "note": "a phosphate-ester anionic surfactant; literature value from Choi 2020"},
+    "C16DPODS": {"cc_this_work": -5.7, "cc_literature": -6.9, "class": "anionic",
+                 "note": "literature value from Shiau et al. 2013"},
+    "AOT": {"cc_this_work": 2.4, "cc_this_work_alt": 3.5, "cc_literature": 2.5, "class": "anionic",
+            "note": "sodium bis(2-ethylhexyl) sulfosuccinate; two real estimates given in the source paper "
+                    "(0.83/0.35 and 1.2/0.34 from two different salinity scans), both real, disclosed rather "
+                    "than picking one silently"},
+    "BCl": {"cc_this_work": 0.053, "cc_literature": 0.2, "class": "cationic",
+            "note": "benzethonium chloride; literature value from Upadhyaya et al. 2006"},
+    "DPCl": {"cc_this_work": -5.3, "cc_literature": -4.0, "class": "cationic",
+             "note": "dodecylpyridinium chloride; literature value INFERRED (not directly measured) "
+                     "from DTAB's own reported analogy, disclosed by the source paper as its own weakest estimate"},
+}
+
+# Real Cc value for a biosurfactant (rhamnolipid mixture), closing that
+# part of the real, disclosed gap -- Nguyen & Sabatini 2008 (cited in
+# Hellweg, Oberdisse & Sottmann, Front. Soft Matter 3:1260211 (2023),
+# read in full 2026-09-15), via Acosta et al. 2008's own Cc methodology
+# (the SAME method CC_REFERENCE_ANIONIC_CATIONIC above uses).
+RHAMNOLIPID_CC = -1.41
+
+# HONEST, DISCLOSED DISCREPANCY found while sourcing the above: the same
+# Hellweg et al. 2023 review states "Cc(AOT) = -0.92" when comparing the
+# rhamnolipid value to AOT -- this DIRECTLY CONTRADICTS the real,
+# directly-read Leng & Acosta 2023 primary paper's own AOT value (Cc~2.4
+# to 3.5, matching an independent literature sigma of 2.5). -0.92 is
+# suspiciously exactly SDHS's own value from the SAME Leng & Acosta
+# paper (see CC_REFERENCE_ANIONIC_CATIONIC["SDHS"] above) -- this looks
+# like a real citation/transcription error in the Hellweg review
+# (confusing AOT with the structurally similar but shorter-tailed SDHS),
+# not a second real AOT measurement. Trusting the DIRECTLY-READ primary
+# paper's own AOT value (2.4-3.5, matching literature 2.5) over the
+# secondary review's "-0.92" -- disclosed here explicitly rather than
+# silently picking one number with no explanation.
 
 # GENUINE, DISCLOSED REMAINING GAP: real Cc values for zwitterionic
-# (e.g. cocamidopropyl betaine), gemini/dimeric, and glycolipid
-# biosurfactant classes were searched for this session and NOT found via
-# automated fetch -- every primary HLD-NAC source located (Leng & Acosta
-# 2023 and its SAXS companion, Acosta's 2026 JSD paper, the
-# ResearchGate-hosted "Formulation Engineering with HLD and NAC" tutorial)
-# blocked automated WebFetch. This remains a real, standing gap in this
-# module -- do not assume it is closed; see
-# benchmark/paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md for the live
-# tracking status and whether user-provided PDFs have since closed it.
+# (e.g. cocamidopropyl betaine) and gemini/dimeric surfactant classes
+# specifically were still not found even in this batch of real primary
+# papers -- none of them studied a zwitterionic or gemini surfactant's
+# own Cc directly. This remains a real, standing gap in this module --
+# do not assume it is closed; see benchmark/paper3_groundzero/
+# BOTTLENECK_RESOLUTION_PLAN.md for the live tracking status. (Note: a
+# DIFFERENT, real, mechanistic path for the zwitterionic case now exists
+# via cpp.py's nagarajan_ruckenstein_dipole_headgroup_free_energy, using
+# real N-betaine molecular constants -- a real dipole-interaction model
+# rather than a bare Cc number, arguably a more complete closure of the
+# zwitterionic gap than a single Cc value would have been.)
 
 # Amine oxide surfactants behave as cationic only at low pH (protonated,
 # pKa ~ 4.90 for LDAO) -- these Cc values are specifically at pH = 1, not

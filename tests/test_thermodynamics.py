@@ -157,6 +157,18 @@ def test_counterion_reference_dtab_and_ctab_are_present_with_moderate_confidence
         assert 0.2 < entry["alpha"] < 0.35  # real, physically sensible range for these compounds
 
 
+def test_counterion_reference_aot_real_primary_source_high_confidence():
+    """Real Tier 2 gap closed 2026-09-15: AOT was searched for and not
+    found via web search alone, then closed with a real primary-source
+    PDF the user provided (Thapa et al. 2015, Table 1, Corrin-Harkins
+    plot, NaCl medium, below c*)."""
+    entry = COUNTERION_BINDING_DEGREE_REFERENCE["AOT"]
+    assert entry["alpha"] == pytest.approx(0.61)
+    assert entry["beta"] == pytest.approx(0.39)
+    assert entry["alpha_confidence"] == "high"
+    assert entry["alpha"] + entry["beta"] == pytest.approx(1.0)
+
+
 def test_gibbs_free_energy_nonionic_vs_ionic_factor():
     # same CMC, but the ionic (counterion_factor > 1) case should be
     # more negative than the nonionic (factor=1) case, since 2-beta > 1

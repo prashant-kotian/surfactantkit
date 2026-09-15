@@ -21,7 +21,8 @@ from surfactantkit.hld import (
     K_EXTENDED_SURFACTANT,
     ALPHA_APG_DEFAULT,
     B_APG_SPAN_DEFAULT,
-    SDS_CC,
+    CC_REFERENCE_ANIONIC_CATIONIC,
+    RHAMNOLIPID_CC,
     cc_mixing_rule,
     fit_k_and_cc_from_salinity_scan,
     hld_ionic,
@@ -234,18 +235,52 @@ def test_k_anionic_default_and_extended_surfactant_are_real_and_distinct():
 def test_sds_cc_is_real_and_strongly_hydrophilic():
     # a real, strongly negative Cc is consistent with SDS's known strong
     # hydrophilicity (same direction/magnitude class as the cationic
-    # quats' own CATIONIC_QUAT_CC entries, e.g. LTAB=-10.0)
-    assert SDS_CC == pytest.approx(-3.0)
-    assert SDS_CC < 0
+    # quats' own CATIONIC_QUAT_CC entries, e.g. LTAB=-10.0), and the
+    # source paper's own solubilization-derived estimate agrees with an
+    # independent literature value to within ~0.13 Cc units
+    sds = CC_REFERENCE_ANIONIC_CATIONIC["SDS"]
+    assert sds["cc_this_work"] == pytest.approx(-2.63)
+    assert sds["cc_literature"] == pytest.approx(-2.5)
+    assert sds["cc_this_work"] < 0
 
 
 def test_sds_hld_ionic_uses_real_k_and_cc_together():
     """Real, usable end-to-end check: SDS's own K_ANIONIC_DEFAULT and
-    SDS_CC plugged directly into hld_ionic (no new function needed)."""
-    hld = hld_ionic(salinity_pct=3.0, k=K_ANIONIC_DEFAULT, eacn=8.0, cc=SDS_CC)
+    real Cc plugged directly into hld_ionic (no new function needed)."""
+    sds_cc = CC_REFERENCE_ANIONIC_CATIONIC["SDS"]["cc_this_work"]
+    hld = hld_ionic(salinity_pct=3.0, k=K_ANIONIC_DEFAULT, eacn=8.0, cc=sds_cc)
     assert isinstance(hld, float)
-    s_star = optimal_salinity_ionic(K_ANIONIC_DEFAULT, eacn=8.0, cc=SDS_CC)
-    assert hld_ionic(s_star, K_ANIONIC_DEFAULT, eacn=8.0, cc=SDS_CC) == pytest.approx(0.0, abs=1e-9)
+    s_star = optimal_salinity_ionic(K_ANIONIC_DEFAULT, eacn=8.0, cc=sds_cc)
+    assert hld_ionic(s_star, K_ANIONIC_DEFAULT, eacn=8.0, cc=sds_cc) == pytest.approx(0.0, abs=1e-9)
+
+
+def test_cc_reference_anionic_cationic_all_entries_have_real_literature_crosscheck():
+    for name, entry in CC_REFERENCE_ANIONIC_CATIONIC.items():
+        assert "cc_this_work" in entry and "cc_literature" in entry, name
+        assert entry["class"] in ("anionic", "cationic"), name
+        # real agreement check: this-work and literature values should be
+        # within a real, physically sensible range of each other (a few
+        # Cc units at most, matching the paper's own stated ~0.2-1.3 unit
+        # uncertainty range) -- not exact, but not wildly different either
+        assert abs(entry["cc_this_work"] - entry["cc_literature"]) < 3.0, name
+
+
+def test_aot_cc_is_real_and_positive_matching_hydrophobic_character():
+    # AOT is a real, well-known LIPOPHILIC-leaning anionic surfactant
+    # (forms reverse micelles/microemulsions readily) -- a positive Cc
+    # is the physically expected sign, unlike SDS's strongly negative one
+    aot = CC_REFERENCE_ANIONIC_CATIONIC["AOT"]
+    assert aot["cc_this_work"] > 0
+    assert aot["cc_literature"] == pytest.approx(2.5)
+
+
+def test_rhamnolipid_cc_is_real_and_more_hydrophilic_than_aot():
+    # real, disclosed finding from the source review: the rhamnolipid
+    # blend used is "slightly more hydrophilic than AOT" -- Cc(rhamnolipid)
+    # should be less positive (or more negative) than AOT's own real Cc
+    aot_cc = CC_REFERENCE_ANIONIC_CATIONIC["AOT"]["cc_this_work"]
+    assert RHAMNOLIPID_CC < aot_cc
+    assert RHAMNOLIPID_CC == pytest.approx(-1.41)
 
 
 def test_alpha_apg_default_is_zero_temperature_independent():

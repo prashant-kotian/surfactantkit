@@ -64,6 +64,9 @@ from .cpp import (
     nagarajan_debye_huckel_kappa_inverse,
     nagarajan_equilibrium_area_ionic,
     estimate_axial_ratio_from_cpp_geometry,
+    nagarajan_ruckenstein_steric_headgroup_free_energy,
+    nagarajan_ruckenstein_dipole_headgroup_free_energy,
+    nagarajan_ruckenstein_ionic_headgroup_free_energy,
 )
 from .electrostatics import (
     ionic_strength,
@@ -169,6 +172,9 @@ __all__ = [
     "nagarajan_debye_huckel_kappa_inverse",
     "nagarajan_equilibrium_area_ionic",
     "estimate_axial_ratio_from_cpp_geometry",
+    "nagarajan_ruckenstein_steric_headgroup_free_energy",
+    "nagarajan_ruckenstein_dipole_headgroup_free_energy",
+    "nagarajan_ruckenstein_ionic_headgroup_free_energy",
     "ionic_strength",
     "debye_length",
     "henry_function",

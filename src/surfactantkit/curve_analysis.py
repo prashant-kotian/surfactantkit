@@ -539,17 +539,23 @@ AVOGADRO_NUMBER = 6.02214076e23  # /mol, exact SI 2019
 # on the standard compiled reference (Theisen, Johann, Deacon & Harding,
 # "Refractive Increment Data-Book for Polymer and Biomolecular
 # Scientists," Nottingham University Press, 2000, ISBN 1-897676-29-8).
-# HONEST DISCLOSURE: only these 2 entries were found via automated
-# search this session -- Triton X-100 and Tween-80 (both explicitly
-# named as targets in the resolution plan) were searched for and NOT
-# found with a real, citable numeric value; this table is genuinely
-# incomplete, not a general database, and raises for anything else
-# rather than guessing.
+# REVISED 2026-09-15 (same day): Triton X-100's real dn/dc was located
+# in a real primary source the user provided directly (Stubicar,
+# Matejas, Zipper & Wilfing, in K.L. Mittal (ed.), "Surfactants in
+# Solution," Plenum Press, New York (1989) 181-193 -- their own
+# instrument-calibration section states it explicitly, stable across
+# both pure water and KCl/KBr/KI electrolyte solutions), closing that
+# part of the earlier-disclosed gap. Tween-80 is still genuinely open --
+# not found in this batch of papers either.
 DN_DC_REFERENCE_ML_PER_G = {
     "SDS": {"dn_dc": 0.11, "solvent": "water", "wavelength_nm": 632.8, "temperature_C": 25.0,
             "source": "Malvern Panalytical dn/dc reference page, live-fetched 2026-09-15"},
     "CTAB": {"dn_dc": 0.15, "solvent": "water", "wavelength_nm": 632.8, "temperature_C": 25.0,
              "source": "Malvern Panalytical dn/dc reference page, live-fetched 2026-09-15"},
+    "TRITONX100": {"dn_dc": 0.140, "dn_dc_uncertainty": 0.005, "solvent": "water (also stable in KCl/KBr/KI)",
+                    "wavelength_nm": 546.0, "temperature_C": 20.0,
+                    "source": "Stubicar, Matejas, Zipper & Wilfing, in Mittal (ed.), Surfactants in Solution, "
+                              "Plenum Press (1989) 181-193, primary PDF read in full 2026-09-15"},
 }
 
 

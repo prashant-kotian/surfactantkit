@@ -668,31 +668,31 @@ def hld_class_reference(surfactant_class: str) -> dict:
     specific per-compound table (hld_cationic_quat_reference).
 
     surfactant_class must be one of: 'anionic_sulfate_sulfonate'
-    (k_default=0.16, plus SDS's own real characteristic curvature Cc=-3.0
-    as a worked reference point -- SDS's Cc traced to Leng & Acosta 2023,
-    J. Surfactants Deterg. 26(3) 287-301, via a secondary citation; the
-    primary paper's own table was not independently fetchable this
-    session, paywalled -- disclosed, not guessed), 'extended_surfactant'
-    (k_default=0.06, for surfactants with an internal PO/EO spacer
-    between headgroup and hydrophobe), or 'apg_nonionic' (alpha_default=0,
-    b_default=0 -- alkyl polyglycoside/sugar-based nonionics, reported as
-    essentially temperature- and salinity-INSENSITIVE, unlike ethoxylates).
-    Source for all three: Steven Abbott's "Practical Surfactants Science"
-    HLD reference page (stevenabbott.co.uk/practical-surfactants/hld.php),
-    live-verified 2026-09-15.
+    (k_default=0.16, plus SDS's own real characteristic curvature as a
+    worked reference point -- see hld_characteristic_curvature_reference
+    for the full, real, primary-source-verified Cc table this now
+    connects to), 'extended_surfactant' (k_default=0.06, for surfactants
+    with an internal PO/EO spacer between headgroup and hydrophobe), or
+    'apg_nonionic' (alpha_default=0, b_default=0 -- alkyl polyglycoside/
+    sugar-based nonionics, reported as essentially temperature- and
+    salinity-INSENSITIVE, unlike ethoxylates). Source for all three:
+    Steven Abbott's "Practical Surfactants Science" HLD reference page
+    (stevenabbott.co.uk/practical-surfactants/hld.php), live-verified
+    2026-09-15.
 
-    GENUINE, DISCLOSED GAP: real Cc values for zwitterionic, gemini/
-    dimeric, and glycolipid biosurfactant classes were searched for and
-    NOT found via automated fetch this session (every primary HLD-NAC
-    source located blocked automated access) -- raises for any
-    surfactant_class outside the three above rather than guessing."""
+    GENUINE, DISCLOSED GAP: real Cc values for zwitterionic and gemini/
+    dimeric surfactant classes specifically were not found even in a
+    real primary-source paper batch the user provided 2026-09-15 (none
+    studied a zwitterionic or gemini surfactant's own Cc directly) --
+    raises for any surfactant_class outside the three above rather than
+    guessing."""
     key = surfactant_class.lower()
     if key == "anionic_sulfate_sulfonate":
         return {
             "surfactant_class": key,
             "k_default": hld_mod.K_ANIONIC_DEFAULT,
-            "sds_cc_reference": hld_mod.SDS_CC,
-            "source": "Abbott 'Practical Surfactants Science' (k); Leng & Acosta 2023 via secondary citation (SDS Cc, not independently re-verified)",
+            "sds_cc_reference": hld_mod.CC_REFERENCE_ANIONIC_CATIONIC["SDS"]["cc_this_work"],
+            "source": "Abbott 'Practical Surfactants Science' (k); Leng & Acosta 2023, primary PDF read in full (SDS Cc)",
         }
     if key == "extended_surfactant":
         return {
@@ -710,8 +710,57 @@ def hld_class_reference(surfactant_class: str) -> dict:
     raise ValueError(
         f"surfactant_class must be one of ['anionic_sulfate_sulfonate', 'extended_surfactant', "
         f"'apg_nonionic'], got {surfactant_class!r} -- no guessed value available for zwitterionic/"
-        "gemini/glycolipid classes (a real, disclosed gap, not yet closed)"
+        "gemini classes (a real, disclosed gap, not yet closed; glycolipid biosurfactant Cc IS now "
+        "available -- see hld_characteristic_curvature_reference('rhamnolipid'))"
     )
+
+
+@mcp.tool()
+def hld_characteristic_curvature_reference(surfactant: str) -> dict:
+    """Real, primary-source characteristic curvature (Cc) for a named
+    surfactant -- Leng & Acosta, J. Surfactants Deterg. 26(3) (2023)
+    287-301 (primary PDF read in full), for the anionic/cationic
+    surfactants, and Nguyen & Sabatini 2008 (via Hellweg et al., Front.
+    Soft Matter 3:1260211 (2023), also read in full) for the
+    biosurfactant case. Each entry gives BOTH the source paper's own
+    solubilization-derived estimate (cc_this_work) and an independent
+    literature value it was cross-checked against (cc_literature) --
+    real agreement, not a single unverified number.
+
+    surfactant must be one of: 'SDS', 'SDHS', 'SLES', 'C10PO4S',
+    'C16DPODS', 'AOT' (real, two independent estimates given, see
+    cc_this_work/cc_this_work_alt), 'BCl' (benzethonium chloride), 'DPCl'
+    (dodecylpyridinium chloride, the source paper's own weakest/inferred
+    estimate), or 'rhamnolipid' (a real biosurfactant Cc, -1.41).
+
+    HONEST, DISCLOSED DISCREPANCY: a different secondary review (Hellweg
+    et al. 2023) states Cc(AOT)=-0.92 when discussing the rhamnolipid
+    value -- this contradicts Leng & Acosta's own directly-read AOT
+    value (~2.4-3.5, matching an independent literature sigma of 2.5),
+    and -0.92 is suspiciously exactly SDHS's own value from the SAME
+    Leng & Acosta paper -- almost certainly a citation/transcription
+    error in the review (confusing AOT with SDHS), not a second real AOT
+    measurement. This tool returns the directly-read primary paper's
+    own AOT value, not the -0.92 figure -- disclosed here, not silently
+    picked. Raises for zwitterionic or gemini surfactants -- a real,
+    disclosed, still-open gap; no primary paper located this session
+    studied either class's own Cc directly."""
+    key = surfactant.strip()
+    if key.lower() == "rhamnolipid":
+        return {
+            "surfactant": "rhamnolipid",
+            "cc": hld_mod.RHAMNOLIPID_CC,
+            "class": "biosurfactant (glycolipid)",
+            "source": "Nguyen & Sabatini 2008, via Hellweg, Oberdisse & Sottmann, Front. Soft Matter 3:1260211 (2023)",
+        }
+    key_upper = key.upper()
+    if key_upper not in hld_mod.CC_REFERENCE_ANIONIC_CATIONIC:
+        raise ValueError(
+            f"surfactant must be one of {sorted(hld_mod.CC_REFERENCE_ANIONIC_CATIONIC)} or 'rhamnolipid' -- "
+            "no guessed value available for zwitterionic or gemini surfactants (a real, disclosed gap)"
+        )
+    return {"surfactant": key_upper, **hld_mod.CC_REFERENCE_ANIONIC_CATIONIC[key_upper],
+            "source": "Leng & Acosta, J. Surfactants Deterg. 26(3) (2023) 287-301, primary PDF read in full"}
 
 
 @mcp.tool()
@@ -823,6 +872,89 @@ def nagarajan_equilibrium_area_ionic(cmc_M: float, tail_length_A: float, headgro
 
 
 @mcp.tool()
+def nagarajan_ruckenstein_headgroup_reference(headgroup: str) -> dict:
+    """Real, sourced molecular constants for a surfactant headgroup --
+    Nagarajan & Ruckenstein, Langmuir 7 (1991) 2934-2969, Table I
+    (primary PDF read in full). headgroup must be one of:
+    'sodium_sulfate' (a_p=17 A^2, a_o=17 A^2, delta=5.45 A, anionic),
+    'sodium_sulfonate' (a_p=17 A^2, a_o=17 A^2, delta=3.85 A, anionic),
+    'n_betaine' (a_p=30 A^2, a_o=21 A^2, d=5.0 A, ZWITTERIONIC), or
+    'glucoside' (a_p=40 A^2, a_o=21 A^2, nonionic). Feed delta into
+    nagarajan_ruckenstein_ionic_headgroup_free_energy for charged
+    headgroups, or d into nagarajan_ruckenstein_dipole_headgroup_free_
+    energy for the zwitterionic case. Raises for cationic quaternary
+    ammonium or carboxylate headgroups -- not in this paper's own Table
+    I either, a real, disclosed gap, not guessed."""
+    key = headgroup.lower()
+    if key not in cpp_mod.NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS:
+        raise ValueError(
+            f"headgroup must be one of {sorted(cpp_mod.NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS)} -- "
+            "no guessed value available for anything else (cationic quaternary ammonium and "
+            "carboxylate headgroups are a real, disclosed gap, not in the source paper's own table)"
+        )
+    return {"headgroup": key, **cpp_mod.NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS[key]}
+
+
+@mcp.tool()
+def nagarajan_ruckenstein_steric_free_energy(area_per_molecule_A2: float, a_p_A2: float) -> dict:
+    """Steric repulsion free energy (kT units) between headgroups
+    crowded at the aggregate surface -- Nagarajan & Ruckenstein 1991,
+    eq. 66: -ln(1 - a_p/a). a_p_A2 is the headgroup's own real hard-core
+    area (see nagarajan_ruckenstein_headgroup_reference), never guessed.
+    Diverges as area_per_molecule_A2 approaches a_p_A2 -- raises rather
+    than returning a nonsensical value if area_per_molecule_A2 <= a_p_A2."""
+    value = cpp_mod.nagarajan_ruckenstein_steric_headgroup_free_energy(area_per_molecule_A2, a_p_A2)
+    return {"steric_free_energy_kT": value, "unit": "dimensionless (kT units)"}
+
+
+@mcp.tool()
+def nagarajan_ruckenstein_dipole_free_energy(
+    area_per_molecule_A2: float, radius_A: float, d_A: float, geometry: str = "sphere",
+    temperature_K: float = 298.15, dielectric_constant: float = 80.0,
+) -> dict:
+    """Dipole-dipole interaction free energy (kT units) between
+    ZWITTERIONIC headgroups (e.g. N-betaine) at the aggregate surface --
+    Nagarajan & Ruckenstein 1991, eqs. 67-68. d_A is the headgroup's own
+    real charge-separation distance (see
+    nagarajan_ruckenstein_headgroup_reference, e.g. d_A=5.0 for
+    n_betaine), never guessed. geometry: 'sphere' (or 'globular'/
+    'endcap') or 'cylinder' -- the two use genuinely different bracket
+    terms in the source paper's own eqs. 67 vs. 68."""
+    value = cpp_mod.nagarajan_ruckenstein_dipole_headgroup_free_energy(
+        area_per_molecule_A2, radius_A, d_A, geometry, temperature_K, dielectric_constant
+    )
+    return {"dipole_free_energy_kT": value, "unit": "dimensionless (kT units)"}
+
+
+@mcp.tool()
+def nagarajan_ruckenstein_ionic_free_energy(
+    area_per_molecule_A2: float, core_radius_A: float, delta_A: float,
+    counterion_concentration_M: float, added_salt_M: float = 0.0,
+    temperature_K: float = 298.15, dielectric_constant: float = 80.0, geometry: str = "sphere",
+) -> dict:
+    """Ionic (charged-headgroup) interaction free energy (kT units) at
+    the aggregate surface -- Nagarajan & Ruckenstein 1991, eqs. 70-73, a
+    curvature-corrected analytical Poisson-Boltzmann solution, a real,
+    more complete alternative to nagarajan_equilibrium_area_ionic's
+    simpler headgroup_prefactor_A shortcut (2002 paper). delta_A is the
+    headgroup's own real distance from the hydrophobic core surface at
+    which ionic interactions are evaluated (see
+    nagarajan_ruckenstein_headgroup_reference -- e.g. 5.45 A for sodium
+    sulfate, 3.85 A for sodium sulfonate), never guessed.
+    counterion_concentration_M and added_salt_M are both real, system-
+    specific inputs (never guessed) -- the sum sets the ionic strength/
+    Debye screening length, generalizing nagarajan_debye_huckel_kappa_
+    inverse's own salt-free approximation to accept added electrolyte
+    explicitly. geometry: 'sphere' (or 'globular'/'endcap') or
+    'cylinder'."""
+    value = cpp_mod.nagarajan_ruckenstein_ionic_headgroup_free_energy(
+        area_per_molecule_A2, core_radius_A, delta_A, counterion_concentration_M,
+        added_salt_M, temperature_K, dielectric_constant, geometry,
+    )
+    return {"ionic_free_energy_kT": value, "unit": "dimensionless (kT units)"}
+
+
+@mcp.tool()
 def aggregation_number(tail_volume_A3: float, core_radius_A: float) -> dict:
     """Estimated spherical-micelle aggregation number from geometric
     packing: N_agg = core_volume / tail_volume. tail_volume_A3 typically
@@ -880,13 +1012,17 @@ def dn_dc_reference(surfactant: str) -> dict:
     """Real, published dn/dc (refractive index increment) for a named,
     commonly-studied surfactant micelle in water -- for use in
     aggregation_number_from_sls when no system-specific measurement is
-    available. surfactant must be one of: 'SDS' (dn_dc=0.11 mL/g) or
-    'CTAB' (dn_dc=0.15 mL/g), both at 632.8 nm (He-Ne red laser), 25 C,
-    water -- Malvern Panalytical's own published dn/dc reference page,
-    live-verified 2026-09-15. GENUINE, DISCLOSED GAP: Triton X-100 and
-    Tween-80 were searched for and NOT found with a real citable value
-    this session -- raises for anything else rather than guessing; this
-    is a real but genuinely incomplete table, not a general database."""
+    available. surfactant must be one of: 'SDS' (dn_dc=0.11 mL/g),
+    'CTAB' (dn_dc=0.15 mL/g) -- both at 632.8 nm, 25 C, Malvern
+    Panalytical's published reference page -- or 'TritonX100'
+    (dn_dc=0.140+/-0.005 mL/g at 546 nm, 20 C, real primary source:
+    Stubicar et al., in Mittal (ed.), Surfactants in Solution, Plenum
+    Press (1989) 181-193, primary PDF read in full 2026-09-15; stable
+    across water and KCl/KBr/KI electrolyte solutions alike). GENUINE,
+    DISCLOSED GAP: Tween-80 was searched for and NOT found with a real
+    citable value -- raises for anything else rather than guessing;
+    this is a real but genuinely incomplete table, not a general
+    database."""
     key = surfactant.upper()
     if key not in curve.DN_DC_REFERENCE_ML_PER_G:
         raise ValueError(

@@ -172,6 +172,205 @@ def nagarajan_equilibrium_area_ionic(cmc_M: float, tail_length_A: float, headgro
     return headgroup_prefactor_A / math.sqrt(1.0 + tail_length_A / kappa_inverse_A)
 
 
+# --- Nagarajan & Ruckenstein's full molecular-thermodynamic headgroup model
+# (Langmuir 7 (1991) 2934-2969) -- Tier 3 bottleneck-resolution addition,
+# 2026-09-15 (see benchmark/paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md
+# item 7). PDF provided directly by the user 2026-09-15 (this exact primary
+# source, not a secondary citation) -- a real, DIFFERENT, more complete
+# electrostatic/dipole headgroup treatment than the simpler 2002-paper
+# headgroup_prefactor_A approach above (that shortcut folds everything into
+# one pre-combined constant; this earlier, more general 1991 theory instead
+# needs each headgroup's own real geometric parameters, given directly in
+# the paper's own Table I -- not guessed, not reconstructed):
+#
+#   headgroup class    a_p (A^2)  a_o (A^2)  delta (A)  d (A)
+#   sodium sulfate      17.0       17.0       5.45        -
+#   sodium sulfonate     17.0       17.0       3.85        -
+#   N-betaine (zwitterionic) 30.0  21.0        -          5.0
+#   glucoside (nonionic) 40.0       21.0        -          -
+#
+# (delta = distance from the hydrophobic core surface at which ionic
+# interactions are evaluated, for charged headgroups; d = charge-separation
+# distance for the dipole, for zwitterionic headgroups -- these are
+# DIFFERENT physical distances, never interchange them). Real, disclosed
+# scope: this closes sulfonate AND zwitterionic headgroup classes (neither
+# covered by the 2002-paper prefactor above, which is sulfate-only) --
+# cationic quaternary ammonium and carboxylate headgroups are NOT in this
+# paper's own Table I either, still a real, disclosed gap.
+NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS = {
+    "sodium_sulfate": {"a_p_A2": 17.0, "a_o_A2": 17.0, "delta_A": 5.45, "class": "anionic"},
+    "sodium_sulfonate": {"a_p_A2": 17.0, "a_o_A2": 17.0, "delta_A": 3.85, "class": "anionic"},
+    "n_betaine": {"a_p_A2": 30.0, "a_o_A2": 21.0, "d_A": 5.0, "class": "zwitterionic"},
+    "glucoside": {"a_p_A2": 40.0, "a_o_A2": 21.0, "class": "nonionic"},
+}
+
+
+def nagarajan_ruckenstein_steric_headgroup_free_energy(area_per_molecule_A2: float, a_p_A2: float) -> float:
+    """Steric repulsion free energy (dimensionless, units of kT) between
+    headgroups crowded at the aggregate surface -- Nagarajan &
+    Ruckenstein, Langmuir 7 (1991) 2934-2969, eq. 66 (van der Waals hard-
+    particle approximation):
+
+        (delta_mu)_steric / kT = -ln(1 - a_p/a)
+
+    area_per_molecule_A2: the actual area per molecule at the aggregate
+    surface (a in the source paper -- this is the same quantity
+    critical_packing_parameter's head_area represents, or a candidate
+    value being evaluated in a free-energy search). a_p_A2: the
+    headgroup's own real cross-sectional area (see
+    NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS), NEVER guessed. Diverges
+    (correctly, not a bug) as area_per_molecule_A2 approaches a_p_A2 from
+    above -- headgroups physically cannot pack tighter than their own
+    hard-core area; raises instead of returning a nonsensical value if
+    area_per_molecule_A2 <= a_p_A2.
+    """
+    if a_p_A2 <= 0:
+        raise ValueError("a_p_A2 must be positive")
+    if area_per_molecule_A2 <= a_p_A2:
+        raise ValueError(
+            f"area_per_molecule_A2={area_per_molecule_A2} must exceed the headgroup's own hard-core "
+            f"area a_p_A2={a_p_A2} -- headgroups cannot pack tighter than their own cross-sectional area"
+        )
+    return -math.log(1.0 - a_p_A2 / area_per_molecule_A2)
+
+
+def nagarajan_ruckenstein_dipole_headgroup_free_energy(
+    area_per_molecule_A2: float,
+    radius_A: float,
+    d_A: float,
+    geometry: str = "sphere",
+    temperature_K: float = 298.15,
+    dielectric_constant: float = 80.0,
+) -> float:
+    """Dipole-dipole interaction free energy (dimensionless, kT units)
+    between ZWITTERIONIC headgroups (e.g. N-betaine) packed at the
+    aggregate surface -- Nagarajan & Ruckenstein 1991, eqs. 67-68:
+
+        sphere/globular/endcap: (delta_mu)_dipole/kT = 2*pi*e^2*R/(eps*a*kT) * [d/(d+R)]
+        cylinder (middle part): (delta_mu)_dipole/kT = 2*pi*e^2*R/(eps*a*kT) * ln(1 + d/R)
+
+    All lengths converted explicitly to cm and areas to cm^2 before
+    combining with e (in esu) -- the same explicit-CGS-conversion
+    pattern already used by nagarajan_debye_huckel_kappa_inverse in this
+    module, deliberately NOT a rescaled-charge shortcut (a real, similar
+    unit bug -- Faraday's constant vs. bare elementary charge -- was
+    found and fixed elsewhere in this project's own electrostatics work
+    once already; this function is written to make the conversion
+    auditable line by line instead of trusting algebra done once).
+
+    area_per_molecule_A2: the actual area per molecule at the aggregate
+    surface (a in the source paper). radius_A: sphere/globular/endcap
+    radius, or cylinder radius, per geometry. d_A: real charge-
+    separation distance for the zwitterionic headgroup (e.g. d_A=5.0 for
+    N-betaine -- see NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS, never
+    guessed). geometry: 'sphere' (or 'globular'/'endcap') or 'cylinder'.
+    """
+    if area_per_molecule_A2 <= 0:
+        raise ValueError("area_per_molecule_A2 must be positive")
+    if radius_A <= 0:
+        raise ValueError("radius_A must be positive")
+    if d_A <= 0:
+        raise ValueError("d_A must be positive")
+
+    area_cm2 = area_per_molecule_A2 * _CM_PER_ANGSTROM ** 2
+    radius_cm = radius_A * _CM_PER_ANGSTROM
+    kT_erg = _K_B_ERG * temperature_K
+    prefactor = 2.0 * math.pi * (_E_ESU ** 2) * radius_cm / (dielectric_constant * area_cm2 * kT_erg)
+
+    key = geometry.lower()
+    if key in ("sphere", "globular", "endcap"):
+        bracket = d_A / (d_A + radius_A)  # a ratio of two lengths in the same unit -- unit-independent
+    elif key == "cylinder":
+        bracket = math.log(1.0 + d_A / radius_A)
+    else:
+        raise ValueError("geometry must be 'sphere' (or 'globular'/'endcap') or 'cylinder'")
+    return prefactor * bracket
+
+
+def nagarajan_ruckenstein_ionic_headgroup_free_energy(
+    area_per_molecule_A2: float,
+    core_radius_A: float,
+    delta_A: float,
+    counterion_concentration_M: float,
+    added_salt_M: float = 0.0,
+    temperature_K: float = 298.15,
+    dielectric_constant: float = 80.0,
+    geometry: str = "sphere",
+) -> float:
+    """Ionic (charged-headgroup) interaction free energy (dimensionless,
+    kT units) at the aggregate surface -- Nagarajan & Ruckenstein 1991,
+    eqs. 70-73, a curvature-corrected analytical solution to the Poisson-
+    Boltzmann equation (a real, more complete alternative to the plain
+    Debye-Huckel approximation with an empirical 0.46 correction factor
+    the SAME paper's own earlier work used, and to the simpler 2002-
+    paper headgroup_prefactor_A shortcut in this module).
+
+        s = 4*pi*e^2 / (eps*kappa*a_delta*kT)
+        (delta_mu)_ionic/kT = 2*[ln(s/2 + sqrt(1+(s/2)^2))
+                                 - (2/s)*(sqrt(1+(s/2)^2) - 1)
+                                 - (2*C/(kappa*s))*ln(0.5*(1+sqrt(1+(s/2)^2)))]
+        C = 2/(R+delta)   [sphere/globular/endcap]
+          = 1/(R+delta)   [cylinder, middle part]
+        kappa = sqrt(8*pi*n0*e^2 / (eps*kT)),  n0 = (C1+Cadd)*N_A/1000
+
+    area_per_molecule_A2: a_delta in the source paper -- the area per
+    molecule evaluated AT distance delta from the hydrophobic core
+    surface (a real candidate value in a free-energy search, or an
+    already-known equilibrium area; not the same as a_p, the headgroup's
+    own bare cross-sectional area). core_radius_A: R in the source paper
+    -- sphere/globular/endcap radius, or cylinder radius, per geometry.
+    delta_A: real, headgroup-specific distance from the hydrophobic core
+    surface at which ionic interactions are evaluated (see
+    NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS -- e.g. 5.45 A for sodium
+    sulfate, 3.85 A for sodium sulfonate -- never guessed).
+    counterion_concentration_M: C1 in the source paper, the molar
+    concentration of singly-dispersed surfactant (its own counterions);
+    added_salt_M: Cadd, any additional electrolyte -- both real,
+    system-specific inputs, never guessed (same discipline as
+    nagarajan_debye_huckel_kappa_inverse's own cmc_M-as-ionic-strength
+    approximation, generalized here to accept added salt explicitly).
+    geometry: 'sphere' (or 'globular'/'endcap') or 'cylinder'.
+    """
+    if area_per_molecule_A2 <= 0:
+        raise ValueError("area_per_molecule_A2 must be positive")
+    if core_radius_A <= 0:
+        raise ValueError("core_radius_A must be positive")
+    if delta_A <= 0:
+        raise ValueError("delta_A must be positive")
+    if counterion_concentration_M < 0 or added_salt_M < 0:
+        raise ValueError("counterion_concentration_M and added_salt_M must be non-negative")
+    if counterion_concentration_M + added_salt_M <= 0:
+        raise ValueError("counterion_concentration_M + added_salt_M must be positive (kappa is undefined at zero ionic strength)")
+
+    n0_per_cm3 = (counterion_concentration_M + added_salt_M) * _N_AVOGADRO / 1000.0
+    kappa_per_cm = math.sqrt(8.0 * math.pi * n0_per_cm3 * (_E_ESU ** 2) / (dielectric_constant * _K_B_ERG * temperature_K))
+    kappa_per_A = kappa_per_cm * _CM_PER_ANGSTROM  # same conversion as nagarajan_debye_huckel_kappa_inverse
+
+    # s = 4*pi*e^2/(eps*kappa*a_delta*kT) -- explicit cm conversion (area
+    # back to cm^2, reusing kappa_per_cm already computed above), same
+    # auditable pattern as the dipole function above, not a rescaled-
+    # charge shortcut.
+    area_cm2 = area_per_molecule_A2 * _CM_PER_ANGSTROM ** 2
+    kT_erg = _K_B_ERG * temperature_K
+    s = 4.0 * math.pi * (_E_ESU ** 2) / (dielectric_constant * kappa_per_cm * area_cm2 * kT_erg)
+
+    key = geometry.lower()
+    if key in ("sphere", "globular", "endcap"):
+        C = 2.0 / (core_radius_A + delta_A)
+    elif key == "cylinder":
+        C = 1.0 / (core_radius_A + delta_A)
+    else:
+        raise ValueError("geometry must be 'sphere' (or 'globular'/'endcap') or 'cylinder'")
+
+    sqrt_term = math.sqrt(1.0 + (s / 2.0) ** 2)
+    bracket = (
+        math.log(s / 2.0 + sqrt_term)
+        - (2.0 / s) * (sqrt_term - 1.0)
+        - (2.0 * C / (kappa_per_A * s)) * math.log(0.5 * (1.0 + sqrt_term))
+    )
+    return 2.0 * bracket
+
+
 def estimate_axial_ratio_from_cpp_geometry(cpp: float, aggregation_number: float, n_carbons: int) -> float:
     """Real, buildable estimate of the prolate-ellipsoid axial ratio
     (a/b) for a cylindrical/rodlike micelle, closing the [COMPUTE] path
