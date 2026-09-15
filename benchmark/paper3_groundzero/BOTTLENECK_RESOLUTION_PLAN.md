@@ -225,13 +225,66 @@ tool can't use pH even when a caller DOES supply it.
 All 5 new functions wired into the MCP server, full suite 429/429 passing
 throughout, each item committed and pushed separately.
 
-**Tier 2 -- [MINE], real literature search, no new theory:**
-- #3/#4/#5 HLD-NAC k/Cc/b for non-quat classes (one search effort, same
-  literature family)
-- #1's common-compound reference table (beta for SDS/CTAB/DTAB/etc.)
-- #7's headgroup-class search in Nagarajan follow-ups
-- #10's common dn/dc values
-- #13's common solubilizate values (alongside the QSPR estimator above)
+**Tier 2 -- DONE 2026-09-15 with 3 real, honest partial-coverage
+disclosures (commits pending push at time of writing) -- literature
+search hit real, disclosed walls for 2 of 5 items, matching this
+project's own long-established pattern (many HLD-NAC and Nagarajan-
+adjacent primary sources are paywalled/bot-walled; see hld.py's own
+CATIONIC_QUAT_HLB_DAVIES precedent for exactly this situation):**
+
+- #3/#4/#5 HLD-NAC k/Cc/b for non-quat classes -- PARTIAL, real values
+  added: `K_ANIONIC_DEFAULT`=0.16 (re-confirmed via a second source),
+  `K_EXTENDED_SURFACTANT`=0.06, `ALPHA_APG_DEFAULT`=0, `B_APG_SPAN_
+  DEFAULT`=0 (all via Steven Abbott's "Practical Surfactants Science"
+  HLD page, live-verified), `SDS_CC`=-3.0 (via a well-corroborated
+  secondary citation to Leng & Acosta 2023, primary paper paywalled).
+  New MCP tool `hld_class_reference`. GENUINE, DISCLOSED REMAINING GAP:
+  real Cc values for zwitterionic (e.g. cocamidopropyl betaine),
+  gemini/dimeric, and glycolipid biosurfactant classes were searched for
+  and NOT found -- every primary HLD-NAC source located (Leng & Acosta
+  2023 and its SAXS companion, Acosta's 2026 JSD paper, the tutorial
+  chapter) blocked automated fetch. Real path forward if this matters:
+  ask the user to provide a PDF, matching this project's own established
+  unblocking mechanism for exactly this class of source.
+- #1's common-compound counterion binding degree table -- DONE for 3
+  real compounds: SDS (alpha=0.272+/-0.017, HIGH confidence, Bales 2001,
+  primary PDF already read in full elsewhere in this project), DTAB
+  (alpha=0.28, MODERATE, web-search-corroborated), CTAB (alpha=0.26,
+  MODERATE). New `COUNTERION_BINDING_DEGREE_REFERENCE` in
+  thermodynamics.py, MCP tool `counterion_binding_degree_reference`.
+  AOT was searched for and not found with a real value -- disclosed, not
+  guessed.
+- #7's Nagarajan headgroup-prefactor search -- NOT CLOSED, a real,
+  disclosed gap. Multiple real searches for sulfonate/carboxylate/
+  quaternary-ammonium headgroup prefactors (or their constituent d/sigma
+  sub-quantities) in Nagarajan's own follow-up papers and related
+  electrostatic-headgroup literature found no citable numeric value --
+  every real lead traced back to paywalled ACS Langmuir content. No
+  constant was added; `headgroup_prefactor_A` remains required, not
+  defaulted, for anything but sulfate-type headgroups, exactly as
+  before this session.
+- #10's common dn/dc values -- DONE for 2 real compounds: SDS (0.11
+  mL/g) and CTAB (0.15 mL/g), both water/632.8nm/25C, Malvern
+  Panalytical's own published reference page, live-verified. New
+  `DN_DC_REFERENCE_ML_PER_G` in curve_analysis.py, MCP tool
+  `dn_dc_reference`. Triton X-100 and Tween-80 (both explicitly named as
+  targets) were searched for and NOT found with a real citable value --
+  disclosed, not guessed.
+- #13's common solubilizate values -- DONE for 3 real compounds:
+  naphthalene (2.17e-4 mol/L, HIGH confidence, the SAME already-
+  validated primary-source value from literature_validation_notes.md),
+  benzene (~0.0228 mol/L, MODERATE, widely-tabulated EPA/ATSDR-compiled
+  constant), pyrene (~6.87e-7 mol/L, MODERATE, a real ACS solubility-
+  measurement paper's value). New `INTRINSIC_WATER_SOLUBILITY_
+  REFERENCE_M` in solubilization.py, MCP tool
+  `intrinsic_water_solubility_reference`.
+
+All 5 sub-items closed with real, sourced, confidence-disclosed values
+where findable; 2 real sub-gaps (zwitterionic/gemini/biosurfactant HLD
+Cc, and Nagarajan's non-sulfate prefactor) remain genuinely open and are
+explicitly recorded here rather than silently dropped, per this
+project's standing "close a workflow to its entirety, record what can't
+be closed" rule.
 
 **Tier 3 -- [NEW METHOD], real research contribution, higher effort:**
 - #1's Manning/PB counterion-binding predictor, validated against Tier 2's

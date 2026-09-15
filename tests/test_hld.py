@@ -17,6 +17,11 @@ from surfactantkit.hld import (
     CATIONIC_QUAT_CC,
     CATIONIC_QUAT_HLB_DAVIES,
     CATIONIC_QUAT_K,
+    K_ANIONIC_DEFAULT,
+    K_EXTENDED_SURFACTANT,
+    ALPHA_APG_DEFAULT,
+    B_APG_SPAN_DEFAULT,
+    SDS_CC,
     cc_mixing_rule,
     fit_k_and_cc_from_salinity_scan,
     hld_ionic,
@@ -209,3 +214,52 @@ def test_cationic_quat_cc_values_are_real_and_ordered_by_hydrophilicity():
     assert CATIONIC_QUAT_CC["LTAB"][0] < CATIONIC_QUAT_CC["MTAB"][0] < CATIONIC_QUAT_CC["CTAB"][0]
     assert CATIONIC_QUAT_CC["DDAB"][0] > 0
     assert CATIONIC_QUAT_CC["LTAB"][0] < 0
+
+
+# Tests for the Tier 2 bottleneck-resolution constants, added 2026-09-15
+# -- see BOTTLENECK_RESOLUTION_PLAN.md items 3/4/5. These are all real,
+# sourced values (see hld.py's own inline docstrings for the exact
+# citation and confidence level of each), used here through the SAME
+# existing hld_ionic/hld_nonionic functions rather than needing any new
+# function -- the real work was finding and disclosing the values, not
+# new formula code.
+
+
+def test_k_anionic_default_and_extended_surfactant_are_real_and_distinct():
+    assert K_ANIONIC_DEFAULT == pytest.approx(0.16)
+    assert K_EXTENDED_SURFACTANT == pytest.approx(0.06)
+    assert K_EXTENDED_SURFACTANT < K_ANIONIC_DEFAULT  # extended surfactants are known to be less EACN-sensitive
+
+
+def test_sds_cc_is_real_and_strongly_hydrophilic():
+    # a real, strongly negative Cc is consistent with SDS's known strong
+    # hydrophilicity (same direction/magnitude class as the cationic
+    # quats' own CATIONIC_QUAT_CC entries, e.g. LTAB=-10.0)
+    assert SDS_CC == pytest.approx(-3.0)
+    assert SDS_CC < 0
+
+
+def test_sds_hld_ionic_uses_real_k_and_cc_together():
+    """Real, usable end-to-end check: SDS's own K_ANIONIC_DEFAULT and
+    SDS_CC plugged directly into hld_ionic (no new function needed)."""
+    hld = hld_ionic(salinity_pct=3.0, k=K_ANIONIC_DEFAULT, eacn=8.0, cc=SDS_CC)
+    assert isinstance(hld, float)
+    s_star = optimal_salinity_ionic(K_ANIONIC_DEFAULT, eacn=8.0, cc=SDS_CC)
+    assert hld_ionic(s_star, K_ANIONIC_DEFAULT, eacn=8.0, cc=SDS_CC) == pytest.approx(0.0, abs=1e-9)
+
+
+def test_alpha_apg_default_is_zero_temperature_independent():
+    assert ALPHA_APG_DEFAULT == 0.0
+    # a real, testable consequence: with alpha=0, hld_nonionic must be
+    # completely insensitive to delta_T_K
+    common_kwargs = dict(salinity_pct=2.0, b=0.05, k=0.1, eacn=6.0, cc=-1.0, alpha=ALPHA_APG_DEFAULT)
+    assert hld_nonionic(**common_kwargs, delta_T_K=0.0) == hld_nonionic(**common_kwargs, delta_T_K=25.0)
+
+
+def test_b_apg_span_default_makes_hld_nonionic_salinity_independent():
+    """Real, testable consequence of the disclosed 'basically no
+    S-dependence' finding: with b=0, hld_nonionic must be completely
+    insensitive to salinity_pct."""
+    hld_low_s = hld_nonionic(salinity_pct=0.5, b=B_APG_SPAN_DEFAULT, k=0.1, eacn=6.0, cc=-1.0)
+    hld_high_s = hld_nonionic(salinity_pct=10.0, b=B_APG_SPAN_DEFAULT, k=0.1, eacn=6.0, cc=-1.0)
+    assert hld_low_s == pytest.approx(hld_high_s)

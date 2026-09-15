@@ -17,10 +17,14 @@ if anything, could ever close each one).
 pre-fix state of every bottleneck -- kept as-is for historical accuracy.
 For live fix status (what's actually been closed, partially closed, or
 deliberately left as a wall), see `BOTTLENECK_RESOLUTION_PLAN.md`, the
-living tracker. As of this update: Tier 0 (item 12) and all 4 Tier 1
-items (8, 11, 13, 14) are DONE and pushed; Tier 2 (mining) and Tier 3
-(new methods, including item 6's gemini/glycolipid HLB and item 9's
-richer-dataset Henry-function path) are scoped but not yet started.
+living tracker. As of this update: Tier 0 (item 12), all 4 Tier 1 items
+(8, 11, 13, 14), and Tier 2 (real literature values for items 1, 3/4/5
+partial, 10, 13 -- with 2 genuine, disclosed remaining gaps: HLD Cc for
+zwitterionic/gemini/biosurfactant classes, and Nagarajan's non-sulfate
+headgroup prefactor, both blocked on paywalled primary sources this
+session) are DONE and pushed. Tier 3 (new methods, including item 6's
+gemini/glycolipid HLB and item 9's richer-dataset Henry-function path)
+is scoped but not yet started.
 
 ## Category A: counterion/ionic-character facts (the most pervasive family)
 

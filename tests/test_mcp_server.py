@@ -46,6 +46,10 @@ def test_all_expected_tools_are_registered():
         "hlb_from_groups",
         "hld_optimal_salinity",
         "hld_cationic_quat_reference",
+        "hld_class_reference",
+        "counterion_binding_degree_reference",
+        "dn_dc_reference",
+        "intrinsic_water_solubility_reference",
         "hld_fit_k_and_cc_from_salinity_scan",
         "tanford_chain_geometry",
         "critical_packing_parameter",
@@ -211,6 +215,61 @@ def test_hld_cationic_quat_reference_tool_matches_library():
 def test_hld_cationic_quat_reference_tool_rejects_unknown_surfactant():
     with pytest.raises(Exception):
         call("hld_cationic_quat_reference", {"surfactant": "SDS"})
+
+
+def test_intrinsic_water_solubility_reference_tool_matches_library():
+    out = call("intrinsic_water_solubility_reference", {"solubilizate": "Naphthalene"})
+    assert out["solubility_M"] == pytest.approx(2.17e-4)
+    assert out["confidence"] == "high"
+
+
+def test_intrinsic_water_solubility_reference_tool_rejects_unknown_solubilizate():
+    with pytest.raises(Exception):
+        call("intrinsic_water_solubility_reference", {"solubilizate": "anthracene"})
+
+
+def test_dn_dc_reference_tool_matches_library():
+    out = call("dn_dc_reference", {"surfactant": "sds"})
+    assert out["dn_dc"] == pytest.approx(0.11)
+    assert out["solvent"] == "water"
+
+
+def test_dn_dc_reference_tool_rejects_unknown_surfactant():
+    with pytest.raises(Exception):
+        call("dn_dc_reference", {"surfactant": "Triton X-100"})
+
+
+def test_counterion_binding_degree_reference_tool_matches_library():
+    out = call("counterion_binding_degree_reference", {"surfactant": "sds"})
+    assert out["alpha"] == pytest.approx(0.272)
+    assert out["beta"] == pytest.approx(0.728)
+    assert out["alpha_confidence"] == "high"
+
+    out_dtab = call("counterion_binding_degree_reference", {"surfactant": "DTAB"})
+    assert out_dtab["alpha_confidence"] == "moderate"
+
+
+def test_counterion_binding_degree_reference_tool_rejects_unknown_surfactant():
+    with pytest.raises(Exception):
+        call("counterion_binding_degree_reference", {"surfactant": "AOT"})
+
+
+def test_hld_class_reference_tool_matches_library():
+    out_anionic = call("hld_class_reference", {"surfactant_class": "anionic_sulfate_sulfonate"})
+    assert out_anionic["k_default"] == pytest.approx(0.16)
+    assert out_anionic["sds_cc_reference"] == pytest.approx(-3.0)
+
+    out_extended = call("hld_class_reference", {"surfactant_class": "Extended_Surfactant"})  # case-insensitive
+    assert out_extended["k_default"] == pytest.approx(0.06)
+
+    out_apg = call("hld_class_reference", {"surfactant_class": "apg_nonionic"})
+    assert out_apg["alpha_default"] == 0.0
+    assert out_apg["b_default"] == 0.0
+
+
+def test_hld_class_reference_tool_rejects_unknown_class():
+    with pytest.raises(Exception):
+        call("hld_class_reference", {"surfactant_class": "zwitterionic"})
 
 
 def test_hld_optimal_salinity_tool_round_trips_with_library():

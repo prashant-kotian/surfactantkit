@@ -18,6 +18,7 @@ from surfactantkit.curve_analysis import (
     estimate_partial_specific_volume_from_tail_and_headgroup,
     cmc_from_conductivity_curve,
     cmc_from_surface_tension_curve,
+    DN_DC_REFERENCE_ML_PER_G,
 )
 from surfactantkit.cpp import tanford_tail_volume
 
@@ -291,6 +292,34 @@ def test_ssfq_rejects_bad_inputs():
         aggregation_number_from_quenching_curve([0.001, 0.002], [900.0, 800.0], 0.0, 40.0, 8.0)  # I0<=0
     with pytest.raises(ValueError):
         aggregation_number_from_quenching_curve([0.001, 0.002], [900.0, 800.0], 1000.0, 5.0, 8.0)  # Ct<=cmc
+
+
+# --- DN_DC_REFERENCE_ML_PER_G (Tier 2 bottleneck fix #10, 2026-09-15 --
+# see BOTTLENECK_RESOLUTION_PLAN.md) -------------------------------------
+
+
+def test_dn_dc_reference_values_are_real_and_usable_directly():
+    sds = DN_DC_REFERENCE_ML_PER_G["SDS"]
+    assert sds["dn_dc"] == pytest.approx(0.11)
+    assert sds["solvent"] == "water"
+    ctab = DN_DC_REFERENCE_ML_PER_G["CTAB"]
+    assert ctab["dn_dc"] == pytest.approx(0.15)
+
+
+def test_dn_dc_reference_sds_usable_end_to_end_in_sls_function():
+    """Real, usable end-to-end check: the reference table's own SDS
+    dn/dc plugged directly into aggregation_number_from_sls_debye_plot
+    (no new function needed -- the real work was sourcing the value)."""
+    dn_dc = DN_DC_REFERENCE_ML_PER_G["SDS"]["dn_dc"]
+    n_solvent, wavelength_nm = 1.333, 632.8
+    k = 4.0 * math.pi ** 2 * n_solvent ** 2 * dn_dc ** 2 / (AVOGADRO_NUMBER * (wavelength_nm * 1e-7) ** 4)
+    true_mw = 15000.0
+    concentrations = [0.002, 0.005, 0.008, 0.011]
+    rayleigh_ratios = [k * c / (1.0 / true_mw + 2.0 * 1e-4 * c) for c in concentrations]
+    result = aggregation_number_from_sls_debye_plot(
+        concentrations, rayleigh_ratios, dn_dc, wavelength_nm, 288.38, refractive_index_solvent=n_solvent
+    )
+    assert result.micelle_molar_mass_g_per_mol == pytest.approx(true_mw, rel=1e-3)
 
 
 # --- aggregation_number_from_sls_debye_plot ---------------------------------

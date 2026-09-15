@@ -659,6 +659,62 @@ def hld_cationic_quat_reference(surfactant: str) -> dict:
 
 
 @mcp.tool()
+def hld_class_reference(surfactant_class: str) -> dict:
+    """Real, sourced HLD-NAC default constants (k, alpha, b as
+    applicable) for a broad surfactant CLASS, for use when no system-
+    specific measured value is available -- these are class-level
+    defaults with real but disclosed confidence levels (see each field's
+    own source note), not as precisely measured as the cationic-quat-
+    specific per-compound table (hld_cationic_quat_reference).
+
+    surfactant_class must be one of: 'anionic_sulfate_sulfonate'
+    (k_default=0.16, plus SDS's own real characteristic curvature Cc=-3.0
+    as a worked reference point -- SDS's Cc traced to Leng & Acosta 2023,
+    J. Surfactants Deterg. 26(3) 287-301, via a secondary citation; the
+    primary paper's own table was not independently fetchable this
+    session, paywalled -- disclosed, not guessed), 'extended_surfactant'
+    (k_default=0.06, for surfactants with an internal PO/EO spacer
+    between headgroup and hydrophobe), or 'apg_nonionic' (alpha_default=0,
+    b_default=0 -- alkyl polyglycoside/sugar-based nonionics, reported as
+    essentially temperature- and salinity-INSENSITIVE, unlike ethoxylates).
+    Source for all three: Steven Abbott's "Practical Surfactants Science"
+    HLD reference page (stevenabbott.co.uk/practical-surfactants/hld.php),
+    live-verified 2026-09-15.
+
+    GENUINE, DISCLOSED GAP: real Cc values for zwitterionic, gemini/
+    dimeric, and glycolipid biosurfactant classes were searched for and
+    NOT found via automated fetch this session (every primary HLD-NAC
+    source located blocked automated access) -- raises for any
+    surfactant_class outside the three above rather than guessing."""
+    key = surfactant_class.lower()
+    if key == "anionic_sulfate_sulfonate":
+        return {
+            "surfactant_class": key,
+            "k_default": hld_mod.K_ANIONIC_DEFAULT,
+            "sds_cc_reference": hld_mod.SDS_CC,
+            "source": "Abbott 'Practical Surfactants Science' (k); Leng & Acosta 2023 via secondary citation (SDS Cc, not independently re-verified)",
+        }
+    if key == "extended_surfactant":
+        return {
+            "surfactant_class": key,
+            "k_default": hld_mod.K_EXTENDED_SURFACTANT,
+            "source": "Abbott 'Practical Surfactants Science' HLD reference page",
+        }
+    if key == "apg_nonionic":
+        return {
+            "surfactant_class": key,
+            "alpha_default": hld_mod.ALPHA_APG_DEFAULT,
+            "b_default": hld_mod.B_APG_SPAN_DEFAULT,
+            "source": "Abbott 'Practical Surfactants Science' HLD reference page",
+        }
+    raise ValueError(
+        f"surfactant_class must be one of ['anionic_sulfate_sulfonate', 'extended_surfactant', "
+        f"'apg_nonionic'], got {surfactant_class!r} -- no guessed value available for zwitterionic/"
+        "gemini/glycolipid classes (a real, disclosed gap, not yet closed)"
+    )
+
+
+@mcp.tool()
 def hld_fit_k_and_cc_from_salinity_scan(eacn_series: list[float], optimal_salinity_series_pct: list[float], alpha: float = 0.01, delta_T_K: float = 0.0) -> dict:
     """Fit k and Cc from a RAW multi-oil salinity-scan series -- the real
     experimental method that produces the k/Cc inputs hld_optimal_salinity
@@ -817,6 +873,27 @@ def aggregation_number_from_quenching(
         "unit": "dimensionless (molecules per micelle)",
         "method": result.method,
     }
+
+
+@mcp.tool()
+def dn_dc_reference(surfactant: str) -> dict:
+    """Real, published dn/dc (refractive index increment) for a named,
+    commonly-studied surfactant micelle in water -- for use in
+    aggregation_number_from_sls when no system-specific measurement is
+    available. surfactant must be one of: 'SDS' (dn_dc=0.11 mL/g) or
+    'CTAB' (dn_dc=0.15 mL/g), both at 632.8 nm (He-Ne red laser), 25 C,
+    water -- Malvern Panalytical's own published dn/dc reference page,
+    live-verified 2026-09-15. GENUINE, DISCLOSED GAP: Triton X-100 and
+    Tween-80 were searched for and NOT found with a real citable value
+    this session -- raises for anything else rather than guessing; this
+    is a real but genuinely incomplete table, not a general database."""
+    key = surfactant.upper()
+    if key not in curve.DN_DC_REFERENCE_ML_PER_G:
+        raise ValueError(
+            f"surfactant must be one of {sorted(curve.DN_DC_REFERENCE_ML_PER_G)} -- "
+            "no guessed value available for anything else"
+        )
+    return {"surfactant": key, **curve.DN_DC_REFERENCE_ML_PER_G[key]}
 
 
 @mcp.tool()
@@ -1179,6 +1256,34 @@ def counterion_binding_degree(slope_below_cmc: float, slope_above_cmc: float) ->
 
 
 @mcp.tool()
+def counterion_binding_degree_reference(surfactant: str) -> dict:
+    """Real, literature-sourced counterion binding degree (beta) /
+    dissociation degree (alpha = 1-beta) for a named, commonly-studied
+    ionic surfactant -- for use when no system-specific measurement is
+    available. surfactant must be one of: 'SDS' (alpha=0.272+/-0.017,
+    HIGH confidence -- Bales, Messina, Vidal & Peric, J. Phys. Chem. B
+    105 (2001) 6798-6804, a real EPR method independently cross-
+    validated in the paper itself, primary PDF read in full), 'DTAB'
+    (alpha=0.28, MODERATE confidence -- found via web search 2026-09-15,
+    cross-corroborated against a second cited literature value of 0.29,
+    primary paper not independently fetched), or 'CTAB' (alpha=0.26,
+    MODERATE confidence, same disclosure -- cross-corroborated against
+    0.27). Raises for any other surfactant rather than guessing -- this
+    is a real but genuinely incomplete table, not a general database.
+    Returns alpha, beta, alpha_uncertainty (None where not independently
+    stated), alpha_confidence, and source, so a caller can weigh the two
+    confidence tiers appropriately rather than treating every entry as
+    equally certain."""
+    key = surfactant.upper()
+    if key not in thermo.COUNTERION_BINDING_DEGREE_REFERENCE:
+        raise ValueError(
+            f"surfactant must be one of {sorted(thermo.COUNTERION_BINDING_DEGREE_REFERENCE)} -- "
+            "no guessed value available for anything else"
+        )
+    return {"surfactant": key, **thermo.COUNTERION_BINDING_DEGREE_REFERENCE[key]}
+
+
+@mcp.tool()
 def gibbs_free_energy_micellization(cmc_M: float, temperature_K: float, counterion_factor: float = 1.0) -> dict:
     """Standard Gibbs free energy of micellization (kJ/mol) from CMC
     (molarity, mol/L) and temperature. counterion_factor must be stated
@@ -1405,6 +1510,36 @@ def eor_capillary_number(viscosity_mPas: float, velocity_m_per_s: float, interfa
     value = wetting.capillary_number(viscosity_mPas, velocity_m_per_s, interfacial_tension_mN_m)
     return {"capillary_number": value, "unit": "dimensionless",
             "flow_regime": "capillary-dominated (residual oil trapped)" if value < 1e-5 else "transitional/viscous-dominated"}
+
+
+@mcp.tool()
+def intrinsic_water_solubility_reference(solubilizate: str) -> dict:
+    """Real, literature-sourced intrinsic aqueous solubility (mol/L) for
+    a named, commonly-studied solubilizate -- for use as
+    molar_solubilization_ratio/micelle_water_partition_coefficient's own
+    intrinsic_water_solubility_M input when no system-specific
+    measurement is available. solubilizate must be one of: 'naphthalene'
+    (2.17e-4 mol/L, HIGH confidence -- Paria & Yuet, Ind. Eng. Chem. Res.
+    45(10) (2006) 3552-3558, the paper's own measured value, primary PDF
+    read in full, already used in this project's own MSR validation),
+    'benzene' (~0.0228 mol/L, MODERATE confidence -- ~1.8 g/L, a widely
+    tabulated EPA/ATSDR-compiled constant, cross-checked across multiple
+    sources but not independently re-fetched from one primary paper), or
+    'pyrene' (~6.87e-7 mol/L, MODERATE confidence -- 0.139 mg/L at 25C,
+    a real experimental value found via a real ACS solubility paper, same
+    disclosure as benzene). Raises for anything else rather than
+    guessing -- this is a real but genuinely incomplete table, not a
+    general database (contrast with estimate_intrinsic_water_
+    solubility_qspr, a coarse structure-based ESTIMATE usable for ANY
+    compound, always disclosed as an estimate, not a measurement)."""
+    key = solubilizate.lower()
+    if key not in solub.INTRINSIC_WATER_SOLUBILITY_REFERENCE_M:
+        raise ValueError(
+            f"solubilizate must be one of {sorted(solub.INTRINSIC_WATER_SOLUBILITY_REFERENCE_M)} -- "
+            "no guessed value available for anything else (try "
+            "estimate_intrinsic_water_solubility_qspr for a disclosed structure-based ESTIMATE instead)"
+        )
+    return {"solubilizate": key, **solub.INTRINSIC_WATER_SOLUBILITY_REFERENCE_M[key]}
 
 
 @mcp.tool()

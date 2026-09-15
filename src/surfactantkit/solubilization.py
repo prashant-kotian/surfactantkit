@@ -31,6 +31,43 @@ from dataclasses import dataclass, field
 
 WATER_MOLARITY_M = 55.5  # mol/L, same dilute-aqueous-solution convention as thermodynamics.py
 
+# Tier 2 bottleneck-resolution addition, 2026-09-15 (see benchmark/
+# paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md item 13): real
+# intrinsic aqueous solubility values for common solubilizates used in
+# real micellar-solubilization studies, closing this bottleneck for
+# compounds molar_solubilization_ratio/micelle_water_partition_
+# coefficient's own intrinsic_water_solubility_M input would otherwise
+# need externally supplied for every use.
+#
+# naphthalene: 2.17e-4 mol/L (27.8 mg/L), the SAME real, already-used
+# value from this project's own literature_validation_notes.md Round 5
+# (Paria & Yuet, Ind. Eng. Chem. Res. 45(10) (2006) 3552-3558, the
+# paper's OWN measured value, stated there as consistent with an
+# independent literature value of 2.44e-4 mol/L) -- HIGH confidence, a
+# real primary-source value already validated end-to-end against this
+# project's own molar_solubilization_ratio function.
+#
+# benzene and pyrene: found via real web search 2026-09-15, both cross-
+# checked against multiple independent citing sources in the same
+# search (benzene ~1.8 g/L / ~1780 mg/L at 25C, a very widely tabulated
+# constant, e.g. EPA/ATSDR-compiled; pyrene 0.139 mg/L at 25C, a
+# specific experimental value found via a real ACS solubility-
+# measurement paper's own reported table) -- MODERATE confidence: real,
+# cross-checked search results, but neither primary source's own table
+# was independently re-fetched and read in full this session, unlike
+# naphthalene's already-established primary-source status.
+INTRINSIC_WATER_SOLUBILITY_REFERENCE_M = {
+    "naphthalene": {"solubility_M": 2.17e-4, "mw_g_per_mol": 128.17,
+                     "source": "Paria & Yuet 2006, Ind. Eng. Chem. Res. 45(10) 3552-3558 (primary PDF read in full, already used in this project's own molar_solubilization_ratio validation)",
+                     "confidence": "high"},
+    "benzene": {"solubility_M": 1780e-3 / 78.11, "mw_g_per_mol": 78.11,
+                "source": "web search 2026-09-15, cross-corroborated across multiple citing sources (~1.8 g/L, EPA/ATSDR-compiled); primary source not independently fetched",
+                "confidence": "moderate"},
+    "pyrene": {"solubility_M": 0.139e-3 / 202.25, "mw_g_per_mol": 202.25,
+               "source": "web search 2026-09-15, real experimental value (0.139 mg/L at 25C) via a real ACS solubility-measurement paper; primary table not independently fetched",
+               "confidence": "moderate"},
+}
+
 
 @dataclass
 class QsprSolubilityEstimate:

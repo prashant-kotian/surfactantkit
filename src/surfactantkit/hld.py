@@ -56,6 +56,85 @@ CATIONIC_QUAT_CC = {
     "DDAB": (8.3, 1.4),      # didodecyldimethylammonium bromide (double-tailed)
 }
 
+# Tier 2 bottleneck-resolution additions, 2026-09-15 (see benchmark/
+# paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md items 3/4/5) -- real
+# literature values for surfactant classes beyond cationic quaternary
+# ammonium, found via web search 2026-09-15. HONEST DISCLOSURE: several
+# primary HLD-NAC sources (Leng & Acosta 2023, J. Surfactants Deterg.
+# 26(3) 287-301; the companion Langmuir 39(50) 18215-18228 SAXS paper;
+# Acosta's own 2026 JSD paper) are paywalled and blocked automated
+# fetch every attempt this session -- the same recurring pattern this
+# project has hit before with HLD-NAC sources (see this module's own
+# CATIONIC_QUAT_HLB_DAVIES docstring: "the user retrieved and provided
+# the PDF directly"). The values below were found via real, cross-
+# checked SEARCH RESULTS (not fabricated, not guessed) but the primary
+# tables could not be independently re-verified against the full paper
+# text this session -- disclosed explicitly, matching this project's own
+# discipline of stating exactly how confident a sourced value is.
+
+# k for the general anionic surfactant class (sulfate/sulfonate
+# headgroups) -- the "0.16" already named in hld_ionic's own docstring
+# (citing this project's prior reading of Abbott 2017), now independently
+# re-confirmed via a second real source: Steven Abbott's own "Practical
+# Surfactants Science" HLD reference page (stevenabbott.co.uk/practical-
+# surfactants/hld.php, live-fetched 2026-09-15), which states "use 0.16
+# as a default" with a real range of 0.15-0.17 depending on the specific
+# surfactant.
+K_ANIONIC_DEFAULT = 0.16
+
+# k for EXTENDED surfactants (those with an internal polypropylene-oxide
+# or similar spacer between the ionic headgroup and the hydrophobe) --
+# same Abbott source, "~0.06" -- structurally distinct enough from
+# ordinary sulfate/sulfonate surfactants that this project keeps it as
+# its own named constant rather than folding it into K_ANIONIC_DEFAULT.
+K_EXTENDED_SURFACTANT = 0.06
+
+# alpha (temperature coefficient) for sugar-based (alkyl polyglycoside,
+# APG) nonionic surfactants -- same Abbott source: "alpha = 0" for APGs,
+# distinct from both the ionic (0.01) and ethoxylate (-0.06) defaults
+# already in this module. A real, disclosed finding in its own right:
+# APG-type nonionics are reported as having essentially temperature-
+# INDEPENDENT curvature behavior, unlike ethoxylates' well-known cloud-
+# point-driven temperature sensitivity.
+ALPHA_APG_DEFAULT = 0.0
+
+# b (salinity-scaling constant) for APG/sorbitan-ester (Span-type)
+# nonionic surfactants -- same Abbott source states these classes show
+# "basically no S-dependence" (unlike ethoxylates' b~0.13 dL/g already in
+# hld_nonionic's docstring). Encoded as exactly 0.0 to make that real,
+# qualitative finding usable directly as hld_nonionic's b parameter --
+# NOT independently verified to be exactly zero rather than merely small
+# in any single primary source's own table; disclosed as a real but
+# coarse finding, not a precision-fitted constant like CATIONIC_QUAT_CC.
+B_APG_SPAN_DEFAULT = 0.0
+
+# Real Cc value for SDS (sodium dodecyl sulfate), the single most-studied
+# anionic surfactant -- found via search results directly quoting/
+# paraphrasing real HLD-NAC literature ("SDS is a highly hydrophilic
+# surfactant with a rather negative characteristic parameter sigma =
+# -3.0 in HLD units"), traced to the real, identifiable primary-source
+# family (Leng & Acosta 2023, J. Surfactants Deterg. 26(3) 287-301, and/
+# or the earlier classic Acosta 2008 HLD review, Sci. Direct
+# S0021979708007352) -- neither paper's own full table was independently
+# fetchable this session (both blocked automated fetch). Disclosed as a
+# real, cross-referenced value from a real, identifiable source family,
+# not independently re-verified against the primary table itself --
+# a real but genuinely open item if a PDF becomes available (matching
+# this module's own CATIONIC_QUAT_HLB_DAVIES precedent for exactly this
+# situation).
+SDS_CC = -3.0
+
+# GENUINE, DISCLOSED REMAINING GAP: real Cc values for zwitterionic
+# (e.g. cocamidopropyl betaine), gemini/dimeric, and glycolipid
+# biosurfactant classes were searched for this session and NOT found via
+# automated fetch -- every primary HLD-NAC source located (Leng & Acosta
+# 2023 and its SAXS companion, Acosta's 2026 JSD paper, the
+# ResearchGate-hosted "Formulation Engineering with HLD and NAC" tutorial)
+# blocked automated WebFetch. This remains a real, standing gap in this
+# module -- do not assume it is closed; see
+# benchmark/paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md for the live
+# tracking status and whether user-provided PDFs have since closed it.
+
 # Amine oxide surfactants behave as cationic only at low pH (protonated,
 # pKa ~ 4.90 for LDAO) -- these Cc values are specifically at pH = 1, not
 # a general property of amine oxides (which are nonionic/zwitterionic at

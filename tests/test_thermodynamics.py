@@ -12,6 +12,7 @@ from surfactantkit.thermodynamics import (
     vant_hoff_enthalpy,
     vant_hoff_multi_point_fit,
     entropy_micellization,
+    COUNTERION_BINDING_DEGREE_REFERENCE,
 )
 
 R_GAS = 8.314462618
@@ -116,6 +117,44 @@ def test_gibbs_free_energy_sds_with_bales_2001_counterion_factor():
     dg = gibbs_free_energy_micellization(x_cmc, 298.15, counterion_factor_sds)
     assert dg < 0.0  # spontaneous, as it must be
     assert dg == pytest.approx(-27.77, abs=0.05)
+
+
+# Tests for COUNTERION_BINDING_DEGREE_REFERENCE, added 2026-09-15 as
+# part of the Tier 2 bottleneck-resolution work (real [MINE] path for
+# item 1 -- see BOTTLENECK_RESOLUTION_PLAN.md).
+
+
+def test_counterion_reference_alpha_beta_consistency_for_all_entries():
+    for name, entry in COUNTERION_BINDING_DEGREE_REFERENCE.items():
+        assert entry["alpha"] + entry["beta"] == pytest.approx(1.0), name
+        assert 0.0 < entry["alpha"] < 1.0, name
+        assert entry["alpha_confidence"] in ("high", "moderate", "low"), name
+
+
+def test_counterion_reference_sds_matches_bales_2001_exactly():
+    entry = COUNTERION_BINDING_DEGREE_REFERENCE["SDS"]
+    assert entry["alpha"] == pytest.approx(0.272)
+    assert entry["alpha_uncertainty"] == pytest.approx(0.017)
+    assert entry["alpha_confidence"] == "high"
+
+
+def test_counterion_reference_sds_usable_directly_in_gibbs_free_energy():
+    """Real, usable end-to-end check: the reference table's own SDS
+    entry plugged directly into gibbs_free_energy_micellization
+    reproduces the exact same result as the already-verified hand-
+    computed worked example above."""
+    entry = COUNTERION_BINDING_DEGREE_REFERENCE["SDS"]
+    counterion_factor = 1.0 + entry["alpha"]
+    x_cmc = cmc_to_mole_fraction(0.0083)
+    dg = gibbs_free_energy_micellization(x_cmc, 298.15, counterion_factor)
+    assert dg == pytest.approx(-27.77, abs=0.05)
+
+
+def test_counterion_reference_dtab_and_ctab_are_present_with_moderate_confidence():
+    for name in ("DTAB", "CTAB"):
+        entry = COUNTERION_BINDING_DEGREE_REFERENCE[name]
+        assert entry["alpha_confidence"] == "moderate"
+        assert 0.2 < entry["alpha"] < 0.35  # real, physically sensible range for these compounds
 
 
 def test_gibbs_free_energy_nonionic_vs_ionic_factor():

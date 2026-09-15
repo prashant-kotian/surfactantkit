@@ -526,6 +526,32 @@ def aggregation_number_from_quenching_curve(
 
 AVOGADRO_NUMBER = 6.02214076e23  # /mol, exact SI 2019
 
+# Tier 2 bottleneck-resolution addition, 2026-09-15 (see benchmark/
+# paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md item 10): real,
+# published dn/dc (refractive index increment) values for common
+# surfactant micelles in water, closing this bottleneck for compounds
+# where a real measured value already exists -- for
+# aggregation_number_from_sls_debye_plot's own dn_dc_mL_per_g input.
+# Source: Malvern Panalytical, "Refractive index increment dn/dc
+# values" (malvernpanalytical.com/en/learn/knowledge-center/insights/
+# refractive-index-increment-dndc-values), live-fetched 2026-09-15,
+# 632.8 nm (He-Ne red laser), 25 C, water as solvent -- itself drawing
+# on the standard compiled reference (Theisen, Johann, Deacon & Harding,
+# "Refractive Increment Data-Book for Polymer and Biomolecular
+# Scientists," Nottingham University Press, 2000, ISBN 1-897676-29-8).
+# HONEST DISCLOSURE: only these 2 entries were found via automated
+# search this session -- Triton X-100 and Tween-80 (both explicitly
+# named as targets in the resolution plan) were searched for and NOT
+# found with a real, citable numeric value; this table is genuinely
+# incomplete, not a general database, and raises for anything else
+# rather than guessing.
+DN_DC_REFERENCE_ML_PER_G = {
+    "SDS": {"dn_dc": 0.11, "solvent": "water", "wavelength_nm": 632.8, "temperature_C": 25.0,
+            "source": "Malvern Panalytical dn/dc reference page, live-fetched 2026-09-15"},
+    "CTAB": {"dn_dc": 0.15, "solvent": "water", "wavelength_nm": 632.8, "temperature_C": 25.0,
+             "source": "Malvern Panalytical dn/dc reference page, live-fetched 2026-09-15"},
+}
+
 
 @dataclass
 class AggregationNumberSLSResult:

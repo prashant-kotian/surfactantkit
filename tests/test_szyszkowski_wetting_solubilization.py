@@ -20,6 +20,7 @@ from surfactantkit.solubilization import (
     molar_solubilization_ratio,
     micelle_water_partition_coefficient,
     estimate_intrinsic_water_solubility_qspr,
+    INTRINSIC_WATER_SOLUBILITY_REFERENCE_M,
 )
 
 
@@ -403,3 +404,58 @@ def test_qspr_solubility_highly_polar_small_molecule_more_soluble_than_hydrocarb
 def test_qspr_solubility_rejects_unparseable_smiles():
     with pytest.raises(ValueError):
         estimate_intrinsic_water_solubility_qspr("not a smiles $$$")
+
+
+# --- INTRINSIC_WATER_SOLUBILITY_REFERENCE_M (Tier 2 bottleneck fix #13,
+# 2026-09-15 -- see BOTTLENECK_RESOLUTION_PLAN.md) -----------------------
+
+
+def test_intrinsic_water_solubility_reference_naphthalene_matches_existing_project_value():
+    entry = INTRINSIC_WATER_SOLUBILITY_REFERENCE_M["naphthalene"]
+    assert entry["solubility_M"] == pytest.approx(2.17e-4)
+    assert entry["confidence"] == "high"
+
+
+def test_intrinsic_water_solubility_reference_all_entries_consistent_with_mw():
+    for name, entry in INTRINSIC_WATER_SOLUBILITY_REFERENCE_M.items():
+        solubility_mg_per_L = entry["solubility_M"] * entry["mw_g_per_mol"] * 1000.0
+        assert solubility_mg_per_L > 0, name
+        assert entry["confidence"] in ("high", "moderate", "low"), name
+
+
+def test_intrinsic_water_solubility_reference_benzene_and_pyrene_real_and_ordered():
+    # a real, physically expected ordering: benzene (small, only mildly
+    # hydrophobic) is far MORE soluble than pyrene (large, strongly
+    # hydrophobic PAH) -- a real sanity check on the two moderate-
+    # confidence entries, not just a formula check
+    benzene = INTRINSIC_WATER_SOLUBILITY_REFERENCE_M["benzene"]
+    pyrene = INTRINSIC_WATER_SOLUBILITY_REFERENCE_M["pyrene"]
+    assert benzene["solubility_M"] > pyrene["solubility_M"]
+    assert benzene["confidence"] == "moderate"
+    assert pyrene["confidence"] == "moderate"
+
+
+def test_intrinsic_water_solubility_reference_usable_directly_in_msr():
+    """Real, usable end-to-end check: the reference table's own
+    naphthalene value plugged directly into molar_solubilization_ratio
+    reproduces this project's own already-verified Paria & Yuet 2006
+    worked example (literature_validation_notes.md Round 5)."""
+    intrinsic = INTRINSIC_WATER_SOLUBILITY_REFERENCE_M["naphthalene"]["solubility_M"]
+    msr = molar_solubilization_ratio(
+        total_solubilized_M=2.517e-3, intrinsic_water_solubility_M=intrinsic,
+        surfactant_concentration_M=0.040, cmc_M=0.0085,
+    )
+    assert msr == pytest.approx(0.0730, abs=1e-3)
+
+
+def test_qspr_estimate_vs_real_measured_naphthalene_value():
+    """A genuinely interesting cross-check between two Tier 1/Tier 2
+    additions: how close does the coarse ESOL QSPR ESTIMATE (Tier 1)
+    land to the real MEASURED value (Tier 2, Paria & Yuet 2006) for the
+    same real compound? Not asserted tight (ESOL's own real published
+    error is ~0.6-1 log unit) -- this is a real, disclosed comparison,
+    not a claim the estimate should be trusted as a substitute."""
+    qspr = estimate_intrinsic_water_solubility_qspr("c1ccc2ccccc2c1")  # naphthalene
+    real = INTRINSIC_WATER_SOLUBILITY_REFERENCE_M["naphthalene"]["solubility_M"]
+    log_diff = abs(qspr.log_s_mol_per_L - math.log10(real))
+    assert log_diff < 2.0  # sanity bound only -- not a precision claim

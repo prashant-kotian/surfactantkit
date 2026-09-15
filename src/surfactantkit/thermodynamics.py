@@ -49,6 +49,47 @@ def counterion_binding_degree(slope_below_cmc: float, slope_above_cmc: float) ->
     return 1.0 - (slope_above_cmc / slope_below_cmc)
 
 
+# Tier 2 bottleneck-resolution addition, 2026-09-15 (see benchmark/
+# paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md item 1): a real
+# reference table of counterion binding degree (beta) / dissociation
+# degree (alpha = 1-beta) for the most-studied ionic surfactants,
+# closing this bottleneck for compounds where a real measured value
+# already exists in the literature. Different entries carry genuinely
+# different confidence levels, disclosed per entry rather than presented
+# as uniformly precise:
+#
+# SDS: alpha=0.272 +/- 0.017 (beta=0.728), Bales, Messina, Vidal & Peric,
+# J. Phys. Chem. B 105 (2001) 6798-6804 -- the HIGHEST-confidence entry
+# here: a real, novel EPR method, independently cross-validated in the
+# paper itself against multiple other literature techniques, and the
+# exact PDF was read in full by this project (provided by the user
+# 2026-09-11, already used elsewhere -- see gibbs_free_energy_
+# micellization's own docstring).
+#
+# DTAB and CTAB: found via real, cross-corroborated web search results
+# this session (2026-09-15) -- each value independently agreed with a
+# SECOND, separately-cited literature value in the same search result
+# (DTAB: 0.28, cross-checked against a cited 0.29; CTAB: 0.26, cross-
+# checked against a cited 0.27), both at 298.15 K via the same slope-
+# ratio conductivity method this module's own counterion_binding_degree
+# implements. The primary papers themselves were not independently
+# fetched this session (search-result-level corroboration only, NOT the
+# same standard as SDS's directly-read primary PDF) -- disclosed
+# explicitly via the per-entry alpha_confidence field, not silently
+# presented as equally certain.
+COUNTERION_BINDING_DEGREE_REFERENCE = {
+    "SDS": {"alpha": 0.272, "alpha_uncertainty": 0.017, "beta": 0.728,
+            "source": "Bales, Messina, Vidal & Peric, J. Phys. Chem. B 105 (2001) 6798-6804 (EPR method, primary PDF read in full)",
+            "alpha_confidence": "high"},
+    "DTAB": {"alpha": 0.28, "alpha_uncertainty": None, "beta": 0.72,
+             "source": "web search 2026-09-15, cross-corroborated against a second cited literature value (0.29); primary paper not independently fetched",
+             "alpha_confidence": "moderate"},
+    "CTAB": {"alpha": 0.26, "alpha_uncertainty": None, "beta": 0.74,
+             "source": "web search 2026-09-15, cross-corroborated against a second cited literature value (0.27); primary paper not independently fetched",
+             "alpha_confidence": "moderate"},
+}
+
+
 def gibbs_free_energy_micellization(cmc_mole_fraction: float, temperature_K: float, counterion_factor: float = 1.0) -> float:
     """Standard Gibbs free energy of micellization, kJ/mol:
     deltaG_mic = counterion_factor * R * T * ln(X_cmc).
