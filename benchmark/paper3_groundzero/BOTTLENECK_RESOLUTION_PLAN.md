@@ -226,9 +226,9 @@ All 5 new functions wired into the MCP server, full suite 429/429 passing
 throughout, each item committed and pushed separately.
 
 **Tier 2 -- DONE 2026-09-15 with 3 real, honest partial-coverage
-disclosures (commits pending push at time of writing) -- literature
-search hit real, disclosed walls for 2 of 5 items, matching this
-project's own long-established pattern (many HLD-NAC and Nagarajan-
+disclosures (commit `5f8e20c`) -- literature search hit real, disclosed
+walls for 2 of 5 items, matching this project's own long-established
+pattern (many HLD-NAC and Nagarajan-
 adjacent primary sources are paywalled/bot-walled; see hld.py's own
 CATIONIC_QUAT_HLB_DAVIES precedent for exactly this situation):**
 
