@@ -305,6 +305,27 @@ def classify_surfactant_charge_type_at_ph(
                      "was recorded -- cannot compute a pKaH-based resolution."],
         )
     amine_class = amine_names[0]  # the detected free-amine substitution class
+    multi_amine_caveat: list[str] = []
+    if len(amine_names) > 1:
+        # A real, honest completeness gap, disclosed rather than silently
+        # resolved: the base classifier's substructure match only reports
+        # WHICH amine classes are present, not how many separate nitrogen
+        # atoms of each -- a real polyamine surfactant can genuinely carry
+        # more than one distinct amine class (e.g. one primary + one
+        # tertiary nitrogen), each with its own pKaH and its own real
+        # contribution to the molecule's net charge state at a given pH.
+        # This function resolves using only the FIRST-listed class below
+        # and does not attempt a combined/summed multi-site answer (that
+        # would require per-site protonation states, not a single
+        # charge_type label) -- lowered confidence and an explicit
+        # caveat flag this rather than silently picking one site.
+        multi_amine_caveat.append(
+            f"Multiple distinct amine classes were detected ({amine_names}), not just one -- "
+            f"this resolution uses only the first-listed class ('{amine_class}') and its own "
+            "pKaH range/override. A real polyamine surfactant can have each site at a genuinely "
+            "different protonation state at the same pH; treat this result as characterizing "
+            "only that one site, not a verified net-charge answer for the whole molecule."
+        )
 
     if amine_pka_override is not None:
         pka_low = pka_high = amine_pka_override
@@ -322,7 +343,7 @@ def classify_surfactant_charge_type_at_ph(
     is_anionic_too = len(base.anionic_groups_found) > 0
     mostly_protonated = frac_low >= 0.7
     mostly_deprotonated = frac_high <= 0.3
-    caveats = [f"Amine class: {amine_class}. pKaH source: {pka_source}."]
+    caveats = [f"Amine class: {amine_class}. pKaH source: {pka_source}."] + multi_amine_caveat
 
     if not (mostly_protonated or mostly_deprotonated):
         return PHConditionalChargeResult(
@@ -343,10 +364,13 @@ def classify_surfactant_charge_type_at_ph(
         caveats.append(f"At pH={ph}, computed protonation fraction {frac_low:.2f}-{frac_high:.2f} "
                         "(mostly deprotonated/neutral amine).")
 
+    base_confidence = "moderate" if amine_pka_override is None else "high"
+    final_confidence = "low" if multi_amine_caveat else base_confidence
+
     return PHConditionalChargeResult(
         smiles=smiles, ph=ph, charge_type_at_ph=resolved,
         amine_class=amine_class, fraction_protonated_low=frac_low, fraction_protonated_high=frac_high,
-        pka_source=pka_source, confidence="moderate" if amine_pka_override is None else "high",
+        pka_source=pka_source, confidence=final_confidence,
         caveats=caveats,
     )
 

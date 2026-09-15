@@ -133,6 +133,20 @@ def test_ph_conditional_delegates_for_pH_independent_charge_type():
     assert r.amine_class is None
 
 
+def test_ph_conditional_multiple_amine_classes_disclosed_not_silently_picked():
+    """Real completeness gap found and fixed 2026-09-15 during a Tier 1
+    review: a molecule with more than one distinct free-amine class (here,
+    DMAPA, 3-dimethylaminopropylamine, CAS 109-55-7 -- a real industrial
+    amine, precursor to cocamidopropyl betaine synthesis) must not have
+    this function silently resolve using only the first-listed class
+    without saying so."""
+    dmapa = "NCCCN(C)C"  # primary amine one end, tertiary amine the other
+    r = classify_surfactant_charge_type_at_ph(dmapa, ph=4.0)
+    assert len(r.caveats) >= 1
+    assert any("Multiple distinct amine classes" in c for c in r.caveats)
+    assert r.confidence == "low"
+
+
 def test_ph_conditional_rejects_bad_ph():
     with pytest.raises(ValueError):
         classify_surfactant_charge_type_at_ph("CCCCCCCCCCCCN", ph=-1.0)

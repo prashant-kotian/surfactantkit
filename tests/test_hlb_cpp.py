@@ -616,6 +616,26 @@ def test_estimate_axial_ratio_rejects_bad_inputs():
         estimate_axial_ratio_from_cpp_geometry(0.4, aggregation_number=60, n_carbons=0)
 
 
+def test_estimate_axial_ratio_agrees_with_aggregation_number_spherical_at_the_boundary():
+    """Real cross-function consistency check, found worth verifying
+    during a Tier 1 completeness review: at axial_ratio=1 (a=b=lc), the
+    ellipsoid-of-revolution volume formula this function uses reduces
+    EXACTLY to the sphere-of-radius-lc volume formula
+    aggregation_number_spherical already uses elsewhere in this same
+    module -- both were derived independently but must agree at the
+    boundary where the two shapes coincide. Confirms no hidden factor-of-
+    something inconsistency between the two functions."""
+    n_carbons = 12
+    lc = tanford_critical_length(n_carbons)
+    v_tail = tanford_tail_volume(n_carbons)
+    n_agg_at_sphere_boundary = aggregation_number_spherical(v_tail, lc)
+
+    recovered_axial_ratio = estimate_axial_ratio_from_cpp_geometry(
+        cpp=0.45, aggregation_number=n_agg_at_sphere_boundary, n_carbons=n_carbons
+    )
+    assert recovered_axial_ratio == pytest.approx(1.0, rel=1e-9)
+
+
 # --- Guo/Rong/Ying 2006 nonionic HLB refinement (alternative-methods
 # sweep, 2026-09-10). Source: J. Colloid Interface Sci. 298 (2006)
 # 441-450, doi:10.1016/j.jcis.2005.12.009 (paywalled; exact coefficients

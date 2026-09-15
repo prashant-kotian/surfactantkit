@@ -13,6 +13,15 @@ independently measured," etc.) and reading each hit's real context.
 data" is the same kind of problem -- distinguishing this matters for what,
 if anything, could ever close each one).
 
+**Status, updated 2026-09-15**: this document describes the ORIGINAL,
+pre-fix state of every bottleneck -- kept as-is for historical accuracy.
+For live fix status (what's actually been closed, partially closed, or
+deliberately left as a wall), see `BOTTLENECK_RESOLUTION_PLAN.md`, the
+living tracker. As of this update: Tier 0 (item 12) and all 4 Tier 1
+items (8, 11, 13, 14) are DONE and pushed; Tier 2 (mining) and Tier 3
+(new methods, including item 6's gemini/glycolipid HLB and item 9's
+richer-dataset Henry-function path) are scoped but not yet started.
+
 ## Category A: counterion/ionic-character facts (the most pervasive family)
 
 **1. Counterion binding degree / dissociation alpha (beta).** Needed for

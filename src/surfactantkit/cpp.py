@@ -237,6 +237,14 @@ def estimate_axial_ratio_from_cpp_geometry(cpp: float, aggregation_number: float
     a = (3.0 * v_core) / (4.0 * math.pi * b ** 2)
     axial_ratio = a / b
     if axial_ratio < 1.0:
+        if math.isclose(axial_ratio, 1.0, rel_tol=1e-9):
+            # Real floating-point boundary case, not a genuine physical
+            # inconsistency: an aggregation_number that lands EXACTLY at
+            # the sphere/cylinder boundary (a==b) can round to axial_ratio
+            # a hair below 1.0 through this division, purely from binary
+            # floating-point representation, not because the inputs
+            # actually disagree -- clamp to exactly 1.0 rather than raise.
+            return 1.0
         raise ValueError(
             f"aggregation_number={aggregation_number:.1f} implies a core major semi-axis "
             f"({a:.1f} A) smaller than the pinned minor axis (b={b:.1f} A) -- this "

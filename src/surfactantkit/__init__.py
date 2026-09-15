@@ -61,6 +61,7 @@ from .cpp import (
     aggregation_number_spherical,
     nagarajan_debye_huckel_kappa_inverse,
     nagarajan_equilibrium_area_ionic,
+    estimate_axial_ratio_from_cpp_geometry,
 )
 from .electrostatics import (
     ionic_strength,
@@ -92,8 +93,14 @@ from .wetting import (
     capillary_number,
     owens_wendt_solid_surface_energy,
     van_oss_chaudhury_good_solid_surface_energy,
+    get_vocg_standard_liquid,
+    get_owens_wendt_standard_liquid,
 )
-from .solubilization import molar_solubilization_ratio, micelle_water_partition_coefficient
+from .solubilization import (
+    molar_solubilization_ratio,
+    micelle_water_partition_coefficient,
+    estimate_intrinsic_water_solubility_qspr,
+)
 from .curve_analysis import (
     cmc_from_surface_tension_curve,
     cmc_from_conductivity_curve,
@@ -101,9 +108,15 @@ from .curve_analysis import (
     aggregation_number_from_sls_debye_plot,
     aggregation_number_from_dls,
     aggregation_number_from_svedberg_equation,
+    estimate_partial_specific_volume_from_tail_and_headgroup,
+)
+from .classify import (
+    classify_surfactant_charge_type,
+    classify_surfactant_charge_type_at_ph,
+    classify_surfactant_structural_family,
 )
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 __all__ = [
     "clint_ideal_cmc",
@@ -149,6 +162,7 @@ __all__ = [
     "aggregation_number_spherical",
     "nagarajan_debye_huckel_kappa_inverse",
     "nagarajan_equilibrium_area_ionic",
+    "estimate_axial_ratio_from_cpp_geometry",
     "ionic_strength",
     "debye_length",
     "henry_function",
@@ -172,12 +186,19 @@ __all__ = [
     "capillary_number",
     "owens_wendt_solid_surface_energy",
     "van_oss_chaudhury_good_solid_surface_energy",
+    "get_vocg_standard_liquid",
+    "get_owens_wendt_standard_liquid",
     "molar_solubilization_ratio",
     "micelle_water_partition_coefficient",
+    "estimate_intrinsic_water_solubility_qspr",
     "cmc_from_surface_tension_curve",
     "cmc_from_conductivity_curve",
     "aggregation_number_from_quenching_curve",
     "aggregation_number_from_sls_debye_plot",
     "aggregation_number_from_dls",
     "aggregation_number_from_svedberg_equation",
+    "estimate_partial_specific_volume_from_tail_and_headgroup",
+    "classify_surfactant_charge_type",
+    "classify_surfactant_charge_type_at_ph",
+    "classify_surfactant_structural_family",
 ]
