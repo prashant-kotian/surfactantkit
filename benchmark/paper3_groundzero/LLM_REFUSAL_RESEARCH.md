@@ -91,20 +91,32 @@ actual answer — the refusal is currently premature, not correct.**
    tendency (section 1 above) substitute a plausible-looking beta.
 
 2. **Missing Davies HLB group numbers for gemini/glycolipid headgroups** —
-   **currently (a), but convertible to (b) with real, disclosed work, not
-   guessing.** This is NOT a case where the information doesn't exist — it's
-   that Davies' 1957 table was never extended to these structural classes.
-   SurfactantKit already has the infrastructure to do this properly:
-   `derive_davies_group_number_from_griffin` (hlb.py) uses Davies' own
-   cross-calibration methodology to back-solve a real new group number for a
-   functional group his original table never assigned one to — already used
-   for several other previously-missing groups (sulfonate, sultaine,
-   phosphate-diNa, amphodiacetate). Doing the same real derivation for a
-   glycoside/gemini-quaternary headgroup would genuinely convert this refusal
-   into an answer — this is the single highest-value, most concrete "give the
-   LLM more real confidence" opportunity found in this pass, not a new tool
-   category, just applying an existing, already-validated method to two more
-   real structural classes.
+   **RE-TESTED 2026-09-15, item retracted: this is (a), pure, not (b).**
+   This entry originally proposed applying `derive_davies_group_number_from_
+   griffin`'s existing cross-calibration method to these two structural
+   classes as a cheap, high-value fix. Directly tested against real numbers
+   before building anything (per this project's own "verify before trusting"
+   discipline) rather than assumed to work because it worked for other
+   groups: for the real G6 gemini (C42H90Br2N2, MW=783.00), naively doubling
+   the already-resolved single-quaternary-ammonium group number (2 x 22.0,
+   base constant 7 unchanged) gives HLB=32.95 -- not just wrong, but outside
+   the physically valid 0-20 HLB scale entirely, versus Griffin's
+   independent mass-ratio HLB of 8.48 for the same real compound. The
+   cross-calibration method's own precondition (Davies' additive model and
+   Griffin's mass-ratio model should agree closely for a SINGLE-headgroup
+   molecule) does not hold for a bis-headgroup gemini architecture at all --
+   this isn't a missing NUMBER, it's Davies' whole single-head model failing
+   to generalize structurally, which no new group number can fix. The
+   glycolipid case has a different, also-blocking problem: partitioning a
+   real rhamnolipid's ring methyl (chemically part of the deoxysugar's own
+   defining structure, not a plain alkyl tail) between "lipophilic" and
+   "hydrophilic" has no unambiguous convention, unlike the clean splits that
+   worked for sulfonate/amide groups. **Conclusion, corrected**: both cases
+   belong in the "reinforce, don't fix" category alongside items 1 and 3
+   below, not the "real investment opportunity" category originally
+   proposed here. GZ-03/GZ-04's refusals are confirmed correct, not
+   premature -- this is itself a disclosed negative result, not a silent
+   walk-back.
 
 3. **HLD's cationic-quaternary-only HLB branch, misapplied to a non-quat
    cationic surfactant** — **(a), pure.** The empirical k/Cc bridge was
@@ -134,25 +146,30 @@ actual answer — the refusal is currently premature, not correct.**
 
 ## 4. Synthesis — where to invest, where to reinforce refusal
 
-**Highest-value real investment**: extend `derive_davies_group_number_from_
-griffin`'s already-validated cross-calibration methodology to gemini and
-glycolipid headgroups (item 2). This converts a currently-premature refusal
-into a genuine answer, using a method this project has already proven works,
-not a new capability class.
+**RE-SCOPED 2026-09-15 after directly testing item 2's proposed fix (see
+above) — it does not hold up.** The remaining real investment is narrower
+than first thought:
 
-**Second-highest-value investment, no new code**: build questions that
+**The one confirmed real investment, no new code**: build questions that
 separate the Nagarajan-geometry path from the Gibbs-prefactor path on the
 SAME real dataset (item 4) — this doesn't require building anything, just
 asking the right combination of sub-questions, and it directly tests whether
 an LLM (or a careless refusal) conflates two genuinely different missing-input
 situations that happen to share a surface-level "electrolyte condition" label.
+(Built as GZ-11, 2026-09-15 -- see GroundZero_Unaugmented.txt.)
 
-**Reinforce, don't fix**: items 1 and 3 are genuinely correct refusals. The
+**Reinforce, don't fix**: items 1, 2, AND 3 are all genuinely correct
+refusals, confirmed by direct testing for item 2, not just asserted. The
 toolkit's real contribution there isn't new capability, it's the toolkit
 holding the line a model's own documented guessing tendency (section 1) would
 otherwise cross — this is precisely the "MCP gives LLMs the confidence to say
 no correctly" framing the user asked for, and it should stay a refusal in
-every future question built around these two cases.
+every future question built around these three cases. The real, honest
+lesson from item 2's retraction: a promising-looking "cheap fix" identified
+from literature/methodology pattern-matching alone still needs to be tested
+against real numbers before it's trusted -- this project's own "verify
+against real source" discipline caught it before anything was built on a
+false premise.
 
 **Structural risk to audit before any MCP re-module**: section 2's finding
 that unnecessary tool availability can suppress correct answers by tens of
