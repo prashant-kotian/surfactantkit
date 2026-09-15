@@ -15,9 +15,11 @@ from surfactantkit.curve_analysis import (
     aggregation_number_from_sls_debye_plot,
     aggregation_number_from_dls,
     aggregation_number_from_svedberg_equation,
+    estimate_partial_specific_volume_from_tail_and_headgroup,
     cmc_from_conductivity_curve,
     cmc_from_surface_tension_curve,
 )
+from surfactantkit.cpp import tanford_tail_volume
 
 
 # --- cmc_from_surface_tension_curve -----------------------------------------
@@ -448,3 +450,60 @@ def test_aggregation_number_from_svedberg_rejects_bad_inputs():
         aggregation_number_from_svedberg_equation(2.0, 1.0e-6, 0.8, 0.0, 288.4)
     with pytest.raises(ValueError):
         aggregation_number_from_svedberg_equation(2.0, 1.0e-6, 0.8, 0.997, 0.0)
+
+
+# --- estimate_partial_specific_volume_from_tail_and_headgroup (Tier 1
+# bottleneck fix #11, 2026-09-15 -- see BOTTLENECK_RESOLUTION_PLAN.md).
+# Validated by round trip, not an external "known real v_bar" number: no
+# specific headgroup partial molar volume was verified against a primary
+# source with enough confidence this session to assert as fact (unlike
+# wetting.py's VOCG_STANDARD_LIQUIDS table, which was live-verified) --
+# only the exact tail-volume unit conversion is shipped as real.
+
+
+def test_estimate_v_bar_tail_contribution_matches_exact_unit_conversion():
+    """With headgroup_molar_volume=0, v_bar must equal exactly the
+    Tanford tail volume converted from A^3/molecule to cm^3/mol and
+    divided by the monomer molar mass -- the one part of this function
+    that needs no external literature value at all."""
+    n_carbons = 12
+    mw = 288.38
+    v_bar = estimate_partial_specific_volume_from_tail_and_headgroup(n_carbons, mw, headgroup_molar_volume_cm3_per_mol=0.0)
+    expected_tail_cm3_per_mol = tanford_tail_volume(n_carbons) * AVOGADRO_NUMBER * 1e-24
+    assert v_bar == pytest.approx(expected_tail_cm3_per_mol / mw, rel=1e-9)
+
+
+def test_estimate_v_bar_round_trip_recovers_known_headgroup_volume():
+    n_carbons = 12
+    mw = 288.38
+    for true_headgroup_cm3_per_mol in (10.0, 35.0, 60.0, -1.5):  # negative allowed (electrostriction)
+        v_bar = estimate_partial_specific_volume_from_tail_and_headgroup(n_carbons, mw, true_headgroup_cm3_per_mol)
+        recovered_headgroup = v_bar * mw - tanford_tail_volume(n_carbons) * AVOGADRO_NUMBER * 1e-24
+        assert recovered_headgroup == pytest.approx(true_headgroup_cm3_per_mol, rel=1e-6)
+
+
+def test_estimate_v_bar_falls_in_physically_sane_range_for_realistic_headgroup():
+    # a plausible-magnitude sulfate-ester+Na headgroup volume (illustrative
+    # only, not asserted as a verified literature value) should land v_bar
+    # for a C12 chain in the range real ionic surfactants are known to
+    # occupy (roughly 0.7-1.0 cm^3/g), not something absurd
+    v_bar = estimate_partial_specific_volume_from_tail_and_headgroup(
+        n_carbons=12, monomer_molar_mass_g_per_mol=288.38, headgroup_molar_volume_cm3_per_mol=35.0
+    )
+    assert 0.7 <= v_bar <= 1.0
+
+
+def test_estimate_v_bar_rejects_nonpositive_result():
+    # a headgroup volume negative enough to drive the total non-positive
+    # must raise, not silently return a nonsensical v_bar
+    with pytest.raises(ValueError):
+        estimate_partial_specific_volume_from_tail_and_headgroup(
+            n_carbons=12, monomer_molar_mass_g_per_mol=288.38, headgroup_molar_volume_cm3_per_mol=-1000.0
+        )
+
+
+def test_estimate_v_bar_rejects_bad_inputs():
+    with pytest.raises(ValueError):
+        estimate_partial_specific_volume_from_tail_and_headgroup(0, 288.38, 35.0)
+    with pytest.raises(ValueError):
+        estimate_partial_specific_volume_from_tail_and_headgroup(12, 0.0, 35.0)

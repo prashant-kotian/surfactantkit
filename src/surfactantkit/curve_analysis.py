@@ -43,6 +43,8 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from .cpp import tanford_tail_volume
+
 
 def _linreg(xs: list[float], ys: list[float]) -> tuple[float, float, float]:
     """Ordinary least squares. Returns (slope, intercept, residual_sum_sq)."""
@@ -702,6 +704,67 @@ def aggregation_number_from_dls(
         micelle_molar_mass_g_per_mol=micelle_molar_mass,
         aggregation_number=aggregation_number,
     )
+
+
+def estimate_partial_specific_volume_from_tail_and_headgroup(
+    n_carbons: int,
+    monomer_molar_mass_g_per_mol: float,
+    headgroup_molar_volume_cm3_per_mol: float,
+) -> float:
+    """Real, buildable [COMPUTE] estimate of the WHOLE monomer's partial
+    specific volume v_bar (cm^3/g) -- the input
+    aggregation_number_from_svedberg_equation and aggregation_number_from_dls
+    both require as an external, fully-formed, system-specific value (see
+    benchmark/paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md item 11).
+    This REDUCES, not eliminates, that external requirement: the
+    hydrophobic TAIL's molar-volume contribution is computed exactly
+    from cpp.py's already-verified tanford_tail_volume (an EXACT unit
+    conversion, cubic-Angstrom/molecule -> cm^3/mol via Avogadro's
+    number, of an already-sourced constant -- not a new empirical fit),
+    leaving only the HEADGROUP's own molar volume as the remaining real,
+    external input.
+
+        V_tail_molar_cm3 = tanford_tail_volume(n_carbons) * N_A * 1e-24
+        v_bar = (V_tail_molar_cm3 + headgroup_molar_volume_cm3_per_mol) / monomer_molar_mass_g_per_mol
+
+    headgroup_molar_volume_cm3_per_mol: the real, literature-sourced (or
+    independently measured) partial molar volume of the headgroup PLUS
+    counterion in water (cm^3/mol) -- deliberately NOT computed here from
+    geometric/RDKit volume, because ionic headgroups undergo real
+    ELECTROSTRICTION: local water structuring around a charged group
+    measurably shrinks its effective partial molar volume below its
+    simple geometric size, and can even make it NEGATIVE for small,
+    highly-charged ions (e.g. Na+ in water is well documented near
+    -1 to -2 cm^3/mol in standard ionic partial-molar-volume tables).
+    This value must still come from a real ionic/apparent-molar-volume
+    source -- do not derive it from geometry, and do not assume it must
+    be positive (the function only requires the FINAL v_bar to be
+    positive, not the headgroup term on its own).
+
+    No specific real headgroup value is hardcoded anywhere in this
+    library -- unlike VOCG_STANDARD_LIQUIDS in wetting.py, partial molar
+    volumes of specific surfactant headgroups were not verified against a
+    primary source with enough confidence this session to hardcode; the
+    real, exact part shipped here is the tail-volume unit conversion
+    alone. Validated by round trip only (construct a known v_bar's
+    consistent headgroup_molar_volume_cm3_per_mol via this same formula,
+    recover it back exactly) -- see tests/test_curve_analysis.py.
+    """
+    if n_carbons < 1:
+        raise ValueError("n_carbons must be at least 1")
+    if monomer_molar_mass_g_per_mol <= 0:
+        raise ValueError("monomer_molar_mass_g_per_mol must be positive")
+    v_tail_A3 = tanford_tail_volume(n_carbons)
+    v_tail_molar_cm3 = v_tail_A3 * AVOGADRO_NUMBER * 1e-24  # A^3/molecule -> cm^3/mol
+    v_bar = (v_tail_molar_cm3 + headgroup_molar_volume_cm3_per_mol) / monomer_molar_mass_g_per_mol
+    if v_bar <= 0:
+        raise ValueError(
+            f"computed v_bar={v_bar:.4f} cm^3/g is non-positive -- check "
+            "headgroup_molar_volume_cm3_per_mol and monomer_molar_mass_g_per_mol; "
+            "a real partial specific volume for a surfactant monomer must be positive "
+            "even when the headgroup's own contribution is negative (electrostriction)"
+        )
+    return v_bar
 
 
 @dataclass

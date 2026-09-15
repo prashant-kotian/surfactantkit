@@ -74,6 +74,7 @@ def test_all_expected_tools_are_registered():
         "van_oss_chaudhury_good_solid_surface_energy",
         "get_standard_probe_liquid_properties",
         "estimate_axial_ratio_from_cpp_geometry",
+        "estimate_partial_specific_volume",
         "micelle_water_partition_coefficient",
         "grahame_equation_surface_potential",
         "aggregation_number_from_dls",
@@ -624,6 +625,16 @@ def test_estimate_axial_ratio_from_cpp_geometry_tool_matches_library():
 
     out_sphere = call("estimate_axial_ratio_from_cpp_geometry", {"cpp": 0.25, "aggregation_number": 60, "n_carbons": n_carbons})
     assert out_sphere["axial_ratio"] == pytest.approx(1.0)
+
+
+def test_estimate_partial_specific_volume_tool_matches_library():
+    from surfactantkit.cpp import tanford_tail_volume
+    from surfactantkit.curve_analysis import AVOGADRO_NUMBER
+
+    n_carbons, mw, head_vol = 12, 288.38, 35.0
+    out = call("estimate_partial_specific_volume", {"n_carbons": n_carbons, "monomer_molar_mass_g_per_mol": mw, "headgroup_molar_volume_cm3_per_mol": head_vol})
+    expected = (tanford_tail_volume(n_carbons) * AVOGADRO_NUMBER * 1e-24 + head_vol) / mw
+    assert out["partial_specific_volume_cm3_per_g"] == pytest.approx(expected, rel=1e-9)
 
 
 def test_get_standard_probe_liquid_properties_tool_matches_library():

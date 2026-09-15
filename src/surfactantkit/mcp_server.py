@@ -887,6 +887,28 @@ def aggregation_number_from_dls(diffusion_coefficient_cm2_per_s: float, viscosit
 
 
 @mcp.tool()
+def estimate_partial_specific_volume(n_carbons: int, monomer_molar_mass_g_per_mol: float, headgroup_molar_volume_cm3_per_mol: float) -> dict:
+    """Real, buildable estimate of the WHOLE monomer's partial specific
+    volume v_bar (cm^3/g) -- reduces, not eliminates, the external
+    literature requirement for aggregation_number_from_svedberg and
+    aggregation_number_from_dls's partial_specific_volume_cm3_per_g
+    input. The hydrophobic TAIL's molar-volume contribution is computed
+    EXACTLY from tanford_chain_geometry's own already-verified formula
+    (cubic-Angstrom/molecule -> cm^3/mol via Avogadro's number); only the
+    HEADGROUP's own real molar volume remains an external input.
+
+    headgroup_molar_volume_cm3_per_mol: real, literature-sourced or
+    independently measured partial molar volume of the headgroup plus
+    counterion in water -- deliberately NOT computed from geometry here,
+    because ionic headgroups undergo real electrostriction (can even be
+    NEGATIVE for small, highly-charged ions like Na+) -- do not guess
+    this value, and do not assume it must be positive on its own (only
+    the final v_bar must be positive)."""
+    v_bar = curve.estimate_partial_specific_volume_from_tail_and_headgroup(n_carbons, monomer_molar_mass_g_per_mol, headgroup_molar_volume_cm3_per_mol)
+    return {"partial_specific_volume_cm3_per_g": v_bar, "unit": "cm^3/g"}
+
+
+@mcp.tool()
 def aggregation_number_from_svedberg(sedimentation_coefficient_S: float, diffusion_coefficient_cm2_per_s: float, partial_specific_volume_cm3_per_g: float, solvent_density_g_per_cm3: float, monomer_molar_mass_g_per_mol: float, temperature_K: float = 298.15) -> dict:
     """Micelle aggregation number from RAW analytical-ultracentrifugation
     data via the classic Svedberg equation -- a real, sourced
