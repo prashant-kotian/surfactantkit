@@ -75,6 +75,7 @@ def test_all_expected_tools_are_registered():
         "get_standard_probe_liquid_properties",
         "estimate_axial_ratio_from_cpp_geometry",
         "estimate_partial_specific_volume",
+        "classify_surfactant_charge_type_at_ph",
         "micelle_water_partition_coefficient",
         "grahame_equation_surface_potential",
         "aggregation_number_from_dls",
@@ -625,6 +626,21 @@ def test_estimate_axial_ratio_from_cpp_geometry_tool_matches_library():
 
     out_sphere = call("estimate_axial_ratio_from_cpp_geometry", {"cpp": 0.25, "aggregation_number": 60, "n_carbons": n_carbons})
     assert out_sphere["axial_ratio"] == pytest.approx(1.0)
+
+
+def test_classify_surfactant_charge_type_at_ph_tool_matches_library():
+    out_low = call("classify_surfactant_charge_type_at_ph", {"smiles": "CCCCCCCCCCCCN", "ph": 4.0})
+    assert out_low["charge_type_at_ph"] == "cationic"
+
+    out_high = call("classify_surfactant_charge_type_at_ph", {"smiles": "CCCCCCCCCCCCN", "ph": 13.0})
+    assert out_high["charge_type_at_ph"] == "nonionic"
+
+    out_exact = call(
+        "classify_surfactant_charge_type_at_ph",
+        {"smiles": "CCCCCCCCCCCCN", "ph": 9.0, "amine_pka_override": 10.6},
+    )
+    assert out_exact["confidence"] == "high"
+    assert out_exact["fraction_protonated_low"] == pytest.approx(out_exact["fraction_protonated_high"])
 
 
 def test_estimate_partial_specific_volume_tool_matches_library():

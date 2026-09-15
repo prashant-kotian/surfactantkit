@@ -203,6 +203,154 @@ def classify_surfactant_charge_type(smiles: str) -> ChargeClassificationResult:
     )
 
 
+# --- pH-conditional resolution of the "ambiguous_pH_dependent" case ------
+#
+# Real, buildable [COMPUTE] closure of part of the pH-ambiguous-charge
+# bottleneck (see benchmark/paper3_groundzero/BOTTLENECK_RESOLUTION_PLAN.md
+# item 14): classify_surfactant_charge_type above correctly refuses to
+# resolve a free-amine surfactant's charge type when solution pH is
+# unstated -- that refusal stays correct and is NOT removed here. What WAS
+# a real, separate gap: even when a caller DOES supply a real solution pH,
+# classify_surfactant_charge_type had no way to use it. This closes that
+# gap via the standard Henderson-Hasselbalch relation applied to literature
+# pKaH ranges for the three free-amine classes this module already detects.
+#
+# pKaH ranges (aqueous, conjugate acid of the free amine) sourced from
+# real small-molecule reference values, live-verified 2026-09-15:
+# methylamine (primary) pKaH=10.64, dimethylamine (secondary) pKaH=10.73,
+# trimethylamine (tertiary) pKaH=9.79. Reported here as RANGES, not a
+# single false-precise number, and explicitly disclosed as small-molecule
+# analogues -- a long-chain alkylamine's pKa is well known to sit close to
+# its small-molecule analogue (alkyl chain length beyond ~C3 has little
+# further inductive effect), typically within a few tenths of a pH unit,
+# but a real system-specific measured pKa should be preferred via the
+# amine_pka_override parameter when precision matters.
+_AMINE_PKAH_RANGES = {
+    "primary_amine": (10.4, 10.8),
+    "secondary_amine": (10.5, 11.0),
+    "tertiary_amine": (9.5, 10.0),
+}
+
+
+def _henderson_hasselbalch_fraction_protonated(ph: float, pka: float) -> float:
+    """Fraction of a basic (amine) group protonated (charged) at a given
+    pH: f = 1 / (1 + 10^(pH - pKaH)). Local helper, no external state."""
+    return 1.0 / (1.0 + 10.0 ** (ph - pka))
+
+
+@dataclass
+class PHConditionalChargeResult:
+    smiles: str
+    ph: float
+    charge_type_at_ph: str  # "anionic" | "cationic" | "zwitterionic" | "nonionic" | "still_ambiguous"
+    amine_class: str | None
+    fraction_protonated_low: float | None
+    fraction_protonated_high: float | None
+    pka_source: str = ""
+    confidence: str = ""
+    caveats: list[str] = field(default_factory=list)
+
+
+def classify_surfactant_charge_type_at_ph(
+    smiles: str, ph: float, amine_pka_override: float | None = None
+) -> PHConditionalChargeResult:
+    """Resolve classify_surfactant_charge_type's "ambiguous_pH_dependent"
+    case using a REAL, explicitly-supplied solution pH -- the pH itself is
+    still never guessed (must be a real caller-supplied value, an
+    experiment-specific fact this function cannot recover any other way),
+    but once given, this computes real ionization behavior via Henderson-
+    Hasselbalch instead of leaving a usable input unused.
+
+    Only meaningful for structures classify_surfactant_charge_type itself
+    reports as "ambiguous_pH_dependent" (a free primary/secondary/tertiary
+    amine, alone or alongside a real anionic group) -- for any other
+    charge_type, delegates straight back to the pH-independent result
+    (a permanently-charged or nonionic group does not need pH information
+    at all, and this function does not pretend otherwise).
+
+    amine_pka_override: a real, system-specific measured pKa for THIS
+    exact compound, if independently known -- when supplied, used exactly
+    (single-point fraction_protonated, low==high). When not supplied,
+    falls back to this module's own literature pKaH RANGE for the
+    detected amine class (see _AMINE_PKAH_RANGES above) and reports a
+    fraction_protonated RANGE (low, high) rather than a single false-
+    precise number -- both bounds computed via Henderson-Hasselbalch.
+
+    Still returns "still_ambiguous" (not a forced pick) when the computed
+    protonation fraction straddles a genuinely ambiguous middle ground
+    (0.3-0.7, i.e. within about 0.5 pH units of pKaH) -- a real physical
+    statement that the population is genuinely mixed at that pH, not a
+    resolvable single answer.
+    """
+    if ph < 0.0 or ph > 14.0:
+        raise ValueError("ph must be between 0 and 14")
+    base = classify_surfactant_charge_type(smiles)
+    if base.charge_type != "ambiguous_pH_dependent":
+        return PHConditionalChargeResult(
+            smiles=smiles, ph=ph, charge_type_at_ph=base.charge_type,
+            amine_class=None, fraction_protonated_low=None, fraction_protonated_high=None,
+            pka_source="not applicable (charge type is pH-independent)",
+            confidence=base.confidence,
+            caveats=base.caveats + ["This structure's charge type does not depend on pH; "
+                                     "the supplied ph value was not needed."],
+        )
+
+    amine_names = base.cationic_conditional_groups_found
+    if not amine_names:
+        return PHConditionalChargeResult(
+            smiles=smiles, ph=ph, charge_type_at_ph="still_ambiguous",
+            amine_class=None, fraction_protonated_low=None, fraction_protonated_high=None,
+            confidence="low",
+            caveats=["Base classification reported ambiguous_pH_dependent but no amine group "
+                     "was recorded -- cannot compute a pKaH-based resolution."],
+        )
+    amine_class = amine_names[0]  # the detected free-amine substitution class
+
+    if amine_pka_override is not None:
+        pka_low = pka_high = amine_pka_override
+        pka_source = f"caller-supplied real pKa={amine_pka_override:.2f} for this specific compound"
+    else:
+        pka_low, pka_high = _AMINE_PKAH_RANGES.get(amine_class, (9.0, 11.0))
+        pka_source = (f"literature pKaH range for {amine_class} class ({pka_low:.1f}-{pka_high:.1f}), "
+                      "small-molecule analogue-based -- see this module's own docstring")
+
+    # f (fraction protonated) is monotonically increasing in pKaH at fixed pH,
+    # so pka_low gives the lower fraction-protonated bound and pka_high the upper.
+    frac_low = _henderson_hasselbalch_fraction_protonated(ph, pka_low)
+    frac_high = _henderson_hasselbalch_fraction_protonated(ph, pka_high)
+
+    is_anionic_too = len(base.anionic_groups_found) > 0
+    mostly_protonated = frac_low >= 0.7
+    mostly_deprotonated = frac_high <= 0.3
+    caveats = [f"Amine class: {amine_class}. pKaH source: {pka_source}."]
+
+    if not (mostly_protonated or mostly_deprotonated):
+        return PHConditionalChargeResult(
+            smiles=smiles, ph=ph, charge_type_at_ph="still_ambiguous",
+            amine_class=amine_class, fraction_protonated_low=frac_low, fraction_protonated_high=frac_high,
+            pka_source=pka_source, confidence="low",
+            caveats=caveats + [f"At pH={ph}, the amine's computed protonation fraction spans "
+                                f"{frac_low:.2f}-{frac_high:.2f} -- genuinely mixed/ambiguous population "
+                                "this close to pKaH, not a resolvable single charge state."],
+        )
+
+    if mostly_protonated:
+        resolved = "zwitterionic" if is_anionic_too else "cationic"
+        caveats.append(f"At pH={ph}, computed protonation fraction {frac_low:.2f}-{frac_high:.2f} "
+                        "(mostly protonated/charged).")
+    else:
+        resolved = "anionic" if is_anionic_too else "nonionic"
+        caveats.append(f"At pH={ph}, computed protonation fraction {frac_low:.2f}-{frac_high:.2f} "
+                        "(mostly deprotonated/neutral amine).")
+
+    return PHConditionalChargeResult(
+        smiles=smiles, ph=ph, charge_type_at_ph=resolved,
+        amine_class=amine_class, fraction_protonated_low=frac_low, fraction_protonated_high=frac_high,
+        pka_source=pka_source, confidence="moderate" if amine_pka_override is None else "high",
+        caveats=caveats,
+    )
+
+
 # --- structural-family classification (orthogonal to charge type) --------
 #
 # Real, previously-missing capability flagged by TOOLKIT_CAPABILITY_AUDIT.md:

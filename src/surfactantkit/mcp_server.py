@@ -1478,6 +1478,39 @@ def classify_surfactant_charge_type(smiles: str) -> dict:
 
 
 @mcp.tool()
+def classify_surfactant_charge_type_at_ph(smiles: str, ph: float, amine_pka_override: float | None = None) -> dict:
+    """Resolve classify_surfactant_charge_type's 'ambiguous_pH_dependent'
+    case using a REAL, explicitly-supplied solution pH -- the pH itself
+    is still never guessed (a real experiment-specific fact this tool
+    cannot recover any other way), but once given, computes real
+    ionization behavior via Henderson-Hasselbalch instead of leaving a
+    usable input unused. Delegates straight through for any charge type
+    that does not depend on pH (permanently charged or nonionic).
+
+    Falls back to this project's own literature pKaH RANGE for the
+    detected free-amine class (primary/secondary/tertiary, small-
+    molecule-analogue-based) when amine_pka_override is not supplied,
+    reporting a fraction_protonated RANGE rather than a false-precise
+    single number; pass amine_pka_override with a real, system-specific
+    measured pKa for an exact single-point answer instead. Returns
+    charge_type_at_ph='still_ambiguous' (not a forced pick) when the
+    computed protonation fraction genuinely straddles a mixed population
+    close to pKaH."""
+    r = classify_mod.classify_surfactant_charge_type_at_ph(smiles, ph, amine_pka_override)
+    return {
+        "smiles": r.smiles,
+        "ph": r.ph,
+        "charge_type_at_ph": r.charge_type_at_ph,
+        "amine_class": r.amine_class,
+        "fraction_protonated_low": r.fraction_protonated_low,
+        "fraction_protonated_high": r.fraction_protonated_high,
+        "pka_source": r.pka_source,
+        "confidence": r.confidence,
+        "caveats": r.caveats,
+    }
+
+
+@mcp.tool()
 def classify_surfactant_structural_family(smiles: str) -> dict:
     """Determine a surfactant's structural family -- dimeric/gemini-type
     (two headgroups in one molecule, e.g. bis-quaternary-ammonium gemini

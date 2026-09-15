@@ -10,7 +10,11 @@ spanning every charge class, including the deliberately ambiguous
 
 import pytest
 
-from surfactantkit.classify import classify_surfactant_charge_type, classify_surfactant_structural_family
+from surfactantkit.classify import (
+    classify_surfactant_charge_type,
+    classify_surfactant_charge_type_at_ph,
+    classify_surfactant_structural_family,
+)
 
 
 def test_sds_anionic_sulfate():
@@ -82,6 +86,58 @@ def test_free_amine_is_ambiguous_not_guessed():
     r = classify_surfactant_charge_type("CCCCCCCCCCCCN")
     assert r.charge_type == "ambiguous_pH_dependent"
     assert r.system_type_for_gibbs is None
+
+
+# --- classify_surfactant_charge_type_at_ph (Tier 1 bottleneck fix #14,
+# 2026-09-15 -- see BOTTLENECK_RESOLUTION_PLAN.md). Dodecylamine
+# (CCCCCCCCCCCCN, a real primary alkylamine surfactant) is the same
+# fixture as test_free_amine_is_ambiguous_not_guessed above -- this
+# closes the follow-on gap: even when a caller DOES supply a real pH,
+# the base classifier had no way to use it.
+
+
+def test_ph_conditional_dodecylamine_low_ph_is_cationic():
+    # well below the primary-amine pKaH range (10.4-10.8) -> mostly protonated
+    r = classify_surfactant_charge_type_at_ph("CCCCCCCCCCCCN", ph=4.0)
+    assert r.charge_type_at_ph == "cationic"
+    assert r.fraction_protonated_low > 0.99
+    assert r.fraction_protonated_high > 0.99
+
+
+def test_ph_conditional_dodecylamine_high_ph_is_nonionic():
+    # well above the pKaH range -> mostly deprotonated (neutral amine)
+    r = classify_surfactant_charge_type_at_ph("CCCCCCCCCCCCN", ph=13.0)
+    assert r.charge_type_at_ph == "nonionic"
+    assert r.fraction_protonated_low < 0.01
+    assert r.fraction_protonated_high < 0.01
+
+
+def test_ph_conditional_dodecylamine_near_pka_is_still_ambiguous():
+    # right in the middle of the pKaH range -> genuinely mixed population
+    r = classify_surfactant_charge_type_at_ph("CCCCCCCCCCCCN", ph=10.6)
+    assert r.charge_type_at_ph == "still_ambiguous"
+    assert 0.0 < r.fraction_protonated_low < r.fraction_protonated_high < 1.0
+
+
+def test_ph_conditional_with_caller_supplied_exact_pka_is_single_point():
+    r = classify_surfactant_charge_type_at_ph("CCCCCCCCCCCCN", ph=9.0, amine_pka_override=10.6)
+    assert r.fraction_protonated_low == pytest.approx(r.fraction_protonated_high)
+    assert r.confidence == "high"  # exact caller pKa, not a literature range
+    assert r.charge_type_at_ph == "cationic"
+
+
+def test_ph_conditional_delegates_for_pH_independent_charge_type():
+    # SDS is anionic regardless of pH -- must delegate, not force an amine analysis
+    r = classify_surfactant_charge_type_at_ph("CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]", ph=7.0)
+    assert r.charge_type_at_ph == "anionic"
+    assert r.amine_class is None
+
+
+def test_ph_conditional_rejects_bad_ph():
+    with pytest.raises(ValueError):
+        classify_surfactant_charge_type_at_ph("CCCCCCCCCCCCN", ph=-1.0)
+    with pytest.raises(ValueError):
+        classify_surfactant_charge_type_at_ph("CCCCCCCCCCCCN", ph=15.0)
 
 
 def test_unparseable_smiles_reported_not_raised():
