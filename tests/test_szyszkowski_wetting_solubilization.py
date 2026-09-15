@@ -11,6 +11,10 @@ from surfactantkit.wetting import (
     capillary_number,
     owens_wendt_solid_surface_energy,
     van_oss_chaudhury_good_solid_surface_energy,
+    get_vocg_standard_liquid,
+    get_owens_wendt_standard_liquid,
+    VOCG_STANDARD_LIQUIDS,
+    OWENS_WENDT_STANDARD_LIQUIDS,
 )
 from surfactantkit.solubilization import molar_solubilization_ratio, micelle_water_partition_coefficient
 
@@ -201,6 +205,75 @@ def test_van_oss_chaudhury_good_rejects_bad_inputs():
         van_oss_chaudhury_good_solid_surface_energy(
             [50.0, 60.0, 70.0], [0.0, 34.0, 50.8], [25.5, 3.92, 0.0], [25.5, 57.4, 0.0]
         )  # bad LW value
+
+
+# Tests for the real, cited standard-probe-liquid lookup tables added
+# 2026-09-15 (see benchmark/paper3_groundzero/GENUINE_BOTTLENECK_AUDIT.md
+# item 12 and BOTTLENECK_RESOLUTION_PLAN.md Tier 0) -- these values were
+# never guessed, they were live-verified against real sources (van Oss,
+# Chaudhury & Good 1988; van Oss, Good & Busscher 1990) before being
+# hardcoded here.
+
+
+def test_vocg_standard_liquid_lookup_matches_known_real_values():
+    water = get_vocg_standard_liquid("water")
+    assert water["lw"] == pytest.approx(21.8)
+    assert water["acid"] == pytest.approx(25.5)
+    assert water["base"] == pytest.approx(25.5)
+    diiodomethane = get_vocg_standard_liquid("Diiodomethane")  # case-insensitive
+    assert diiodomethane["lw"] == pytest.approx(50.8)
+    assert diiodomethane["acid"] == pytest.approx(0.0)
+    assert diiodomethane["base"] == pytest.approx(0.0)
+
+
+def test_vocg_standard_liquid_totals_are_internally_consistent():
+    # total = LW + 2*sqrt(acid*base), the same mixing rule the real
+    # solver uses -- catches a transcription error in the hardcoded table
+    for name, vals in VOCG_STANDARD_LIQUIDS.items():
+        recomputed_total = vals["lw"] + 2.0 * math.sqrt(vals["acid"] * vals["base"])
+        assert recomputed_total == pytest.approx(vals["total"], abs=0.05), name
+
+
+def test_vocg_standard_liquid_rejects_unknown_name():
+    with pytest.raises(ValueError):
+        get_vocg_standard_liquid("ethanol")
+
+
+def test_owens_wendt_standard_liquid_lookup_matches_known_real_values():
+    water = get_owens_wendt_standard_liquid("water")
+    assert water["dispersive"] == pytest.approx(21.8)
+    assert water["polar"] == pytest.approx(51.0)
+    glycerol = get_owens_wendt_standard_liquid("GLYCEROL")  # case-insensitive
+    assert glycerol["dispersive"] == pytest.approx(34.0)
+    assert glycerol["polar"] == pytest.approx(30.0)
+
+
+def test_owens_wendt_standard_liquid_rejects_unknown_name():
+    with pytest.raises(ValueError):
+        get_owens_wendt_standard_liquid("ethanol")
+
+
+def test_vocg_solver_runs_end_to_end_on_real_standard_liquid_values_alone():
+    """No external lookup needed at all -- pull water/glycerol/
+    diiodomethane straight from the real tabulated dict and confirm the
+    solver runs to completion on a physically sane synthetic solid."""
+    liquids = ["water", "glycerol", "diiodomethane"]
+    vals = [get_vocg_standard_liquid(n) for n in liquids]
+    liquids_lw = [v["lw"] for v in vals]
+    liquids_acid = [v["acid"] for v in vals]
+    liquids_base = [v["base"] for v in vals]
+    liquids_total = [v["lw"] + 2.0 * math.sqrt(v["acid"] * v["base"]) for v in vals]
+
+    true_lw, true_acid, true_base = 25.0, 2.0, 15.0
+    contact_angles = []
+    for gt, lw, a, b in zip(liquids_total, liquids_lw, liquids_acid, liquids_base):
+        w = 2.0 * (math.sqrt(true_lw * lw) + math.sqrt(true_acid * b) + math.sqrt(true_base * a))
+        contact_angles.append(math.degrees(math.acos(w / gt - 1.0)))
+
+    result = van_oss_chaudhury_good_solid_surface_energy(contact_angles, liquids_lw, liquids_acid, liquids_base)
+    assert result.gamma_s_lw_mN_m == pytest.approx(true_lw, abs=1e-3)
+    assert result.gamma_s_acid_mN_m == pytest.approx(true_acid, abs=1e-3)
+    assert result.gamma_s_base_mN_m == pytest.approx(true_base, abs=1e-3)
 
 
 def test_molar_solubilization_ratio_basic():

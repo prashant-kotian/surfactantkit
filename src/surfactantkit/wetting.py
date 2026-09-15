@@ -8,6 +8,84 @@ import math
 from dataclasses import dataclass
 
 
+# Real, literature-tabulated surface-tension components for the standard
+# probe liquids used with owens_wendt_solid_surface_energy (dispersive/
+# polar split) and van_oss_chaudhury_good_solid_surface_energy (LW/acid/
+# base split). NOT a universal constant table for arbitrary liquids -- this
+# resolves what looked like a "caller must supply an unmeasured value"
+# bottleneck (see benchmark/paper3_groundzero/GENUINE_BOTTLENECK_AUDIT.md
+# item 12) ONLY for these specific, standard reference liquids, which ARE
+# real and independently tabulated; any liquid not in this dict still must
+# be supplied directly by the caller, never guessed.
+#
+# Sources: water/diiodomethane baseline from van Oss, Chaudhury & Good,
+# Chem. Rev. 88 (1988) 927-941 (water gamma^LW fixed at 21.8, remaining
+# acid-base part split equally 25.5/25.5 by convention); glycerol and
+# formamide acid/base parameters from van Oss, Good & Busscher, J.
+# Dispersion Sci. Technol. 11(1) (1990) 75-81 (glycerol acid=3.92,
+# base=57.4; formamide acid=2.28, base=39.6) -- both independently
+# cross-checked 2026-09-15 against multiple secondary sources reproducing
+# the same numbers before being sourced into this table.
+VOCG_STANDARD_LIQUIDS: dict[str, dict[str, float]] = {
+    "water": {"lw": 21.8, "acid": 25.5, "base": 25.5, "total": 72.8},
+    "diiodomethane": {"lw": 50.8, "acid": 0.0, "base": 0.0, "total": 50.8},
+    "glycerol": {"lw": 34.0, "acid": 3.92, "base": 57.4, "total": 64.0},
+    "formamide": {"lw": 39.0, "acid": 2.28, "base": 39.6, "total": 58.0},
+}
+
+# Owens-Wendt dispersive/polar split for the same real standard liquids
+# (the "polar" term here is the whole acid-base part treated as one
+# component, not split into acid/base -- OWRK's own simpler model; same
+# real sources as VOCG_STANDARD_LIQUIDS above for the totals, matching
+# dispersive/polar values as commonly reported alongside the OWRK method
+# for these liquids).
+OWENS_WENDT_STANDARD_LIQUIDS: dict[str, dict[str, float]] = {
+    "water": {"dispersive": 21.8, "polar": 51.0},
+    "diiodomethane": {"dispersive": 50.8, "polar": 0.0},
+    "glycerol": {"dispersive": 34.0, "polar": 30.0},
+    "formamide": {"dispersive": 39.0, "polar": 19.0},
+}
+
+
+def get_vocg_standard_liquid(name: str) -> dict[str, float]:
+    """Look up real, literature-tabulated LW/acid/base surface-tension
+    components (mN/m) for one of the standard van Oss-Chaudhury-Good
+    probe liquids: 'water', 'diiodomethane', 'glycerol', 'formamide'.
+
+    Raises for any other name -- this is a small, real, cited table for
+    exactly these 4 standard liquids, not a general property database; a
+    liquid outside this list must still have its real values supplied
+    directly by the caller to
+    van_oss_chaudhury_good_solid_surface_energy, never guessed here.
+    """
+    key = name.strip().lower()
+    if key not in VOCG_STANDARD_LIQUIDS:
+        raise ValueError(
+            f"'{name}' is not one of the standard vOCG probe liquids tabulated here "
+            f"({sorted(VOCG_STANDARD_LIQUIDS)}) -- supply its real LW/acid/base values "
+            "directly to van_oss_chaudhury_good_solid_surface_energy instead, do not guess"
+        )
+    return dict(VOCG_STANDARD_LIQUIDS[key])
+
+
+def get_owens_wendt_standard_liquid(name: str) -> dict[str, float]:
+    """Look up real, literature-tabulated dispersive/polar surface-tension
+    components (mN/m) for one of the standard Owens-Wendt probe liquids:
+    'water', 'diiodomethane', 'glycerol', 'formamide'.
+
+    Raises for any other name -- see get_vocg_standard_liquid's docstring;
+    same discipline applies.
+    """
+    key = name.strip().lower()
+    if key not in OWENS_WENDT_STANDARD_LIQUIDS:
+        raise ValueError(
+            f"'{name}' is not one of the standard Owens-Wendt probe liquids tabulated here "
+            f"({sorted(OWENS_WENDT_STANDARD_LIQUIDS)}) -- supply its real dispersive/polar "
+            "values directly to owens_wendt_solid_surface_energy instead, do not guess"
+        )
+    return dict(OWENS_WENDT_STANDARD_LIQUIDS[key])
+
+
 def work_of_adhesion(gamma_LV_mN_m: float, contact_angle_deg: float) -> float:
     """Young-Dupre work of adhesion (mN/m, numerically = mJ/m^2):
     W_a = gamma_LV * (1 + cos(theta)).
@@ -66,7 +144,10 @@ def owens_wendt_solid_surface_energy(
     order (one entry per test liquid) -- real, literature-tabulated
     values for common test liquids (e.g. water: gamma^d~21.8,
     gamma^p~51.0 mN/m; diiodomethane: gamma^d~50.8, gamma^p~0 mN/m) must
-    be supplied by the caller, not guessed here.
+    be supplied by the caller, not guessed here. For the 4 standard
+    probe liquids (water, diiodomethane, glycerol, formamide), real
+    tabulated values are available via get_owens_wendt_standard_liquid
+    in this module instead of needing to be looked up externally.
     """
     if not (len(contact_angles_deg) == len(liquid_gamma_dispersive_mN_m) == len(liquid_gamma_polar_mN_m)):
         raise ValueError("contact_angles_deg, liquid_gamma_dispersive_mN_m, and liquid_gamma_polar_mN_m "
@@ -183,7 +264,11 @@ def van_oss_chaudhury_good_solid_surface_energy(
     matching order -- real, literature-tabulated per-liquid values
     (e.g. water: LW~21.8, acid~25.5, base~25.5 mN/m; diiodomethane:
     LW~50.8, acid~0, base~0 mN/m) must be supplied by the caller, not
-    guessed here.
+    guessed here. For the 4 standard probe liquids (water, diiodomethane,
+    glycerol, formamide), real tabulated values are available via
+    get_vocg_standard_liquid in this module instead of needing to be
+    looked up externally -- e.g. a real water/glycerol/diiodomethane run
+    needs no external lookup at all.
     """
     lengths = {len(contact_angles_deg), len(liquid_gamma_lw_mN_m), len(liquid_gamma_acid_mN_m), len(liquid_gamma_base_mN_m)}
     if lengths != {3}:

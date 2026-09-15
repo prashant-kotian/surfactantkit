@@ -1247,6 +1247,35 @@ def wetting_work_of_adhesion(gamma_LV_mN_m: float, contact_angle_deg: float) -> 
 
 
 @mcp.tool()
+def get_standard_probe_liquid_properties(liquid_name: str) -> dict:
+    """Real, literature-tabulated surface-tension components for a
+    standard wetting probe liquid -- 'water', 'diiodomethane', 'glycerol',
+    or 'formamide' (case-insensitive). Returns BOTH the Owens-Wendt
+    dispersive/polar split (for owens_wendt_solid_surface_energy) and the
+    van Oss-Chaudhury-Good LW/acid/base split (for
+    van_oss_chaudhury_good_solid_surface_energy) in one call, so a
+    water/glycerol/diiodomethane run needs no external lookup at all.
+    Sources: van Oss, Chaudhury & Good, Chem. Rev. 88 (1988) 927-941
+    (water, diiodomethane); van Oss, Good & Busscher, J. Dispersion Sci.
+    Technol. 11(1) (1990) 75-81 (glycerol, formamide acid/base split).
+    Raises for any liquid not in this small, real table -- that liquid's
+    values must still be supplied directly by the caller to the two
+    solver tools, never guessed."""
+    ow = wetting.get_owens_wendt_standard_liquid(liquid_name)
+    vocg = wetting.get_vocg_standard_liquid(liquid_name)
+    return {
+        "liquid": liquid_name.strip().lower(),
+        "owens_wendt_dispersive_mN_m": ow["dispersive"],
+        "owens_wendt_polar_mN_m": ow["polar"],
+        "vocg_lw_mN_m": vocg["lw"],
+        "vocg_acid_mN_m": vocg["acid"],
+        "vocg_base_mN_m": vocg["base"],
+        "vocg_total_mN_m": vocg["total"],
+        "unit": "mN/m (= mJ/m^2)",
+    }
+
+
+@mcp.tool()
 def owens_wendt_solid_surface_energy(contact_angles_deg: list[float], liquid_gamma_dispersive_mN_m: list[float], liquid_gamma_polar_mN_m: list[float]) -> dict:
     """Decompose a SOLID's surface energy into dispersive and polar
     components via the OWRK method (Owens & Wendt 1969; Rabel 1971;

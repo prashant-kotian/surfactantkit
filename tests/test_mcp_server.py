@@ -72,6 +72,7 @@ def test_all_expected_tools_are_registered():
         "zeta_potential_relaxation_corrected",
         "owens_wendt_solid_surface_energy",
         "van_oss_chaudhury_good_solid_surface_energy",
+        "get_standard_probe_liquid_properties",
         "micelle_water_partition_coefficient",
         "grahame_equation_surface_potential",
         "aggregation_number_from_dls",
@@ -602,6 +603,22 @@ def test_wetting_work_of_adhesion_tool_complete_wetting():
 def test_wetting_spreading_coefficient_tool_never_positive():
     out = call("wetting_spreading_coefficient", {"gamma_LV_mN_m": 72.0, "contact_angle_deg": 90.0})
     assert out["spreading_coefficient_mN_m"] <= 0
+
+
+def test_get_standard_probe_liquid_properties_tool_matches_library():
+    out = call("get_standard_probe_liquid_properties", {"liquid_name": "Water"})
+    assert out["liquid"] == "water"
+    assert out["owens_wendt_dispersive_mN_m"] == pytest.approx(21.8)
+    assert out["owens_wendt_polar_mN_m"] == pytest.approx(51.0)
+    assert out["vocg_lw_mN_m"] == pytest.approx(21.8)
+    assert out["vocg_acid_mN_m"] == pytest.approx(25.5)
+    assert out["vocg_base_mN_m"] == pytest.approx(25.5)
+    assert out["vocg_total_mN_m"] == pytest.approx(72.8)
+
+
+def test_get_standard_probe_liquid_properties_tool_rejects_unknown_liquid():
+    with pytest.raises(Exception):
+        call("get_standard_probe_liquid_properties", {"liquid_name": "ethanol"})
 
 
 def test_owens_wendt_tool_recovers_true_components_round_trip():
