@@ -316,6 +316,17 @@ def test_dn_dc_reference_triton_x100_real_primary_source():
     assert triton["wavelength_nm"] == pytest.approx(546.0)  # different wavelength than SDS/CTAB, disclosed
 
 
+def test_dn_dc_reference_tween80_real_primary_source():
+    """Real gap CLOSED 2026-09-15 (second real-paper batch, same day):
+    Tween-80 was searched for and not found via web search alone, then
+    closed with a real primary-source PhD dissertation (Jiang, Virginia
+    Tech, 2011) the user provided, its own SPR methods section stating
+    the value directly."""
+    tween = DN_DC_REFERENCE_ML_PER_G["TWEEN80"]
+    assert tween["dn_dc"] == pytest.approx(0.132)
+    assert tween["wavelength_nm"] == pytest.approx(690.0)
+
+
 def test_dn_dc_reference_sds_usable_end_to_end_in_sls_function():
     """Real, usable end-to-end check: the reference table's own SDS
     dn/dc plugged directly into aggregation_number_from_sls_debye_plot

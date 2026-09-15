@@ -315,10 +315,18 @@ def test_hld_characteristic_curvature_reference_tool_matches_library():
     assert out_rham["cc"] == pytest.approx(-1.41)
     assert out_rham["class"] == "biosurfactant (glycolipid)"
 
+    out_capb = call("hld_characteristic_curvature_reference", {"surfactant": "capb"})  # case-insensitive
+    assert out_capb["cc_this_work"] == pytest.approx(-5.2)
+    assert out_capb["class"] == "zwitterionic"
+
+    out_gemini = call("hld_characteristic_curvature_reference", {"surfactant": "gemini_benzene_sulfonate"})
+    assert out_gemini["cc"] == pytest.approx(-7.4)
+    assert out_gemini["class"] == "gemini/dimeric (anionic)"
+
 
 def test_hld_characteristic_curvature_reference_tool_rejects_unknown():
     with pytest.raises(Exception):
-        call("hld_characteristic_curvature_reference", {"surfactant": "cocamidopropyl_betaine"})
+        call("hld_characteristic_curvature_reference", {"surfactant": "sulfobetaine_unknown_variant"})
 
 
 def test_hld_class_reference_tool_matches_library():

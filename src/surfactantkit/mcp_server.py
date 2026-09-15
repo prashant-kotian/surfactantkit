@@ -718,46 +718,65 @@ def hld_class_reference(surfactant_class: str) -> dict:
 @mcp.tool()
 def hld_characteristic_curvature_reference(surfactant: str) -> dict:
     """Real, primary-source characteristic curvature (Cc) for a named
-    surfactant -- Leng & Acosta, J. Surfactants Deterg. 26(3) (2023)
-    287-301 (primary PDF read in full), for the anionic/cationic
-    surfactants, and Nguyen & Sabatini 2008 (via Hellweg et al., Front.
-    Soft Matter 3:1260211 (2023), also read in full) for the
-    biosurfactant case. Each entry gives BOTH the source paper's own
-    solubilization-derived estimate (cc_this_work) and an independent
-    literature value it was cross-checked against (cc_literature) --
-    real agreement, not a single unverified number.
+    surfactant, now spanning anionic, cationic, zwitterionic, gemini,
+    and biosurfactant classes -- Leng & Acosta, J. Surfactants Deterg.
+    26(3) (2023) 287-301 (anionic/cationic); Nguyen & Sabatini 2008 via
+    Hellweg et al., Front. Soft Matter 3:1260211 (2023) (biosurfactant);
+    Acosta, Harwell & Sabatini (eds.), Surfactant Formulation
+    Engineering Using HLD and NAC, Elsevier (2021), Table 1.1
+    (zwitterionic and gemini) -- all primary sources read in full.
 
     surfactant must be one of: 'SDS', 'SDHS', 'SLES', 'C10PO4S',
-    'C16DPODS', 'AOT' (real, two independent estimates given, see
-    cc_this_work/cc_this_work_alt), 'BCl' (benzethonium chloride), 'DPCl'
-    (dodecylpyridinium chloride, the source paper's own weakest/inferred
-    estimate), or 'rhamnolipid' (a real biosurfactant Cc, -1.41).
+    'C16DPODS', 'AOT', 'BCl', 'DPCl' (anionic/cationic, see
+    cc_this_work/cc_literature); 'rhamnolipid' (biosurfactant, -1.41);
+    'lecithin', 'Epikuron200', 'C4mPC', 'dodecylsulfobetaine',
+    'lauramineoxide', 'CAPB' (zwitterionic -- CAPB=cocamidopropyl
+    betaine, the exact compound repeatedly named as the target example
+    for this whole investigation, has two real estimates,
+    cc_this_work/cc_this_work_alt); or 'gemini_benzene_sulfonate' (a
+    real dimeric/gemini surfactant, Cc=-7.4, cross-checked against an
+    independent value of -6.6).
 
     HONEST, DISCLOSED DISCREPANCY: a different secondary review (Hellweg
     et al. 2023) states Cc(AOT)=-0.92 when discussing the rhamnolipid
     value -- this contradicts Leng & Acosta's own directly-read AOT
-    value (~2.4-3.5, matching an independent literature sigma of 2.5),
-    and -0.92 is suspiciously exactly SDHS's own value from the SAME
-    Leng & Acosta paper -- almost certainly a citation/transcription
-    error in the review (confusing AOT with SDHS), not a second real AOT
-    measurement. This tool returns the directly-read primary paper's
-    own AOT value, not the -0.92 figure -- disclosed here, not silently
-    picked. Raises for zwitterionic or gemini surfactants -- a real,
-    disclosed, still-open gap; no primary paper located this session
-    studied either class's own Cc directly."""
+    value (~2.4-3.5, matching an independent literature sigma of 2.5,
+    and independently consistent with the real bi~0.32 for AOT stated in
+    the Acosta 2021 book), and -0.92 is suspiciously exactly SDHS's own
+    value from the SAME Leng & Acosta paper -- almost certainly a
+    citation/transcription error in the review, not a second real AOT
+    measurement. This tool returns the directly-read primary value, not
+    the -0.92 figure, disclosed here rather than silently picked."""
     key = surfactant.strip()
-    if key.lower() == "rhamnolipid":
+    key_lower = key.lower()
+    if key_lower == "rhamnolipid":
         return {
             "surfactant": "rhamnolipid",
             "cc": hld_mod.RHAMNOLIPID_CC,
             "class": "biosurfactant (glycolipid)",
             "source": "Nguyen & Sabatini 2008, via Hellweg, Oberdisse & Sottmann, Front. Soft Matter 3:1260211 (2023)",
         }
+    if key_lower == "gemini_benzene_sulfonate":
+        return {
+            "surfactant": "gemini_benzene_sulfonate",
+            "cc": hld_mod.GEMINI_BENZENE_SULFONATE_CC,
+            "cc_literature": hld_mod.GEMINI_BENZENE_SULFONATE_CC_LITERATURE,
+            "class": "gemini/dimeric (anionic)",
+            "source": "Acosta, Harwell & Sabatini (eds.), Surfactant Formulation Engineering Using HLD and NAC, "
+                      "Elsevier (2021), Table 1.1",
+        }
+    zwitterionic_key = next((k for k in hld_mod.CC_REFERENCE_ZWITTERIONIC if k.lower() == key_lower), None)
+    if zwitterionic_key is not None:
+        return {"surfactant": zwitterionic_key, "class": "zwitterionic",
+                **hld_mod.CC_REFERENCE_ZWITTERIONIC[zwitterionic_key],
+                "source": "Acosta, Harwell & Sabatini (eds.), Surfactant Formulation Engineering Using HLD and NAC, "
+                          "Elsevier (2021), Table 1.1"}
     key_upper = key.upper()
     if key_upper not in hld_mod.CC_REFERENCE_ANIONIC_CATIONIC:
         raise ValueError(
-            f"surfactant must be one of {sorted(hld_mod.CC_REFERENCE_ANIONIC_CATIONIC)} or 'rhamnolipid' -- "
-            "no guessed value available for zwitterionic or gemini surfactants (a real, disclosed gap)"
+            f"surfactant must be one of {sorted(hld_mod.CC_REFERENCE_ANIONIC_CATIONIC)}, "
+            f"{sorted(hld_mod.CC_REFERENCE_ZWITTERIONIC)}, 'rhamnolipid', or 'gemini_benzene_sulfonate' -- "
+            "no guessed value available for anything else"
         )
     return {"surfactant": key_upper, **hld_mod.CC_REFERENCE_ANIONIC_CATIONIC[key_upper],
             "source": "Leng & Acosta, J. Surfactants Deterg. 26(3) (2023) 287-301, primary PDF read in full"}

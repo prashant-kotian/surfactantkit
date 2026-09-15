@@ -545,8 +545,13 @@ AVOGADRO_NUMBER = 6.02214076e23  # /mol, exact SI 2019
 # Solution," Plenum Press, New York (1989) 181-193 -- their own
 # instrument-calibration section states it explicitly, stable across
 # both pure water and KCl/KBr/KI electrolyte solutions), closing that
-# part of the earlier-disclosed gap. Tween-80 is still genuinely open --
-# not found in this batch of papers either.
+# part of the earlier-disclosed gap. Tween-80 CLOSED same day: Jiang,
+# F., PhD dissertation, Virginia Tech (2011), "Effects of the Non-ionic
+# Surfactant Tween 80 on the Enzymatic Hydrolysis of Model Cellulose and
+# Lignocellulosic Substrates" -- states directly, in its own SPR
+# (surface plasmon resonance) methods section, a real dn/dc measured
+# with a Wyatt Optilab rEX differential refractometer, primary PDF read
+# in full 2026-09-15.
 DN_DC_REFERENCE_ML_PER_G = {
     "SDS": {"dn_dc": 0.11, "solvent": "water", "wavelength_nm": 632.8, "temperature_C": 25.0,
             "source": "Malvern Panalytical dn/dc reference page, live-fetched 2026-09-15"},
@@ -556,6 +561,9 @@ DN_DC_REFERENCE_ML_PER_G = {
                     "wavelength_nm": 546.0, "temperature_C": 20.0,
                     "source": "Stubicar, Matejas, Zipper & Wilfing, in Mittal (ed.), Surfactants in Solution, "
                               "Plenum Press (1989) 181-193, primary PDF read in full 2026-09-15"},
+    "TWEEN80": {"dn_dc": 0.132, "solvent": "water", "wavelength_nm": 690.0, "temperature_C": 25.0,
+                "source": "Jiang, PhD dissertation, Virginia Tech (2011), Wyatt Optilab rEX differential "
+                          "refractometer, primary PDF read in full 2026-09-15"},
 }
 
 

@@ -26,9 +26,17 @@ sulfonate and zwitterionic (N-betaine) headgroups via the real
 Nagarajan & Ruckenstein 1991 model; item 1's AOT counterion binding
 degree closed; item 10's Triton X-100 dn/dc closed; the HLD Cc gap
 extended to 8 real anionic/cationic compounds plus a real biosurfactant
-(rhamnolipid) value. Genuinely still open: zwitterionic/gemini HLD Cc
-specifically, Nagarajan's cationic-quat/carboxylate prefactor, and
-Tween-80 dn/dc -- see BOTTLENECK_RESOLUTION_PLAN.md for the live detail.
+(rhamnolipid) value. **A second real-paper batch the SAME day closed
+essentially everything still open**: item 7's cationic-quat and
+carboxylate headgroup constants (Nagarajan's own 2003 review chapter,
+13 real entries total now); the HLD Cc gap extended to FIVE real
+zwitterionic surfactants including cocamidopropyl betaine (CAPB) and a
+real gemini/dimeric surfactant, via Acosta's own 2021 compiled book;
+item 10's Tween-80 dn/dc (a real PhD thesis). Only remaining open:
+Tier 3 item 1's counterion-binding predictor now has a real, better-
+targeted resource identified (the Blankschtein group's 3-paper
+molecular-thermodynamic series) but is deliberately NOT yet
+implemented -- see BOTTLENECK_RESOLUTION_PLAN.md for full detail.
 Tier 3 (new methods, including item 6's
 gemini/glycolipid HLB and item 9's richer-dataset Henry-function path)
 is scoped but not yet started.

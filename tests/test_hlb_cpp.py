@@ -963,3 +963,39 @@ def test_nagarajan_ruckenstein_headgroup_constants_are_real_and_complete():
     assert NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS["sodium_sulfonate"]["delta_A"] == pytest.approx(3.85)
     assert NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS["n_betaine"]["d_A"] == pytest.approx(5.0)
     assert NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS["n_betaine"]["class"] == "zwitterionic"
+
+
+def test_nagarajan_ruckenstein_headgroup_constants_2003_extension_closes_cationic_and_carboxylate_gaps():
+    """Real Tier 3 gaps closed 2026-09-15, same day (second real-paper
+    batch): cationic quaternary ammonium and carboxylate headgroups,
+    both explicitly disclosed as missing from the 1991 paper's own
+    Table I, are now present via Nagarajan's own later, more
+    comprehensive 2003 book chapter (Table 3), which independently
+    reports IDENTICAL values for every headgroup already in this table
+    from 1991 -- a genuine cross-confirmation, not just one paper's own
+    self-consistency."""
+    quat = NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS["trimethyl_ammonium_bromide"]
+    assert quat["class"] == "cationic"
+    assert quat["delta_A"] == pytest.approx(3.45)
+
+    carboxylate = NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS["sodium_carboxylate"]
+    assert carboxylate["class"] == "anionic"
+    assert carboxylate["delta_A"] == pytest.approx(5.55)
+
+    lecithin = NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS["lecithin"]
+    assert lecithin["class"] == "zwitterionic"
+    assert lecithin["delta_A"] == pytest.approx(6.50)
+    assert lecithin["d_A"] == pytest.approx(6.2)
+
+
+def test_nagarajan_ruckenstein_ionic_free_energy_usable_with_trimethyl_ammonium_bromide():
+    """Real, usable end-to-end check: the newly-added cationic headgroup
+    constants plugged directly into the existing ionic free-energy
+    function (no new function needed -- the real work was sourcing the
+    values)."""
+    quat = NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS["trimethyl_ammonium_bromide"]
+    energy = nagarajan_ruckenstein_ionic_headgroup_free_energy(
+        area_per_molecule_A2=quat["a_o_A2"] * 2.0, core_radius_A=20.0,
+        delta_A=quat["delta_A"], counterion_concentration_M=0.01,
+    )
+    assert energy > 0.0

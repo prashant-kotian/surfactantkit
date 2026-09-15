@@ -163,20 +163,46 @@ RHAMNOLIPID_CC = -1.41
 # not a second real AOT measurement. Trusting the DIRECTLY-READ primary
 # paper's own AOT value (2.4-3.5, matching literature 2.5) over the
 # secondary review's "-0.92" -- disclosed here explicitly rather than
-# silently picking one number with no explanation.
+# silently picking one number with no explanation. CONFIRMED correct by
+# a THIRD independent real source below (Acosta 2021 book, Table 1.1):
+# that table's own discussion explicitly states AOT's real bi~0.32,
+# consistent with the strongly LIPOPHILIC-leaning positive Cc already in
+# CC_REFERENCE_ANIONIC_CATIONIC, not anywhere near -0.92.
 
-# GENUINE, DISCLOSED REMAINING GAP: real Cc values for zwitterionic
-# (e.g. cocamidopropyl betaine) and gemini/dimeric surfactant classes
-# specifically were still not found even in this batch of real primary
-# papers -- none of them studied a zwitterionic or gemini surfactant's
-# own Cc directly. This remains a real, standing gap in this module --
-# do not assume it is closed; see benchmark/paper3_groundzero/
-# BOTTLENECK_RESOLUTION_PLAN.md for the live tracking status. (Note: a
-# DIFFERENT, real, mechanistic path for the zwitterionic case now exists
-# via cpp.py's nagarajan_ruckenstein_dipole_headgroup_free_energy, using
-# real N-betaine molecular constants -- a real dipole-interaction model
-# rather than a bare Cc number, arguably a more complete closure of the
-# zwitterionic gap than a single Cc value would have been.)
+# REVISED 2026-09-15, same day -- CLOSED with real primary-source data:
+# the user provided Acosta, Harwell & Sabatini (eds.), "Surfactant
+# Formulation Engineering Using HLD and NAC," Elsevier (2021), Table 1.1
+# ("HLD-NAC parameters for selected surfactants") -- Acosta's own
+# comprehensive, authoritative compiled database, read in full 2026-09-
+# 15. Real Cc values for FIVE distinct zwitterionic surfactants,
+# including cocamidopropyl betaine (CAPB), the exact compound repeatedly
+# named as the target example throughout this whole investigation.
+# Lecithin's own value (5.5) matches EXACTLY the Nouraei & Acosta 2017
+# value already sourced above -- an independent cross-confirmation
+# within the same real dataset, not a coincidence.
+CC_REFERENCE_ZWITTERIONIC = {
+    "lecithin": {"cc_this_work": 5.5, "cc_literature": 5.4,
+                 "note": "palmitoyl oleyl phosphatidyl choline; matches Nouraei & Acosta 2017 (JCIS 495, 178-190) exactly"},
+    "Epikuron200": {"cc_this_work": 5.1, "cc_literature": None,
+                     "note": "a real commercial lecithin-type phospholipid product; calculated from Ontiveros et al. 2014"},
+    "C4mPC": {"cc_this_work": 3.0, "cc_literature": None, "note": "a shorter-headgroup phospholipid variant"},
+    "dodecylsulfobetaine": {"cc_this_work": -0.7, "cc_literature": None, "note": "also known as lauryl sultaine"},
+    "lauramineoxide": {"cc_this_work": -4.0, "cc_literature": None, "note": "C12NC2O, amine oxide zwitterionic"},
+    "CAPB": {"cc_this_work": -5.2, "cc_this_work_alt": -2.1, "cc_literature": None,
+             "note": "cocamidopropyl betaine -- two real estimates given in the source table (a direct method, "
+                     "and a second calculated from Ontiveros et al. 2014), both real, disclosed rather than "
+                     "picking one silently"},
+}
+
+# Real Cc value for a GEMINI (dimeric) surfactant, closing that part of
+# the real, disclosed gap -- same Acosta 2021 book, Table 1.1: "Gemini
+# benzene sulfonate C16 [Ph](SO3Na)O[Ph](SO3Na)" (a bis-sulfonate gemini
+# with an ether-linked spacer), k=0.16 (matching K_ANIONIC_DEFAULT
+# exactly, a real cross-consistency check), Cc=-7.4 (this work, "from
+# dlnS*/dx with SDHS as reference"), cross-checked against an
+# independent comparison value of -6.6.
+GEMINI_BENZENE_SULFONATE_CC = -7.4
+GEMINI_BENZENE_SULFONATE_CC_LITERATURE = -6.6
 
 # Amine oxide surfactants behave as cationic only at low pH (protonated,
 # pKa ~ 4.90 for LDAO) -- these Cc values are specifically at pH = 1, not

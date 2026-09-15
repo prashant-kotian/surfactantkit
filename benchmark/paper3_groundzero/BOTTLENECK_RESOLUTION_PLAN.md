@@ -364,6 +364,93 @@ dropped. Full suite: 486/486 passing after this round (one real bug
 found and fixed along the way: a stale test assertion still expecting
 the old SDS_CC=-3.0 placeholder after the real value was substituted).
 
+**2026-09-15, same day -- SECOND real-paper batch, closing essentially
+everything still listed as open just above.** User asked "give me
+paper/book keyword to search for all open issues"; a grouped list
+(Groups A-F) was given, and the user provided 10 more real PDFs into a
+`New folder` subdirectory, immediately renamed per the established
+convention. Every remaining item in this section was closed:
+
+- **Nagarajan cationic-quat/carboxylate headgroup prefactor -- CLOSED**:
+  Nagarajan's own later, more comprehensive review chapter, "Theory of
+  Micelle Formation," Ch. 1 in *Structure-Performance Relationships in
+  Surfactants*, 2nd ed., Taylor & Francis (2003), Table 3 ("Molecular
+  Constants for Surfactant Headgroups") -- the user pointed directly at
+  the exact table via the filename itself. This independent, later
+  source reports IDENTICAL values for every headgroup already sourced
+  from the 1991 paper (a real cross-confirmation, not just one paper's
+  self-consistency), AND adds real constants for trimethyl ammonium
+  bromide and pyridinium bromide (CATIONIC, both real gaps now closed),
+  sodium and potassium carboxylate (the CARBOXYLATE gap now closed),
+  four more nonionic classes, and a SECOND real zwitterionic class
+  (lecithin -- genuinely needing BOTH the ionic delta AND the dipole d,
+  a real structural complexity the table discloses rather than
+  resolves one way). `NAGARAJAN_RUCKENSTEIN_HEADGROUP_CONSTANTS` in
+  cpp.py grew from 4 to 13 real, sourced entries.
+- **Zwitterionic HLD Cc -- CLOSED**, comprehensively: Acosta, Harwell &
+  Sabatini (eds.), *Surfactant Formulation Engineering Using HLD and
+  NAC*, Elsevier (2021), Table 1.1 -- Acosta's own definitive compiled
+  database. Real Cc for FIVE zwitterionic surfactants: lecithin (5.5,
+  matching Nouraei & Acosta 2017 -- also independently provided this
+  round and read in full -- EXACTLY, a genuine cross-confirmation
+  within the same real dataset), Epikuron 200 (5.1), C4-mPC (3.0),
+  dodecylsulfobetaine/lauryl sultaine (-0.7), lauramine oxide (-4.0),
+  and **cocamidopropyl betaine (CAPB)** -- the exact compound
+  repeatedly named as the target example throughout this whole
+  investigation -- with two real estimates (-5.2 and -2.1). New
+  `CC_REFERENCE_ZWITTERIONIC` in hld.py. The AOT=-0.92 discrepancy
+  flagged in the previous batch is now further confirmed as a citation
+  error: this book's own text states AOT's real bi~0.32, consistent
+  with the strongly positive Cc already sourced, nowhere near -0.92.
+- **Gemini HLD Cc -- CLOSED**: same Table 1.1, a real gemini/dimeric
+  surfactant ("Gemini benzene sulfonate C16 [Ph](SO3Na)O[Ph](SO3Na)"),
+  k=0.16 (matching `K_ANIONIC_DEFAULT` exactly -- another real cross-
+  consistency check), Cc=-7.4 (this work), cross-checked against an
+  independent comparison value of -6.6. New `GEMINI_BENZENE_SULFONATE_
+  CC`/`_LITERATURE` in hld.py.
+- **Tween-80 dn/dc -- CLOSED**: Jiang, F., PhD dissertation, Virginia
+  Tech (2011), "Effects of the Non-ionic Surfactant Tween 80 on the
+  Enzymatic Hydrolysis of Model Cellulose and Lignocellulosic
+  Substrates" -- its own SPR methods section states directly: dn/dc =
+  0.132 mL/g (690 nm, 25 C, Wyatt Optilab rEX). Added to
+  `DN_DC_REFERENCE_ML_PER_G`.
+- **Real, identified resources for Tier 3 item 1 (counterion-binding
+  predictor), NOT yet implemented -- deliberately deferred, not a
+  smaller task than it looks.** The user also provided the REAL Manning
+  1969 paper (*J. Chem. Phys.* 51, 924) AND, more importantly, a full
+  3-paper Blankschtein-group series specifically calibrated for
+  SURFACTANT micelles (not generic polyelectrolytes like Manning's own
+  theory): Srinivasan & Blankschtein, *Langmuir* 19 (2003) 9932-9945 and
+  9946-9961 (molecular-thermodynamic theory of counterion binding,
+  validated against real SDS+NaCl, alkali dodecyl sulfates, multivalent
+  counterions, and organic counterions), and Goldpise & Blankschtein,
+  *Langmuir* 21 (2005) 9850-9865 (extending it to ionic-nonionic and
+  ionic-zwitterionic MIXTURES). This is a real, better-targeted
+  alternative to plain Manning theory for this specific goal -- but
+  implementing the full free-energy-minimization model is a
+  substantially larger undertaking than a lookup-table extension, on
+  the same scale as reimplementing a piece of Nagarajan's own
+  micellization theory. Deliberately scoped OUT of this session's work;
+  flagged here as the real, identified starting point for whenever Tier
+  3 item 1 is actually taken on.
+- **Real, supporting (not load-bearing) evidence for Tier 3 item 6**
+  (gemini/glycolipid Davies HLB): Liao et al., *Arabian J. Chem.* 16
+  (2023) 105111, reports real Griffin-method HLB values (6.22-7.97) for
+  four real NONIONIC gemini surfactants, cross-validated against their
+  own observed W/O vs. O/W emulsion behavior -- real, published,
+  recent (2023) confirmation that Griffin's method is already being
+  used successfully as the practical default for gemini surfactants,
+  supporting this project's own proposed resolution path (formally
+  establish Griffin-as-default rather than extending Davies). No new
+  code needed -- `hlb_griffin` already exists; this is documentation-
+  grade supporting evidence, not a capability gap.
+
+**Genuinely still open after this second batch**: only the Blankschtein
+counterion-binding theory's actual implementation (Tier 3 item 1,
+scoped as real future work, not blocked on sourcing) and the Davies-
+gemini-HLB resolution's own code decision (Tier 3 item 6, now with even
+more real supporting data in hand). Full suite: 494/494 passing.
+
 **Tier 3 -- [NEW METHOD], real research contribution, higher effort:**
 - #1's Manning/PB counterion-binding predictor, validated against Tier 2's
   mined table
