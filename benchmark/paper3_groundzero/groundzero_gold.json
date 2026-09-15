@@ -151,5 +151,28 @@
       "grading_note": "the real point of this question: grade n_ethylene_oxide_units and molecular_weight_g_per_mol as their OWN fields, not just hlb_griffin, since an off-by-one EO miscount only shifts HLB by ~0.4-0.5 units (n=9 gives HLB=12.94, n=11 gives HLB=13.80) -- small enough that it could still fall inside typical 20% numeric tolerance on hlb_griffin alone while the underlying count is genuinely wrong. This directly re-tests the real, mechanistically-documented repeated-substructure-counting weakness this session already found on GZ-08 (two independent models both said 7 ethylene-oxide units where the real answer was 8) -- see LLM_CAPABILITY_RESEARCH.md item 2b."
     },
     "computed_via": "RDKit formula verification + surfactantkit.hlb.hlb_griffin, verified 2026-09-15"
+  },
+  "GZ-14": {
+    "source": "SAME real AOT curve as GZ-01/GZ-09 (Shah, Das & Bhattarai 2025)",
+    "gold": {
+      "frumkin_a_best_fit": 3.7882920070770343,
+      "langmuir_bic": 10.134654851271518,
+      "frumkin_bic": 14.35655834691898,
+      "delta_bic": -4.221903495647462,
+      "lateral_interaction_present": "ambiguous by design -- a=3.788 is real and nonzero (genuine 2D-condensation-regime magnitude), but Langmuir still wins on BIC",
+      "confidence_from_this_data_alone": "low",
+      "grading_note": "the correct answer is NOT a confident true or false on lateral_interaction_present -- it's recognizing that a real, nonzero best-fit value (a=3.788) coexists with LOW confidence that this specific limited dataset (9 points, most of the fitting leverage spent on locating the CMC) can actually resolve whether that interaction is real or an artifact of too few/noisy points. Credit reasoning that distinguishes 'a fitted value exists' from 'this value is independently confirmed' -- the real tool's own disclosed finding is 'data-limited, not proof a=0', not a confident claim either way. A model that confidently asserts NO interaction (ignoring the real nonzero a), or confidently reports a=3.788 as solid (ignoring that BIC still preferred the simpler model), should both be marked wrong on confidence_from_this_data_alone."
+    },
+    "computed_via": "surfactantkit.orchestrate.derive_all_properties_from_smiles_and_curve's own isotherm-selection output, re-verified 2026-09-15"
+  },
+  "GZ-15": {
+    "source": "GZ-15_chart.png, generated 2026-09-15 via matplotlib directly from AOT's real curve data (same system as GZ-01/09/14) -- requires vision, not text reasoning",
+    "gold": {
+      "gamma_lowest_conc_mN_per_m": 62.22,
+      "gamma_plateau_mN_per_m": 27.5,
+      "estimated_cmc_mM": 2.5118612800073175,
+      "grading_note": "gamma fields (a) and (b) are direct point-reads at the chart's own extremes and should be read fairly precisely (real markers sit close to real gridlines there). estimated_cmc_mM (c) is expected to show real, meaningful visual-estimation error -- the tool's own real segment-fit (2.51 mM) is NOT necessarily at the most visually obvious 'corner' of the curve (the visible bend looks like it's nearer 1.5-4 mM by eye); per LLM_CAPABILITY_RESEARCH.md item 2e, chart numeric extraction is a documented, current, unsolved VLM weakness -- grade with wider tolerance than the other numeric fields in this project (this question is deliberately testing HOW WRONG the visual estimate is, not requiring tight agreement)."
+    },
+    "computed_via": "same real orchestrator output as GZ-01, values read directly from the same real curve used to build the chart"
   }
 }

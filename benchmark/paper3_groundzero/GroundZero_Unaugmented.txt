@@ -366,3 +366,57 @@ FINAL_JSON:
   "hlb_griffin": <number>
 }
 <<< PASTE ABOVE <<<
+
+
+GZ-14
+[reference only, do not paste -- SAME real AOT curve as GZ-01 (Shah, Das & Bhattarai 2025). Gold via the real orchestrator's own isotherm-selection output (verified 2026-09-15): Frumkin's own best fit gives a=3.788 (a genuine, real, nonzero 2D-condensation-regime value, not noise), yet Langmuir (a=0) still wins on BIC (delta_bic=-4.22). The tool's own real, disclosed warning: this means the data is too limited to CONFIRM a genuine lateral-interaction term, not that the interaction is proven absent -- "report the model selection as data-limited, not as proof a=0." The real test: does the model recognize that a specific fitted value (a=3.788) coming from the SAME limited data used for everything else is a fundamentally different epistemic situation than an independently-known value, and correctly report low confidence rather than either (i) confidently asserting no interaction exists, or (ii) confidently reporting a=3.788 as if it were a solid, independently-verified answer.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+SMILES: CCCCC(CC)COC(=O)CC(C(=O)OCC(CC)CCCC)S(=O)(=O)[O-].[Na+]
+
+Real concentration-vs-surface-tension data at 298.15 K (concentration in mM, surface tension in mN/m):
+  0.01585, 62.22
+  0.03981, 55.66
+  0.10000, 49.10
+  0.25119, 42.54
+  0.63096, 35.98
+  1.58489, 29.42
+  3.981, 27.5
+  6.31, 27.8
+  10.0, 28.0
+
+Analyze the pre-CMC adsorption behavior of this surfactant. Determine whether there is genuine surfactant-surfactant lateral interaction at the interface (beyond simple independent adsorption), and separately assess how confidently that specific question can be answered using only this dataset.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "lateral_interaction_present": <true|false>,
+  "confidence_from_this_data_alone": "<high|moderate|low>",
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-15
+[reference only, do not paste -- REQUIRES an attached image: GZ-15_chart.png (in this same folder), generated 2026-09-15 via matplotlib directly from AOT's real curve data (same real system as GZ-01/GZ-09/GZ-14, Shah/Das/Bhattarai 2025) -- deliberately titled generically ("Real surfactant"), not naming AOT, so the model must read the chart rather than recall AOT's literature values. This is the vision/chart-reading track discussed this session -- unlike every other GZ question, this one needs the model's own vision capability, not text reasoning; the model has NOT been given the underlying numbers as text anywhere in this question. Real gold, read directly off the same real data the chart was built from: gamma at the lowest concentration point = 62.22 mN/m; gamma at the plateau (highest concentrations) = ~27.5-28.0 mN/m; the real CMC (from the tool's own real segment-fit, not just eyeballing the visible bend) = 2.51 mM -- note the VISUAL bend in the chart is not necessarily at the same point as the real fitted breakpoint, since the fit uses information (which points belong to which segment, via BIC) not directly visible as a sharp corner. Real, current literature (LLM_CAPABILITY_RESEARCH.md item 2e, MeasureBench/CHI 2026) confirms numeric extraction from charts is a primary, still-unsolved VLM failure mode -- this question is expected to show real, meaningful error, not near-100% accuracy.]
+
+>>> PASTE BELOW >>>
+The attached image shows a real surface-tension-vs-concentration curve for a real surfactant (log-scale concentration axis).
+
+Read the following directly from the chart -- do not assume this is any particular named/recognized surfactant, and do not use any numeric value except by reading the chart itself:
+(a) The surface tension at the lowest concentration shown.
+(b) The surface tension in the flat (plateau) region at the highest concentrations shown.
+(c) Your best estimate of the concentration (in mM) at which the curve transitions from its declining pre-plateau behavior to the flat plateau -- this is the critical micelle concentration.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "gamma_lowest_conc_mN_per_m": <number>,
+  "gamma_plateau_mN_per_m": <number>,
+  "estimated_cmc_mM": <number>
+}
+<<< PASTE ABOVE <<<
