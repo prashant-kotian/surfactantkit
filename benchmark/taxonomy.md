@@ -1,5 +1,16 @@
 # SurfBench question taxonomy
 
+**SUPERSEDED 2026-09-14, found during a 2026-09-15 documentation completeness audit and
+flagged here rather than silently left to mislead a future reader.** This describes the
+ORIGINAL Tier1+Tier2 (25-tool, ~500-question, pre-fitted-parameter) benchmark design. The
+user identified this whole design as fatally flawed (all 4 tested LLMs scored 83-100%
+unaugmented -- it tested arithmetic/interpolation, not real chemistry judgment) and the
+project moved to a ground-zero redesign instead (raw SMILES + raw data, no pre-named
+model/formula) -- see `benchmark/paper3_groundzero/` and
+`H:\CodeProjects\PhD-Research\PROJECT_STATUS.md`'s Paper 3 section (2026-09-14 entry onward)
+for the live design. Kept here as historical record of why the pivot happened, not as a
+current design document -- do not build against this taxonomy.
+
 500 questions total, split so every one of SurfactantKit's 25 MCP tools gets systematic, multi-question coverage (Tier 1), plus a control group of non-tool categories (Tier 2) that measures whether tool augmentation is neutral where it should be -- pure recall/classification isn't something a calculation tool can help with, and showing that plainly is part of the paper's honesty.
 
 ## Tier 1 -- tool-mapped categories (294 questions)

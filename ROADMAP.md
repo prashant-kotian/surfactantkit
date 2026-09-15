@@ -5,6 +5,17 @@ up exactly where this one left off. Read this file FIRST before starting new wor
 
 Last updated: 2026-09-13.
 
+**Found stale 2026-09-15, during a full completeness audit of this repo's own documentation
+(triggered by a real, standing rule -- see this project's `~/.claude/CLAUDE.md`, "Close Every
+Workflow to Its Entirety Before Starting the Next"): everything below this line remains
+accurate as dated HISTORY (each entry is a true statement about what was true on its own
+date), but nothing has been added here since 2026-09-13, and real work has continued past
+that date. Ground-zero benchmark redesign, the full toolkit capability audit, the 14-item
+`GENUINE_BOTTLENECK_AUDIT.md`, and the ongoing tiered `BOTTLENECK_RESOLUTION_PLAN.md`
+bottleneck-resolution work (Tier 0 and Tier 1 both fully DONE as of 2026-09-15, `__version__`
+now 0.4.0) are tracked in `H:\CodeProjects\PhD-Research\PROJECT_STATUS.md`'s Paper 3 section
+instead, not duplicated here -- check that file for anything after 2026-09-13, not this one.**
+
 ---
 
 ## Autonomous SMILES+raw-data orchestrator built -- 2026-09-13

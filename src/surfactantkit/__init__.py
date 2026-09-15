@@ -35,6 +35,8 @@ from .adsorption import (
     szyszkowski_fit_K,
     frumkin_theta,
     frumkin_surface_tension,
+    frumkin_fit_K_and_a,
+    select_isotherm_model,
 )
 from .hlb import (
     hlb_griffin,
@@ -115,6 +117,8 @@ from .classify import (
     classify_surfactant_charge_type_at_ph,
     classify_surfactant_structural_family,
 )
+from .mixture_model_selection import rubingh_predict_cmc_mix, select_mixture_model
+from .orchestrate import derive_all_properties_from_smiles_and_curve
 
 __version__ = "0.4.0"
 
@@ -142,6 +146,8 @@ __all__ = [
     "szyszkowski_fit_K",
     "frumkin_theta",
     "frumkin_surface_tension",
+    "frumkin_fit_K_and_a",
+    "select_isotherm_model",
     "hlb_griffin",
     "hlb_davies",
     "guo_effective_eo_chain_length",
@@ -201,4 +207,7 @@ __all__ = [
     "classify_surfactant_charge_type",
     "classify_surfactant_charge_type_at_ph",
     "classify_surfactant_structural_family",
+    "rubingh_predict_cmc_mix",
+    "select_mixture_model",
+    "derive_all_properties_from_smiles_and_curve",
 ]
