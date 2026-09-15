@@ -76,6 +76,7 @@ def test_all_expected_tools_are_registered():
         "estimate_axial_ratio_from_cpp_geometry",
         "estimate_partial_specific_volume",
         "classify_surfactant_charge_type_at_ph",
+        "estimate_intrinsic_water_solubility_qspr",
         "micelle_water_partition_coefficient",
         "grahame_equation_surface_potential",
         "aggregation_number_from_dls",
@@ -626,6 +627,15 @@ def test_estimate_axial_ratio_from_cpp_geometry_tool_matches_library():
 
     out_sphere = call("estimate_axial_ratio_from_cpp_geometry", {"cpp": 0.25, "aggregation_number": 60, "n_carbons": n_carbons})
     assert out_sphere["axial_ratio"] == pytest.approx(1.0)
+
+
+def test_estimate_intrinsic_water_solubility_qspr_tool_matches_library():
+    out = call("estimate_intrinsic_water_solubility_qspr", {"smiles": "c1ccc2ccccc2c1"})
+    assert 1e-6 <= out["solubility_M"] <= 1e-1
+    assert out["caveats"]
+
+    with pytest.raises(Exception):
+        call("estimate_intrinsic_water_solubility_qspr", {"smiles": "not a smiles $$$"})
 
 
 def test_classify_surfactant_charge_type_at_ph_tool_matches_library():

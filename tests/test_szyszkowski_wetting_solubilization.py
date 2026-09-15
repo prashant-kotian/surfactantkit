@@ -16,7 +16,11 @@ from surfactantkit.wetting import (
     VOCG_STANDARD_LIQUIDS,
     OWENS_WENDT_STANDARD_LIQUIDS,
 )
-from surfactantkit.solubilization import molar_solubilization_ratio, micelle_water_partition_coefficient
+from surfactantkit.solubilization import (
+    molar_solubilization_ratio,
+    micelle_water_partition_coefficient,
+    estimate_intrinsic_water_solubility_qspr,
+)
 
 
 def test_szyszkowski_returns_gamma0_at_zero_concentration():
@@ -345,3 +349,57 @@ def test_micelle_water_partition_coefficient_rejects_zero_intrinsic_solubility()
 def test_micelle_water_partition_coefficient_rejects_inconsistent_solubility():
     with pytest.raises(ValueError):
         micelle_water_partition_coefficient(0.005e-3, 0.01e-3, 10e-3, 2e-3)
+
+
+# --- estimate_intrinsic_water_solubility_qspr (Tier 1 bottleneck fix #13,
+# 2026-09-15 -- see BOTTLENECK_RESOLUTION_PLAN.md). Coefficients are Pat
+# Walters' real, published RDKit-refit of Delaney's 2004 ESOL model,
+# live-verified before being hardcoded. Validated by recomputing the exact
+# same formula independently in the test (not just trusting the
+# implementation), plus a real-world sanity check on naphthalene, a classic
+# ESOL benchmark compound.
+
+
+def test_qspr_solubility_matches_manual_esol_formula_for_naphthalene():
+    from rdkit import Chem
+    from rdkit.Chem import Descriptors, Crippen, Lipinski
+
+    smiles = "c1ccc2ccccc2c1"  # naphthalene
+    mol = Chem.MolFromSmiles(smiles)
+    mw = Descriptors.MolWt(mol)
+    clogp = Crippen.MolLogP(mol)
+    rotors = Lipinski.NumRotatableBonds(mol)
+    n_aromatic = len(mol.GetSubstructMatches(Chem.MolFromSmarts("a")))
+    ap = n_aromatic / mol.GetNumAtoms()
+    expected_log_s = (
+        0.26121066137801696 - 0.7416739523408995 * clogp - 0.0066138847738667125 * mw
+        + 0.003451545565957996 * rotors - 0.42624840441316975 * ap
+    )
+
+    result = estimate_intrinsic_water_solubility_qspr(smiles)
+    assert result.log_s_mol_per_L == pytest.approx(expected_log_s, rel=1e-9)
+    assert result.solubility_M == pytest.approx(10.0 ** expected_log_s, rel=1e-9)
+
+
+def test_qspr_solubility_naphthalene_in_realistic_range():
+    # naphthalene's real measured aqueous solubility is well known to be
+    # low-mM range (~2e-4 M); ESOL is a coarse estimate (real RMSE ~0.6-1
+    # log unit) so this checks order-of-magnitude plausibility, not an
+    # exact match against a specific literature number.
+    result = estimate_intrinsic_water_solubility_qspr("c1ccc2ccccc2c1")
+    assert 1e-6 <= result.solubility_M <= 1e-1
+    assert result.caveats  # the QSPR-estimate caveat must always be present
+
+
+def test_qspr_solubility_highly_polar_small_molecule_more_soluble_than_hydrocarbon():
+    # a real, qualitative sanity check the formula must get right regardless
+    # of exact coefficients: a small polar molecule should be predicted
+    # MORE soluble than a nonpolar aromatic hydrocarbon of similar size
+    naphthalene = estimate_intrinsic_water_solubility_qspr("c1ccc2ccccc2c1")
+    ethanol = estimate_intrinsic_water_solubility_qspr("CCO")
+    assert ethanol.solubility_M > naphthalene.solubility_M
+
+
+def test_qspr_solubility_rejects_unparseable_smiles():
+    with pytest.raises(ValueError):
+        estimate_intrinsic_water_solubility_qspr("not a smiles $$$")

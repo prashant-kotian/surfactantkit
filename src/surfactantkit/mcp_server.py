@@ -1441,6 +1441,34 @@ def micelle_water_partition_coefficient(total_solubilized_M: float, intrinsic_wa
 
 
 @mcp.tool()
+def estimate_intrinsic_water_solubility_qspr(smiles: str) -> dict:
+    """Real, buildable QSPR ESTIMATE (not a measurement) of a
+    solubilizate's intrinsic aqueous solubility from its SMILES alone --
+    closes part of the intrinsic_water_solubility_M bottleneck for
+    molar_solubilization_ratio/micelle_water_partition_coefficient, for
+    compounds no real measured value has been sourced for yet. Uses ESOL
+    (Delaney 2004), Pat Walters' real RDKit-specific coefficient refit
+    (github.com/PatWalters/solubility) -- log10(S, mol/L) = a - b*clogP -
+    c*MW + d*rotatable_bonds - e*aromatic_proportion.
+
+    PROMINENT, HONEST LIMITATION: this is a coarse estimate, not a
+    measurement -- real published validation error is roughly 0.6-1 log
+    unit (can be off by an order of magnitude or more for an individual
+    compound). Always prefer a real measured/cited value when one is
+    available; use this only as a fallback, and treat its output as an
+    estimate, never as equivalent to a real literature value."""
+    r = solub.estimate_intrinsic_water_solubility_qspr(smiles)
+    return {
+        "smiles": r.smiles,
+        "log_s_mol_per_L": r.log_s_mol_per_L,
+        "solubility_M": r.solubility_M,
+        "method": r.method,
+        "confidence": r.confidence,
+        "caveats": r.caveats,
+    }
+
+
+@mcp.tool()
 def classify_surfactant_charge_type(smiles: str) -> dict:
     """Determine a surfactant's charge type (anionic/cationic/zwitterionic/
     nonionic) from its real SMILES structure via RDKit SMARTS functional-
