@@ -118,5 +118,38 @@
       "grading_note": "assumptions_or_limitations is open free text -- credit if it recognizes the fixed Amin is a real simplification for an ionic surfactant (electrolyte-dependent equilibrium-area models like Nagarajan's exist and would differ), without requiring it to fabricate a specific corrected CPP number (no electrolyte condition was given). This is now unprompted -- the question no longer names the specific limitation, so also credit a model that raises a genuinely different, valid limitation instead."
     },
     "computed_via": "surfactantkit.cpp.tanford_tail_volume/tanford_critical_length/critical_packing_parameter/classify_aggregate_morphology, verified 2026-09-15"
+  },
+  "GZ-11": {
+    "source": "SDS n_c=12, real CMC=8mM (textbook); measured Amin from Sachin et al. 2019 (same as GZ-10); Nagarajan 2002 Table 2 electrostatic method (headgroup_prefactor_A=82.0, real paper value for sulfate headgroups)",
+    "gold": {
+      "tail_volume_A3": 350.2,
+      "critical_length_A": 16.68,
+      "cpp_measured_area": 0.46969136100515557,
+      "morphology_measured_area": "cylindrical/rodlike micelle",
+      "electrostatic_headgroup_area_A2": 67.27174770212636,
+      "cpp_electrostatic_area": 0.31209541232517773,
+      "morphology_electrostatic_area": "spherical micelle",
+      "grading_note": "The real, intended finding IS the disagreement -- both CPPs/morphologies must be reported and both are real, gold does not expect (or want) the model to force a single resolved answer. 'comment' is open free text; credit recognizing this as a genuine measured-vs-theoretical tension (different real methods, different real physical assumptions -- measured Amin reflects the ACTUAL solution's surface excess at a real experimental condition, the electrostatic estimate is a theoretical prediction at the CMC with no added salt), not a contradiction to be papered over or an error in either number."
+    },
+    "computed_via": "surfactantkit.cpp.tanford_tail_volume/critical_length + nagarajan_debye_huckel_kappa_inverse/nagarajan_equilibrium_area_ionic, verified 2026-09-15, cross-checked against test_hlb_cpp.py's own real Nagarajan Table 2 validation"
+  },
+  "GZ-12": {
+    "source": "Schulz & Durand 2016, Comput. Chem. Eng. 87, 145-153, SI mmc2.csv -- real Hyamine(benzethonium chloride)-DTAB system, real fitted W12=-3.565/W21=-0.889 (RT units), already validated in this project's test suite",
+    "gold": {
+      "f1_at_x1_0.90": 1.0125688763683442,
+      "f2_at_x1_0.90": 0.3154843161590624,
+      "grading_note": "interaction_model_or_approach is open free text -- credit any real 2-parameter asymmetric-interaction reasoning (the model must notice f1 and f2 do NOT mirror each other the way a single Rubingh beta would force, since f1 approaches 1 near x1=0.8-0.9 while f2 stays well below 1 -- a real asymmetry). Extrapolating with only a single-beta Rubingh-style fit is expected to give a worse, more symmetric answer; this is the actual test, not exact parameter recovery. Given 5 real interior points and no code execution, expect real spread across models here -- this question is intentionally hard, matching TOOLKIT_COMBINATION_GRAPH.md's gap #3 (genuinely predictive extrapolation, not fitting-then-reporting the same points)."
+    },
+    "computed_via": "surfactantkit.mixed_micelle.asymmetric_margules_activity_coefficients, verified 2026-09-15"
+  },
+  "GZ-13": {
+    "source": "Constructed C16E10 nonionic surfactant, SMILES RDKit-verified (formula C36H74O11, 10 EO units confirmed via two independent atom counts) before use",
+    "gold": {
+      "n_ethylene_oxide_units": 10,
+      "molecular_weight_g_per_mol": 682.9770000000001,
+      "hlb_griffin": 13.398313559607427,
+      "grading_note": "the real point of this question: grade n_ethylene_oxide_units and molecular_weight_g_per_mol as their OWN fields, not just hlb_griffin, since an off-by-one EO miscount only shifts HLB by ~0.4-0.5 units (n=9 gives HLB=12.94, n=11 gives HLB=13.80) -- small enough that it could still fall inside typical 20% numeric tolerance on hlb_griffin alone while the underlying count is genuinely wrong. This directly re-tests the real, mechanistically-documented repeated-substructure-counting weakness this session already found on GZ-08 (two independent models both said 7 ethylene-oxide units where the real answer was 8) -- see LLM_CAPABILITY_RESEARCH.md item 2b."
+    },
+    "computed_via": "RDKit formula verification + surfactantkit.hlb.hlb_griffin, verified 2026-09-15"
   }
 }

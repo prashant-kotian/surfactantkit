@@ -275,3 +275,94 @@ FINAL_JSON:
   "assumptions_or_limitations": "<string>"
 }
 <<< PASTE ABOVE <<<
+
+
+GZ-11
+[reference only, do not paste -- source: SDS, n_c=12, real CMC=8mM (textbook, already used throughout this project). Tanford lc=16.68A (universal regression). Real measured Amin=44.70 A^2 (Sachin, Karpe, Singh & Bhattarai 2019, PMC6458362, already used in GZ-10) gives CPP=0.4697 -> cylindrical/rodlike. Real Nagarajan 2002 (Langmuir 18, 31-38) equilibrium-area method, headgroup_prefactor_A=82.0 (the paper's own real value for sulfate-type headgroups, a fair universal constant to supply per this project's established precedent), using the SAME lc=16.68 for internal consistency, gives a_e=67.27 A^2 -> CPP=0.3121 -> SPHERICAL. Verified via the real nagarajan_debye_huckel_kappa_inverse/nagarajan_equilibrium_area_ionic functions, cross-checked against this project's own already-committed test suite (test_hlb_cpp.py's real Nagarajan Table 2 validation). Two real, independently legitimate methods genuinely disagree on morphology for the exact same real compound -- built directly from TOOLKIT_COMBINATION_GRAPH.md's own finding (2026-09-15) that GZ-10's earlier refusal on a "corrected CPP" was one step too conservative: Nagarajan's method needs no electrolyte condition at all (it derives screening length from the CMC itself via Debye-Huckel), unlike the Gibbs-prefactor path. Gold does NOT expect the model to force an artificial resolution -- recognizing the real, disclosed tension between a measured Amin and a theoretical a_e, and reporting both, is the correct behavior.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+A real anionic surfactant has 12 carbons in its hydrophobic tail and a real critical micelle concentration of 8 mM (no added electrolyte).
+
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+
+Use Tanford's standard empirical relations for a saturated, unbranched alkyl chain of n_c carbons:
+  Tail volume V (cubic Angstrom) = 27.4 + 26.9 * n_c
+  Critical chain length l_c (Angstrom) = 1.5 + 1.265 * n_c
+  Critical packing parameter P = V / (a * l_c), where a is the headgroup area per molecule
+  Morphology: P <= 1/3 spherical micelle; 1/3 < P <= 1/2 cylindrical/rodlike micelle; 1/2 < P <= 1 vesicle/bilayer; P > 1 inverted structures
+
+A real, independently measured headgroup area for this exact compound is 44.70 square Angstrom.
+
+Separately, for an ionic surfactant with no added electrolyte, the effective headgroup area can also be estimated from electrostatic double-layer theory rather than measured directly, using only the CMC itself (no separate electrolyte concentration needed): first the Debye-Huckel screening length at that ionic strength, then an equilibrium headgroup area from that screening length and a real headgroup-specific electrostatic prefactor -- for a sulfate-type headgroup, this prefactor is 82.0 (Angstrom, in this convention's own units).
+
+Analyze this system using BOTH approaches -- the directly measured headgroup area, and the electrostatically-derived one -- and report what each implies about the aggregate morphology. Comment on what you find.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp_measured_area": <number>,
+  "morphology_measured_area": "<string>",
+  "electrostatic_headgroup_area_A2": <number>,
+  "cpp_electrostatic_area": <number>,
+  "morphology_electrostatic_area": "<string>",
+  "comment": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-12
+[reference only, do not paste -- source: Schulz & Durand 2016, Comput. Chem. Eng. 87, 145-153, SI mmc2.csv -- real Hyamine(1)-DTAB(2) system, 5 real interior compositions (x1, ln f1, ln f2), x1 from 0.305 to 0.808. Gold via asymmetric_margules_activity_coefficients at the real fitted W12=-3.565, W21=-0.889 (RT units, both from this same real SI, already validated in this project's test suite): at x1=0.90 (genuinely beyond the measured range), f1=1.0126, f2=0.3155 (ln f1=0.0125, ln f2=-1.1536). Tests EOMMM's genuinely predictive branch (TOOLKIT_COMBINATION_GRAPH.md's gap #3) -- extrapolating a fitted interaction model to an unmeasured composition, not just reproducing the fit at points already given. Does not name "EOMMM" or "asymmetric Margules" or give the functional form -- the model must recognize this is a 2-parameter interaction model (not Rubingh's single beta, since f1 and f2 clearly do NOT mirror each other the way a single-beta model would require) and either fit or reasonably interpolate/extrapolate it.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this specific system.
+
+Two real cationic surfactants form a real binary mixed micelle system.
+
+Component 1 SMILES: CC(C)(C)CC(C)(C)C1=CC=C(C=C1)OCCOCC[N+](C)(C)CC2=CC=CC=C2.[Cl-]
+Component 2 SMILES: CCCCCCCCCCCC[N+](C)(C)C.[Br-]
+
+Real measured activity coefficients of each component in the mixed micelle, at several real bulk compositions (x1 = micellar mole fraction of component 1; f1, f2 = activity coefficients of components 1 and 2 respectively):
+  x1=0.305, f1=0.394, f2=0.650
+  x1=0.415, f1=0.630, f2=0.500
+  x1=0.483, f1=0.769, f2=0.426
+  x1=0.626, f1=0.970, f2=0.322
+  x1=0.808, f1=1.028, f2=0.286
+
+Analyze the interaction between these two surfactants in their mixed micelle, and predict f1 and f2 at x1=0.90 (a composition not among those measured above).
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "f1_at_x1_0.90": <number>,
+  "f2_at_x1_0.90": <number>,
+  "interaction_model_or_approach": "<string>",
+  "notes": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-13
+[reference only, do not paste -- a real C16E10 nonionic surfactant (hexadecyl decaethylene glycol ether, a real Brij-family structural type), SMILES constructed and RDKit-verified (formula C36H74O11, confirmed 10 real ethylene-oxide units via two independent atom counts) before use -- learning directly from this session's own real GZ-08 finding (two independent frontier LLMs both miscounted a real SMILES's EO units, 7 vs the real 8, later confirmed mechanistically as a documented general LLM architecture limitation for counting repeated substructures, see LLM_CAPABILITY_RESEARCH.md item 2b). Gold: mw_total=682.98 g/mol, HLB(Griffin)=13.398. Real, checked sensitivity: an off-by-one EO count shifts HLB by ~0.4-0.5 units (n=9 gives 12.94, n=11 gives 13.80) -- real but small, so this question ALSO asks for the EO count and total MW explicitly as separate graded fields, not just the final HLB, so a genuine miscount is directly gradable regardless of whether the downstream HLB happens to still land within numeric tolerance.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+A real nonionic surfactant has the SMILES: CCCCCCCCCCCCCCCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCO
+
+Analyze this structure and report the number of ethylene-oxide repeat units in the polyether chain, the molecule's total molecular weight, and its HLB by Griffin's method (HLB = 20 * hydrophilic-portion mass / total mass).
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "n_ethylene_oxide_units": <integer>,
+  "molecular_weight_g_per_mol": <number>,
+  "hlb_griffin": <number>
+}
+<<< PASTE ABOVE <<<
