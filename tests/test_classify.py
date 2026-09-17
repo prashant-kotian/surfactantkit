@@ -58,6 +58,33 @@ def test_capb_zwitterionic():
     assert r.system_type_for_gibbs is None  # deliberately not defaulted -- real open question
 
 
+def test_pyridinium_ionic_liquid_surfactant_cationic():
+    """Real gap found and fixed 2026-09-18 while building GZ-26: the
+    original cationic patterns only matched sp3 [NX4+], silently missing
+    a real N-alkylated aromatic ring nitrogen -- [C12mpy][Br] (Fu et al.
+    2019) was misclassified as nonionic before this fix."""
+    r = classify_surfactant_charge_type("CCCCCCCCCCCC[N+]1=CC=CC(=C1)C.[Br-]")
+    assert r.charge_type == "cationic"
+    assert r.cationic_strong_groups_found == ["aromatic_quaternary_nitrogen"]
+
+
+def test_imidazolium_ionic_liquid_surfactant_cationic():
+    """Same real fix, second real compound: CMIC (1-hexadecyl-3-
+    methylimidazolium chloride) is already used elsewhere in this
+    project's own HLD-NAC reference data (CATIONIC_QUAT_CC) -- it was
+    ALSO silently misclassified as nonionic before this fix."""
+    r = classify_surfactant_charge_type("CCCCCCCCCCCCCCCC[n+]1ccn(C)c1.[Cl-]")
+    assert r.charge_type == "cationic"
+
+
+def test_plain_pyridine_and_imidazole_not_cationic():
+    """Negative control -- neither ring nitrogen carries an alkyl
+    substituent here, so neither is permanently charged; the new pattern
+    must not over-match plain neutral heterocycles."""
+    assert classify_surfactant_charge_type("c1ccncc1").charge_type == "nonionic"
+    assert classify_surfactant_charge_type("c1cnc[nH]1").charge_type == "nonionic"
+
+
 def test_dhpc_phospholipid_zwitterionic_via_phosphodiester():
     """Real bug found and fixed 2026-09-15 while building Paper 3 ground-
     zero benchmark questions: DHPC (1,2-diheptanoyl-sn-glycero-3-

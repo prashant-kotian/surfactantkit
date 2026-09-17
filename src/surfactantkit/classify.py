@@ -20,7 +20,18 @@ a phosphoDIester instead, C-O-P(=O)(O-)-O-C, which the monoester-only
 pattern silently missed entirely, misclassifying an otherwise-correctly-
 detected quaternary-ammonium-bearing phospholipid as plain "cationic"
 instead of "zwitterionic" -- caught while building real Paper 3 ground-
-zero benchmark questions against DHPC, not hypothesized) (anionic,
+zero benchmark questions against DHPC, not hypothesized), quaternary
+AROMATIC nitrogen -- pyridinium/imidazolium-type ionic-liquid headgroups
+(real, second genuine gap found and fixed 2026-09-18: the original
+cationic patterns only matched sp3 [NX4+], silently missing a real
+N-alkylated aromatic ring nitrogen like pyridinium's [n+] entirely --
+misclassifying real pyridinium (e.g. the Fu et al. 2019 ionic-liquid
+surfactant [C12mpy][Br]) AND real imidazolium (e.g. CMIC, 1-hexadecyl-
+3-methylimidazolium, already used elsewhere in this project's own HLD-NAC
+reference data) as "nonionic" -- caught the same way, while building GZ-26.
+Verified the new pattern correctly rejects plain neutral pyridine/imidazole,
+which have no alkyl substituent on the ring nitrogen and are not
+permanently charged) (anionic,
 strong-to-moderate acids, treated as ionized at normal surfactant testing
 pH regardless of how the SMILES happens to write the protonation state,
 since that's how these groups actually behave in real aqueous
@@ -72,6 +83,7 @@ _ANIONIC_PATTERNS = [
 _CATIONIC_STRONG_PATTERNS = [
     ("quaternary_ammonium", "[#6][NX4+]([#6])([#6])[#6]", "strong"),
     ("quaternary_ammonium_ring", "[#6][NX4+;R]", "strong"),
+    ("aromatic_quaternary_nitrogen", "[#6][n+;R]", "strong"),
 ]
 _CATIONIC_CONDITIONAL_PATTERNS = [
     ("primary_amine", "[NX3H2;!$(NC=O);!$(N=*)]", "conditional"),
