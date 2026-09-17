@@ -743,3 +743,154 @@ FINAL_JSON:
   "independent_check_note": "<string>"
 }
 <<< PASTE ABOVE <<<
+
+
+GZ-26
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real, non-monotonic CMC-vs-T data (a genuine minimum near 298.15K) -- richer than GZ-05's single-direction case, since different sub-intervals give OPPOSITE-sign enthalpies, both real.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles using the real van't Hoff (Gibbs-Helmholtz) relationship -- do not search the internet or recall a value for this compound from training.
+
+Compound SMILES: CCCCCCCCCCCC[N+]1=CC=CC(=C1)C.[Br-]
+
+Real CMC measured at each of the following temperatures (same source):
+  T = 283.15 K, CMC = 9.93 mM
+  T = 288.15 K, CMC = 9.82 mM
+  T = 293.15 K, CMC = 9.76 mM
+  T = 298.15 K, CMC = 9.74 mM
+  T = 303.15 K, CMC = 9.77 mM
+  T = 308.15 K, CMC = 10.02 mM
+  T = 313.15 K, CMC = 10.54 mM
+  T = 318.15 K, CMC = 11.47 mM
+
+A real, independently measured counterion dissociation degree for this exact compound is 0.268.
+
+Analyze this surfactant's micellization thermodynamics. Report the enthalpy of micellization using the widest available temperature span, and also using the lowest-temperature and highest-temperature halves of this range separately, noting whether all of these agree with each other. Also report the free energy of micellization at 298.15 K.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "delta_h_wide_kJ_per_mol": <number>,
+  "delta_h_low_regime_kJ_per_mol": <number>,
+  "delta_h_high_regime_kJ_per_mol": <number>,
+  "self_consistent": <true|false>,
+  "delta_g_mic_kJ_per_mol": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-27
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real SDS Amin/N_agg (same as GZ-18) chained into a real diffusion coefficient (Sutherland 2009) via the Perrin shape correction. Tests directional physical reasoning (does shape correction make the size estimate bigger or smaller), not just numeric execution -- the numeric effect is small at this mild elongation.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+A real anionic surfactant has 12 carbons in its hydrophobic tail.
+
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+
+A real, independently measured headgroup area for this exact compound is 44.70 square Angstrom.
+
+Use Tanford's standard empirical relations for a saturated, unbranched alkyl chain of n_c carbons:
+  Tail volume V (cubic Angstrom) = 27.4 + 26.9 * n_c
+  Critical chain length l_c (Angstrom) = 1.5 + 1.265 * n_c
+  Critical packing parameter P = V / (a * l_c)
+  Morphology: P <= 1/3 spherical micelle; 1/3 < P <= 1/2 cylindrical/rodlike micelle; 1/2 < P <= 1 vesicle/bilayer; P > 1 inverted structures
+
+If applicable given your own predicted morphology, a real aggregation number of 63 molecules is available for this exact compound, and the micelle core can be modeled as a prolate ellipsoid of revolution whose minor semi-axis is pinned at the critical chain length, with the major semi-axis following from volume conservation (core volume = aggregation number x tail volume = (4/3) x pi x major x minor^2). Compute the axial ratio (major/minor) if this applies.
+
+Separately: a real diffusion coefficient of 9.3e-7 cm^2/s was measured for this exact compound's micelle in water at 298.15 K (viscosity 0.8903 mPa.s). Using the naive Stokes-Einstein relation (assuming a spherical particle), estimate the hydrodynamic radius. Then, using your own axial ratio above and the real Perrin friction factor correction for a prolate ellipsoid, estimate the true (shape-corrected) hydrodynamic radius. State whether this correction makes the size estimate larger or smaller than the naive value, and why.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "morphology": "<string>",
+  "axial_ratio": <number or null>,
+  "rh_naive_stokes_einstein_nm": <number>,
+  "rh_perrin_corrected_nm": <number or null>,
+  "direction_of_correction": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-28
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Continues GZ-26's exact real numbers into a pure arithmetic-execution test of the documented ~4.5%-observed sign-substitution slip on entropy calculations. Can be pasted standalone; all needed numbers are restated.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- this is a direct arithmetic calculation, not a lookup.
+
+For a real surfactant at 298.15 K: the free energy of micellization is -37.131 kJ/mol.
+
+Using the standard thermodynamic relation deltaG = deltaH - T*deltaS (i.e. deltaS = (deltaH - deltaG) / T), compute the entropy of micellization (in J/(mol.K)) for EACH of the following two independently-determined enthalpy of micellization values, treating them as two separate, unrelated scenarios for the same deltaG and T:
+  (a) deltaH = +0.904 kJ/mol
+  (b) deltaH = -8.574 kJ/mol
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "delta_s_mic_low_regime_J_per_mol_K": <number>,
+  "delta_s_mic_high_regime_J_per_mol_K": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-29
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Same real C12E8 curve as GZ-08, real Gamma_max independently given. Genuine opposite-direction complement to GZ-14: Frumkin technically wins by BIC here, but its own fitted interaction parameter is physically negligible.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+SMILES: CCCCCCCCCCCCOCCOCCOCCOCCOCCOCCOCCOCCO
+
+Real concentration-vs-surface-tension data at 298 K (concentration in mol/L, surface tension in mN/m):
+  1.00e-08, 71.539
+  3.00e-08, 70.720
+  1.00e-07, 68.550
+  3.00e-07, 64.935
+  1.00e-06, 59.512
+  3.00e-06, 53.880
+  1.00e-05, 47.426
+  3.00e-05, 41.449
+  8.00e-05, 36.088
+Pure-solvent surface tension: 72.0 mN/m.
+
+A real, independently measured maximum surface excess for this exact compound is Gamma_max = 2.21e-6 mol/m^2.
+
+Analyze this surfactant's pre-CMC adsorption behavior. Determine which isotherm model best describes this data, and separately assess whether the result implies a physically meaningful surfactant-surfactant lateral interaction at the interface, or not.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "selected_model": "<string>",
+  "frumkin_a": <number or null>,
+  "physically_meaningful_interaction": <true|false>,
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-30
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Same real Gamma_max as GZ-16, re-expressed in mol/cm^2 to test unit-conversion robustness under a basis switch.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- this is a direct unit-conversion calculation, not a lookup.
+
+A real surfactant has a measured maximum surface excess (Gamma_max) of 3.4268e-10 mol/cm^2.
+
+Using A_min (area per molecule) = 1 / (Gamma_max x Avogadro's number), compute the minimum area per molecule in BOTH square nanometers and square Angstrom, making sure both values are mutually consistent with each other.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "a_min_nm2": <number>,
+  "a_min_A2": <number>
+}
+<<< PASTE ABOVE <<<
