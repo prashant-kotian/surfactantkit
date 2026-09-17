@@ -420,3 +420,326 @@ FINAL_JSON:
   "estimated_cmc_mM": <number>
 }
 <<< PASTE ABOVE <<<
+
+
+GZ-16
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real SDS PendantProp curve (Dankloff et al. 2025), real alpha=0.272 (Bales 2001) supplied directly. Tests whether the model uses the newly-given alpha for deltaG_mic while still correctly recognizing deltaS_mic needs a separate, still-absent multi-T dataset -- a two-tier applicability judgment, not one missing-parameter block.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+
+Real concentration-vs-surface-tension data at 296.15 K (concentration in mM, surface tension in mN/m):
+  0.4058, 69.859
+  0.8115, 67.937
+  1.6231, 62.893
+  3.2462, 54.573
+  6.4923, 42.876
+  12.9847, 37.914
+  25.9694, 37.443
+  51.9387, 36.791
+
+A real, independently measured counterion dissociation degree for this exact compound is 0.272 (27.2% of counterions remain dissociated in the micellar Stern layer).
+
+Analyze this surfactant and report the critical micelle concentration, its charge type, its pre-CMC adsorption behavior (whatever quantities and approach you find most appropriate), and the free energy and entropy of micellization if they can genuinely be determined from what's given here.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "charge_type": "<string>",
+  "cmc_mM": <number or null>,
+  "gamma_max_mol_per_m2": <number or null>,
+  "a_min_nm2": <number or null>,
+  "delta_g_mic_kJ_per_mol": <number or null>,
+  "delta_s_mic_J_per_mol_K": <number or null>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-17
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real DTAB PendantProp curve (Dankloff et al. 2025), deliberately NO counterion data given -- direct contrast with GZ-16, tests whether the refusal behavior generalizes to a fresh compound rather than being AOT/SDS-specific.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+SMILES: CCCCCCCCCCCC[N+](C)(C)C.[Br-]
+
+Real concentration-vs-surface-tension data at 296.35 K (concentration in mM, surface tension in mN/m):
+  0.2558, 70.269
+  0.5116, 68.207
+  1.0231, 65.397
+  2.0463, 57.504
+  4.0925, 49.236
+  16.370, 32.348
+  32.740, 36.224
+
+Analyze this surfactant and report the critical micelle concentration, its charge type, its pre-CMC adsorption behavior (whatever quantities and approach you find most appropriate), and the free energy and entropy of micellization if they can genuinely be determined from what's given here.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "charge_type": "<string>",
+  "cmc_mM": <number or null>,
+  "gamma_max_mol_per_m2": <number or null>,
+  "a_min_nm2": <number or null>,
+  "delta_g_mic_kJ_per_mol": <number or null>,
+  "delta_s_mic_J_per_mol_K": <number or null>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-18
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real SDS Amin (Sachin 2019) + real N_agg=63 (Bales 1998's own worked example) chained into a brand-new (2026-09-15) geometric relationship. The Tanford/CPP part reuses GZ-10/11's already-tested skill; the new part is executing volume-conservation algebra under a stated geometric setup, since this specific derivation is not standard, widely-known textbook material.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+A real anionic surfactant has 12 carbons in its hydrophobic tail.
+
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+
+A real, independently measured headgroup area for this exact compound is 44.70 square Angstrom.
+
+Use Tanford's standard empirical relations for a saturated, unbranched alkyl chain of n_c carbons:
+  Tail volume V (cubic Angstrom) = 27.4 + 26.9 * n_c
+  Critical chain length l_c (Angstrom) = 1.5 + 1.265 * n_c
+  Critical packing parameter P = V / (a * l_c)
+  Morphology: P <= 1/3 spherical micelle; 1/3 < P <= 1/2 cylindrical/rodlike micelle; 1/2 < P <= 1 vesicle/bilayer; P > 1 inverted structures
+
+Separately: for a surfactant whose aggregate morphology is cylindrical/rodlike, the micelle's real core can be modeled as a prolate ellipsoid of revolution (an elongated capsule shape) whose minor semi-axis is pinned exactly at the tail's own fully-extended critical length l_c, with the major semi-axis following from volume conservation (total core volume = aggregation number x tail volume = (4/3) x pi x major-semi-axis x minor-semi-axis^2). A real, independently measured aggregation number of 63 molecules is available for this exact compound under real solution conditions. Using your own predicted morphology above, determine whether this axial-ratio estimate is applicable here, and if so, compute it (major semi-axis / minor semi-axis).
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp": <number>,
+  "morphology": "<string>",
+  "axial_ratio": <number or null>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-19
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real SDS tail volume (Bales 1998) exactly unit-converted to a molar quantity; the headgroup's own real partial molar volume is a genuinely open, disclosed gap in this project (electrostriction makes it non-derivable from geometry) -- tests whether the model reports a real PARTIAL answer rather than either full refusal or a fabricated full number.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+A real anionic surfactant has 12 carbons in its hydrophobic tail and a real monomer molar mass of 288.38 g/mol.
+
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+
+Use Tanford's standard empirical relation for a saturated, unbranched alkyl chain of n_c carbons: tail volume V (cubic Angstrom) = 27.4 + 26.9 * n_c.
+
+Analyze this surfactant's partial specific volume in water (v_bar, cm^3/g -- the quantity needed to interpret sedimentation/diffusion measurements via the Svedberg equation). Report what you can genuinely determine from what's given here, and state explicitly what real information (if any) would still be needed to complete the calculation.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_molar_volume_contribution_cm3_per_mol": <number or null>,
+  "v_bar_full_cm3_per_g": <number or null>,
+  "missing_information": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-20
+[reference only, do not paste -- see groundzero_gold.json for full source detail. SAME real AOT curve as GZ-01/09/14, now WITH the real alpha=0.39 (Thapa 2015) that was missing in GZ-01 -- deliberately re-presented as if fresh (not flagged as "the same compound as before") so the model must independently notice both the new answerability and, if it recalls this exact curve from earlier in the same chat, its own prior refusal.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+SMILES: CCCCC(CC)COC(=O)CC(C(=O)OCC(CC)CCCC)S(=O)(=O)[O-].[Na+]
+
+Real concentration-vs-surface-tension data at 298.15 K (concentration in mM, surface tension in mN/m):
+  0.01585, 62.22
+  0.03981, 55.66
+  0.10000, 49.10
+  0.25119, 42.54
+  0.63096, 35.98
+  1.58489, 29.42
+  3.981, 27.5
+  6.31, 27.8
+  10.0, 28.0
+
+A real, independently measured counterion dissociation degree for this exact compound is 0.39 (39% of counterions remain dissociated in the micellar Stern layer).
+
+Analyze this surfactant and report the critical micelle concentration, its charge type, its pre-CMC adsorption behavior (whatever quantities and approach you find most appropriate), and the free energy of micellization if it can genuinely be determined from what's given here.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "charge_type": "<string>",
+  "cmc_mM": <number or null>,
+  "isotherm_model": "<string or null>",
+  "gamma_max_mol_per_m2": <number or null>,
+  "a_min_nm2": <number or null>,
+  "delta_g_mic_kJ_per_mol": <number or null>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-21
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real DTAB Amin (Sachin 2019) + real CMC (Dankloff 2025). Tests whether the model recognizes a headgroup-specific electrostatic constant (GZ-11's sulfate value) doesn't transfer to a different headgroup class, rather than assuming the same dual-path pattern GZ-11 established always applies.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+A real cationic surfactant has 12 carbons in its hydrophobic tail and a real critical micelle concentration of 12.93 mM (no added electrolyte).
+
+SMILES: CCCCCCCCCCCC[N+](C)(C)C.[Br-]
+
+Use Tanford's standard empirical relations for a saturated, unbranched alkyl chain of n_c carbons:
+  Tail volume V (cubic Angstrom) = 27.4 + 26.9 * n_c
+  Critical chain length l_c (Angstrom) = 1.5 + 1.265 * n_c
+  Critical packing parameter P = V / (a * l_c), where a is the headgroup area per molecule
+  Morphology: P <= 1/3 spherical micelle; 1/3 < P <= 1/2 cylindrical/rodlike micelle; 1/2 < P <= 1 vesicle/bilayer; P > 1 inverted structures
+
+A real, independently measured headgroup area for this exact compound is 59.62 square Angstrom.
+
+Separately, for an ionic surfactant with no added electrolyte, the effective headgroup area can also be estimated from electrostatic double-layer theory using only the CMC itself, via a real headgroup-specific electrostatic prefactor. Attempt this second approach as well if you can determine an appropriate prefactor for this specific headgroup type; if you cannot, say so explicitly rather than substituting a value from a different headgroup class.
+
+Analyze this system using the directly measured headgroup area, and report what you find for the electrostatically-derived approach.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "tail_volume_A3": <number>,
+  "critical_length_A": <number>,
+  "cpp_measured_area": <number>,
+  "morphology_measured_area": "<string>",
+  "electrostatic_headgroup_area_A2": <number or null>,
+  "comment": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-22
+[reference only, do not paste -- see groundzero_gold.json for full source detail. CTAB's real Cc + the real Cc-to-HLB regression (both fair to supply directly, matching precedent). Dodecylamine at pH=7.0 tests the new pH-conditional classifier; its HLB-via-Cc is null both because no Cc is given AND (bonus nuance, not required) because the regression's own real calibration is headgroup-class-specific.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for either compound from training.
+
+Compound 1 SMILES: CCCCCCCCCCCCCCCC[N+](C)(C)C.[Br-]
+A real, independently measured characteristic curvature (Cc) for this exact compound is -5.7.
+
+Compound 2 SMILES: CCCCCCCCCCCCN
+This compound is in an aqueous solution at pH 7.0.
+
+A real, published linear regression relates characteristic curvature (Cc) to HLB: HLB = -0.27 * Cc + 20.1 (R^2 = 0.975, fitted across 5 real compounds).
+
+For each compound, report its charge type at the stated conditions, and its HLB via the given Cc-to-HLB regression if it can genuinely be determined from what's given here.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "compound1_charge_type": "<string>",
+  "compound1_hlb_via_cc": <number or null>,
+  "compound2_charge_type": "<string>",
+  "compound2_hlb_via_cc": <number or null>,
+  "notes": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-23
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real, RDKit-verified gemini 12-4-12 (McLachlan 2020), fresh compound relative to GZ-03's G6. Deliberately no numeric HLB is requested -- see gold file for why.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall information about this specific compound.
+
+SMILES: [Br-].[Br-].CCCCCCCCCCCC[N+](C)(C)CCCC[N+](C)(C)CCCCCCCCCCCC
+
+Analyze this structure and report its charge type, its structural family (describe what about the structure supports your answer), and which real HLB estimation method (if any) is actually valid for this structure -- explain your reasoning.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "charge_type": "<string>",
+  "structural_family": "<string>",
+  "valid_hlb_method": "<string>",
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-24
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real sodium cholate-SDS 1:1 system, this project's strongest single Rubingh validation case. The given free-energy expression is mechanically computable but genuinely outside its own stated domain for this pairing -- see gold file.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this specific system.
+
+Two real anionic surfactants form a real binary mixed micelle system.
+
+Component 1 SMILES: [Na+].C[C@H](CCC(=O)[O-])[C@H]1CC[C@@H]2[C@@]1([C@H](C[C@H]3[C@H]2[C@@H](C[C@H]4[C@@]3(CC[C@H](C4)O)C)O)O)C
+Component 1 pure CMC: 11.50 mM
+
+Component 2 SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+Component 2 pure CMC: 11.98 mM
+
+At a bulk mole fraction of component 2 of 0.5, the real experimentally measured mixed CMC is 4.07 mM, at 298.15 K.
+
+A real, published free energy expression for a binary mixed micelle (requiring one ionic and one nonionic component, and incorporating chain-chain as well as head-group interaction) is:
+  deltaG_M = R*T*(B0 + B1*X1 + B2*X1^2)
+  where B0 = ln(Xcmc2), B2 = -beta, B1 = ln(Xcmc1/Xcmc2) - B2
+  Xcmc1, Xcmc2 are the pure-component CMCs on the mole-fraction scale (moles surfactant per mole surfactant+water); X1 and beta are the regular-solution-theory micellar mole fraction and interaction parameter for this exact system.
+
+Analyze the interaction between these two surfactants, and report whether this free energy expression is an appropriate choice for this specific system.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "x1_rubingh": <number>,
+  "beta_rubingh": <number>,
+  "interaction_character": "<string>",
+  "maeda_deltag_kJ_per_mol": <number or null>,
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-25
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real DHPC-DTAB 5-point series (Vautier-Giongo/Bales 2005), fresh system relative to GZ-02/GZ-12.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this specific system.
+
+Two real surfactants form a real binary mixed micelle system.
+
+Component 1 SMILES: CCCCCCC(=O)OC[C@H](COP(=O)([O-])OCC[N+](C)(C)C)OC(=O)CCCCCC
+Component 1 pure CMC: 1.8 mM
+
+Component 2 SMILES: CCCCCCCCCCCC[N+](C)(C)C.[Br-]
+Component 2 pure CMC: 15.6 mM
+
+Real measured mixed CMC at each bulk mole fraction of component 2 (alpha2, CMC_mix in mM):
+  0.95, 10.8
+  0.90, 6.2
+  0.80, 4.8
+  0.60, 2.7
+  0.50, 2.4
+
+Analyze this binary surfactant system and report component 1's charge type, the interaction behavior between the two surfactants in their mixed micelles (with whatever model and parameters you find best explain this data), how you would characterize the nature of that interaction, and whether an independent check of the micellar composition trend -- one that doesn't rely on your chosen model's own assumptions -- supports the same conclusion.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "component1_charge_type": "<string>",
+  "selected_mixture_model": "<string>",
+  "model_parameters": {},
+  "interaction_character": "<string>",
+  "independent_check_note": "<string>"
+}
+<<< PASTE ABOVE <<<

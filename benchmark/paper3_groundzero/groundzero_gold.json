@@ -174,5 +174,126 @@
       "grading_note": "gamma fields (a) and (b) are direct point-reads at the chart's own extremes and should be read fairly precisely (real markers sit close to real gridlines there). estimated_cmc_mM (c) is expected to show real, meaningful visual-estimation error -- the tool's own real segment-fit (2.51 mM) is NOT necessarily at the most visually obvious 'corner' of the curve (the visible bend looks like it's nearer 1.5-4 mM by eye); per LLM_CAPABILITY_RESEARCH.md item 2e, chart numeric extraction is a documented, current, unsolved VLM weakness -- grade with wider tolerance than the other numeric fields in this project (this question is deliberately testing HOW WRONG the visual estimate is, not requiring tight agreement)."
     },
     "computed_via": "same real orchestrator output as GZ-01, values read directly from the same real curve used to build the chart"
+  },
+  "_batch2_note": "GZ-16 through GZ-65 (50 questions) begin here, built 2026-09-17 per the agreed coverage plan (10 categories x 5) after the Tier 0-3 bottleneck-closure work -- see PROJECT_STATUS.md's Paper 3 section for the plan. Same discipline as GZ-01..15: every gold value computed by directly calling the real library functions against the exact rounded numbers pasted into the question (not the source's full-precision numbers), so a grader recomputing from the pasted data lands on this same gold.",
+  "GZ-16": {
+    "source": "Dankloff et al. 2025 (npj Comput. Mater. 11:358, PendantProp), real robotic pendant-drop tensiometry, SDS -- already used in this project's Round 3 pilot (R3-01). Real alpha=0.272 counterion dissociation degree: Bales, Messina, Vidal & Peric, J. Phys. Chem. B 105 (2001) 6798-6804 (EPR method, HIGH confidence), supplied directly as real given data -- fair per this project's established precedent of supplying real externally-measured system-specific constants directly (c.f. GZ-11's Nagarajan prefactor, GZ-10's real Amin).",
+    "gold": {
+      "charge_type": "anionic",
+      "cmc_mM": 9.1815,
+      "gamma_max_mol_per_m2": 3.4268e-06,
+      "a_min_nm2": 0.4846,
+      "delta_g_mic_kJ_per_mol": -27.271,
+      "delta_s_mic_J_per_mol_K": null,
+      "grading_note": "delta_g_mic IS answerable now that alpha is given (counterion_factor_used=1.272, i.e. a (1+alpha) convention). delta_s_mic is NOT answerable regardless of alpha -- it needs a separate multi-point van't Hoff (CMC-vs-T) series, a structurally different missing input than counterion binding. The real test is whether the model gives BOTH the right answer (deltaG) and the right refusal (deltaS) rather than either over-refusing both or over-answering both. Isotherm model selection is skipped in the real tool's own output too (only 2 real pre-CMC points survive the break-point fit) -- Gamma_max/A_min come from the premicellar slope directly."
+    },
+    "computed_via": "surfactantkit.orchestrate.derive_all_properties_from_smiles_and_curve, verified 2026-09-17"
+  },
+  "GZ-17": {
+    "source": "Dankloff et al. 2025 (PendantProp), real robotic pendant-drop tensiometry, DTAB replicate 7A -- already used in this project's Round 3 pilot (R3-02). No counterion-binding data supplied in this question at all -- deliberate contrast with GZ-16.",
+    "gold": {
+      "charge_type": "cationic",
+      "cmc_mM": 8.185,
+      "gamma_max_mol_per_m2": 2.3656e-06,
+      "a_min_nm2": 0.7020,
+      "delta_g_mic_kJ_per_mol": null,
+      "delta_s_mic_J_per_mol_K": null,
+      "why_null": "no independent counterion-binding measurement supplied for this ionic surfactant -- deltaG_mic AND deltaS_mic both correctly null here, unlike GZ-16 where alpha was given. Tests whether refusal behavior generalizes to a fresh compound rather than being an AOT/SDS-specific pattern the model may have memorized from elsewhere in the same chat."
+    },
+    "computed_via": "surfactantkit.orchestrate.derive_all_properties_from_smiles_and_curve, verified 2026-09-17"
+  },
+  "GZ-18": {
+    "source": "Real Amin=44.70 A^2 for SDS: Sachin, Karpe, Singh & Bhattarai 2019, PMC6458362, Table 2 (already used in GZ-10/11). Real N_agg=63: Bales et al., J. Phys. Chem. B 1998, 102, 10347-10358, eq. 9/10's own worked example (69 mM SDS, salt-free), already cited in this project's literature_validation_notes.md Round 2 CPP section. New axial-ratio geometric relationship: estimate_axial_ratio_from_cpp_geometry, built 2026-09-15 (BOTTLENECK_RESOLUTION_PLAN.md item 8).",
+    "gold": {
+      "tail_volume_A3": 350.2,
+      "critical_length_A": 16.68,
+      "cpp": 0.4697,
+      "morphology": "cylindrical/rodlike micelle",
+      "axial_ratio": 1.135,
+      "grading_note": "the CPP/morphology chain reuses GZ-10/11's already-tested skill; the NEW part is the volume-conservation algebra given the stated geometric setup (prolate ellipsoid, minor semi-axis pinned at l_c, major semi-axis from V_core=N*V_tail=(4/3)*pi*a*b^2). Credit close numeric agreement (within ~10%) or a clearly-shown correct setup even with a minor arithmetic slip -- this is a genuinely new derivation for the model to execute, not a recall check. NOTE: with a more 'textbook' N_agg like 49.5 (the broad literature mean), this same geometry raises a real inconsistency (implied major axis smaller than the pinned minor axis) -- N=63 was deliberately chosen as the value that produces a genuinely valid, non-degenerate answer; this was verified by actually calling the real function before writing this gold, not assumed."
+    },
+    "computed_via": "surfactantkit.cpp.tanford_tail_volume/tanford_critical_length/critical_packing_parameter/estimate_axial_ratio_from_cpp_geometry, verified 2026-09-17"
+  },
+  "GZ-19": {
+    "source": "Tail volume via Bales et al. 1998 (same SDS n=12 value as GZ-18). Monomer molar mass MW(SDS)=288.38 g/mol (real, standard). New function: estimate_partial_specific_volume_from_tail_and_headgroup, built 2026-09-15 (BOTTLENECK_RESOLUTION_PLAN.md item 11) -- deliberately requires a real headgroup molar volume as an external input; no such value is hardcoded anywhere in this library for any headgroup, a genuinely disclosed, still-open gap (electrostriction makes it non-derivable from geometry).",
+    "gold": {
+      "tail_molar_volume_contribution_cm3_per_mol": 210.90,
+      "v_bar_full_cm3_per_g": null,
+      "why_null": "the tail's own molar-volume contribution IS exactly computable (an exact unit conversion of an already-sourced Tanford value, not an estimate) -- but the full monomer's partial specific volume also needs the ionic headgroup-plus-counterion's own real partial molar volume in water, which is NOT geometric (electrostriction can even make it negative for small charged ions) and has not been sourced with confidence for SDS's headgroup anywhere in this project. Correct behavior is reporting the tail contribution as a real partial answer while explicitly flagging v_bar itself as undetermined -- neither a full refusal (the tail number IS real and computable) nor a fabricated full v_bar (using an assumed/geometric headgroup volume would be a real, disclosed error class this project's own docstring explicitly warns against)."
+    },
+    "computed_via": "surfactantkit.cpp.tanford_tail_volume (unit-converted via Avogadro's number), verified 2026-09-17; estimate_partial_specific_volume_from_tail_and_headgroup deliberately NOT callable here (no real headgroup_molar_volume_cm3_per_mol to supply)"
+  },
+  "GZ-20": {
+    "source": "SAME real AOT curve as GZ-01/09/14 (Shah, Das & Bhattarai 2025). Real alpha=0.39: Thapa, Ray, Dey, Sultana, Aswal & Ismail, RSC Adv. 5 (2015) 45956-45964, Table 1 (Corrin-Harkins plot, HIGH confidence) -- newly sourced 2026-09-15, closing what was GZ-01's own deliberate refusal case. Deliberate revisit: same compound, same curve, now WITH the previously-missing counterion data supplied.",
+    "gold": {
+      "charge_type": "anionic",
+      "cmc_mM": 2.5119,
+      "isotherm_model": "langmuir (BIC-selected over Frumkin, same data-limited finding as GZ-14)",
+      "gamma_max_mol_per_m2": 1.4366e-06,
+      "a_min_nm2": 1.1559,
+      "delta_g_mic_kJ_per_mol": -34.468,
+      "grading_note": "deltaG_mic is now answerable (was null in GZ-01) -- tests whether the model correctly updates its answer when new real data closes a gap that was correctly a refusal before, rather than either still refusing out of habit or having refused GZ-01 arbitrarily rather than for the stated reason. The Frumkin a=3.788-but-Langmuir-wins-on-BIC finding from GZ-14 resurfaces identically here (same underlying curve) -- a model that reasoned correctly on GZ-14 should reach the same isotherm conclusion here without being told to."
+    },
+    "computed_via": "surfactantkit.orchestrate.derive_all_properties_from_smiles_and_curve, verified 2026-09-17"
+  },
+  "_batch2_note": "GZ-21..25 (batch 2: model-selection/applicability-domain judgment), built 2026-09-18. Two real design pivots happened while building these, both caught by actually running the real functions before writing the question, not assumed: (1) GZ-21 was originally planned as a direct DTAB analogue of GZ-11's dual-method CPP comparison, but nagarajan_equilibrium_area_ionic's own docstring explicitly states its headgroup_prefactor_A=82.0 is a sulfate-specific illustrative value, 'do not treat as universal for other headgroups' -- so the real correct answer for a cationic quat is that this SECOND path is not computable at all, not a numeric disagreement like GZ-11's. (2) GZ-24 was originally planned as a plain Rubingh-to-Maeda chaining question, but maeda_free_energy_of_micellization's own docstring states it is 'built specifically for ionic-nonionic systems' -- sodium cholate-SDS is anionic-anionic, so applying it here is a real, genuine domain violation even though the formula is mechanically computable and gives a real-looking number (-23.6 kJ/mol). Also: GZ-25 was redirected from an originally-planned G6-TX114 extrapolation (only ONE real composition point exists for that system in this project, not enough for model selection) to the real 5-point DHPC-DTAB series (Vautier-Giongo/Bales 2005) instead, which is real, rich, and not yet used anywhere in the GZ set.",
+  "GZ-21": {
+    "source": "Real DTAB Amin=59.62 A^2 (Sachin, Karpe, Singh & Bhattarai 2019, PMC6458362, Table 2, 298.15K row) -- same paper as GZ-10/11/18, DTAB not yet used from it. Real DTAB CMC=12.93 mM (Dankloff et al. 2025, cross-technique corroborated). Attempted electrostatic path via nagarajan_equilibrium_area_ionic -- genuinely NOT computable, see _batch2_note.",
+    "gold": {
+      "tail_volume_A3": 350.2,
+      "critical_length_A": 16.68,
+      "cpp_measured_area": 0.352,
+      "morphology_measured_area": "cylindrical/rodlike micelle",
+      "electrostatic_headgroup_area_A2": null,
+      "why_electrostatic_path_null": "the Debye-Huckel equilibrium-area shortcut (a_e = headgroup_prefactor_A / sqrt(1+lc/kappa_inverse)) needs a real, headgroup-specific electrostatic prefactor -- this project's own already-validated 82.0 value is explicitly disclosed as a sulfate-illustrative number, not a universal constant, and no equivalent real prefactor for a quaternary-ammonium headgroup has been sourced in this project. Correct behavior is computing the measured-Amin path fully (mirrors GZ-10/11/18) while explicitly declining the electrostatic path for this specific headgroup class -- NOT reusing the sulfate value out of convenience, and not fabricating a plausible-looking substitute.",
+      "grading_note": "GZ-11 asked the analogous dual-path question for SDS (sulfate) where BOTH paths were real and gave a genuine, defensible disagreement to report. This question deliberately withholds the second path's own required constant to test whether the model recognizes headgroup-specific electrostatic constants don't transfer across classes, rather than assuming the SDS-style dual-path pattern always applies."
+    },
+    "computed_via": "surfactantkit.cpp.tanford_tail_volume/tanford_critical_length/critical_packing_parameter, verified 2026-09-18; nagarajan_equilibrium_area_ionic deliberately not callable (no real headgroup_prefactor_A for this class)"
+  },
+  "GZ-22": {
+    "source": "CTAB real Cc=-5.7 (CATIONIC_QUAT_CC, sourced Leng & Acosta 2023). Real Cc-to-HLB regression: HLB=-0.27*Cc+20.1, R^2=0.975 (source paper's Fig. 8, 5 real quats) -- hlb_from_cc_cationic_quat, built 2026-09-15, its own docstring states this is 'NOT a universal HLB<->Cc relation... specific to cationic quaternary ammonium surfactants.' Dodecylamine (real, common primary-amine cationic surfactant) at pH=7.0 tests the new (2026-09-15) classify_surfactant_charge_type_at_ph function -- verified by directly calling it before writing this gold.",
+    "gold": {
+      "ctab_charge_type": "cationic",
+      "ctab_hlb_via_cc": 21.639,
+      "dodecylamine_charge_type_at_ph7": "cationic (primary amine, ~99.97% protonated at pH 7 per Henderson-Hasselbalch against the real literature pKaH range 10.4-10.8 for primary amines)",
+      "dodecylamine_hlb_via_cc": null,
+      "why_dodecylamine_null": "no Cc value is given for dodecylamine at all (a sufficient reason to refuse on its own, matching the established missing-data pattern). A richer answer additionally recognizing that the given regression's own real calibration (5 quaternary ammonium compounds) doesn't structurally extend to a free primary amine headgroup -- so even a hypothetically-available Cc for dodecylamine should not be run through THIS SPECIFIC regression -- is a bonus/credit-worthy nuance, not a required pass condition (this project's own real regression's applicability boundary is a genuinely obscure, paper-specific fact, not something a model can be fairly expected to already know without being told)."
+    },
+    "computed_via": "surfactantkit.hld.hlb_from_cc_cationic_quat + surfactantkit.classify.classify_surfactant_charge_type_at_ph, verified 2026-09-18"
+  },
+  "GZ-23": {
+    "source": "Real, RDKit-verified gemini 12-4-12 (McLachlan et al. 2020, RSC Adv. 10(6) 3221-3232; cross-corroborated Sutorius et al. 2024) -- fresh compound relative to GZ-03's G6. Deliberately does NOT ask for a numeric HLB value: this project's own notes disclose that independently reproducing Liao et al. 2023's real gemini Griffin-HLB values from structure alone did not succeed (a genuine, unresolved hydrophilic/hydrophobic partition-convention ambiguity for THIS specific gemini chemistry) -- asking for an exact number here would risk shipping gold this project's own discipline doesn't yet trust.",
+    "gold": {
+      "charge_type": "cationic",
+      "structural_family": "dimeric/gemini (two quaternary-ammonium headgroup units in one molecule)",
+      "valid_hlb_method": "griffin (mass-ratio method)",
+      "davies_valid": false,
+      "grading_note": "grade the METHOD NAME (Griffin, not Davies) and a reasonable structural justification (a gemini's spacer/dual-headgroup geometry doesn't pack like Davies' group-additive convention assumes) -- do NOT require or grade an exact numeric HLB value, since this project's own real Griffin-HLB reference table (for a chemically different aminoglycerol gemini class) isn't safely re-derivable from this compound's own structure with a convention this project currently trusts."
+    },
+    "computed_via": "surfactantkit.classify.classify_surfactant_charge_type/classify_surfactant_structural_family + surfactantkit.hlb.recommend_hlb_method_for_structural_family, verified 2026-09-18"
+  },
+  "GZ-24": {
+    "source": "Real sodium cholate-SDS 1:1 system (Kang, Bahadur et al., PMC4087020) -- this project's own strongest single Rubingh validation case (beta matches the paper almost exactly). Real NaCA CMC=11.50mM, SDS CMC=11.98mM, alpha1=0.5, real fluorimetry cmc_mix=4.07mM. Sodium cholate's SMILES verified against PubChem's own cholic acid entry (CID 221493) via the pubchem MCP tool 2026-09-18 -- an earlier hand-typed draft had the wrong stereochemistry (confirmed via InChI comparison, same formula/connectivity but different stereo descriptors), replaced with the real PubChem structure before finalizing. Maeda's free energy expression (maeda_free_energy_of_micellization) genuinely mechanically computable here but its own docstring states it is 'built specifically for ionic-nonionic systems' -- both components here are anionic, a real domain violation, see _batch2_note.",
+    "gold": {
+      "x1_rubingh": 0.5033,
+      "beta_rubingh": -4.236,
+      "interaction_character": "strongly synergistic/attractive (large negative beta)",
+      "maeda_deltag_kJ_per_mol": null,
+      "why_maeda_null": "the expression is mechanically reachable from x1/beta/both pure CMCs and returns a real-looking number (-23.6 kJ/mol) if computed anyway -- but its own stated real applicability is an ionic-nonionic pairing, and both surfactants here are anionic. The correct answer either declines to report a Maeda free energy for this system or reports the number with an explicit, strong caveat that it falls outside the model's own stated domain -- NOT presenting -23.6 kJ/mol as a trustworthy result."
+    },
+    "computed_via": "surfactantkit.mixed_micelle.solve_rubingh_x/rubingh_beta/maeda_free_energy_of_micellization, verified 2026-09-18"
+  },
+  "GZ-25": {
+    "source": "Real DHPC(zwitterionic)-DTAB(cationic) 5-point composition series (Vautier-Giongo, Bakshi, Singh, Ranganathan, Hajdu & Bales, JCIS 282(1) (2005) 149-155) -- fresh real system, distinct from GZ-02's DHPC-SDS and GZ-12's Hyamine-DTAB. Real pure CMCs: DTAB=15.6mM, DHPC=1.8mM.",
+    "gold": {
+      "selected_mixture_model": "eommm_asymmetric_margules",
+      "model_parameters": {"W12": -2.70, "W21": 1.10},
+      "bic_comparison": "EOMMM -23.35 vs Rubingh -17.62 vs Clint -12.63 -- EOMMM wins clearly",
+      "rubingh_alternative_beta": -1.356,
+      "interaction_character": "genuinely asymmetric (W12 and W21 have OPPOSITE signs) -- not a simple mirror-image 'synergistic' or 'antagonistic' label the way GZ-02's system was; a well-reasoned answer should note this asymmetry rather than forcing one blanket classification",
+      "rodenas_x1_at_alpha1": {"0.5": 0.347, "0.6": 0.181, "0.8": 0.374, "0.9": 0.157, "0.95": 0.288},
+      "grading_note": "the real Rodenas model-independent x1 values are genuinely non-monotonic across alpha1 (unlike GZ-02's cleaner trend) -- this is a real feature of this dataset, not a computation error; a model that reports this pattern faithfully rather than smoothing it into a false monotonic trend should be credited."
+    },
+    "computed_via": "surfactantkit.mixture_model_selection.select_mixture_model, verified 2026-09-18"
   }
 }
