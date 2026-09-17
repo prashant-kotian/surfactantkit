@@ -894,3 +894,114 @@ FINAL_JSON:
   "a_min_A2": <number>
 }
 <<< PASTE ABOVE <<<
+
+
+GZ-31
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real gemini 12-6-12 (Garcia 2017/Sutorius 2024), fresh spacer length relative to GZ-23's 12-4-12.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall information about this specific compound.
+
+SMILES: [Br-].[Br-].CCCCCCCCCCCC[N+](C)(C)CCCCCC[N+](C)(C)CCCCCCCCCCCC
+
+Analyze this structure and report its charge type, its structural family, and -- if it is a gemini/dimeric surfactant -- the number of carbons in each hydrophobic tail, the number of carbons in the spacer connecting the two headgroups, and the number of tails.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "charge_type": "<string>",
+  "structural_family": "<string>",
+  "tail_carbons_per_tail": <integer or null>,
+  "spacer_carbons": <integer or null>,
+  "n_tails": <integer or null>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-32
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Same real AOT SMILES used throughout this set, now as a pure structural counting question -- AOT's two tails are branched, a different counting challenge than straight-chain EO counting.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall information about this specific compound.
+
+SMILES: CCCCC(CC)COC(=O)CC(C(=O)OCC(CC)CCCC)S(=O)(=O)[O-].[Na+]
+
+Analyze this structure's hydrophobic tails carefully. Report the total number of carbons in the molecule, the total number of carbons across both hydrophobic tails combined, whether the tails are straight-chain or branched (describe the branching if present), and the number of carbons in the remaining (non-tail) backbone/headgroup portion of the molecule.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "total_carbons": <integer>,
+  "tail_carbons_total": <integer>,
+  "tails_branched": <true|false>,
+  "tail_description": "<string>",
+  "backbone_carbons": <integer>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-33
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real Brij-35-type C12E23 nonionic, same EO-counting challenge as GZ-08/13 but at a much longer chain length -- tests whether the miscounting failure rate scales with repeat length.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+A real nonionic surfactant has the SMILES: CCCCCCCCCCCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCO
+
+Analyze this structure and report the number of ethylene-oxide repeat units in the polyether chain, the molecule's total molecular weight, and its HLB by Griffin's method (HLB = 20 * hydrophilic-portion mass / total mass; the hydrophilic portion includes the polyoxyethylene chain and its terminal hydroxyl).
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "n_ethylene_oxide_units": <integer>,
+  "molecular_weight_g_per_mol": <number>,
+  "hlb_griffin": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-34
+[reference only, do not paste -- see groundzero_gold.json for full source detail. A real bolaform surfactant -- this project's own tool currently cannot distinguish this from a true gemini (confirmed by calling it directly); tests whether the model notices the real structural distinction the tool itself does not yet make.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall information about this specific compound.
+
+SMILES: [Br-].[Br-].C[N+](C)(C)CCCCCCCCCCCCCCCC[N+](C)(C)C
+
+Analyze this structure and report its charge type. It has two quaternary ammonium headgroups, similar to a gemini surfactant -- examine the actual connectivity carefully and determine whether this is genuinely a gemini surfactant (two separate tail-plus-headgroup units joined by a spacer) or a different architecture, explaining your reasoning based on what lies between and beyond the two headgroups.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "charge_type": "<string>",
+  "true_classification": "<string>",
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-35
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real sophorolipid (PubChem CID 11856871), a disaccharide-headgroup glycolipid -- harder than GZ-04's single-sugar-ring monorhamnolipid.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall information about this specific compound.
+
+SMILES: CC(CCCCCC/C=C/CCCCCCCC(=O)O)O[C@H]1[C@@H]([C@H]([C@@H]([C@H](O1)COC(=O)C)O)O)O[C@H]2[C@@H]([C@H]([C@@H]([C@H](O2)COC(=O)C)O)O)O
+
+Analyze this structure carefully and report its charge type (including your confidence in that assignment), its structural family (describe what about the structure supports your answer), how many sugar rings are present in the headgroup, and which real HLB estimation method (if any) is valid for this structure.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "charge_type": "<string>",
+  "charge_confidence": "<string>",
+  "structural_family": "<string>",
+  "n_sugar_rings": <integer>,
+  "valid_hlb_method": "<string>"
+}
+<<< PASTE ABOVE <<<

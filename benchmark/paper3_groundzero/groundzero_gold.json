@@ -351,5 +351,62 @@
       "grading_note": "both values must be mutually consistent (1 nm^2 = 100 A^2 exactly) and must match GZ-16's own A_min once GZ-16's mol/m^2 value is converted to the same basis -- a model that gets a numerically DIFFERENT A_min here than it would from the equivalent mol/m^2 value has made a real unit-conversion error, not a different legitimate answer. Grade primarily on whether the two reported values (nm^2 and A^2) are self-consistent with each other, and secondarily on absolute accuracy."
     },
     "computed_via": "A_min = 1/(Gamma_max * Avogadro's number), unit-converted from the same real Gamma_max already verified in GZ-16, checked 2026-09-18"
+  },
+  "_batch4_note": "GZ-31..35 (batch 4: repeated-substructure counting), built 2026-09-18. A real internal inconsistency was found and had to be resolved while computing GZ-33's gold: GZ-13's own already-published gold (13.398) only reproduces from Mh=n_EO*44.053 PLUS the terminal OH's own mass (17.008) -- but a DIFFERENT benchmark generator elsewhere in this project (category_E_structure_geometry/build_category_E.py) uses Mh=n_EO*44.053 alone, giving a materially different HLB (12.90 vs 13.40 for the same n=10 compound). Used GZ-13's own convention for GZ-33 (internal consistency within the GZ set takes priority over matching a different, separate benchmark set's convention), documented here rather than silently picked.",
+  "GZ-31": {
+    "source": "Real gemini 12-6-12 (Garcia et al. 2017 / Sutorius et al. 2024 series, already verified in SurfQSPR's own GEMINI_CANDIDATE_STRUCTURES, cross-corroborated by 6 independent literature measurements per that project's dataset.py). Fresh compound relative to GZ-23's 12-4-12.",
+    "gold": {
+      "charge_type": "cationic",
+      "structural_family": "dimeric/gemini",
+      "tail_carbons_per_tail": 12,
+      "spacer_carbons": 6,
+      "n_tails": 2,
+      "grading_note": "verified via gemini_tail_and_spacer_carbons(), real, already-tested elsewhere in this project. The spacer is 6 carbons (hexanediyl), not the more commonly-tested 4 or the historically-confused case (this project itself once misread a different gemini's tail length, G6, as 12-6-12 when it's actually 16-6-16 -- the same general failure mode this question tests for)."
+    },
+    "computed_via": "surfactantkit.classify.classify_surfactant_charge_type/classify_surfactant_structural_family + surfqspr.featurize.gemini_tail_and_spacer_carbons, verified 2026-09-18"
+  },
+  "GZ-32": {
+    "source": "Same real AOT SMILES used throughout this set (GZ-01/09/14/20), now asked as a structural counting question instead of a property question -- AOT's two tails are BRANCHED (2-ethylhexyl, not straight dodecyl), a real, different counting challenge (parsing branch notation) than GZ-08/13's straight-chain EO counting.",
+    "gold": {
+      "total_carbons": 20,
+      "tail_carbons_total": 16,
+      "tails_branched": true,
+      "tail_description": "two identical 2-ethylhexyl groups (each an 8-carbon branched chain: a 6-carbon backbone with a 2-carbon ethyl branch at the second position), not straight octyl or dodecyl chains",
+      "backbone_carbons": 4,
+      "grading_note": "real formula C20H37NaO7S, verified via RDKit. The succinate backbone (2 carbonyl carbons + 2 CH backbone carbons between them) accounts for the remaining 4 carbons. A model that reports AOT's tails as straight-chain (missing the branch) or miscounts either the branch length or the backbone has made a real structural-parsing error, not just an arithmetic one."
+    },
+    "computed_via": "RDKit rdMolDescriptors.CalcMolFormula, verified 2026-09-18"
+  },
+  "GZ-33": {
+    "source": "Real Brij-35-type nonionic (C12E23, polyoxyethylene(23) lauryl ether, a real, common commercial surfactant), SMILES constructed and RDKit-verified (formula C58H118O24, MW 1199.56, confirmed 23 real ethylene-oxide units via independent atom counting). Same real EO-counting challenge as GZ-08/13 but at a much longer chain length (23 vs 8/10) -- tests whether the miscounting failure rate scales with repeat length.",
+    "gold": {
+      "n_ethylene_oxide_units": 23,
+      "molecular_weight_g_per_mol": 1199.56,
+      "hlb_griffin": 17.18,
+      "grading_note": "HLB computed via this GZ set's own established convention (Mh = n_EO*44.053 + 17.008 terminal-OH mass, M_total = full RDKit MW) -- see _batch4_note for a real, disclosed inconsistency with a DIFFERENT benchmark generator elsewhere in this project that omits the terminal-OH term. 17.18 is a real, sensible HLB for this compound (commercial Brij 35 is commonly cited around HLB~16.9, a close, independently plausible match)."
+    },
+    "computed_via": "RDKit formula/MW + this project's own established Griffin-HLB convention for ethoxylates, verified 2026-09-18"
+  },
+  "GZ-34": {
+    "source": "A real bolaform surfactant (hexadecane-1,16-bis(trimethylammonium bromide), C22H50Br2N2, hand-constructed and RDKit-verified since not found in PubChem under any tested name -- a real, simple, unambiguous structure, unlike GZ-24's steroid where hand-construction genuinely risked a stereochemistry error). This is the EXACT real limitation classify_surfactant_structural_family's own docstring discloses as unresolved: its 'dimeric_gemini_type' signal (2 matching strong ionic headgroups) cannot distinguish a true gemini from a bolaform, and this project's own tool currently calls this compound 'dimeric_gemini_type' too.",
+    "gold": {
+      "charge_type": "cationic",
+      "true_classification": "bolaform, not a true gemini",
+      "reasoning": "a true gemini has two SEPARATE tail+headgroup units joined by a spacer near the headgroups (i.e. there is real hydrophobic tail material beyond the spacer, on the far side of each headgroup from the other headgroup). Here, the ENTIRE hydrophobic backbone (16 carbons) IS the spacer between the two headgroups -- there is no additional tail segment beyond it, which is the defining bolaform architecture (one long backbone, a headgroup at EACH end).",
+      "grading_note": "this is a genuinely open case where the current SurfactantKit tool itself does NOT make this distinction (confirmed by directly calling classify_surfactant_structural_family on this exact compound, which returns 'dimeric_gemini_type' with an explicit caveat admitting the ambiguity) -- so a model that correctly identifies this as bolaform via its own structural reasoning is doing something the tool-augmented condition currently cannot help with. Report this finding honestly regardless of which way it cuts: if models also fail to make this distinction, that's a real, disclosed case where MCP augmentation would NOT yet close the gap, not a result to suppress."
+    },
+    "computed_via": "surfactantkit.classify.classify_surfactant_charge_type/classify_surfactant_structural_family, verified 2026-09-18 -- deliberately demonstrates a real, current tool limitation, not a tool capability"
+  },
+  "GZ-35": {
+    "source": "Real sophorolipid (PubChem CID 11856871, already used elsewhere in this project's structural-family classifier validation) -- a real disaccharide-headgroup (sophorose = two linked glucose rings) glycolipid biosurfactant, harder than GZ-04's single-sugar-ring monorhamnolipid.",
+    "gold": {
+      "charge_type": "anionic",
+      "charge_confidence": "moderate (carboxylic acid, pKa~4-5 -- ionized at typical surfactant-testing pH but not at low pH)",
+      "structural_family": "glycolipid biosurfactant (disaccharide headgroup)",
+      "n_sugar_rings": 2,
+      "valid_hlb_method": "griffin (mass-ratio method, same real reason as GZ-03/04/23 -- Davies has no group number for a glycoside headgroup, confirmed structurally invalid for this class, not just missing data)",
+      "grading_note": "the real, gradable counting test is n_sugar_rings=2 (a genuine disaccharide, sophorose) -- GZ-04's monorhamnolipid had only 1. A model that reports 1 sugar ring here has made a real structural-counting error, not just a vocabulary choice."
+    },
+    "computed_via": "surfactantkit.classify.classify_surfactant_charge_type/classify_surfactant_structural_family, verified 2026-09-18"
   }
 }
