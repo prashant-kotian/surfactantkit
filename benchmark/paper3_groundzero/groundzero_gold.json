@@ -408,5 +408,52 @@
       "grading_note": "the real, gradable counting test is n_sugar_rings=2 (a genuine disaccharide, sophorose) -- GZ-04's monorhamnolipid had only 1. A model that reports 1 sugar ring here has made a real structural-counting error, not just a vocabulary choice."
     },
     "computed_via": "surfactantkit.classify.classify_surfactant_charge_type/classify_surfactant_structural_family, verified 2026-09-18"
+  },
+  "_batch5_note": "GZ-36..40 (batch 5: vision/chart-reading), built 2026-09-18. All 5 charts generated via matplotlib directly from real data already validated elsewhere in this project (same discipline as GZ-15). A real mistake was caught and fixed while building GZ-39's fitted-curve overlay: a hand-derived Szyszkowski formula (omitting the real n_factor=2 ionic prefactor) gave a fit curve wildly mismatched to the real data (~60 mN/m flat vs the data's real 62->28 mN/m decline) -- fixed by calling the real szyszkowski_surface_tension function directly instead of re-deriving the formula by hand, the same discipline this whole benchmark exists to test.",
+  "GZ-36": {
+    "source": "GZ-36_chart.png -- real, non-monotonic-source CMC-vs-T data (Saito, Moroi & Matuura 1980, same compound as GZ-05, but here only the T=30/50/70C portion, which IS monotonic and gives a clean single-sign slope), plotted as ln(CMC) vs 1000/T (Arrhenius-style). Real slope (in 1/T units, not the chart's rescaled 1000/T units) = -1634.8, giving deltaH=+slope*R=-13.59 kJ/mol -- matches GZ-05's own already-published, tool-verified endpoint value exactly.",
+    "gold": {
+      "slope_sign": "negative (ln(CMC) decreases as 1000/T increases, i.e. ln(CMC) increases as temperature rises)",
+      "process_character": "exothermic (delta_h_mic < 0)",
+      "reasoning": "for the van't Hoff relation applied to micellization (ln X_cmc vs 1/T), the slope equals delta_h_mic/R -- a negative slope directly implies a negative (exothermic) enthalpy of micellization. This is the exact real relationship this project's own vant_hoff_enthalpy() function had backwards until a real sign bug was found and fixed on 2026-09-04 (dividing by (1/T1-1/T2) instead of (1/T2-1/T1)) -- a model that reports 'endothermic' from this chart has very likely made the same class of sign-convention error."
+    },
+    "computed_via": "matplotlib chart generated from real Saito/Moroi/Matuura 1980 data (same as GZ-05); sign cross-checked against surfactantkit.thermodynamics.vant_hoff_enthalpy, verified 2026-09-18"
+  },
+  "GZ-37": {
+    "source": "GZ-37_chart.png -- real EOMMM fit (W12=-2.70, W21=1.10, from GZ-25's real DHPC-DTAB system), plotted as smooth activity-coefficient curves with the real Rodenas-diagnostic x1 points marked. Vision-only: no numbers given as text anywhere in the question.",
+    "gold": {
+      "f1_at_x1_0.5": 1.32,
+      "f2_at_x1_0.5": 0.51,
+      "which_is_larger_at_0.5": "component 1",
+      "grading_note": "grade with real chart-reading tolerance (+/-0.15 absolute on each value) -- this is a curved, non-monotonic line, harder to read precisely than a straight line; the qualitative 'which is larger' comparison at x1=0.5 should be read correctly regardless of exact numeric precision."
+    },
+    "computed_via": "surfactantkit.mixed_micelle.asymmetric_margules_activity_coefficients, verified 2026-09-18"
+  },
+  "GZ-38": {
+    "source": "GZ-38_chart.png -- real SDS PendantProp curve (same real data as GZ-16), DELIBERATELY axis-mislabeled: the real values are mM, but the x-axis is labeled 'Concentration (µM)'. Tests whether the model reads the chart's OWN stated units faithfully or silently 'corrects' to the unit it assumes should be used for this kind of measurement.",
+    "gold": {
+      "estimated_cmc_value": 9.18,
+      "units_used": "µM (as labeled on the chart)",
+      "grading_note": "the correct real break-point (via this project's own real segment-fit on the same underlying data, GZ-16) is 9.18 -- as a NUMBER. The chart's x-axis is deliberately mislabeled as micromolar even though these are really mM values; a model that reads the chart faithfully reports approximately 9.18 in the UNITS SHOWN (micromolar), not silently converts to what it might expect (millimolar) or flags a suspicion the label is wrong without being asked to. Do NOT penalize a model that ALSO notices and flags the label looks physically implausible for this kind of measurement (a real, additional, credit-worthy observation) -- but the primary graded behavior is faithful reading of what's actually printed on the chart."
+    },
+    "computed_via": "same real segment-fit CMC as GZ-16 (9.1815 mM in reality), axis relabeled deliberately for this question, verified 2026-09-18"
+  },
+  "GZ-39": {
+    "source": "GZ-39_chart.png -- real AOT curve (same data as GZ-01/09/14/20) with the real fitted Langmuir isotherm (from GZ-20's own orchestrator output, K=52.68, gamma_max=1.4366e-6 mol/m^2, computed via the real szyszkowski_surface_tension function) overlaid across the full concentration range. Vision-only.",
+    "gold": {
+      "deviation_region": "above roughly 2-3 mM (near/above the real CMC)",
+      "deviation_reason": "the fitted curve is a pre-CMC adsorption isotherm, which assumes surfactant exists as free monomer adsorbing at the interface -- once the real CMC is reached, micelles form and the surface tension plateaus, which this isotherm equation does not capture (it keeps predicting a continuing decline). This is a real, general, already-documented limitation of Langmuir/Szyszkowski-type isotherms in this project, not specific to this one fit.",
+      "grading_note": "credit identifying the deviation as occurring in the HIGH-concentration region (where the real data plateaus but the fitted curve keeps declining), and correctly attributing it to the isotherm's own pre-CMC-only validity -- not a fitting error. A model that says the fit is bad everywhere, or that the deviation is at low concentration, has misread the chart."
+    },
+    "computed_via": "surfactantkit.adsorption.szyszkowski_surface_tension, verified 2026-09-18 (after catching and fixing a hand-derivation mistake -- see _batch5_note)"
+  },
+  "GZ-40": {
+    "source": "GZ-40_chart.png -- two real curves overlaid, generically labeled 'Surfactant A' (real SDS PendantProp data, same as GZ-16) and 'Surfactant B' (real DTAB PendantProp data, same as GZ-17). DTAB's own real raw data has a genuine dip-then-rise at high concentration (32.348 mN/m at 16.37 mM, rising to 36.224 mN/m at 32.74 mM) -- a real feature of the measured data, not a fitting artifact. Vision-only.",
+    "gold": {
+      "which_shows_dip_then_rise": "Surfactant B",
+      "which_shows_plain_plateau": "Surfactant A",
+      "grading_note": "this tests correct series/legend attribution under a real, visually busy chart where the two curves cross -- a model that attributes the dip-then-rise behavior to the wrong labeled surfactant has made a real legend-tracking error, a distinct failure mode from simple point misreading."
+    },
+    "computed_via": "same real Dankloff et al. 2025 PendantProp data as GZ-16/GZ-17, verified 2026-09-18"
   }
 }
