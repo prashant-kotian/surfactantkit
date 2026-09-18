@@ -502,5 +502,60 @@
       "grading_note": "credit recognizing concentration-dependence as the resolving factor -- a model that treats N=63 as simply outside the 'true' range (implying one measurement must be in error) has missed a real, general, well-known surfactant-science fact rather than a system-specific coincidence."
     },
     "computed_via": "same real values already used/cited elsewhere in this project, cross-referenced 2026-09-18"
+  },
+  "_batch7_note": "GZ-46..50 (batch 7: predictive extrapolation), built 2026-09-18. Two of the five (GZ-46, GZ-47) turned out to hide a genuine physical-plausibility trap discovered while computing gold, not designed in advance: GZ-46's hexadecane prediction gives a salinity far beyond real NaCl solubility (SDS alone cannot reach Winsor III with a very lipophilic oil), and GZ-47's furthest requested extrapolation lands past the real curve's own known CMC, where the isotherm equation is no longer valid. GZ-48 was descoped from a literal 'predict at a new composition' framing once building it clarified that Rodenas's own local-derivative method only produces pointwise values at MEASURED compositions (unlike EOMMM's genuine global functional form) -- it is honestly a fresh model-independent CHAIN, not an extrapolation, and labeled as such rather than forced into a framing it doesn't fit. GZ-49 uses a real, previously-unused-in-this-project-benchmark system (C8E4-SDS, nonionic-anionic, Schulz & Durand 2016 SI) for genuine EOMMM extrapolation on BOTH sides of the measured composition range.",
+  "GZ-46": {
+    "source": "Real SDS Cc=-2.63 (Leng & Acosta 2023) + real K_ANIONIC_DEFAULT=0.16 (Steven Abbott source), both already in this project's own hld.py. Real standard EOR test oils: toluene (EACN=0) and hexadecane (EACN=16).",
+    "gold": {
+      "s_star_toluene_pct": 13.87,
+      "s_star_hexadecane_pct": 179.47,
+      "hexadecane_physically_achievable": false,
+      "reasoning": "179.47% NaCl-equivalent salinity is far beyond real aqueous NaCl solubility (~26 g/100mL at room temperature) -- this is a real, meaningful finding, not a computational error: SDS (a relatively hydrophilic anionic surfactant, Cc=-2.63) genuinely CANNOT reach a Winsor III/optimal formulation with a very lipophilic oil like hexadecane at any physically achievable salinity, a real, well-known real-world formulation constraint (would need a more lipophilic surfactant, a cosurfactant, or an extended-surfactant structure instead). The toluene prediction (13.87%) is real and physically achievable."
+    },
+    "computed_via": "surfactantkit.hld.optimal_salinity_ionic, verified 2026-09-18"
+  },
+  "GZ-47": {
+    "source": "Real C12E8 fitted parameters (K=8.772e6 L/mol, Gamma_max=2.21e-6 mol/m^2, Ho/Lips/Velikov 2023, same real source as GZ-08). Real CMC for this compound is ~1e-4 mol/L (the paper's own stated value, already disclosed in this project's literature_validation_notes as the point where the equation 'breaks down due to formation of micelles').",
+    "gold": {
+      "gamma_at_5e-6": 51.17,
+      "gamma_at_5e-5": 38.68,
+      "gamma_at_2e-4": null,
+      "why_2e-4_null": "2e-4 mol/L is ABOVE this compound's own real CMC (~1e-4 mol/L) -- the Szyszkowski/Langmuir pre-CMC isotherm is not physically valid past the CMC (real surface tension plateaus there instead of continuing to decline), so predicting a numeric value at this concentration would apply the model outside its own known validity range. The other two concentrations (5e-6, 5e-5) are both below the real CMC and are valid, real predictions.",
+      "grading_note": "credit correctly identifying which of the three requested concentrations is NOT a valid extrapolation, not just computing all three mechanically."
+    },
+    "computed_via": "surfactantkit.adsorption.szyszkowski_surface_tension, verified 2026-09-18"
+  },
+  "GZ-48": {
+    "source": "Real DHPC-SDS 5-point series (same as GZ-02, Vautier-Giongo/Bales 2005) -- a fresh chain (Rodenas model-independent x1 -> real activity coefficients) not yet asked about on this system; GZ-02 only asked for model selection + a qualitative Rodenas cross-check, not this specific quantitative chain. NOTE: unlike EOMMM, Rodenas's local-derivative method only yields values AT the measured compositions, not genuine extrapolation to new ones -- this question is honestly a fresh execution chain, not a predictive-extrapolation question (see _batch7_note).",
+    "gold": {
+      "x1_rodenas_at_alpha1_0.60": 0.384,
+      "f1_at_alpha1_0.60": 0.527,
+      "f2_at_alpha1_0.60": 1.010,
+      "grading_note": "alpha1=0.60 is the SAME real composition this project's own test suite already flags as a real, disclosed outlier point in the paper's own printed Rubingh x1 (0.29 printed vs 0.41 solved) -- the Rodenas value computed here (0.384) is a THIRD, independent route to a similar composition estimate, itself real and not artificially smoothed to agree with either of the other two. Do not expect exact agreement with any single 'true' x1 -- credit correct mechanical execution of the Rodenas-then-activity-coefficient chain."
+    },
+    "computed_via": "surfactantkit.mixed_micelle.rodenas_x1_series + rodenas_activity_coefficients, verified 2026-09-18"
+  },
+  "GZ-49": {
+    "source": "Real C8E4-SDS system (nonionic-anionic, Schulz & Durand 2016 SI, mmc6.csv, Case Study 3, already validated in this project's own test suite to <0.25% relative error) -- a genuinely fresh real compound pairing not yet used anywhere in the GZ-01..48 set. W12/W21 solved exactly from the real data's own two endpoint compositions, verified against a real interior point (x1=0.48) to <0.1% before trusting the extrapolation.",
+    "gold": {
+      "w12": -3.25,
+      "w21": -2.82,
+      "f1_at_x1_0.10": 0.077,
+      "f2_at_x1_0.10": 0.965,
+      "f1_at_x1_0.90": 0.976,
+      "f2_at_x1_0.90": 0.095,
+      "grading_note": "both x1=0.10 and x1=0.90 are OUTSIDE the real measured range (0.215-0.779) -- genuine extrapolation on both sides, not interpolation. The real fitted W12 and W21 are close in magnitude (both strongly negative, ~-3.0), a genuinely different interaction character than GZ-25's asymmetric (opposite-sign) DHPC-DTAB case -- a well-reasoned answer might note this system's interaction looks closer to symmetric/Rubingh-like than GZ-25's does, even though the full 2-parameter model was still needed to fit the real data."
+    },
+    "computed_via": "surfactantkit.mixed_micelle.asymmetric_margules_activity_coefficients/excess_free_energy, verified 2026-09-18"
+  },
+  "GZ-50": {
+    "source": "Same real 8-point CMC-vs-T table and real beta=0.268 as GZ-26/28 (Fu et al. 2019, fetched directly). Real deltaG_mic computed at all 8 temperatures via gibbs_free_energy_micellization.",
+    "gold": {
+      "delta_g_mic_at_283.15K": -35.18,
+      "delta_g_mic_at_318.15K": -38.87,
+      "trend": "monotonically more negative (more favorable) as temperature increases across the ENTIRE real range, despite CMC itself being non-monotonic (a real minimum near 298.15K)",
+      "reasoning": "this is a genuinely non-obvious real result: even though delta_h_mic changes SIGN between the low-T and high-T regimes (GZ-26/28's own real finding), delta_g_mic does NOT flip its own trend -- it stays monotonically more negative with T throughout, because the real entropy of micellization is large and positive in both regimes (GZ-28's own real finding), and the T*deltaS term dominates delta_g_mic's own temperature dependence even where deltaH itself reverses sign. A model that assumes delta_g_mic's trend must mirror CMC's own non-monotonic shape, or must flip when deltaH flips, has made a real, understandable but incorrect inference -- deltaG, deltaH, and deltaS each have their own distinct temperature dependence, not a single shared one."
+    },
+    "computed_via": "surfactantkit.thermodynamics.gibbs_free_energy_micellization, verified 2026-09-18"
   }
 }
