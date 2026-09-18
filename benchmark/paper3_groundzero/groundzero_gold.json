@@ -455,5 +455,52 @@
       "grading_note": "this tests correct series/legend attribution under a real, visually busy chart where the two curves cross -- a model that attributes the dip-then-rise behavior to the wrong labeled surfactant has made a real legend-tracking error, a distinct failure mode from simple point misreading."
     },
     "computed_via": "same real Dankloff et al. 2025 PendantProp data as GZ-16/GZ-17, verified 2026-09-18"
+  },
+  "_batch6_note": "GZ-41..45 (batch 6: cross-source consistency), built 2026-09-18. Three genuinely different flavors of 'cross-source consistency' deliberately covered: GZ-42 tests spotting a REAL discrepancy (with a source-reliability signal, not an impossible coincidence-detection), GZ-43 tests recognizing REAL close agreement (don't manufacture a discrepancy that isn't there), GZ-44 tests recognizing agreement between two DIFFERENT METHODS on the same real compound (not just two citations of the same method), and GZ-45 tests recognizing a real, legitimate, EXPLAINABLE difference (concentration-dependence) rather than assuming one real number must be wrong.",
+  "GZ-41": {
+    "source": "Real Triton X-100 micelle molar mass Mw=66,600 g/mol (Serafini et al. 2019 SI Table SI-II, already used in this project's own literature_validation_notes), real dn/dc=0.140+/-0.005 mL/g (Stubicar et al. 1989, already in DN_DC_REFERENCE_ML_PER_G), real monomer MW~625 g/mol (standard TX-100 average). Raw (concentration, Rayleigh ratio) points are a real, physically-consistent FORWARD CONSTRUCTION from this real Mw (no raw published Rayleigh-ratio table exists for this system, per this project's own already-disclosed literature_validation_notes finding) -- honestly disclosed here, not presented to the model as literally-published raw data, though the physics and final numbers are completely real.",
+    "gold": {
+      "micelle_molar_mass_g_per_mol": 66600,
+      "aggregation_number": 106.6,
+      "consistent_with_literature": true,
+      "reasoning": "106.6 lands within the well-established, temperature-sensitive literature range for TX-100 (~100-155), already cited elsewhere in this project -- a real, positive cross-check, not a discrepancy."
+    },
+    "computed_via": "surfactantkit.curve_analysis.aggregation_number_from_sls_debye_plot, verified 2026-09-18"
+  },
+  "GZ-42": {
+    "source": "Real, documented AOT Cc discrepancy already found and resolved in this project's own hld.py: Hellweg, Oberdisse & Sottmann 2023 (a review comparing multiple surfactants) states Cc(AOT)=-0.92; Leng & Acosta 2023 (the primary paper directly measuring AOT's own real solubilization/interfacial behavior) reports Cc=2.4-3.5 for the same real compound. The review's -0.92 suspiciously equals a DIFFERENT surfactant's (SDHS) own value from the same primary paper -- a likely citation error, not disclosed to the model here (an impossible coincidence to independently spot without already knowing SDHS's value; the fair, gradable signal given is source type + AOT's own famous real chemistry).",
+    "gold": {
+      "more_likely_correct": "2.4 to 3.5 (Cc strongly positive/lipophilic)",
+      "reasoning": "two convergent real reasons: (1) source reliability -- a primary paper's own direct measurement of the compound in question outweighs a secondary review's stated comparison value; (2) AOT (sodium bis(2-ethylhexyl) sulfosuccinate) is one of the most famous real reverse-micelle-forming surfactants in surfactant science, a well-documented, strongly lipophilic-curvature-favoring compound -- a near-zero or slightly negative Cc (-0.92, mildly hydrophilic-leaning) is chemically inconsistent with this extremely well-known real behavior, while a strongly positive Cc (2.4-3.5) is exactly what AOT's famous reverse-micelle/Winsor-II-favoring character predicts.",
+      "grading_note": "credit either reason alone as sufficient, both together as a stronger answer. A model that picks -0.92 (matching the review) without noticing the tension with AOT's own famous real chemistry has missed a genuine, well-known chemistry fact, not just a citation-reliability heuristic."
+    },
+    "computed_via": "surfactantkit.hld.CC_REFERENCE_ANIONIC_CATIONIC (real, dual-sourced), the discrepancy itself already documented in this project's own code comments, re-verified 2026-09-18"
+  },
+  "GZ-43": {
+    "source": "Real DTAB counterion dissociation degree, two independently-cited real values already in this project's own COUNTERION_BINDING_DEGREE_REFERENCE: 0.28 (this project's own web-corroborated value) cross-checked against a second independently cited literature value of 0.29.",
+    "gold": {
+      "agreement_assessment": "strong agreement -- these two values differ by only ~3.5% relative, well within normal real inter-study variation for this kind of measurement",
+      "reasoning": "unlike GZ-42's real discrepancy, this is a case of genuine real corroboration between two independent sources -- a model should recognize this as mutually consistent and report reasonable-to-high confidence, not manufacture a discrepancy or artificially favor one value over the other without cause."
+    },
+    "computed_via": "surfactantkit.thermodynamics.COUNTERION_BINDING_DEGREE_REFERENCE, verified 2026-09-18"
+  },
+  "GZ-44": {
+    "source": "Real DTAB micelle molar mass Mw=16,800 g/mol (Serafini et al. 2019 SI, same real source as GZ-41's TX-100 value), real monomer MW=308.34 g/mol (standard DTAB) -> real SLS-measured N_agg=54.5. Cross-checked against a real GEOMETRIC estimate: Tanford tail volume/critical length for n=12 (already used throughout this GZ set) via aggregation_number_spherical.",
+    "gold": {
+      "sls_measured_n_agg": 54.5,
+      "geometric_n_agg": 55.5,
+      "agreement": "strong (within ~2%)",
+      "reasoning": "these are two INDEPENDENT methods (a real light-scattering measurement vs. a first-principles geometric packing estimate), not two citations of the same technique -- close agreement here is a genuinely stronger, more informative cross-check than GZ-43's same-method comparison, and should be recognized as such."
+    },
+    "computed_via": "surfactantkit.cpp.tanford_tail_volume/tanford_critical_length/aggregation_number_spherical, verified 2026-09-18"
+  },
+  "GZ-45": {
+    "source": "Real Bales et al. 1998 SDS worked example (N_agg=63 at 69 mM, salt-free -- already used in GZ-18/GZ-27) vs. the real, broader SDS literature range (44.8-54.2 across independent techniques, mean~49.5, Bales et al.'s own Table 4, already cited elsewhere in this project).",
+    "gold": {
+      "genuine_conflict": false,
+      "reasoning": "aggregation number is a real, well-established function of surfactant concentration ABOVE the CMC -- it generally GROWS as concentration increases further above CMC (more surfactant available to add to existing micelles before a morphology change intervenes). 69 mM is roughly 8x SDS's own CMC (~8 mM), well above the more dilute, near-CMC conditions many of the broader-range literature techniques measure at -- so a genuinely higher N_agg at this specific, higher concentration is an expected, physically consistent result, not evidence that either number is wrong.",
+      "grading_note": "credit recognizing concentration-dependence as the resolving factor -- a model that treats N=63 as simply outside the 'true' range (implying one measurement must be in error) has missed a real, general, well-known surfactant-science fact rather than a system-specific coincidence."
+    },
+    "computed_via": "same real values already used/cited elsewhere in this project, cross-referenced 2026-09-18"
   }
 }

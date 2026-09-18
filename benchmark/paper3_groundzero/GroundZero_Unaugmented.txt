@@ -1108,3 +1108,131 @@ FINAL_JSON:
   "which_shows_plain_plateau": "<string>"
 }
 <<< PASTE ABOVE <<<
+
+
+GZ-41
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real, physically-consistent forward-constructed SLS raw data (real known Mw=66,600 g/mol for Triton X-100, real dn/dc). Tests both correct execution of the Debye-plot method and recognition of consistency with known literature.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+A real static light scattering (SLS) experiment measured the following micellized-surfactant concentration vs. excess Rayleigh ratio series for a real nonionic surfactant micelle in water:
+
+  Concentration (g/mL), Rayleigh ratio (cm^-1):
+  0.002, 1.847e-05
+  0.004, 3.601e-05
+  0.006, 5.269e-05
+  0.008, 6.856e-05
+  0.010, 8.368e-05
+  0.012, 9.811e-05
+
+Real, known constants for this system: refractive index increment (dn/dc) = 0.140 mL/g, laser vacuum wavelength = 632.8 nm, solvent refractive index = 1.333, pure surfactant monomer molar mass = 625 g/mol.
+
+Analyze this data using the single-angle Debye plot method (Kc/DeltaR = 1/Mw + 2*A2*c, where K = 4*pi^2*n^2*(dn/dc)^2/(NA*lambda^4)) to determine the micelle molar mass and aggregation number. Comment on whether this aggregation number is consistent with what you know about typical nonionic surfactant micelles of this general type.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "micelle_molar_mass_g_per_mol": <number>,
+  "aggregation_number": <number>,
+  "consistent_with_literature": <true|false>,
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-42
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real, documented AOT characteristic-curvature discrepancy between two real sources. Tests literature-conflict resolution via source reliability + known compound chemistry, not an impossible coincidence-detection.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet for this specific discrepancy, but do use your general knowledge of this compound's real, well-documented chemistry.
+
+SMILES: CCCCC(CC)COC(=O)CC(C(=O)OCC(CC)CCCC)S(=O)(=O)[O-].[Na+]
+
+Two real sources report different values for this compound's characteristic curvature (Cc), a parameter describing a surfactant's preference for normal (positive Cc, water-continuous) vs. reverse (negative Cc, oil-continuous) curvature:
+
+Source 1 -- a review article comparing characteristic curvature values across several different surfactants -- states Cc = -0.92 for this compound.
+
+Source 2 -- a primary research paper directly measuring this exact compound's own real interfacial/solubilization behavior -- reports Cc in the range 2.4 to 3.5 for the same compound.
+
+Which value do you find more likely to be correct, and why? Consider both the nature of each source and what you know about this specific compound's own real, well-established behavior.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "more_likely_correct": "<string>",
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-43
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real DTAB counterion binding degree, two independently-cited values that genuinely AGREE -- direct contrast with GZ-42's real discrepancy.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles.
+
+SMILES: CCCCCCCCCCCC[N+](C)(C)C.[Br-]
+
+Two independent real sources report this compound's counterion dissociation degree (the fraction of counterions NOT bound in the micellar Stern layer): one reports 0.28, the other reports 0.29.
+
+Assess the level of agreement between these two values, and state how confident you would be in using either for a downstream thermodynamic calculation.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "agreement_assessment": "<string>",
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-44
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real DTAB SLS-measured aggregation number vs. a real geometric estimate -- cross-METHOD agreement, not just cross-citation agreement.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+A real cationic surfactant has 12 carbons in its hydrophobic tail. SMILES: CCCCCCCCCCCC[N+](C)(C)C.[Br-]
+
+A real static light scattering measurement reports this compound's micelle molar mass as 16,800 g/mol, and its own pure monomer molar mass is 308.34 g/mol.
+
+Separately, using Tanford's standard empirical relations for a saturated, unbranched alkyl chain of n_c carbons (tail volume V = 27.4 + 26.9*n_c cubic Angstrom, critical chain length l_c = 1.5 + 1.265*n_c Angstrom), and modeling the micelle core as a sphere of radius equal to the critical chain length, estimate the aggregation number geometrically (spherical volume / tail volume).
+
+Compare the two aggregation number estimates (light-scattering-derived and geometric) and assess their level of agreement, noting what makes this comparison different in kind from comparing two citations of the same experimental technique.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "sls_measured_n_agg": <number>,
+  "geometric_n_agg": <number>,
+  "agreement": "<string>",
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-45
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real Bales 1998 high-concentration SDS N_agg vs. the real broader literature range -- tests recognizing a legitimate, explainable difference rather than assuming a contradiction.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles.
+
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+
+A real measurement reports this compound's micelle aggregation number as 63, at a real surfactant concentration of 69 mM (no added salt). Separately, a broader survey of independent literature techniques for this same compound reports aggregation numbers in the range 44.8 to 54.2 (mean approximately 49.5), without specifying the exact concentration of each individual measurement.
+
+Assess whether the 69 mM measurement (N=63) genuinely conflicts with the broader literature range, or whether there is a real, physical reason both could be correct.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "genuine_conflict": <true|false>,
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
