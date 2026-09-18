@@ -147,9 +147,15 @@ def run_openai(model, question_system, question_user, condition, api_key,
 
 # =============================== Gemini generateContent =======================
 def run_gemini(model, question_system, question_user, condition, api_key,
-               thinking_budget=None):
+               thinking_budget=None, image_base64=None, image_mime_type="image/png"):
     tools = to_gemini_tools() if condition == "surfmcp" else None
-    contents = [{"role": "user", "parts": [{"text": question_user}]}]
+    user_parts = [{"text": question_user}]
+    if image_base64:
+        # Real vision questions (GZ-15/36-40) require an attached chart -- Gemini's
+        # REST API takes inline images as a base64 part alongside the text part,
+        # both in the same user turn's "parts" list.
+        user_parts.append({"inline_data": {"mime_type": image_mime_type, "data": image_base64}})
+    contents = [{"role": "user", "parts": user_parts}]
     tool_calls = []
     url = (f"https://generativelanguage.googleapis.com/v1beta/models/{model}"
            f":generateContent?key={api_key}")
@@ -211,7 +217,9 @@ def run(provider, model_id, system, user, condition, **kw):
         if not key:
             return _keyerr("GEMINI_API_KEY")
         return run_gemini(model_id, system, user, condition, key,
-                          thinking_budget=kw.get("thinking_budget"))
+                          thinking_budget=kw.get("thinking_budget"),
+                          image_base64=kw.get("image_base64"),
+                          image_mime_type=kw.get("image_mime_type", "image/png"))
     return {"final_text": "", "thinking": "", "tool_calls": [], "raw": {},
             "error": f"unknown provider {provider}"}
 
