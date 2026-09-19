@@ -1670,3 +1670,141 @@ FINAL_JSON:
   "estimated_cmc_mM": <number>
 }
 <<< PASTE ABOVE <<<
+
+
+================================================================================
+BATCH 8B -- REPRODUCIBILITY EXTENSION (GZ-61 through GZ-65)
+================================================================================
+SAME PROTOCOL AS BATCH 8: run EACH of these questions MULTIPLE TIMES (5 repeats
+is a reasonable number) per AI, in a FRESH chat/session each time. Each of
+these 5 was deliberately chosen to test a DIFFERENT real fragility mechanism
+than GZ-51..60 (a near-agreement multi-method convention, an informal
+regression-boundary judgment, a marginal-data-inclusion judgment, a real
+multi-source numeric conflict, and a real historically-observed prefactor
+default failure) -- see groundzero_gold.json's own "why_reproducibility_prone"
+field per question for the specific real mechanism being tested.
+================================================================================
+
+
+GZ-61
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real intermediate-zone kappa*a (electrostatics.henry_function's own docstring: real micelles typically land at kappa*a ~0.2-4.2, squarely between the Huckel and Smoluchowski limits) -- three real, accurate closed-form treatments exist for this regime and are not named in the question, testing whether repeated attempts consistently pick the same one (or at minimum consistently avoid the two limiting-case traps).]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a specific literature value for this system.
+
+A real anionic micelle in aqueous solution has an effective hydrodynamic radius of 2.5 nm. The solution contains a 1:1 background electrolyte at 20 mM ionic strength, at 298.15 K (relative permittivity of water: 78.4).
+
+The micelle's electrophoretic mobility was measured as 2.7 um*cm/(V*s). The solvent viscosity is 0.8903 mPa*s.
+
+Determine the micelle's zeta potential (mV).
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "kappa_a": <number>,
+  "zeta_potential_mV": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-62
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Forward-constructed (disclosed) real conductometric break-point data -- tests whether informal point-by-point slope reading near the break (rather than a real two-segment regression over all points) reproduces the true CMC and counterion binding degree consistently across repeats.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this system.
+
+A real 1:1 ionic surfactant's specific conductivity was measured across a concentration series in water at 298.15 K:
+
+Concentration (mM): 1.0, 2.0, 3.0, 4.0, 5.0, 5.5, 6.0, 6.5, 7.0, 8.0, 10.0, 12.0
+Specific conductivity (mS/cm): 0.692, 1.327, 1.974, 2.605, 3.260, 3.556, 3.903, 4.0275, 4.191, 4.477, 5.072, 5.659
+
+Determine the critical micelle concentration and the counterion binding degree (beta) from this data.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "cmc_mM": <number>,
+  "counterion_binding_degree": <number>
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-63
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Forward-constructed (disclosed) steady-state fluorescence quenching series, Turro-Yekta method -- the highest two quencher concentrations show real, deliberate curvature (a documented real SSFQ artifact at high quencher loading), testing whether repeated attempts consistently include or exclude the deviating points.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this system.
+
+A real fluorescent probe solubilized in a surfactant's micelles was quenched by a series of quencher concentrations, in a solution where the total surfactant concentration is 50 mM and the critical micelle concentration is 8 mM.
+
+Probe fluorescence intensity without quencher (I0): 1.00
+
+Quencher concentration (mM) and probe intensity (I), paired:
+  0.5, 0.4895
+  1.0, 0.2397
+  1.5, 0.1173
+  2.0, 0.0574
+  2.5, 0.0402
+  3.0, 0.0298
+
+The relationship follows ln(I0/I) = N*[Q] / (Ct - cmc), a straight line through the origin.
+
+Determine the micelle aggregation number (N).
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "aggregation_number": <number>,
+  "reasoning": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-64
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real, independently sourced CTAB CMC values from three different real methods/papers (Oremusova 2012's own conductometric result; Oremusova's own cited 15-source literature average; Chenyakin & Chen 2025's streaming-potential result) -- a genuine, if modest, real 3-way disagreement, testing resolution-strategy consistency across repeats rather than a single number.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles using only the real data given below -- do not search the internet for additional values.
+
+Cetyltrimethylammonium bromide (CTAB) is a real, extremely well-studied cationic surfactant.
+
+SMILES: CCCCCCCCCCCCCCCC[N+](C)(C)C.[Br-]
+
+Three real, independently reported values for its critical micelle concentration in pure water at room temperature are:
+  0.876 mM (a single-lab conductometric measurement)
+  0.904 mM (a literature average across 15 independent sources)
+  0.930 mM (a streaming-potential measurement)
+
+Report a single best-estimate CMC value for CTAB in pure water, and explain how you arrived at it from these three real values.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "best_estimate_cmc_mM": <number>,
+  "resolution_method": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-65
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Forward-constructed (disclosed), real excess-electrolyte condition explicitly stated once in the setup -- this library's own gibbs_gamma_max() docstring records a real historical failure (unaugmented Claude Opus 4.8 silently defaulted to the no-added-salt prefactor 5/6 times even when told otherwise); the two candidate prefactors differ by exactly 2x, a large and easily detectable divergence.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this system.
+
+A real anionic surfactant's pre-CMC surface tension was measured as a function of concentration in an aqueous solution containing 0.1 M NaCl as a background electrolyte, at 298.15 K. The fitted slope of surface tension (mN/m) versus ln(concentration) in the premicellar region is -18.4 mN/m.
+
+Determine the maximum surface excess concentration (Gamma_max, mol/m^2) and the minimum area per surfactant molecule (A_min, nm^2) at the interface.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "gamma_max_mol_per_m2": <number>,
+  "a_min_nm2": <number>
+}
+<<< PASTE ABOVE <<<
