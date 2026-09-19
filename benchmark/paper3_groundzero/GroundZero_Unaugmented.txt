@@ -1808,3 +1808,109 @@ FINAL_JSON:
   "a_min_nm2": <number>
 }
 <<< PASTE ABOVE <<<
+
+
+================================================================================
+BATCH 8C -- CROSS-PROPERTY COMBINATION REPRODUCIBILITY (GZ-66 through GZ-68)
+================================================================================
+SAME PROTOCOL AS BATCH 8/8B: run EACH of these questions MULTIPLE TIMES (5
+repeats is a reasonable number) per AI, in a FRESH chat/session each time.
+Unlike GZ-51..65 (each testing ONE technique's own fragility point), these 3
+each deliberately CHAIN TWO OR THREE DIFFERENT toolkit techniques together in
+one question -- a permutation/combination across the toolkit's property
+space, testing whether multi-step reasoning stays reproducible when it must
+correctly execute several real calculations in sequence and then synthesize
+them, not just recall or apply one formula. See groundzero_gold.json's own
+"why_reproducibility_prone" field per question for the specific real mechanism.
+================================================================================
+
+
+GZ-66
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real SDS Amin=49.37 A^2 (Sachin et al. 2019, PMC6458362, already validated in this project to reproduce the paper's own CPP within 1.2%) combined with SDS's real Davies HLB -- tests whether repeated attempts correctly chain BOTH independent frameworks (CPP geometry + Davies group-additivity) and recognize Davies' well-known ionic-surfactant scale-overflow quirk rather than treating an out-of-0-20-range number naively.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+Sodium dodecyl sulfate (SDS) is a real, well-characterized anionic surfactant.
+
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+
+A real measured minimum area per molecule for SDS at 298.15 K is 49.37 A^2.
+
+Using Tanford's standard empirical relations for a saturated 12-carbon alkyl chain (tail volume V = 27.4 + 26.9*n_c cubic Angstrom; critical chain length l_c = 1.5 + 1.265*n_c Angstrom), compute the critical packing parameter and the predicted aggregate morphology.
+
+Separately, using Davies' group-contribution method (HLB = 7 + sum of hydrophilic group numbers - sum of lipophilic group numbers), compute the HLB for this molecule. Treat it as one sulfate ester salt headgroup (-OSO3Na, hydrophilic group number 38.6) plus eleven -CH2- groups and one terminal -CH3 group (each a lipophilic group number of 0.475).
+
+Discuss whether these two independent structural descriptors (the packing parameter and the HLB value) are consistent with each other for this molecule.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "cpp": <number>,
+  "morphology": "<string>",
+  "hlb_davies": <number>,
+  "consistency_discussion": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-67
+[reference only, do not paste -- see groundzero_gold.json for full source detail. Real SDS Cc=-2.63 (Leng & Acosta 2023, already used/validated in this project for GZ-46) combined with SDS's real, independently-measured counterion binding degree beta=0.728 (Bales et al. 2001, EPR method) -- tests whether repeated attempts correctly recognize Cc is already an empirical, holistic descriptor derived from real HLD-scan data on this actual surfactant, not a separate theoretical prediction that must independently agree or disagree with beta (a real property measured by a completely unrelated technique), rather than treating the two as two independent forecasts to reconcile.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this system.
+
+Sodium dodecyl sulfate (SDS) is a real anionic surfactant.
+
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+
+Its real characteristic curvature is Cc = -2.63. For anionic surfactants, the EACN-scaling constant is k = 0.16.
+
+Using the ionic-surfactant Hydrophilic-Lipophilic Difference equation, HLD = ln(S) - k*EACN - alpha*deltaT + Cc (with alpha = 0.01 per K and deltaT = 0 at the 298.15 K reference), determine the Winsor type for this surfactant with toluene (EACN = 0) at 5% NaCl-equivalent aqueous salinity (S = 5).
+
+Separately, this same surfactant's real counterion binding degree (the fraction of counterions bound to the micelle surface, from an independent conductivity/EPR-type measurement) is beta = 0.728.
+
+Discuss whether this counterion binding degree is consistent with, or provides independent support for, the Winsor-type prediction above.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "hld_value": <number>,
+  "winsor_type": "<string>",
+  "consistency_discussion": "<string>"
+}
+<<< PASTE ABOVE <<<
+
+
+GZ-68
+[reference only, do not paste -- see groundzero_gold.json for full source detail. A real, chained 3-technique combination: SDS's real Amin=49.37 A^2 (Sachin 2019) -> CPP -> real Bales 1998 aggregation number N=63 (salt-free 69mM SDS) -> ellipsoid-of-revolution axial ratio -> real Sutherland 2009 Taylor-dispersion diffusion coefficient -> Perrin-corrected hydrodynamic radius. Tests whether repeated attempts correctly execute the full real chain (not skip a step or substitute an assumed axial ratio) and report the real, honestly SMALL correction this specific chain produces, rather than assuming "cylindrical" morphology automatically implies a large shape correction.]
+
+>>> PASTE BELOW >>>
+Work entirely from first principles -- do not search the internet or recall a value for this compound from training.
+
+Sodium dodecyl sulfate (SDS) is a real anionic surfactant, 12-carbon tail.
+
+SMILES: CCCCCCCCCCCCOS(=O)(=O)[O-].[Na+]
+
+A real measured minimum area per molecule for SDS at 298.15 K is 49.37 A^2. Using Tanford's standard empirical relations (tail volume V = 27.4 + 26.9*n_c cubic Angstrom; critical chain length l_c = 1.5 + 1.265*n_c Angstrom, n_c = 12), compute the critical packing parameter.
+
+A real, independently measured aggregation number for this system is N = 63.
+
+Model the hydrophobic core of this micelle as a prolate ellipsoid of revolution whose minor semi-axis is pinned at the critical chain length l_c, with the major semi-axis determined by real volume conservation (core volume = N times the tail volume = (4/3)*pi*(major semi-axis)*(minor semi-axis)^2). Compute the resulting axial ratio (major/minor semi-axis).
+
+A real Taylor-dispersion-measured diffusion coefficient for this system is D = 0.093e-5 cm^2/s, in water (viscosity 0.8903 mPa*s) at 298.15 K.
+
+Compute the true (shape-corrected) hydrodynamic radius using the Perrin friction factor for this axial ratio, and compare it to the naive (uncorrected, sphere-assumed) Stokes-Einstein hydrodynamic radius.
+
+End your response with a block in exactly this form:
+
+FINAL_JSON:
+{
+  "cpp": <number>,
+  "axial_ratio": <number>,
+  "r_h_naive_nm": <number>,
+  "r_h_perrin_corrected_nm": <number>
+}
+<<< PASTE ABOVE <<<
